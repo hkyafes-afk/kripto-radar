@@ -147,8 +147,9 @@ class Desk:
         full = bool((m.extra or {}).get("tam_yetki"))     # 👑 Baş Trader: Genel Müdür kısıtları yok, hep gerçek işlem
         shadow = False if full else (self.benched(m.id) or (seg == "golge")
                                      or (bool(idea.get("shadow_only")) and seg != "gercek"))
-        if any(t["mgr"] == m.id and t["inst"] == idea["inst"] for t in self.ledger["open"] if t.get("mgr")):
-            return "red", None, None                         # zaten pozisyonu var (sessiz)
+        if any(t["mgr"] == m.id and t["inst"] == idea["inst"] for t in self.ledger["open"] if t.get("mgr")) \
+                and not (full and idea.get("pyramid")):
+            return "red", None, None                         # zaten pozisyonu var (sessiz); Baş Trader piramitte ekler
         if any(o["mgr"] == m.id and o["idea"]["inst"] == idea["inst"] for o in self.ledger["orders"]):
             return "red", None, None                         # zaten bekleyen emri var
         cool = self.fc["tekrar_bekleme_mum"] * {"15m": 900_000, "1H": 3600_000, "4H": 14_400_000,
@@ -205,6 +206,14 @@ class Desk:
         ext = wm * fm * km * hm * xm * (kel if not shadow else 1.0) * (cm if (cm > 0 and not shadow) else 1.0)
         if full:          # Baş Trader kendi puanıyla boyutlanır; dış çarpanlar (hava, uzman, Kelly, seri) uygulanmaz
             mult, ext = 1.0, 1.0
+            ext *= float(idea.get("risk_scale") or 1.0)          # piramit katı: her kat bir öncekinin yarısı
+            cf = env.get("corr")
+            if cf:        # benzer hareket eden coinlerde aynı yöne birikme: engellemez, boyutu yumuşakça küçültür
+                k = sum(1 for t in self._live_open() if t.get("mgr") == m.id and t["side"] == side
+                        and t["inst"] != idea["inst"] and cf(t["inst"], idea["inst"]) >= 0.7)
+                if k:
+                    ext /= math.sqrt(1 + k)
+                    gm.append(f"benzer {k} coinde zaten {side}: boyut ×{1 / math.sqrt(1 + k):.2f}")
         risk_pct = (m.base_risk + (m.max_risk - m.base_risk) * idea["conviction"]) * mult * ext
         risk_usd = eq_m * risk_pct / 100
         if idea.get("notional_target"):     # Ortak Masa: anlaşan yöneticilerin %5 katkısı kadar pozisyon
@@ -638,7 +647,7 @@ class Desk:
     @staticmethod
     def _tag(t: dict, idea: dict, mults: dict | None):
         """Fikirden işleme taşınan öğrenme bilgisi: giriş özellikleri (Hakem), uzman görüşleri (karne), varyantlar."""
-        for k in ("feat", "experts", "exp_mult", "variants", "bas_score", "bas_parts"):
+        for k in ("feat", "experts", "exp_mult", "variants", "bas_score", "bas_parts", "pyramid", "layer"):
             if idea.get(k) is not None:
                 t[k] = idea[k]
         if mults:

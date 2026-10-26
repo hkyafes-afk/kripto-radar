@@ -434,13 +434,20 @@ def a_bas(ctx, mgr, cfg):
     trail = round(2.0 + 1.5 * rv, 2)                     # iz stop da oynaklığa göre: sakin coinde sıkı, oynakta geniş
     conv = min(1.0, (abs(s) - bas.GIRIS_ESIK) / (1 - bas.GIRIS_ESIK))
     checks = [(r[2:], r.startswith("✓")) for r in bas.reasons(p, side)]
+    # Kovalamaz: fiyat 20 günlük ortalamadan çok uzaklaştıysa piyasa emriyle zirveye girmez; 0,75 ATR geri çekilmeye
+    # limit emir koyar (1 gün geçerli). Hareket geri çekilmeden sürerse fırsatı kaçırmayı göze alır.
+    ext = bas.extension(ctx, side)
+    chase = ext is not None and ext > bas.KOVALAMA_ATR
+    lim = px - sgn * 0.75 * atr if chase else None
     plan = (f"Puan {s:+.2f} ({'long' if s > 0 else 'short'}). Stop {dist / atr:.1f} ATR ötede: "
             f"{'10 günlük ' + ('dibin' if sgn > 0 else 'tepenin') + ' ötesi' if struct >= noise else 'coinin gürültü bandı (oynaklık sırası %' + format(rv * 100, '.0f') + ')'}. "
             f"2R'de %30 kâr alıp stop'u başabaşa çekerim, kalanı {trail:g} ATR iz süren stopla taşırım; tablo tersine dönerse (puan {'≤ −' if sgn > 0 else '≥ +'}{bas.CIKIS_ESIK:.2f}) çıkarım. "
-            f"Risk güvene göre sermayenin %{mgr.base_risk:g}–%{mgr.max_risk:g}'i.")
+            f"Risk güvene göre sermayenin %{mgr.base_risk:g}–%{mgr.max_risk:g}'i."
+            + (f" Fiyat ortalamadan {ext:.1f} ATR uzakta: kovalamıyorum, {lim:.6g} geri çekilmesine limit koydum." if chase else ""))
     idea = _idea(ctx, mgr, side, sl, tp, checks, f"Baş Trader puanı {s:+.2f}", plan, tp1_r=2.0,
                  pp={"partial_frac": 0.3, "trail_atr": trail, "basabas": True}, max_saat=90 * DAY_H, min_checks=0,
-                 setup="bas", kind="trend", min_rr=2.0, exit_rule={"type": "skor"})
+                 setup="bas", kind="trend", min_rr=2.0, exit_rule={"type": "skor"},
+                 entry_type="limit" if chase else "piyasa", limit_px=lim, limit_bars=1 if chase else 0)
     if idea:
         idea["conviction"] = round(conv, 3)
         idea["bas_score"] = round(s, 3)
