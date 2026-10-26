@@ -11,6 +11,9 @@ on:
       years:
         description: "v8: kaç yıl"
         default: "5"
+      mod:
+        description: "standart | kesintisiz"
+        default: "standart"
       coins:
         description: "Kaç coin (hacme göre)"
         default: "30"
@@ -38,7 +41,7 @@ jobs:
       - run: pip install -r requirements.txt
       - name: v8 yönetici testi (5 yıl, sert maliyet)
         if: (github.event.inputs.surum || 'v8') == 'v8'
-        run: python -m radar test8 --coins "${{ github.event.inputs.coins || '30' }}" --years "${{ github.event.inputs.years || '5' }}"
+        run: python -m radar test8 --coins "${{ github.event.inputs.coins || '30' }}" --years "${{ github.event.inputs.years || '5' }}" ${{ github.event.inputs.mod == 'kesintisiz' && '--kesintisiz' || '' }}
       - name: Walk-forward backtest (v7)
         if: (github.event.inputs.surum || 'v8') == 'v7'
         run: python -m radar backtest --coins "${{ github.event.inputs.coins || '30' }}" --days "${{ github.event.inputs.days || '365' }}"

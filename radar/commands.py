@@ -151,14 +151,20 @@ def cmd_demo(d: dict) -> str:
 
 
 def cmd_pozisyonlar(d: dict) -> str:
-    op = d["ledger"]["open"]
+    allo = d["ledger"]["open"]
+    op = [t for t in allo if not t.get("shadow")]
+    n_sh = len(allo) - len(op)
+    tm = d.get("team") or {}
     if not op:
-        return "Açık demo pozisyon yok."
-    L = [f"📂 <b>Açık demo pozisyonlar</b> ({len(op)})"]
+        return "Açık gerçek pozisyon yok." + (f" (Gölgede {n_sh} işlem var: dashboard → Gölge sekmesi)" if n_sh else "")
+    L = [f"📂 <b>Açık pozisyonlar</b> ({len(op)})"]
     for t in op[:25]:
+        who = (tm.get(t.get("mgr") or "") or {}).get("name") or SETUP_LABELS.get(t.get("setup"), t.get("setup", ""))
         L.append(f"{'🟢' if t['side'] == 'long' else '🔴'} <b>{nt.esc(t['sym'])}</b> {t.get('tf', '4H')} "
-                 f"{SETUP_LABELS[t['setup']]} · giriş {nt.fmt_price(t['entry'])} → {nt.fmt_price(t.get('last'))}"
+                 f"{nt.esc(str(who))} · giriş {nt.fmt_price(t['entry'])} → {nt.fmt_price(t.get('last'))}"
                  f" · <b>{_usd(t.get('upnl_usd', 0))}</b> ({t.get('r_now', 0):+.2f}R)")
+    if n_sh:
+        L.append(f"<i>Gölgede {n_sh} sanal işlem ayrıca var (bakiyeyi etkilemez).</i>")
     return "\n".join(L)
 
 

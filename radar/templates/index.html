@@ -165,6 +165,13 @@ input.search:focus{border-color:var(--muted)}
     <div id="demoBody"></div>
   </section>
 
+  <section id="t-shadow">
+    <p class="note"><b>Gölge</b>: sermayesi olmayan yöneticilerin ve testte kazandırmayan işlem türlerinin (ör. Kaan/Selin short'ları)
+    <b>sanal</b> işlemleri. Gerçek fiyat ve aynı komisyonla ölçülür ama firma bakiyesine dokunmaz. 10 gölge işlemde ortalama +0,1R
+    yapan yönetici gerçek sermayeye döner.</p>
+    <div id="shadowBody"></div>
+  </section>
+
   <section id="t-fund">
     <p class="note">Delta-nötr carry: spot'tan al + perp'te aynı miktar short aç → fiyat riski ~0, pozitif funding'i toplarsın.
     Liste 30 günlük istikrara göre sıralı. <b>Başabaş gün</b> = 4 bacağın işlem maliyetini funding'in kaç günde çıkardığı.</p>
@@ -256,15 +263,15 @@ function render(){
     <div class="kpi"><div class="l">BTC</div><div class="v num" id="kpiBtc">${fp(b.price)}</div><div class="s num ${cls(b.chg24)}">${pct(b.chg24)} · 24s</div></div>
     <div class="kpi"><div class="l">Rejim</div><div class="v">${reg}</div><div class="s">EMA200 ${fp(b.ema200)}</div></div>
     <div class="kpi"><div class="l">Güçlü sinyal</div><div class="v num">${D.counts.strong}</div><div class="s">${D.counts.scanned} coin tarandı</div></div>
-    <div class="kpi"><div class="l">Demo bakiye</div><div class="v num" id="kpiEq">${money(DM.equity,false)}</div><div class="s num ${cls(DM.return_pct)}" id="kpiRet">${pct(DM.return_pct,2)} · ${D.ledger.open.length} açık</div></div>`;
-  const tabs = (D.team ? [["team","Ekip",Object.keys(D.team).length]] : []).concat([["demo","İşlemler",D.ledger.open.length],["sig","Sinyaller",D.counts.strong]]).concat([["led","Karne",L.n||0],["fund","Funding",D.harvest.length],["coins","Coinler",D.coins.length]]);
+    <div class="kpi"><div class="l">Demo bakiye</div><div class="v num" id="kpiEq">${money(DM.equity,false)}</div><div class="s num ${cls(DM.return_pct)}" id="kpiRet">${pct(DM.return_pct,2)} · ${D.ledger.open.filter(t=>!t.shadow).length} açık</div></div>`;
+  const tabs = (D.team ? [["team","Ekip",Object.keys(D.team).length]] : []).concat([["demo","İşlemler",D.ledger.open.filter(t=>!t.shadow).length]]).concat(D.team ? [["shadow","Gölge",D.ledger.open.filter(t=>t.shadow).length]] : []).concat([["sig","Sinyaller",D.counts.strong]]).concat([["led","Karne",L.n||0],["fund","Funding",D.harvest.length],["coins","Coinler",D.coins.length]]);
   if (BT) tabs.push(["bt","Backtest",""]);
   tabs.push(["guide","Rehber",""]);
   if (!tabs.find(t=>t[0]===state.tab)) state.tab = tabs[0][0];
   $("#tabs").innerHTML = tabs.map(([k,n,c]) => `<button class="tab ${state.tab===k?"on":""}" data-t="${k}">${n}${c!==""?`<span class="c">${c}</span>`:""}</button>`).join("");
   document.querySelectorAll(".tab").forEach(el => el.onclick = () => { state.tab = el.dataset.t; save(); render(); scrollTo({top:0}); });
   document.querySelectorAll("section").forEach(s => s.classList.toggle("on", s.id === "t-"+state.tab));
-  ({team:renderTeam,sig:renderSignals,demo:renderDemo,fund:()=>{renderFunding();renderArb();},led:renderLedger,coins:renderCoins,bt:renderBT,guide:renderGuide})[state.tab]();
+  ({team:renderTeam,shadow:renderShadow,sig:renderSignals,demo:renderDemo,fund:()=>{renderFunding();renderArb();},led:renderLedger,coins:renderCoins,bt:renderBT,guide:renderGuide})[state.tab]();
   $("#foot").innerHTML = `v${esc(D.version)} · ${D.counts.scanned}/${D.counts.universe} coin · ${D.duration_s!=null ? D.duration_s+" sn · " : ""}${D.scan_times ? "son tarama "+Object.entries(D.scan_times).map(([k,v])=>tfl(k)+" "+v).join(", ")+" · " : ""}OI: ${esc(D.oi_source)} · taker verisi: ${D.taker_real}/${D.coins.length}<br>Karar destek aracıdır · otomatik emir vermez · yatırım tavsiyesi değildir`;
 }
 
@@ -578,7 +585,7 @@ function liveRender(){
   });
   const eq = (DM.equity||0) - snap + live, ret = DM.start ? (eq/DM.start - 1)*100 : 0, unr = (DM.unrealized||0) - snap + live;
   const e1 = $("#kpiEq"); if (e1){ e1.dataset.k = "eq"; setTxt(e1, money(eq,false), null); }
-  const r1 = $("#kpiRet"); if (r1) r1.textContent = pct(ret,2) + " · " + D.ledger.open.length + " açık";
+  const r1 = $("#kpiRet"); if (r1) r1.textContent = pct(ret,2) + " · " + D.ledger.open.filter(t=>!t.shadow).length + " açık";
   const e2 = $("#demoEq"); if (e2){ e2.dataset.k = "eq2"; setTxt(e2, money(eq,false), null); }
   const e3 = $("#teamEq"); if (e3){ e3.dataset.k = "eq3"; setTxt(e3, money(eq,false), null); }
   const r2 = $("#demoRet"); if (r2){ r2.textContent = pct(ret,2); r2.className = "v " + cls(ret); }
@@ -589,8 +596,28 @@ function liveRender(){
 }
 setInterval(liveRender, 333);
 
+function renderShadow(){
+  const T = D.team || {}, op = D.ledger.open.filter(t=>t.shadow), cl = (D.ledger.shadow_closed||[]);
+  const f2 = (x,d=2) => x==null ? "–" : (+x).toFixed(d).replace(".",",");
+  const ms = Object.values(T).filter(m => m.benched || (m.shadow && (m.shadow.open || m.shadow.closed)));
+  let h = `<h2>Gölgedeki yöneticiler</h2>`;
+  h += ms.length ? `<div class="list">` + ms.map(m => { const sh = m.shadow || {};
+      return `<div class="li"><div style="min-width:0"><div>${m.emoji} <b>${esc(m.name)}</b> ${m.benched?`<span class="badge b-amber">gölgede</span>`:`<span class="badge b-dim">sermayeli · bazı işlem türleri gölgede</span>`}</div>
+      <div class="m">${sh.closed||0} gölge işlem kapandı · ortalama ${sh.avg_r!=null?(sh.avg_r>0?"+":"")+f2(sh.avg_r)+"R":"–"} · ${sh.open||0} açık${m.bench_why?" · sebep: "+esc(m.bench_why):""}</div></div></div>`; }).join("") + `</div>`
+    : `<div class="empty">Gölgede yönetici yok.</div>`;
+  const row = (t, open) => { const pnl = open ? (t.upnl_usd||0) : t.pnl_usd, r = open ? (t.r_now||0) : t.r;
+    return `<div class="li"><div style="min-width:0"><div><span class="badge ${t.side==="long"?"b-green":"b-red"}">${t.side==="long"?"LONG":"SHORT"}</span> <b>${esc(t.sym)}</b> ${who(t)} <span class="m">${tfl(t.tf)}</span></div>
+      <div class="m num">${fp(t.entry)} → ${open?`<span data-lpx="${t.id}">${fp(t.last)}</span>`:fp(t.exit)+" · "+esc(t.outcome||"")}${open?" · stop "+fp(t.sl):""} · ${ago(open?t.entry_ts:t.exit_ts)}</div></div>
+      <div class="r ${cls(pnl)}" ${open?`data-lpnl="${t.id}"`:""}>${money(pnl)}<div class="m" ${open?`data-lr="${t.id}"`:""}>${(r>0?"+":"")+(+r).toFixed(2)}R</div></div></div>`; };
+  h += `<h2>Açık gölge işlemler <span class="n">${op.length}</span></h2>`;
+  h += op.length ? `<div class="list">` + op.map(t => row(t, true)).join("") + `</div>` : `<div class="empty">Açık gölge işlem yok.</div>`;
+  h += `<h2>Kapanan gölge işlemler <span class="n">${cl.length}</span></h2>`;
+  h += cl.length ? `<div class="list">` + cl.slice(0,60).map(t => row(t, false)).join("") + `</div>` : `<div class="empty">Henüz kapanan gölge işlem yok.</div>`;
+  $("#shadowBody").innerHTML = h;
+}
+
 function renderDemo(){
-  const DM = D.ledger.stats.demo || {}, O = D.ledger.stats.overall, op = D.ledger.open, cl = D.ledger.closed;
+  const DM = D.ledger.stats.demo || {}, O = D.ledger.stats.overall, op = D.ledger.open.filter(t=>!t.shadow), cl = D.ledger.closed.filter(t=>!t.shadow);
   const icon = {hedef:"✅",stop:"❌","süre":"⏱",manuel:"✋",likidasyon:"💥","iz stop":"🔒"}, what = {hedef:"hedef (limit)",stop:"stop (piyasa)","süre":"süre doldu",manuel:"elle kapatıldı",likidasyon:"likidasyon","iz stop":"iz süren stop"};
   let h = `<div class="card">
     <div class="hd"><div><div class="lbl">Demo bakiye · ${DM.mode==="risk" ? "işlem başı risk %"+String(DM.risk_pct).replace(".",",") : "işlem başı "+(DM.trade_size||20)+"$"}</div>

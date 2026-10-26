@@ -36,6 +36,7 @@ def main(argv=None) -> int:
     p.add_argument("--coins", type=int, default=30)
     p.add_argument("--years", type=float, default=5.0)
     p.add_argument("--deniz-days", type=int, default=365)
+    p.add_argument("--kesintisiz", action="store_true", help="kesintisiz (gün içi) mod testi")
     p.add_argument("--demo", action="store_true")
     p.add_argument("--config", default=None)
 
@@ -107,7 +108,10 @@ def main(argv=None) -> int:
         if a.demo:
             from .demo import DemoClient
             client = DemoClient(hours=24 * 900)
-        bt2.run(client=client, cfg_path=a.config, n_coins=a.coins, years=a.years, deniz_days=a.deniz_days)
+        if a.kesintisiz:
+            bt2.run_intraday(client=client, cfg_path=a.config, n_coins=a.coins, years=a.years)
+        else:
+            bt2.run(client=client, cfg_path=a.config, n_coins=a.coins, years=a.years, deniz_days=a.deniz_days)
         return 0
 
     if a.cmd == "backtest":

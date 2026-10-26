@@ -125,7 +125,7 @@ class Desk:
         m = self.by_id.get(idea["mgr"])
         if not m:
             return "red", None, "yönetici pasif"
-        shadow = self.benched(m.id)
+        shadow = self.benched(m.id) or bool(idea.get("shadow_only"))
         sym, tf, side = idea["sym"], idea["tf"], idea["side"]
         if any(t["mgr"] == m.id and t["inst"] == idea["inst"] for t in self.ledger["open"] if t.get("mgr")):
             return "red", None, None                         # zaten pozisyonu var (sessiz)

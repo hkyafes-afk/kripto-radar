@@ -161,6 +161,7 @@ class Engine:
         self.weather: dict = {}
         self.daily_cache: dict = {}
         self.signal_exits: list = []
+        self.live_seen: dict = {}            # kesintisiz değerlendirmede aynı fikri dakikada bir tekrar önermemek için
         self.calendar = macro.Calendar()
         self.news = nw.NewsDesk()
         self.news.from_state(self.state.get("news") or {})
@@ -168,7 +169,8 @@ class Engine:
         self.my_hb = 0
         self.lease_thread: threading.Thread | None = None
         self.lease_ok = None
-        self.t.update({"health": 0.0, "mgr": 0.0, "orders": 0.0, "lease": 0.0, "rebal": 0.0, "news": 0.0, "cal": 0.0})
+        self.t.update({"health": 0.0, "mgr": 0.0, "orders": 0.0, "lease": 0.0, "rebal": 0.0, "news": 0.0, "cal": 0.0,
+                       "live1d": 0.0})
         self.stats_counter.update({"ideas": 0, "rejected": 0, "orders": 0, "fills": 0, "carry": 0})
 
     def _setup_cfg(self):
@@ -320,6 +322,7 @@ class Engine:
             if x:
                 last, o24 = self.prices.get(r["inst"]) or _f(x.get("last")), _f(x.get("open24h"))
                 r["price"] = last
+                r["vol24_base"] = _f(x.get("volCcy24h"))
                 if o24 and o24 == o24:
                     r["chg24"] = (last / o24 - 1) * 100
         self.t["prices"] = now
@@ -568,6 +571,93 @@ class Engine:
               f"{time.time() - t0:.1f} sn" + (f" (mum kapanışından {time.time() - boundary:.1f} sn sonra)" if boundary else ""))
         return strong
 
+    def _live_fields(self, row: dict, inst: str) -> dict:
+        cur = self.fund_cur.get(inst)
+        fr = self.funding.get(inst) or {}
+        rate = cur[0] if cur else _f(fr.get("fundingRate"))
+        iv = _interval_h(fr)
+        tk = self._taker(inst)
+        w = self.weather or {}
+        regime = self.btc.get("regime", 0)
+        return {"inst": inst, "sym": row["sym"], "regime": regime, "funding_rate": rate, "interval_h": iv,
+                "funding_ann": rate * (8760 / iv) * 100 if rate == rate else float("nan"),
+                "oi_chg24": _f(self.oi_chg.get(inst)), "taker_imb": tk[0] if tk else None,
+                "chg24": row.get("chg24"), "vol24_usd": row.get("vol24_usd"),
+                "btc_bear": w.get("btc_bear", regime < 0), "btc_bull": w.get("btc_bull", regime > 0),
+                "w_trend": w.get("trend"), "high_vol": w.get("high_vol"), "signals": []}
+
+    def live_daily_ctx(self, row: dict) -> dict | None:
+        """Kapanmış günler + bugünün CANLI mumu (fiyat canlı akıştan, hacim kayan 24 saat). Günün saatinden bağımsız."""
+        inst = row["inst"]
+        px = self.prices.get(inst)
+        if not px:
+            return None
+        df = self.client.candles(inst, "1D", 300, closed_only=False)
+        if len(df) < 120:
+            return None
+        df = df.copy()
+        day0 = pd.Timestamp(int(time.time() * 1000), unit="ms", tz="UTC").normalize()
+        if df.index[-1] < day0:
+            df.loc[day0] = {"open": px, "high": px, "low": px, "close": px, "volume": 0.0, "quote_volume": 0.0}
+        i = df.index[-1]
+        df.at[i, "close"] = px
+        df.at[i, "high"] = max(df.at[i, "high"], px)
+        df.at[i, "low"] = min(df.at[i, "low"], px)
+        v24 = row.get("vol24_base")
+        if v24 and v24 == v24 and v24 > 0:
+            df.at[i, "volume"] = v24
+        Q = quant.features(df)
+        qc = quant.ctx_at(Q)
+        qc["hvn"] = quant.hvn_levels(Q)
+        ctx = {**qc, **self._live_fields(row, inst), "tf": "1D", "bar_ms": TF_SEC["1D"] * 1000, "price": px,
+               "live_bar": True}
+        bg = self.bg_book.get(row["sym"])
+        if bg and time.time() - bg[3] < 30 and abs(bg[0] / px - 1) > 0.03:
+            ctx["suspect"] = f"Bitget ile fiyat farkı %{abs(bg[0] / px - 1) * 100:.1f}"
+        return ctx
+
+    def scan_live_daily(self):
+        """(işçi) Kesintisiz değerlendirme: günlük yöneticiler her dakika canlı mumla bakar; fırsat oluştuğu an fikir verir,
+        kural çıkışları da anlık çalışır. Aynı fikir 30 dakikada bir defadan sık önerilmez."""
+        if not (self.team_on and self.desk):
+            return
+        self.t["live1d"] = time.time()
+        mgrs = [m for m in self.desk.mgrs if m.analyze and "1D" in m.tfs]
+        rows = list(self.universe)
+        ctxs = []
+        with ThreadPoolExecutor(6) as ex:
+            for c in ex.map(lambda r: self._safe(self.live_daily_ctx, r), rows):
+                if c:
+                    ctxs.append(c)
+        now = time.time()
+        ideas = []
+        for c in ctxs:
+            self._queue_rule_exits(c)
+            if c.get("suspect"):
+                continue
+            for idea in team.ideas_for(c, mgrs, self.cfg):
+                key = (idea["mgr"], idea["inst"], idea["side"])
+                if now - self.live_seen.get(key, 0) < 1800:
+                    continue
+                self.live_seen[key] = now
+                idea["card"] = team.analyst_card(c, idea["side"], self.news.flag(c["sym"]))
+                if idea["entry_type"] == "piyasa":
+                    idea["maker_first"] = True
+                ideas.append(idea)
+        if ideas:
+            self.stats_counter["ideas"] += len(ideas)
+            with self.lock:
+                self.pending_ideas.extend(ideas)
+            print("[canlı 1G] " + ", ".join(f"{i['mgr']}:{i['sym']} {i['side']}" for i in ideas[:12]))
+        self.stats_counter["live_evals"] = self.stats_counter.get("live_evals", 0) + 1
+        self.stats_counter["live_coins"] = len(ctxs)
+
+    def _safe(self, fn, *a):
+        try:
+            return fn(*a)
+        except Exception as e:  # noqa: BLE001
+            return None
+
     def _queue_rule_exits(self, c: dict):
         """(işçi) Kural tabanlı çıkışlar mum kapanışında kontrol edilir; ana döngü kapatır."""
         for t in list(self.ledger["open"]):
@@ -704,6 +794,8 @@ class Engine:
                     self.refresh_funding()
                 elif name == "news":
                     self.refresh_news()
+                elif name == "live1d":
+                    self.scan_live_daily()
                 elif name == "cal":
                     self.t["cal"] = time.time()
                     self.calendar.refresh()
@@ -729,7 +821,9 @@ class Engine:
         self.stats_counter[f"{via}_closes"] = self.stats_counter.get(f"{via}_closes", 0) + len(closed)
         self.dirty = True
         self.rebuild_watch()
-        self._notify(self.msg_closed(closed))
+        real = [t for t in closed if not t.get("shadow")]      # gölge işlemler Telegram'ı meşgul etmez
+        if real:
+            self._notify(self.msg_closed(real))
 
     def _close_ids(self, items: list[tuple], via: str):
         """items: (id, fiyat, ms, sonuç, maker)"""
@@ -766,7 +860,9 @@ class Engine:
         if partial_msgs:
             self.dirty = True
             self.rebuild_watch()
-            self._notify(self.msg_partial(partial_msgs))
+            pm = [x for x in partial_msgs if not x[0].get("shadow")]
+            if pm:
+                self._notify(self.msg_partial(pm))
         self._close_ids(items, "ws")
 
     def process_trailing(self):
@@ -1130,7 +1226,10 @@ class Engine:
             "ledger": {
                 "stats": lstats,
                 "open": sorted(self.ledger["open"], key=lambda t: t["entry_ts"], reverse=True),
-                "closed": sorted(self.ledger["closed"], key=lambda t: t.get("exit_ts") or 0, reverse=True)[:150],
+                "closed": sorted([t for t in self.ledger["closed"] if not t.get("shadow")],
+                                 key=lambda t: t.get("exit_ts") or 0, reverse=True)[:150],
+                "shadow_closed": sorted([t for t in self.ledger["closed"] if t.get("shadow")],
+                                        key=lambda t: t.get("exit_ts") or 0, reverse=True)[:100],
                 "skipped": self.skipped[:10],
             },
             "errors": self.errors,
@@ -1519,9 +1618,13 @@ class Engine:
             self.rebuild_watch()
             self._feed_symbols()
         if opened:
-            self._notify(self.msg_team_opened(opened), buttons=self._open_buttons(opened))
+            ro = [o for o in opened if not o.get("shadow")]
+            if ro:
+                self._notify(self.msg_team_opened(ro), buttons=self._open_buttons(ro))
         if orders:
-            self._notify(self.msg_orders(orders))
+            rord = [o for o in orders if not o.get("shadow")]
+            if rord:
+                self._notify(self.msg_orders(rord))
 
     def process_orders(self):
         if not self.desk:
@@ -1538,7 +1641,9 @@ class Engine:
                 self.stats_counter["opened"] += len(filled)
                 self.dirty = True
                 self.rebuild_watch()
-                self._notify(self.msg_team_opened(filled, fill=True), buttons=self._open_buttons(filled))
+                rf = [t for t in filled if not t.get("shadow")]
+                if rf:
+                    self._notify(self.msg_team_opened(rf, fill=True), buttons=self._open_buttons(rf))
         now = time.time()
         if now - self.t["orders"] >= 20:
             self.t["orders"] = now
@@ -1941,6 +2046,9 @@ class Engine:
                         for tf in due:
                             self.scan_at[tf] = now
                         self.enqueue(f"scan:{','.join(due)}:{bnd or ''}")
+                    if self.team_on and self.desk and now - self.t["live1d"] >= float(self.live.get("gunici_sn", 60)):
+                        self.t["live1d"] = now
+                        self.enqueue("live1d")
                     if now - self.t["news"] >= 600:
                         self.t["news"] = now
                         self.enqueue("news")

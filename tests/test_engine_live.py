@@ -233,6 +233,42 @@ def test_user_extra_daily_allowance():
         assert "kullanıldı" in e.resume("evet") and e.halt == "gunluk", "günde 1 kez"
 
 
+def test_continuous_daily_evaluation():
+    """Günlük yöneticiler gece yarısını beklemez: canlı mumla her an değerlendirilir; aynı fikir tekrarlanmaz."""
+    with tempfile.TemporaryDirectory() as d:
+        e = _engine(d)
+        if not e.desk:
+            e.ensure_team()
+        r = e.universe[0]
+        e.prices[r["inst"]] = 12345.0
+        c = e.live_daily_ctx(r)
+        assert c and c["live_bar"] and c["close"] == 12345.0 and c["tf"] == "1D"
+        assert c["high"] >= 12345.0, "bugünün mumu canlı fiyatla güncellenmeli"
+        # her coin için canlı değerlendirme; fikir çıkarsa ikinci turda tekrar önerilmez
+        for x in e.universe:
+            e.prices.setdefault(x["inst"], x["price"])
+        e.pending_ideas.clear()
+        e.scan_live_daily()
+        n1 = len(e.pending_ideas)
+        e.scan_live_daily()
+        assert len(e.pending_ideas) == n1, "aynı fikir 30 dk içinde tekrar önerilmemeli"
+        assert e.stats_counter["live_coins"] >= len(e.universe) // 2
+
+
+def test_kaan_short_is_shadow():
+    from radar import team
+    c = {"inst": "X-USDT-SWAP", "sym": "X", "tf": "1D", "bar_ms": 86_400_000, "price": 80.0, "close": 80.0, "atr": 4.0,
+         "open": 84.0, "high": 85.0, "low": 79.5, "hh20": 99.0, "ll20": 82.0, "hh10": 88.0, "ll10": 83.0,
+         "sma50": 90.0, "sma100": 95.0, "sma200": 99.0, "vol_ratio": 2.0, "close_pos": 0.1, "btc_bear": True}
+    idea = team.a_kaan(c, team.BY_ID["kaan"], e_cfg())
+    assert idea and idea["side"] == "short" and idea["shadow_only"]
+
+
+def e_cfg():
+    from radar.config import load_config
+    return load_config()
+
+
 def test_data_issue_scales_with_volatility():
     """Kapanmış 4H mumdan bu yana sert ama gerçek hareket 'bozuk veri' sayılmamalı; kaba hatalar yakalanmalı."""
     import pandas as pd

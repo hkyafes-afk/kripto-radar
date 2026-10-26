@@ -549,3 +549,197 @@ def markdown(rep) -> str:
             f"{_fmt(b['by_year'].get(y, {}).get('avg_r'), 2)} ({b['by_year'].get(y, {}).get('n', 0)})" for y in years) + " |")
     L += ["", "## Notlar", ""] + [f"- {n}" for n in rep["notes"]]
     return "\n".join(L) + "\n"
+
+
+# ── kesintisiz mod testi (v8.1) ───────────────────────────────────────
+# Canlıda yöneticiler her dakika "kapanmış günler + bugünün canlı mumu" ile karar verir. Burada bu, 5 yıllık 4 saatlik
+# veriyle 4 saatte bir aynı şekilde kurulan canlı mumla ölçülür (canlıdan daha yavaş → kötümser). Giriş bir sonraki
+# 4S mumun açılışında; stop/hedef/iz stop 4S mumlarla; kural çıkışları da canlı mumla.
+
+INTRA_MGRS = ("kemal", "kaan", "selin")
+
+
+def _intraday_coin(sym, inst, D, H, mgrs, cfg, wx, vol, start_ts):
+    Dfe = quant.features(D)
+    dh, dl, dc = D["high"].to_numpy(float), D["low"].to_numpy(float), D["close"].to_numpy(float)
+    didx = D.index
+    hh20 = pd.Series(dh).rolling(20, min_periods=20).max().to_numpy()
+    ll20 = pd.Series(dl).rolling(20, min_periods=20).min().to_numpy()
+    hh10 = pd.Series(dh).rolling(10, min_periods=10).max().to_numpy()
+    ll10 = pd.Series(dl).rolling(10, min_periods=10).min().to_numpy()
+    hc20 = pd.Series(dc).rolling(20, min_periods=20).max().to_numpy()
+    lc20 = pd.Series(dc).rolling(20, min_periods=20).min().to_numpy()
+    s19 = pd.Series(dc).rolling(19, min_periods=19).sum().to_numpy()
+    s49 = pd.Series(dc).rolling(49, min_periods=49).sum().to_numpy()
+    sma50 = Dfe["sma50"].to_numpy(float)
+    sma20, sma100 = Dfe["sma20"].to_numpy(float), Dfe["sma100"].to_numpy(float)
+    bbu, bbl = Dfe["bb_up"].to_numpy(float), Dfe["bb_lo"].to_numpy(float)
+    rank = Dfe["bbw_rank"].to_numpy(float)
+    ho, hh, hl, hc, hv = (H[x].to_numpy(float) for x in ("open", "high", "low", "close", "volume"))
+    hidx = H.index
+    day_of = hidx.normalize()
+    j_of = np.searchsorted(didx.values, day_of.values) - 1          # son KAPANMIŞ gün (dünkü)
+    first_k = {}
+    for k, d in enumerate(day_of):
+        first_k.setdefault(d, k)
+
+    def partial(k):
+        k0 = first_k[day_of[k]]
+        return ho[k0], hh[k0:k + 1].max(), hl[k0:k + 1].min(), hc[k], hv[max(0, k - 5):k + 1].sum()
+
+    def exit_ctx(k):
+        j = j_of[k]
+        c = hc[k]
+        return {"close": c, "sma50": (s49[j] + c) / 50 if j >= 0 else float("nan"),
+                "sma20": (s19[j] + c) / 20 if j >= 0 else float("nan"), "bb_mid": (s19[j] + c) / 20 if j >= 0 else float("nan"),
+                "ll10": ll10[j] if j >= 0 else float("nan"), "hh10": hh10[j] if j >= 0 else float("nan")}
+
+    trades = []
+    busy = {m.id: -1 for m in mgrs}            # yöneticinin bu coinde pozisyonu/bekleme süresi bitene kadar mum indeksi
+    k = max(int(np.searchsorted(hidx.values, np.datetime64(start_ts.tz_convert(None)))), 0)
+    while k < len(hc) - 1:
+        j = j_of[k]
+        if j < 210:
+            k += 1
+            continue
+        free = [m for m in mgrs if busy[m.id] < k]
+        if not free:
+            k += 1
+            continue
+        c = hc[k]
+        w = wx.get(didx[j]) or {}
+        pre = (c > hh20[j] or c < ll20[j]
+               or (np.nanmin(rank[max(0, j - 2):j + 1]) <= 0.25 and (c > bbu[j] * 0.98 or c < bbl[j] * 1.02))
+               or (c > sma50[j] * 0.98 and (not (dc[j] > sma50[j] and sma20[j] > sma100[j]) or c > hc20[j]))
+               or (c < sma50[j] * 1.02 and (not (dc[j] < sma50[j] and sma20[j] < sma100[j]) or c < lc20[j])))
+        if not pre:
+            k += 1
+            continue
+        o, hi, lo, cl, v24 = partial(k)
+        part = D.iloc[max(0, j - 299):j + 1].copy()
+        part.loc[day_of[k]] = {"open": o, "high": hi, "low": lo, "close": cl, "volume": v24,
+                               **({"quote_volume": float("nan")} if "quote_volume" in part else {})}
+        F = quant.features(part)
+        ctx = quant.ctx_at(F)
+        ctx.update({"price": cl, "sym": sym, "inst": inst, "tf": "1D", "bar_ms": 86_400_000, "vol24_usd": vol,
+                    "btc_bear": w.get("btc_bear", False), "btc_bull": w.get("btc_bull", False),
+                    "w_trend": w.get("trend"), "high_vol": w.get("high_vol")})
+        for m in free:
+            idea = m.analyze(ctx, m, cfg)
+            if not idea:
+                continue
+            t = simulate_trade(idea, H, k, 4.0, exit_ctx)
+            if not t:
+                continue
+            t.update({"weather_trend": w.get("trend"), "high_vol": w.get("high_vol"), "mode": "kesintisiz",
+                      "shadow_only": bool(idea.get("shadow_only"))})
+            trades.append(t)
+            busy[m.id] = t["exit_i"] + 18          # 3 gün bekleme (canlıdaki gibi)
+        k += 1
+    return trades
+
+
+def run_intraday(client=None, cfg_path=None, n_coins=30, years=5.0, out_dir: Path | None = None) -> dict:
+    t0 = time.time()
+    cfg = load_config(cfg_path)
+    if client is None:
+        from .okx import OKXClient
+        client = OKXClient()
+    daily, _, now_ms = load_data(client, cfg, n_coins, years, deniz_days=0)
+    test_start = pd.Timestamp(now_ms - int(years * 365 * 86400_000), unit="ms", tz="UTC")
+    BF = quant.features(daily["BTC"][1])
+    wx = {BF.index[k]: quant.btc_weather(BF, k) for k in range(len(BF))}
+    rets = pd.DataFrame({sym: quant.features(df)["ret1"] for sym, (inst, df, _) in daily.items()})
+
+    def corr_fn(a, b, ts):
+        if a == b:
+            return 1.0
+        w = rets.loc[:ts].tail(61)
+        return quant.corr(w[a].to_numpy(), w[b].to_numpy()) if a in w and b in w else 0.0
+
+    mgrs = [m for m in team.roster(cfg) if m.id in INTRA_MGRS]
+    risk = {m.id: m.base_risk for m in mgrs}
+    close_trs, intra_trs = {m.id: [] for m in mgrs}, {m.id: [] for m in mgrs}
+    start_4h = now_ms - int((years * 365 + 5) * 86400_000)
+    for sym, (inst, D, vol) in daily.items():
+        F = quant.features(D)
+        idx = F.index
+        warm = max(int(np.searchsorted(idx, test_start)), 210)
+
+        def extra(k, idx=idx):
+            w = wx.get(idx[k]) or {}
+            return {"btc_bear": w.get("btc_bear", False), "btc_bull": w.get("btc_bull", False),
+                    "w_trend": w.get("trend"), "high_vol": w.get("high_vol"), "vol24_usd": vol}
+        for m in mgrs:                                   # gün sonu modu (karşılaştırma için aynı çalıştırmada)
+            close_trs[m.id] += run_manager(m, F, sym, inst, 24.0, warm, extra, cfg)
+        try:
+            H = client.history_candles(inst, "4H", start_4h, max_pages=130)
+        except Exception as e:  # noqa: BLE001
+            print(f"  {sym} 4S atlandı: {e}")
+            continue
+        if len(H) < 600:
+            continue
+        got = _intraday_coin(sym, inst, D, H, mgrs, cfg, wx, vol, test_start)
+        for t in got:
+            intra_trs[t["mgr"]].append(t)
+        print(f"  {sym}: kesintisiz " + ", ".join(f"{m.id} {sum(1 for t in got if t['mgr'] == m.id)}" for m in mgrs))
+
+    days = pd.date_range(test_start.normalize(), pd.Timestamp(now_ms, unit="ms", tz="UTC").normalize(), freq="1D", tz="UTC")
+
+    def wmult(t):
+        return quant.weather_mult({"trend": t.get("weather_trend") or "yatay", "high_vol": t.get("high_vol")}, t["mgr"], t["side"])
+
+    def long_only(trs):
+        return {mid: [t for t in v if not (mid in ("kaan", "selin") and t["side"] == "short")] for mid, v in trs.items()}
+
+    fl = {"coin": 2.5, "side": 6.0, "cluster": 4.0, "corr": corr_fn}
+    variants = {"gün sonu · tüm yönler": close_trs, "gün sonu · Kaan/Selin sadece long": long_only(close_trs),
+                "kesintisiz · tüm yönler": intra_trs, "kesintisiz · Kaan/Selin sadece long": long_only(intra_trs)}
+    rep = {"variants": {}, "managers": {}}
+    srs = []
+    for name, trs in variants.items():
+        allt = [t for v in trs.values() for t in v]
+        g_risk = {mid: risk[mid] / len(trs) for mid in trs}
+        ec = equity_curve(allt, g_risk, days=days, firm_limits=fl, mult_fn=wmult)
+        p = perf(ec["curve"]) if ec else {}
+        if p.get("sr_daily") is not None:
+            srs.append(p["sr_daily"])
+        rep["variants"][name] = {"equity": p, "taken": len(ec["taken"]) if ec else 0, "skipped": ec["skipped"] if ec else 0,
+                                 "stats": r_stats(ec["taken"]) if ec else {}, "by_year": by_year(ec["taken"]) if ec else {}}
+    for mid in risk:
+        rep["managers"][mid] = {"gun_sonu": r_stats(close_trs[mid]), "kesintisiz": r_stats(intra_trs[mid]),
+                                "kesintisiz_long": r_stats([t for t in intra_trs[mid] if t["side"] == "long"]),
+                                "kesintisiz_short": r_stats([t for t in intra_trs[mid] if t["side"] == "short"]),
+                                "kesintisiz_saat": round(float(np.mean([t["hours"] for t in intra_trs[mid]])), 1) if intra_trs[mid] else None}
+    for v in rep["variants"].values():
+        e = v["equity"]
+        if e.get("sr_daily") is not None:
+            e["dsr"], _ = deflated_sharpe(e["sr_daily"], e["T"], e["skew"], e["kurt"], srs)
+    rep.update({"generated": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"), "years": years,
+                "n_coins": len(daily), "test_start": str(test_start.date()), "cost": COST,
+                "duration_s": round(time.time() - t0, 1)})
+    out_dir = out_dir or (ROOT / "data")
+    out_dir.mkdir(parents=True, exist_ok=True)
+    store.dump(out_dir / "backtest_v81.json", rep)
+    md = markdown_intraday(rep)
+    (out_dir / "BACKTEST_KESINTISIZ.md").write_text(md, encoding="utf-8")
+    print(md)
+    return rep
+
+
+def markdown_intraday(rep) -> str:
+    L = [f"# Kesintisiz mod testi — {rep['generated']}", "",
+         f"- Dönem: {rep['test_start']} → bugün ({rep['years']:g} yıl), {rep['n_coins']} coin, sert maliyet; firma limitleri + hava + yığılma",
+         "- Gün sonu: karar günlük kapanışta, giriş ertesi gün açılışta. Kesintisiz: karar 4 saatte bir bugünün canlı mumuyla, "
+         "giriş bir sonraki 4S açılışta (canlıda her dakika → canlı daha hızlı).", "",
+         "| Mod | Alınan / atlanan | Ort. R | Yıllık getiri | Maks. düşüş | Sharpe | Deflated Sharpe |", "|---|---|---|---|---|---|---|"]
+    for name, v in rep["variants"].items():
+        e, st = v["equity"], v["stats"]
+        L.append(f"| {name} | {v['taken']} / {v['skipped']} | {_fmt(st.get('avg_r'), 3)} | {_fmt(e.get('cagr_pct'), 1, True)} | "
+                 f"{_fmt(e.get('max_dd_pct'), 1, True)} | {_fmt(e.get('sharpe'))} | {_fmt(e.get('dsr'), 3)} |")
+    L += ["", "| Yönetici | Gün sonu (n, ort. R) | Kesintisiz (n, ort. R) | Kesintisiz long | Kesintisiz short | Ort. süre (saat) |",
+          "|---|---|---|---|---|---|"]
+    for mid, b in rep["managers"].items():
+        f = lambda s: f"{s.get('n', 0)}, {_fmt(s.get('avg_r'), 3)}"
+        L.append(f"| {mid} | {f(b['gun_sonu'])} | {f(b['kesintisiz'])} | {f(b['kesintisiz_long'])} | {f(b['kesintisiz_short'])} | {b['kesintisiz_saat']} |")
+    return "\n".join(L) + "\n"

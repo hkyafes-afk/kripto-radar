@@ -190,6 +190,15 @@ def _shorts_allowed(ctx) -> bool:
 DAY_H = 24
 
 
+def _short_shadow(idea, who):
+    """5 yıllık test: Kaan ve Selin'in short'ları masraf sonrası ~0R (long'lar +0,28R / +0,20R). Short'lar risk bütçesini
+    boşa harcamasın diye gölgede (sanal) açılır ve ölçülmeye devam eder."""
+    if idea and idea["side"] == "short":
+        idea["shadow_only"] = True
+        idea["plan"] += f" (Not: {who}'ın short'ları testte masraf sonrası kazandırmadığı için gölgede ölçülüyor.)"
+    return idea
+
+
 def a_kemal(ctx, mgr, cfg):
     """Günlük trend takibi. Kanıt: BTC 50 günlük ortalama Sharpe 1,9 (Grayscale 2012–2023); trend
     kuralları 2022–2024 canlı testinde de çalıştı (Quantpedia). Trend bitince (kapanış 50 günlüğün altı) çıkar."""
@@ -250,9 +259,10 @@ def a_kaan(ctx, mgr, cfg):
     plan = (f"20 günlük {'tepe' if sgn > 0 else 'dip'} {nfp(ctx['hh20'] if sgn > 0 else ctx['ll20'])} {vr:.1f}x hacimle kırıldı. "
             f"Stop 10 günlük {'dibin' if sgn > 0 else 'tepenin'} ötesinde (1–2,5 ATR). 2R'de %30 alırım, kalanı 2,5 ATR iz "
             f"süren stopla ve 10 günlük {'dip' if sgn > 0 else 'tepe'} kırılınca çıkarak taşırım. En fazla 30 gün.")
-    return _idea(ctx, mgr, side, sl, tp, checks, "günlük 20 günlük kanal kırılımı + hacim", plan, tp1_r=2.0,
+    idea = _idea(ctx, mgr, side, sl, tp, checks, "günlük 20 günlük kanal kırılımı + hacim", plan, tp1_r=2.0,
                  pp={"partial_frac": 0.3, "trail_atr": 2.5, "basabas": True}, max_saat=30 * DAY_H, min_checks=0,
                  setup="kaan", kind="trend", min_rr=2.0, exit_rule={"type": "chan", "n": 10})
+    return _short_shadow(idea, "Kaan")
 
 
 def a_selin(ctx, mgr, cfg):
@@ -279,9 +289,10 @@ def a_selin(ctx, mgr, cfg):
             f"{vr:.1f}x hacimle bandın {'üstünde' if sgn > 0 else 'altında'} kapandı. Stop orta bandın ötesinde; "
             "1,5R'de yarısını alıp kalanı 2 ATR iz süren stopla taşırım. Fiyat orta banda dönerse patlama başarısız sayılır, "
             "çıkarım. En fazla 20 gün.")
-    return _idea(ctx, mgr, side, sl, tp, checks, "günlük volatilite sıkışmasından patlama", plan, tp1_r=1.5,
+    idea = _idea(ctx, mgr, side, sl, tp, checks, "günlük volatilite sıkışmasından patlama", plan, tp1_r=1.5,
                  pp={"partial_frac": 0.5, "trail_atr": 2.0, "basabas": True}, max_saat=20 * DAY_H, min_checks=0,
                  setup="selin", kind="squeeze", min_rr=2.0, exit_rule={"type": "mid"})
+    return _short_shadow(idea, "Selin")
 
 
 def a_murat(ctx, mgr, cfg):
