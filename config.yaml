@@ -133,7 +133,7 @@ ucret:
   mmr_yuzde: 0.5             # bakım marjı (kaldıraçta likidasyon hesabı için)
 
 canli:
-  dongu_dakika: 14           # GitHub'da tek çalışma süresi (en fazla ~350); bitince yenisi devralır
+  dongu_dakika: 330          # GitHub'da tek çalışma süresi (en fazla ~350); bitince yenisi devralır
   websocket: true            # OKX canlı fiyat akışı (her fiyat değişiminde stop/hedef kontrolü)
   bitget_ws: true            # Bitget canlı fiyat akışı (borsalar arası fark)
   fiyat_kontrol_sn: 60       # ek güvenlik: 1 dk'lık mumlarla kaç saniyede bir kontrol edilsin
