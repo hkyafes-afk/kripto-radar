@@ -215,6 +215,10 @@ def test_policy_bench_and_capital():
     assert abs(d.firm_equity() - 1000) < 1e-6
     assert abs(d.capital("elif") - 150) < 1e-6 and abs(d.capital("kaan") - 850 / 3) < 1e-6
     assert d.capital("deniz") == 0 and "gölge" in msg
+    # gölgedeki yönetici sermayesiz olsa da gölge işlem açabilmeli (kendini kanıtlaması için)
+    sh = dict(_kaan_idea(), mgr="murat", inst="S-USDT-SWAP", sym="S")
+    o, _, r = d.execute([sh], NOW)
+    assert o and o[0]["shadow"], r
     # gölgede kendini kanıtlayan geri döner (sermayesi bir sonraki dağıtımda gelir)
     for i in range(10):
         L["closed"].append({"mgr": "deniz", "shadow": True, "r": 0.5, "exit_ts": NOW + i, "pnl_usd": 1.0})

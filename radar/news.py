@@ -214,10 +214,11 @@ class NewsDesk:
         return self._exchange_ann("Binance", rows, universe)
 
     def _rss(self, universe, get_text):
-        n = 0
+        n, ok = 0, 0
         for src, url in RSS:
             try:
                 root = ET.fromstring(get_text(url))
+                ok += 1
             except Exception:  # noqa: BLE001
                 continue
             for it in root.iter("item"):
@@ -236,6 +237,8 @@ class NewsDesk:
                     n += 1
                 if syms:
                     self._item(title, src, link, ts, hit or syms, level)
+        if not ok:
+            raise RuntimeError("hiçbir haber akışı okunamadı")
         return n
 
     def _fng(self, universe, get_json):

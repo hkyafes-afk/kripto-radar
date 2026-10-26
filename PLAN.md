@@ -1,7 +1,7 @@
 # Kripto Radar — Kararlar ve Yol Haritası
 
 > Bu dosya kullanıcıyla birlikte alınan kararların kalıcı kaydıdır. Her yeni çalışma oturumunda **önce bu dosya okunur**.
-> Son güncelleme: 26 Ekim 2026
+> Son güncelleme: 26 Ekim 2026 (v8 uygulandı)
 
 ## 1. Değişmeyen temel kararlar
 
@@ -21,6 +21,38 @@
 - **Kendi kendini onarma:** Planlı halef çağrısı yeniden denenir. Hatayla biten ya da takılan döngü yedeğini çağırır. İş akışında "Çökme kurtarma" adımı var.
 - **Veri denetçisi:** Canlı fiyat sapma eşiği oynaklığa göre ayarlanır (en az %8, 5 ATR).
 - **OKX funding aboneliği:** Yalnızca SWAP kontratlarında.
+
+## 2b. v8 uygulandı (26 Ekim 2026) — 5 yıllık test sonuçları
+
+Test: Ekim 2021 → Ekim 2026, OKX'in en likit 28 coini, günlük mumlar (Deniz: BTC/ETH 15dk, son 1 yıl).
+Sert maliyet: taker %0,10, maker %0,04, girişte 2 bp, stop'ta 5 bp kayma, long funding yıllık ~%11.
+Parametre optimizasyonu yok. Ayrıntı: `data/BACKTEST.md`, `data/backtest_v8.json`.
+
+| Yönetici | İşlem | Ort. R | Örneklem dışı | Long / Short | Yıllık | Maks. düşüş | Karar |
+|---|---|---|---|---|---|---|---|
+| Kaan (günlük kırılım) | 574 | +0,17 | +0,19 | +0,28 / +0,01 | %20,0 | −%25,6 | sermaye |
+| Selin (sıkışma patlaması) | 396 | +0,13 | +0,13 | +0,20 / +0,04 | %15,5 | −%23,4 | sermaye |
+| Kemal (günlük trend) | 918 | +0,05 | +0,08 | +0,02 / +0,08 | %7,0 | −%33,7 | sermaye (zayıf) |
+| Murat (geri çekilme) | 940 | −0,05 | −0,02 | −0,13 / +0,02 | −%3,7 | −%47,8 | gölge |
+| Ayşe (kapitülasyon) | 39 | −0,04 | +0,08 | −0,22 / +0,33 | −%0,2 | −%11,6 | gölge |
+| Deniz (15dk maker) | 233 | −0,28 | −0,28 | −0,35 / −0,21 | −%52 | −%52 | gölge |
+
+Firma (eşit pay, firma limitleri): 6 yönetici %4,8 yıllık / −%22,4 düşüş; **politika (Kemal+Kaan+Selin) %12,0 / −%12,8**;
+politika + hava + yığılma katmanları %10,9 / −%11,6 (Sharpe 0,72).
+
+**Dürüst not:** Deflated Sharpe ≈ 0. 16 deneme hesaba katılınca hiçbir sonuç "şans değil" diye kanıtlanmış sayılmaz.
+Kaan ve Selin long tarafının işlem başı t-istatistiği güçlü (3,4 / 2,65), ama kesin kanıt canlı sonuçla gelecek.
+Short sinyalleri araştırmadaki gibi sıfıra yakın çıktı.
+
+Testte bulunup düzeltilen hatalar:
+- "Yatay piyasada kırılımcıyı yarıya indir" kuralı dayanaksızdı, Kaan'ı %20'den %11,5'e düşürdü → kaldırıldı.
+- Firma simülasyonunda risk yanlışlıkla firma sermayesine göre hesaplanıyordu → yönetici payına göre düzeltildi.
+- Geniş günlük stoplarda sabit 5x kaldıraç likidasyonu stop'tan önceye getiriyordu → kaldıraç her işlemde
+  likidasyon stop'un 1,5 katı ötede kalacak şekilde seçiliyor.
+- Gölgedeki yönetici sermayesiz kalınca gölge işlem de açamıyordu → sanal sermaye.
+
+Uygulanan politika (config `ekip.politika`): Kemal, Kaan, Selin eşit pay + Elif %15 sabit. Deniz, Murat (kendi işlemleri),
+Ayşe gölgede; 10 gölge işlemde ort. +0,1R yapan geri döner. Murat'ın baş analist karnesi her fikre uygulanıyor.
 
 ## 3. Araştırma özeti (kaynaklar aşağıda)
 
@@ -71,7 +103,7 @@
 | **Ayşe** | Dipte al / funding aşırılığı | Sadece gerçek aşırılıklarda (funding + açık pozisyon şişmesi + zincirleme likidasyon birlikte), küçük pozisyonla. |
 | **Haber Masası** | Yok | Yeni ajan (madde 4.7). |
 
-## 6. Uygulama sırası
+## 6. Uygulama sırası (v8'de 1–4 tamamlandı)
 
 1. Test altyapısı + sert maliyet modeli (madde 4.1–4.2)
 2. Ajanların yeni yöntemleri ve tek tek testleri

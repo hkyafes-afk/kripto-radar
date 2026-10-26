@@ -145,6 +145,8 @@ class Desk:
         if card.get("mult", 1.0) <= 0:
             return "red", None, "baş analist: " + "; ".join(card.get("notes") or ["uygun değil"])
         eq_m = self.equity(m.id)
+        if shadow:   # gölgede sermaye yok: kanıt toplamak için başlangıç payı kadar sanal sermayeyle ölçülür
+            eq_m = max(eq_m, float(self.st.get("start", 1000.0)) / len(team.ROSTER))
         if eq_m <= 0:
             return "red", None, "yönetici sermayesi tükendi"
         mult = self.fc["seri_carpan"] if self.loss_streak(m.id) >= self.fc["kayip_serisi"] else 1.0
@@ -422,8 +424,8 @@ class Desk:
             s = lg._summ(cl)
             out[m.id] = {**m.public(), "active": m.id in self.by_id,
                          "capital": round(cap, 2), "equity": round(eq, 2),
-                         "pnl": round(eq - self.st["alloc"].get(m.id, 0), 2),
-                         "return_pct": round((eq / self.st["alloc"][m.id] - 1) * 100, 2) if self.st["alloc"].get(m.id) else 0,
+                         "pnl": round(eq - cap, 2),
+                         "return_pct": round((eq / cap - 1) * 100, 2) if cap > 0 else 0,
                          "realized": round(p["realized"], 2), "unrealized": round(p["unrealized"], 2),
                          "dd_pct": round((eq / peak - 1) * 100, 2) if peak else 0,
                          "open": len(op), "orders": sum(1 for o in self.ledger["orders"] if o["mgr"] == m.id),
