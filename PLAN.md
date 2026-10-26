@@ -85,6 +85,33 @@ Ayşe gölgede; 10 gölge işlemde ort. +0,1R yapan geri döner. Murat'ın baş 
 - **Düzeltilen hata:** Kısmi kâr alma kontratı tam sayıya yuvarlıyordu; 0,01/0,1 lotlu küçük pozisyonlarda kısmi kâr hiç
   alınmıyordu. Artık OKX lot büyüklüğüne göre yuvarlıyor.
 
+## 2d. Bekleyen kararlar — 26 Ekim 2026 konuşması (ONAY BEKLİYOR, uygulanmadı)
+
+Kullanıcı kuralı: "başla" denmeden hiçbiri uygulanmaz.
+
+**Ana hedef:** Parayı katlamak = batmadan en hızlı bileşik büyüme. Kaldıraç abartılmaz; aşırı risk bileşik büyümeyi öldürür.
+
+1. **Kârı koştur, kazananı kesme.** Trend ajanlarında (Kemal, Kaan, Selin) erken kâr alma büyük kazancı kesiyor.
+   Tepki ajanları (Ayşe, Murat, Deniz) kısa hareket avladığı için hedefte çıkmak doğru olabilir. Tek kural yok, her ajana test karar verir.
+   - Test: Kaan, Selin, Murat, Ortak için 5 yılda üç çıkış yarışı → (a) şimdiki kısmi kâr + iz stop, (b) kısmi kâr yok, sadece iz stop, (c) hedefte tam çıkış.
+   - Kazanan çıkış, öğrenme modülünün ayarlayabildiği bir parametre olur.
+2. **Öğrenmenin ölçüsü değişir:** "işlem başına ortalama R" yerine "bileşik büyüme + sınırlı düşüş".
+3. **Ortak Masa güven kuralı:**
+   - Oylar ajanın kanıtlanmış karnesine göre ağırlıklı: kanıtlanmış = tam oy, kanıtsız/eksi = yarım oy, gölgedeki segment = 0.
+   - En az iki *farklı tarzdan* onay (iki trendcinin anlaşması yetmez).
+   - Ağırlıklı oy eşiği; masa kötü giderse eşik otomatik yükselir.
+4. **Ortak Masa %5 katkı modeli:** Anlaşan her ajan kendi bütçesinin %5'ini koyar (10k → 500$). Kâr/zarar katkı payına göre ajanlara döner ve güven puanını besler.
+   Stop genişse kaldıraç düşürülür, risk sınırı aşılmaz. Kurallar dolar değil yüzde olarak yazılır, 100$ gerçek hesaba taşınabilsin diye.
+5. **Kâr artırma önceliği (sıra: a → b → d → c):**
+   - a. Testte eksi çıkan ajanlar (Murat, Ayşe, Deniz) yeniden tasarlanıp kanıtlayana kadar gölgede; bütçe kazananlara.
+   - b. Meta-labeling: her sinyale "benzer koşulda kaç kez tuttu" güven yüzdesi; yüksek → büyük, orta → küçük, düşük → girme.
+   - c. Göreli güç: BTC'den güçlü giden ilk ~5 coinin kırılımları.
+   - d. Kalabalık verisi (OKX ücretsiz): açık pozisyon değişimi, fonlama, long/short oranı, likidasyon akışı.
+   - e. Kanıta göre boyut: çeyrek Kelly, segment istatistiklerinden.
+   - f. Zarar otopsisi: her zarara sebep etiketi (sahte kırılım, BTC çekti, haber, dar stop).
+   - Hepsi önce 5 yıl + walk-forward testten geçer; geçmeyen canlıya girmez.
+6. **Gerçek API (sonra):** Kullanıcı ~100$ ile başlamayı düşünüyor. OKX asgari işlem miktarları yüzünden 8 ajan ayrı ayrı çalışamaz; kanıtlanmış 1–2 ajan + Ortak Masa ile başlanır. Ciddiye binince ayrıca konuşulacak.
+
 ## 3. Araştırma özeti (kaynaklar aşağıda)
 
 - **Aşırı uydurma:** Geçmiş testteki Sharpe canlıyı yalnızca **%1–2** açıklıyor; oynaklık (R² 0,67) ve maks. düşüş (0,34) tekrarlanıyor (Quantopian, 888 strateji). Çok denemeyle seçilen strateji canlıda çöker (Bailey ve López de Prado). → Az ayar, deneme sayısına göre indirimli Sharpe, sermaye riske göre dağıtılır.
