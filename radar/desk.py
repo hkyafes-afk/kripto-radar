@@ -20,7 +20,7 @@ import uuid
 import numpy as np
 
 from . import ledger as lg
-from . import director, learn, macro, quant
+from . import director, experts, learn, macro, quant
 from . import team
 
 
@@ -189,9 +189,16 @@ class Desk:
         fm = env["fng_mult"](side) if env.get("fng_mult") else 1.0
         km = float(card.get("mult", 1.0))
         hm = macro.weekend_mult(now_ms, tf)
-        ext = wm * fm * km * hm * (cm if (cm > 0 and not shadow) else 1.0)
+        xm = float(idea.get("exp_mult") or 1.0)                  # uzmanların karne ağırlıklı görüşü
+        kel, kel_why = experts.kelly_mult(self, m.id)            # Genel Müdür · Sermaye Dağıtıcı (30+ işlemden sonra)
+        if kel != 1.0 and not shadow:
+            gm.append(kel_why)
+        ext = wm * fm * km * hm * xm * (kel if not shadow else 1.0) * (cm if (cm > 0 and not shadow) else 1.0)
         risk_pct = (m.base_risk + (m.max_risk - m.base_risk) * idea["conviction"]) * mult * ext
         risk_usd = eq_m * risk_pct / 100
+        if idea.get("notional_target"):     # Ortak Masa: anlaşan yöneticilerin %5 katkısı kadar pozisyon
+            ref_px = idea.get("limit_px") or idea["entry"]
+            risk_usd = idea["notional_target"] * abs(idea["entry"] - idea["sl"]) / ref_px
         if not shadow:      # coin risk tavanı: tüm yöneticilerin bu coindeki toplam riski
             cap, used, room = director.coin_room(self, idea["inst"])
             if risk_usd > room:
@@ -279,7 +286,7 @@ class Desk:
                   "risk_usd": risk_now, "risk_pct": risk_now / eq_m * 100, "margin_usd": margin, "shadow": shadow,
                   "eq_m": eq_m, "mult": mult, "ext": round(ext, 3), "lev_why": lev_why,
                   "mults": {"hava": round(wm, 2), "korku": round(fm, 2), "analist": round(km, 2), "haftasonu": round(hm, 2),
-                            "sinif": round(cm, 2)},
+                            "sinif": round(cm, 2), "uzman": round(xm, 2), "kelly": round(kel, 2)},
                   "coin_class": cls, "gm": gm}
         return ("limit" if limit else "market"), detail, None
 
@@ -313,6 +320,7 @@ class Desk:
         risk_usd = self.budget * (m.base_risk + (m.max_risk - m.base_risk) * idea.get("conviction", 0.5)) / 100
         qty = risk_usd / stop_dist
         t = lg.build_trade(idea, entry, qty, 0.0, 1.0, self.cfg, now_ms, self.budget, src="gölge (elendi)", shadow=True)
+        self._tag(t, idea, None)
         t["filtered"] = why[:160]
         t["filter_kind"] = self.filter_kind(why)
         t["coin_class"] = director.coin_class(meta(idea["inst"]) if meta else None, now_ms, self.fc)
@@ -356,6 +364,9 @@ class Desk:
                 t["lot_sz"] = d.get("lot_sz")
                 t["lev_why"] = d.get("lev_why")
                 t["coin_class"], t["gm"] = d.get("coin_class"), d.get("gm") or []
+                self._tag(t, idea, d.get("mults"))
+                if idea.get("contrib") and not d["shadow"]:
+                    t["contrib"], t["votes"] = idea["contrib"], idea.get("votes")
                 self.ledger["open"].append(t)
                 opened.append({**idea, **t})
                 self.journal(idea["mgr"], idea["sym"], idea["tf"], idea["side"],
@@ -370,7 +381,7 @@ class Desk:
                      "eq_m": d["eq_m"], "created": now_ms, "expire_ts": now_ms + (idea.get("limit_valid_ms", 600_000) if idea.get("fallback_market")
                                                            else max(idea.get("limit_valid_ms", 0), 900_000)),
                      "risk_usd": d["risk_usd"], "lot_sz": d.get("lot_sz"), "lev_why": d.get("lev_why"),
-                     "coin_class": d.get("coin_class"), "gm": d.get("gm") or []}
+                     "coin_class": d.get("coin_class"), "gm": d.get("gm") or [], "mults": d.get("mults")}
                 self.ledger["orders"].append(o)
                 orders.append(o)
                 self.journal(idea["mgr"], idea["sym"], idea["tf"], idea["side"], "limit emir",
@@ -388,6 +399,9 @@ class Desk:
         t["lot_sz"] = o.get("lot_sz")
         t["lev_why"] = o.get("lev_why")
         t["coin_class"], t["gm"] = o.get("coin_class"), o.get("gm") or []
+        self._tag(t, o["idea"], o.get("mults"))
+        if o["idea"].get("contrib") and not o.get("shadow"):
+            t["contrib"], t["votes"] = o["idea"]["contrib"], o["idea"].get("votes")
         self.ledger["open"].append(t)
         self.journal(o["mgr"], t["sym"], t["tf"], t["side"], "limit doldu", f"{team.nfp(o['px'])} seviyesinden girdi")
         return {**o["idea"], **t}
@@ -552,7 +566,8 @@ class Desk:
             g = (groups if "gm" in t else groups_all).get((inst, t["side"]), {})
             if len(g) < 2:
                 to_close.append((t, f"uzlaşı dağıldı (aynı yönde {len(g)} yönetici kaldı)"))
-        n_vot = max(len(voters), 2)
+        thr, thr_why = director.committee_threshold(self)
+        pct = float(((self.cfg.get("ekip") or {}).get("ortak") or {}).get("katki_yuzde", 5.0))
         for (inst, side), g in groups.items():
             if len(g) < 2 or inst in mine:
                 continue
@@ -562,27 +577,80 @@ class Desk:
             trs = list(g.values())
             if not px or px <= 0:
                 continue
+            # güven kuralı: karne ağırlıklı oy + en az iki farklı tarz
+            votes = {mid: director.vote_weight(self, mid, side) for mid in g}
+            wsum = sum(w for w, _ in votes.values())
+            fams = {director.FAMILY.get(mid, mid) for mid, (w, _) in votes.items() if w > 0}
+            if wsum < thr or len(fams) < 2:
+                seen = self.st.setdefault("cons_skip", {})
+                if seen.get(f"{inst}|{side}") != round(wsum, 2):
+                    seen[f"{inst}|{side}"] = round(wsum, 2)
+                    self.journal("ortak", trs[0]["sym"], "1D", side, "komite reddetti",
+                                 f"ağırlıklı oy {wsum:.2f} (eşik {thr:.2f}), {len(fams)} farklı tarz"
+                                 + (" — aynı aileden iki oy yetmez" if len(fams) < 2 and len(g) >= 2 else "")
+                                 + "; " + ", ".join(f"{self.by_id[m].name if m in self.by_id else m} {w:.2f} ({why})"
+                                                    for m, (w, why) in votes.items()))
+                    if len(seen) > 200:
+                        seen.pop(next(iter(seen)))
+                continue
             sgn = 1 if side == "long" else -1
             dist = float(np.median([abs(x["entry"] - (x.get("sl_init") or x["sl"])) / x["entry"] for x in trs])) * px
             atr = float(np.median([(x.get("atr") or 0) / x["entry"] for x in trs])) * px or dist / 2
             if dist <= 0:
                 continue
             names = [self.by_id[mid].name if mid in self.by_id else mid for mid in sorted(g)]
-            conv = min(1.0, (len(g) - 1) / max(n_vot - 2, 1) * 2)
+            contrib = {mid: round(self.capital(mid) * pct / 100, 2) for mid, (w, _) in votes.items() if w > 0}
+            notional = sum(contrib.values())
+            if notional <= 0:
+                continue
+            conv = min(1.0, wsum / 3.0)
             to_open.append({
                 "mgr": "ortak", "inst": inst, "sym": trs[0]["sym"], "tf": "1D", "side": side, "entry": px, "market_px": px,
                 "sl": px - sgn * dist,
                 "tp": px + 3 * dist if sgn > 0 else max(px - 3 * dist, px * 0.05),
                 "tp1": px + 2 * dist if sgn > 0 else max(px - 2 * dist, px * 0.1), "atr": atr,
                 "max_saat": 30 * 24, "pp": {"partial_frac": 0.3, "trail_atr": 2.5, "basabas": True},
-                "conviction": round(conv, 3), "checks": [[f"{n} aynı yönde", True] for n in names],
+                "conviction": round(conv, 3),
+                "checks": [[f"{self.by_id[m].name if m in self.by_id else m} oy {w:.2f} ({why})", w > 0] for m, (w, why) in votes.items()],
                 "core": f"{len(g)} yönetici hemfikir", "reasons": [f"{len(g)} yönetici hemfikir: {', '.join(names)}"],
-                "plan": (f"{', '.join(names)} aynı anda {sym_side(side)} tarafında. Stop, onların stop mesafelerinin ortancası; "
-                         f"2R'de %30 alıp kalanı 2,5 ATR iz süren stopla taşırım. Hemfikir sayısı 2'nin altına düşerse çıkarım."),
+                "plan": (f"{', '.join(names)} aynı anda {sym_side(side)} tarafında. Yatırım komitesi onayı: ağırlıklı oy "
+                         f"{wsum:.2f} ≥ eşik {thr:.2f} ({thr_why}), {len(fams)} farklı tarz ({', '.join(sorted(fams))}). "
+                         f"Her biri bütçesinin %{pct:g}'ini koydu: toplam {notional:,.0f}$ pozisyon; kâr/zarar katkı payına göre "
+                         f"onlara döner. Stop, onların stop mesafelerinin ortancası; 2R'de %30 alıp kalanı 2,5 ATR iz süren stopla "
+                         f"taşırım. Hemfikir sayısı 2'nin altına düşerse çıkarım."),
                 "entry_type": "piyasa", "limit_px": None, "limit_valid_ms": 0, "setup": "ortak", "kind": "consensus",
                 "funding_rate": trs[0].get("funding_rate", 0.0), "interval_h": trs[0].get("interval_h", 8), "regime": 0,
-                "rr": 3.0, "tags": names, "exit": None, "maker_first": True, "consensus": sorted(g)})
+                "rr": 3.0, "tags": names, "exit": None, "maker_first": True, "consensus": sorted(g),
+                "contrib": contrib, "notional_target": notional, "votes": {m: w for m, (w, _) in votes.items()}})
         return to_open, to_close
+
+    @staticmethod
+    def _tag(t: dict, idea: dict, mults: dict | None):
+        """Fikirden işleme taşınan öğrenme bilgisi: giriş özellikleri (Hakem), uzman görüşleri (karne), varyantlar."""
+        for k in ("feat", "experts", "exp_mult", "variants"):
+            if idea.get(k) is not None:
+                t[k] = idea[k]
+        if mults:
+            t["mults"] = mults
+
+    def on_closed(self, closed: list[dict]) -> list[str]:
+        """Ortak Masa işlemi kapanınca kâr/zarar katkı payına göre katkı veren yöneticilere aktarılır (v9 Faz 4)."""
+        msgs = experts.score_closed(self.st, closed)            # uzman karneleri (gerçek + gölge)
+        for t in closed:
+            c = t.get("contrib")
+            if t.get("mgr") != "ortak" or not c or t.get("shadow") or t.get("distributed"):
+                continue
+            pnl = float(t.get("pnl_usd") or 0.0)
+            tot = sum(c.values()) or 1.0
+            dist = {mid: round(pnl * usd / tot, 2) for mid, usd in c.items()}
+            for mid, amt in dist.items():
+                self.st["adj"][mid] = self.st["adj"].get(mid, 0.0) + amt
+            self.st["adj"]["ortak"] = self.st["adj"].get("ortak", 0.0) - pnl
+            t["distributed"] = dist
+            line = ", ".join(f"{self.by_id[m].name if m in self.by_id else m} {v:+.2f}$" for m, v in dist.items())
+            self.journal("ortak", t["sym"], t.get("tf", "1D"), t["side"], "kâr/zarar dağıtıldı", f"{pnl:+.2f}$ → {line}")
+            msgs.append(f"🤝 Ortak Masa {t['sym']}: {pnl:+.2f}$ katkı payına göre dağıtıldı ({line})")
+        return msgs
 
     # ── rapor ────────────────────────────────────────────────────────
     def summary(self, now_ms: int) -> dict:

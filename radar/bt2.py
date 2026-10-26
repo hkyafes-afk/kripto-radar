@@ -241,6 +241,7 @@ def run_manager(mgr, F, sym, inst, bar_h, warm, ctx_extra_fn, cfg, cooldown_bars
         t["high_vol"] = ctx.get("high_vol")
         t["btc_bear"] = bool(ctx.get("btc_bear"))
         t["coin_class"] = cls
+        t["feat"] = dict(idea.get("feat") or {}, age_cls={"A": 0.0, "B": 1.0, "C": 2.0}[cls])
         trades.append(t)
         i = t["exit_i"] + cooldown_bars
     return trades

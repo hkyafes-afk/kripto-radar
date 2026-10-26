@@ -154,7 +154,34 @@ def _idea(ctx: dict, mgr: Manager, side: str, sl: float, tp: float, checks: list
         "interval_h": ctx.get("interval_h", 8), "regime": ctx.get("regime", 0),
         "rr": round(sgn * (tp - ref) / dist, 2), "tags": [n for n, ok in checks if ok],
         "exit": exit_rule, "signal_close": ctx.get("close"),
+        "feat": features_for(ctx, side, conviction),
     }
+
+
+FEAT_KEYS = ("vol_ratio", "close_pos", "rsi", "adx", "bbw_rank", "rv_rank", "dist50", "dist200", "rs",
+             "btc_bull", "high_vol", "conviction", "side", "age_cls", "range_atr")
+
+
+def features_for(ctx: dict, side: str, conviction: float) -> dict:
+    """Analist-Hakem'in gördüğü giriş anı özellikleri (canlı ve test aynı). Eksik değer → None."""
+    sgn = 1 if side == "long" else -1
+    atr = ctx.get("atr") or 0
+
+    def g(k):
+        v = ctx.get(k)
+        return float(v) if isinstance(v, (int, float)) and v == v else None
+    c, s50, s200 = g("close"), g("sma50"), g("sma200")
+    rs = g("rs_rel")
+    return {"vol_ratio": g("vol_ratio"), "close_pos": (g("close_pos") if sgn > 0 else (1 - g("close_pos")) if g("close_pos") is not None else None),
+            "rsi": (g("rsi") if sgn > 0 else (100 - g("rsi")) if g("rsi") is not None else None),
+            "adx": g("adx"), "bbw_rank": g("bbw_rank"), "rv_rank": g("rv_rank"),
+            "dist50": sgn * (c - s50) / atr if (c and s50 and atr) else None,
+            "dist200": sgn * (c - s200) / atr if (c and s200 and atr) else None,
+            "rs": sgn * rs if rs is not None else None,
+            "btc_bull": (1.0 if ctx.get("btc_bull") else 0.0) if sgn > 0 else (1.0 if ctx.get("btc_bear") else 0.0),
+            "high_vol": 1.0 if ctx.get("high_vol") else 0.0, "conviction": float(conviction), "side": float(sgn),
+            "age_cls": {"A": 0.0, "B": 1.0, "C": 2.0}.get(ctx.get("coin_class") or "", None),
+            "range_atr": g("range_atr")}
 
 
 def _clamp_stop(entry: float, raw_sl: float, atr: float, side: str, lo: float, hi: float) -> float:

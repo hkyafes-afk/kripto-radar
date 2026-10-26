@@ -86,14 +86,14 @@ def run(client=None, cfg_path=None, n_coins=30, years=5.0, out_dir: Path | None 
             out += bt2.run_manager(mgrs[mid], F, sym, inst, 24.0, warm, extra, cfg, first_ts=ages.get(sym))
         return out
 
-    def wmult_fn(bear_long=0.5, classes=False):
+    def wmult_fn(bear_long=0.5, classes=None):
         def f(t):
             m = quant.weather_mult({"trend": t.get("weather_trend") or "yatay", "high_vol": t.get("high_vol")},
                                    t["mgr"], t["side"], bear_long=bear_long)
             if bear_long == 0.0 and t["side"] == "long" and t.get("btc_bear") and t["mgr"] != "ayse":
                 m = 0.0
             if classes:
-                m *= CLASS_MULT.get(t.get("coin_class") or "A", 1.0)
+                m *= classes.get(t.get("coin_class") or "A", 1.0)
             return m
         return f
 
@@ -175,10 +175,13 @@ def run(client=None, cfg_path=None, n_coins=30, years=5.0, out_dir: Path | None 
     pool = [t for mid, trs in all_trades.items() for t in trs
             if not (mid in LONG_ONLY and t["side"] == "short")]
     risk = {mid: mgrs[mid].base_risk for mid in all_trades}
-    for name, fn in (("taban (ayıda long yarım, sınıf kuralı yok)", wmult_fn(0.5, False)),
-                     ("ayıda long YASAK", wmult_fn(0.0, False)),
-                     ("Genel Müdür kanıt sınıfı açık (B yarım, C gölge)", wmult_fn(0.5, True)),
-                     ("ayıda long yasak + kanıt sınıfı", wmult_fn(0.0, True))):
+    C_ONLY = {"A": 1.0, "B": 1.0, "C": 0.0}
+    for name, fn in (("taban (ayıda long yarım, sınıf kuralı yok)", wmult_fn(0.5)),
+                     ("ayıda long YASAK", wmult_fn(0.0)),
+                     ("Genel Müdür kanıt sınıfı açık (B yarım, C gölge)", wmult_fn(0.5, CLASS_MULT)),
+                     ("ayıda long yasak + kanıt sınıfı", wmult_fn(0.0, CLASS_MULT)),
+                     ("sadece C gölge (B tam boyut)", wmult_fn(0.5, C_ONLY)),
+                     ("ayıda long yasak + sadece C gölge", wmult_fn(0.0, C_ONLY))):
         ec = bt2.equity_curve(pool, risk, days=days, mult_fn=fn)
         p = bt2.perf(ec["curve"]) if ec else {}
         tr = [t for t in ec["taken"] if t["entry_ts"] < split] if ec else []

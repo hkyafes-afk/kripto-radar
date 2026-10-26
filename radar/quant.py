@@ -50,6 +50,7 @@ def features(df: pd.DataFrame) -> pd.DataFrame:
     F["close_pos"] = (c - l) / rng
     F["range_atr"] = (h - l) / F["atr"]
     F["ret1"] = c.pct_change()
+    F["ret30"] = c.pct_change(30)            # göreli güç (Gözcü): BTC'ye göre 30 günlük getiri
     F["rv20"] = F["ret1"].rolling(20, min_periods=20).std()
     F["rv_rank"] = F["rv20"].rolling(365, min_periods=120).rank(pct=True)
     F["prev_high"], F["prev_low"] = h.shift(1), l.shift(1)

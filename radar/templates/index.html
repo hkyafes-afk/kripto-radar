@@ -639,6 +639,7 @@ function explainTrade(t, closed){
   if (learned) h += `<p>${esc(learned)}</p>`;
   if (t.coin_class) h += `<p class="m">Coin kanıt sınıfı: <b>${esc(t.coin_class)}</b> ${({A:"(3 yıl+ geçmiş, tam boyut)",B:"(1–3 yıl, yarım boyut)",C:"(1 yıldan yeni; kanıtlanana kadar gölge)"})[t.coin_class]||""}</p>`;
   if (t.gm && t.gm.length) h += `<p>🏛 Genel Müdür: ${t.gm.map(esc).join("; ")}</p>`;
+  if (t.contrib) { const T2 = D.team||{}; h += `<p>🤝 Yatırım komitesi: ${Object.entries(t.contrib).map(([k,v])=>esc((T2[k]||{}).name||k)+" "+money(v,false)+(t.votes&&t.votes[k]!=null?" (oy "+(+t.votes[k]).toFixed(2).replace(".",",")+")":"")).join(" · ")} koydu.${t.distributed?" Kâr/zarar dağıtıldı: "+Object.entries(t.distributed).map(([k,v])=>esc((T2[k]||{}).name||k)+" "+money(v)).join(" · "):" Kapanınca kâr/zarar bu paylara göre onlara döner."}</p>`; }
   if (t.filtered) h += `<p>🧪 Bu fikir elendi ama gölgede izleniyor (filtre de sınanıyor): <b>${esc(t.filtered)}</b></p>`;
   h += `<h4>Para dökümü${closed?"":" (canlı)"}</h4><div class="k2">`
      + `<span>Pozisyon büyüklüğü</span><span>${money(t.notional_usd,false)} · ${fp(t.qty)} ${esc(t.sym)}</span>`

@@ -139,6 +139,18 @@ ekip:
     carry_min_yillik: 15       # % 30 günlük funding ortalaması en az
     kume_risk_yuzde: 4.0       # % birlikte hareket eden (60 günlük korelasyon ≥ 0,7) aynı yön pozisyonların toplam riski
     kume_korelasyon: 0.7
+    # v9 Genel Müdür (demo limitlerinden bağımsız, hep açık güvenlik kuralları)
+    carpisma_yasak: true       # aynı coinde başka yönetici ters yönde GERÇEK pozisyondaysa yeni gelen gölgede izlenir
+    coin_tavan_yuzde: 1.25     # % bir coinde bütün yöneticilerin toplam riski (firma sermayesinin); aşan fikir küçülür ya da gölge
+    sinif_a_gun: 1095          # coin kanıt sınıfı: 3 yıl+ = A (tam boyut)
+    sinif_c_gun: 365           # 1 yıldan yeni = C (gölge); arası B (yarım boyut)
+    ioc_bant_bp: 10            # piyasa emri yerine IOC limit: en iyi fiyatın en fazla %0,1 ötesi, dolmayan kısım iptal
+    dongu_uyari_sn: 10         # döngü bir turda bundan uzun sürerse Telegram uyarısı
+  ortak:                       # v9 Yatırım Komitesi (Ortak Masa)
+    esik: 1.25                 # karne ağırlıklı oy eşiği; masanın karnesi eksiye düşerse kendiliğinden +0,5
+    katki_yuzde: 5             # anlaşan her yönetici bütçesinin %5'i kadar pozisyon koyar; kâr/zarar katkı payına göre ona döner
+    on_bilgi: {kaan: 1.0, selin: 0.75, kemal: 0.5, murat: 0, ayse: 0, deniz: 0}   # 5 yıllık test; 30+ canlı işlemden sonra karne
+  varyant: {}                  # v9 Faz 1 yarışını kazanan varyantlar (data/YARIS.md), ör. kaan: [cikis_iz]
 
 # Gerçek OKX ücretleri (VIP0). Giriş ve stop/süre çıkışı piyasa emri (taker), hedef limit emir (maker).
 # v8: SERT maliyet modeli (kullanıcı kararı): OKX liste ücretinin 2 katı + stop kayması. Demo sonuçları gerçeğinden
@@ -147,7 +159,8 @@ ucret:
   taker_yuzde: 0.10          # liste %0,05 × 2
   maker_yuzde: 0.04          # liste %0,02 × 2
   spot_taker_yuzde: 0.20     # spot piyasa emri (Elif'in spot bacağı), liste %0,10 × 2
-  stop_kayma_bp: 5           # stop emri stres anında ek kayma
+  stop_kayma_bp: 5           # stop emri stres anında ek kayma (taban)
+  stop_kayma_atr_oran: 0.05  # v9: + günlük ATR'nin %5'i (oynak coinde daha çok kayma); genç (C) coinde ×1,5; en çok 150 bp
   mmr_yuzde: 0.5             # bakım marjı (kaldıraçta likidasyon hesabı için)
 
 canli:

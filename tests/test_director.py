@@ -199,6 +199,36 @@ def test_variants_shared_by_live_and_backtest():
     assert team.apply_variant(copy.deepcopy(base), qctx(), cfg) == base, "varyant yoksa fikir aynen kalır"
 
 
+def test_committee_trust_family_and_contribution():
+    d, st, L = _desk()
+    base = {"inst": "Q-USDT-SWAP", "sym": "Q", "side": "long", "entry": 100.0, "sl": 95.0, "atr": 3.0, "qty": 1.0,
+            "shadow": False}
+    L["open"] = [dict(base, mgr="kemal"), dict(base, mgr="kaan")]
+    to_open, _ = d.consensus_plan(NOW, {"Q-USDT-SWAP": 101.0})
+    assert not to_open, "iki trendcinin anlaşması yetmez (aynı aile)"
+    assert any(j["action"] == "komite reddetti" for j in st["desk"]["journal"])
+    L["open"].append(dict(base, mgr="selin"))
+    to_open, _ = d.consensus_plan(NOW, {"Q-USDT-SWAP": 101.0})
+    i = to_open[0]
+    assert set(i["contrib"]) == {"kemal", "kaan", "selin"} and abs(i["notional_target"] - 3 * 500.0) < 1e-6
+    _, det, _ = d.evaluate(i, NOW, meta=OLD)
+    assert abs(det["qty"] * det["entry"] - 1500.0) < 1.0, "pozisyon = katkıların toplamı (3 × %5 × 10.000$)"
+    # kapanışta kâr/zarar katkı payına göre dağıtılır
+    o, _, _ = d.execute([i], NOW, meta=OLD)
+    t = o[0]
+    tr = next(x for x in L["open"] if x.get("id") == t["id"])
+    L["open"].remove(tr)
+    tr = lg.close_trade(tr, 110.0, NOW + 1000, "hedef", CFG, maker=True)
+    L["closed"].append(tr)
+    eq0 = {m: d.equity(m) for m in ("kemal", "kaan", "selin", "ortak")}
+    d.on_closed([tr])
+    assert tr["distributed"] and abs(sum(tr["distributed"].values()) - tr["pnl_usd"]) < 0.05
+    assert abs(d.equity("ortak") - (eq0["ortak"] - tr["pnl_usd"])) < 1e-6
+    assert abs(d.equity("kaan") - eq0["kaan"] - tr["pnl_usd"] / 3) < 0.02
+    d.on_closed([tr])
+    assert abs(d.equity("ortak") - (eq0["ortak"] - tr["pnl_usd"])) < 1e-6, "iki kez dağıtılmaz"
+
+
 if __name__ == "__main__":
     for name, fn in list(globals().items()):
         if name.startswith("test_"):

@@ -31,6 +31,8 @@ import json
 from . import commands as cm
 from . import desk as dk
 from . import director as gmd
+from . import experts as ex
+from . import hakem as hk
 from . import harvest as hv
 from . import lease
 from . import learn
@@ -169,6 +171,8 @@ class Engine:
         self.news = nw.NewsDesk()
         self.news.from_state(self.state.get("news") or {})
         self.cfg["_learned"] = learn.load_learned()
+        self.hakem = hk.load()
+        self.crowd_cache: dict = {}
         self.loop_done = False
         self.my_hb = 0
         self.lease_thread: threading.Thread | None = None
@@ -593,6 +597,7 @@ class Engine:
                     idea["card"] = team.analyst_card(c, idea["side"], self.news.flag(c["sym"]))
                     if idea["tf"] == "1D" and idea["entry_type"] == "piyasa":
                         idea["maker_first"] = True       # önce limit (maker), dolmazsa piyasa
+                    self.enrich_idea(idea, c, fetch=False)
                     ideas.append(idea)
             self.stats_counter["ideas"] += len(ideas)
             self.ideas_seen += len(ideas)
@@ -662,6 +667,7 @@ class Engine:
             for c in ex.map(lambda r: self._safe(self.live_daily_ctx, r), rows):
                 if c:
                     ctxs.append(c)
+        self._rel_strength(ctxs)
         now = time.time()
         ideas = []
         held = {(t.get("mgr"), t["inst"]) for t in list(self.ledger["open"])}
@@ -680,6 +686,7 @@ class Engine:
                 idea["card"] = team.analyst_card(c, idea["side"], self.news.flag(c["sym"]))
                 if idea["entry_type"] == "piyasa":
                     idea["maker_first"] = True
+                self.enrich_idea(idea, c, fetch=True)
                 ideas.append(idea)
         if ideas:
             self.stats_counter["ideas"] += len(ideas)
@@ -688,6 +695,73 @@ class Engine:
             print("[canlı 1G] " + ", ".join(f"{i['mgr']}:{i['sym']} {i['side']}" for i in ideas[:12]))
         self.stats_counter["live_evals"] = self.stats_counter.get("live_evals", 0) + 1
         self.stats_counter["live_coins"] = len(ctxs)
+
+    def _rel_strength(self, ctxs: list[dict]):
+        """Gözcü: BTC'ye göre 30 günlük göreli güç ve kesitsel sıra (1 = en güçlü)."""
+        btc = next((c for c in ctxs if c.get("sym") == "BTC"), None)
+        b30 = (btc or {}).get("ret30")
+        vals = []
+        for c in ctxs:
+            r = c.get("ret30")
+            if isinstance(r, (int, float)) and r == r and isinstance(b30, (int, float)) and b30 == b30:
+                c["rs_rel"] = r - b30
+                vals.append(c["rs_rel"])
+        if len(vals) >= 10:
+            arr = sorted(vals)
+            for c in ctxs:
+                if "rs_rel" in c:
+                    c["rs_rank"] = sum(1 for v in arr if v <= c["rs_rel"]) / len(arr)
+
+    def crowd(self, inst: str, fetch: bool = True) -> dict:
+        """(işçi) Balina Gözü verisi: hesap ve büyük hesap long/short oranı + son 1 saatin likidasyonları. 10 dk önbellek."""
+        hit = self.crowd_cache.get(inst)
+        if hit and time.time() - hit[0] < 600:
+            return hit[1]
+        if not fetch or self.demo:
+            return (hit or (0, {}))[1]
+        out = {}
+        try:
+            r = self.client.get("/api/v5/rubik/stat/contracts/long-short-account-ratio-contract",
+                                {"instId": inst, "period": "1H", "limit": "1"})
+            out["ls_acct"] = _f(r[0][1]) if r else None
+            r = self.client.get("/api/v5/rubik/stat/contracts/long-short-account-ratio-contract-top-trader",
+                                {"instId": inst, "period": "1H", "limit": "1"})
+            out["ls_top"] = _f(r[0][1]) if r else None
+        except Exception:  # noqa: BLE001
+            pass
+        try:
+            uly = inst.replace("-SWAP", "")
+            rows = self.client.get("/api/v5/public/liquidation-orders",
+                                   {"instType": "SWAP", "uly": uly, "state": "filled", "limit": "100"})
+            ct = (self.meta.get(inst) or {}).get("ct_val") or 1.0
+            cut = int(time.time() * 1000) - 3600_000
+            lq = {"long_usd": 0.0, "short_usd": 0.0}
+            for row in rows:
+                for d in row.get("details") or []:
+                    if _f(d.get("ts"), 0) < cut:
+                        continue
+                    side = "long" if d.get("posSide") == "long" or d.get("side") == "sell" else "short"
+                    lq[f"{side}_usd"] += _f(d.get("sz"), 0.0) * _f(d.get("bkPx"), 0.0) * ct
+            out["liq_1h"] = lq
+        except Exception:  # noqa: BLE001
+            pass
+        self.crowd_cache[inst] = (time.time(), out)
+        if len(self.crowd_cache) > 400:
+            self.crowd_cache.pop(next(iter(self.crowd_cache)))
+        return out
+
+    def enrich_idea(self, idea: dict, c: dict, fetch: bool = True):
+        """Yöneticinin uzmanları görüş verir (Gözcü, Balina Gözü, Analist-Hakem); karne ağırlıklı çarpan fikre eklenir."""
+        if not self.desk:
+            return
+        try:
+            c.setdefault("coin_class", gmd.coin_class(self.meta.get(idea["inst"]), int(time.time() * 1000), self.desk.fc))
+            idea["feat"] = team.features_for(c, idea["side"], idea.get("conviction", 0.5))
+            ops = [ex.gozcu(c, idea), ex.balina(c, idea, self.crowd(idea["inst"], fetch=fetch)), ex.hakem(idea, self.hakem)]
+            mult, ops = ex.combine(ops, self.desk.st, idea["mgr"])
+            idea["experts"], idea["exp_mult"] = ops, round(mult, 3)
+        except Exception as e:  # noqa: BLE001
+            print(f"[uzmanlar] {idea.get('mgr')} {idea.get('sym')}: {e}")
 
     def _safe(self, fn, *a):
         try:
@@ -861,6 +935,13 @@ class Engine:
                 t["lesson"] = learn.lesson(t)
             except Exception:  # noqa: BLE001
                 pass
+        if self.desk:
+            try:
+                for msg in self.desk.on_closed(closed):
+                    if "Uzman karnesi" in msg:
+                        self._notify(msg)
+            except Exception as e:  # noqa: BLE001
+                print(f"[kapanış sonrası] {e}")
         self.stats_counter["closed"] += len(closed)
         self.stats_counter[f"{via}_closes"] = self.stats_counter.get(f"{via}_closes", 0) + len(closed)
         self.dirty = True
@@ -1272,6 +1353,8 @@ class Engine:
                          "limits_on": bool((self.desk.fc if self.desk else {}).get("sinirlar_aktif", True))},
             "backtest_v8": self._bt8(),
             "director": self._director(now_ms),
+            "experts": ex.report(self.desk.st) if self.desk else None,
+            "hakem": self._hakem_public(),
             "news": self.news.public(),
             "calendar": {"status": self.calendar.status, "upcoming": self.calendar.upcoming(),
                          "block": self.calendar.block()},
@@ -1555,11 +1638,13 @@ class Engine:
             subprocess.run(["git", "fetch", "-q", "origin", "main"], cwd=ROOT, timeout=60, check=True)
             txt = subprocess.run(["git", "show", "origin/main:config.yaml"], cwd=ROOT, timeout=30,
                                  check=True, capture_output=True, text=True).stdout
-            lj = subprocess.run(["git", "show", "origin/main:data/learned.json"], cwd=ROOT, timeout=30,
-                                capture_output=True, text=True).stdout
-            if lj.strip():
-                (ROOT / "data").mkdir(exist_ok=True)
-                (ROOT / "data" / "learned.json").write_text(lj, encoding="utf-8")
+            for fn in ("learned.json", "hakem.json"):
+                lj = subprocess.run(["git", "show", f"origin/main:data/{fn}"], cwd=ROOT, timeout=30,
+                                    capture_output=True, text=True).stdout
+                if lj.strip():
+                    (ROOT / "data").mkdir(exist_ok=True)
+                    (ROOT / "data" / fn).write_text(lj, encoding="utf-8")
+            self.hakem = hk.load()
             if txt and txt != (ROOT / "config.yaml").read_text(encoding="utf-8"):
                 (ROOT / "config.yaml").write_text(txt, encoding="utf-8")
                 self.cfg = load_config(self.cfg_path)
@@ -1691,6 +1776,14 @@ class Engine:
         top = ", ".join(f"{n} {v:.1f} sn" for n, v in self.perf.top(3))
         self._notify(f"🐢 <b>Döngü yavaşladı</b>: son tur {dt:.1f} sn (eşik {lim:g} sn), günlük değerlendirme {job:.0f} sn.\n"
                      f"En çok süren: {top}")
+
+    def _hakem_public(self) -> dict | None:
+        H = self.hakem or {}
+        if not H.get("groups"):
+            return None
+        return {"generated": H.get("generated"), "n_backtest": H.get("n_backtest"), "n_live": H.get("n_live"),
+                "groups": {k: {kk: g.get(kk) for kk in ("n", "val_corr", "val_gain_r", "validated", "top")}
+                           for k, g in H["groups"].items()}}
 
     def _director(self, now_ms: int) -> dict | None:
         if not self.desk:

@@ -186,3 +186,34 @@ class PerfMeter:
                 "loop_avg_s": round(self.loop_sum / self.loops, 4) if self.loops else None, "slow": self.slow,
                 "parts": {n: {"last": round(s[0], 3), "max": round(s[1], 3), "avg": round(s[3] / s[2], 4) if s[2] else None}
                           for n, s in sorted(self.parts.items(), key=lambda x: -x[1][1])[:14]}}
+
+
+# ── Yatırım Komitesi: Ortak Masa güven kuralı (v9 Faz 4) ─────────────────────────────────────────────
+# Oy ağırlığı önce 5 yıllık testten (ön bilgi), 30+ gerçek işlemden sonra canlı karneden gelir.
+FAMILY = {"kemal": "trend", "kaan": "trend", "selin": "sıkışma", "murat": "geri çekilme", "ayse": "dönüş", "deniz": "kısa vade"}
+PRIOR = {"kaan": 1.0, "selin": 0.75, "kemal": 0.5, "murat": 0.0, "ayse": 0.0, "deniz": 0.0}   # v8 testi: +0,17 / +0,13 / +0,05R
+
+
+def vote_weight(desk, mid: str, side: str) -> tuple[float, str]:
+    if desk.segment(mid, side) == "golge":
+        return 0.0, "gölgede"
+    seg = ((desk.st.get("segments") or {}).get(f"{mid}|{side}") or {}).get("real") or {}
+    n, avg, pf = seg.get("n", 0), seg.get("avg_r"), seg.get("pf")
+    if n >= 30 and avg is not None:
+        if avg >= 0.10 and (pf or 0) >= 1.2:
+            return 1.0, f"canlıda kanıtlı ({n} işlem, {avg:+.2f}R)"
+        if avg <= 0:
+            return 0.25, f"canlıda kaybettiriyor ({n} işlem, {avg:+.2f}R)"
+    w = float((((desk.cfg.get("ekip") or {}).get("ortak") or {}).get("on_bilgi") or {}).get(mid, PRIOR.get(mid, 0.0)))
+    return w, "5 yıllık test ön bilgisi"
+
+
+def committee_threshold(desk) -> tuple[float, str]:
+    oc = (desk.cfg.get("ekip") or {}).get("ortak") or {}
+    base = float(oc.get("esik", 1.25))
+    cl = [t for t in desk.ledger["closed"] if t.get("mgr") == "ortak" and not t.get("shadow") and t.get("contrib")]
+    if len(cl) >= 20:
+        avg = sum(t.get("r", 0) for t in cl) / len(cl)
+        if avg < 0:
+            return min(base + 0.5, 3.0), f"masanın karnesi eksi ({len(cl)} işlem, {avg:+.2f}R) → eşik yükseldi"
+    return base, "normal eşik"
