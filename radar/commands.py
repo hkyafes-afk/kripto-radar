@@ -24,6 +24,9 @@ HELP = (
     "/funding — funding harvest listesi\n"
     "/demo — demo hesap: bakiye, kâr/zarar\n"
     "/pozisyonlar — açık demo işlemler\n"
+    "/ekip — 7 yöneticinin durumu\n"
+    "/yonetici kaan — bir yöneticinin ayrıntısı ve son kararları\n"
+    "/emirler — bekleyen limit emirler\n"
     "/kapat SOL — demo işlemi elle kapat\n"
     "/borsalar — borsalar arası funding ve fiyat farkı\n"
     "/saglik — canlı veri ve bağlantı durumu\n"
@@ -179,6 +182,57 @@ def cmd_borsalar(d: dict) -> str:
     return "\n".join(L)
 
 
+def cmd_ekip(d: dict) -> str:
+    tm = d.get("team")
+    if not tm:
+        return "Ekip henüz kurulmadı."
+    L = ["🏢 <b>Yatırım ekibi</b>"]
+    for m in sorted(tm.values(), key=lambda x: -x["equity"]):
+        s = m.get("stats") or {}
+        perf = (f" · {s['n']} işlem, %{_tr(s['win_rate'], 0)} isabet, {_tr(s['avg_r'], 2, True)}R" if s.get("n") else " · henüz kapanmış işlem yok")
+        L.append(f"{m['emoji']} <b>{m['name']}</b> ({m['title']}) {_tr(m['equity'])}$ (%{_tr(m['return_pct'], 1, True)})"
+                 + (f" · {m['open']} açık" if m["open"] else "") + (f" · {m['orders']} emir" if m["orders"] else "")
+                 + perf + (" · 🪑 yedekte" if m["benched"] else ""))
+    L.append("\nAyrıntı: /yonetici kaan")
+    return "\n".join(L)
+
+
+def cmd_yonetici(d: dict, mid: str) -> str:
+    tm = d.get("team") or {}
+    mid = {"ayşe": "ayse"}.get(mid, mid)
+    m = tm.get(mid)
+    if not m:
+        return "Böyle bir yönetici yok. Ekip: " + ", ".join(x["name"] for x in tm.values())
+    s = m.get("stats") or {}
+    L = [f"{m['emoji']} <b>{m['name']} · {m['title']}</b>", f"<i>{nt.esc(m['style'])}</i>",
+         f"Sermaye {_tr(m['equity'])}$ (başlangıç {_tr(m['capital'])}$) · getiri %{_tr(m['return_pct'], 1, True)} · zirveden %{_tr(m['dd_pct'], 1)}",
+         f"Risk: işlem başı %{_tr(m['base_risk'], 1)}–%{_tr(m['max_risk'], 1)} · yedek kulübesi limiti %{_tr(m['dd_bench'], 0)}"]
+    if s.get("n"):
+        L.append(f"{s['n']} işlem · isabet %{_tr(s['win_rate'], 0)} · ort. {_tr(s['avg_r'], 2, True)}R · PF {s.get('pf') or '-'}")
+    op = [t for t in (d.get("ledger") or {}).get("open", []) if t.get("mgr") == mid]
+    for t in op[:6]:
+        L.append(f"• {nt.esc(t['sym'])} {t['side']} {_usd(t.get('upnl_usd', 0))} ({_tr(t.get('r_now', 0), 2, True)}R)")
+    j = [x for x in d.get("journal", []) if x["mgr"] == mid][-6:]
+    if j:
+        L.append("\n<b>Son kararlar</b>")
+        for x in reversed(j):
+            L.append(f"• {nt.esc(x['sym'])} {x['action']}: {nt.esc(x['reason'])}")
+    return "\n".join(L)
+
+
+def cmd_emirler(d: dict) -> str:
+    od = d.get("orders") or []
+    if not od:
+        return "Bekleyen limit emir yok."
+    tm = d.get("team") or {}
+    L = ["📌 <b>Bekleyen limit emirler</b>"]
+    for o in od:
+        m = tm.get(o["mgr"], {})
+        L.append(f"{m.get('emoji', '')} {m.get('name', o['mgr'])} · {nt.esc(o['sym'])} {o['side']} {nt.fmt_price(o['px'])} "
+                 f"(şu an {nt.fmt_price(o.get('market'))})")
+    return "\n".join(L)
+
+
 def cmd_risk(d: dict) -> str:
     r = d.get("risk") or {}
     c = r.get("cfg") or {}
@@ -291,6 +345,12 @@ def handle(updates: list, state: dict, data: dict | None, on_scan=None, on_close
                 reply = on_close(arg.strip().upper())
             else:
                 reply = "Kapatma şu an sadece canlı döngü açıkken yapılabilir."
+        elif cmd in ("/ekip", "/yoneticiler"):
+            reply = cmd_ekip(data)
+        elif cmd in ("/yonetici", "/yönetici"):
+            reply = cmd_yonetici(data, arg.strip().lower()) if arg.strip() else "Kullanım: /yonetici kaan"
+        elif cmd in ("/emirler", "/emir"):
+            reply = cmd_emirler(data)
         elif cmd == "/devam":
             reply = on_resume() if on_resume else "Bu komut canlı döngü açıkken çalışır."
         elif cmd == "/risk":
@@ -302,7 +362,7 @@ def handle(updates: list, state: dict, data: dict | None, on_scan=None, on_close
         else:
             reply = "Bilinmeyen komut. /yardim yaz."
         buttons = None
-        if data and data.get("dashboard_url") and cmd in ("/durum", "/sinyaller", "/karne", "/demo"):
+        if data and data.get("dashboard_url") and cmd in ("/durum", "/sinyaller", "/karne", "/demo", "/ekip"):
             buttons = [[{"text": "📊 Dashboard", "url": data["dashboard_url"]}]]
         nt.tg_send(cid, reply, buttons)
     return changed

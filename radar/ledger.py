@@ -52,7 +52,7 @@ def risk_cfg(cfg: dict) -> dict:
 
 
 def fees_cfg(cfg: dict) -> dict:
-    f = {"taker_yuzde": 0.05, "maker_yuzde": 0.02, "mmr_yuzde": 0.5}
+    f = {"taker_yuzde": 0.05, "maker_yuzde": 0.02, "mmr_yuzde": 0.5, "spot_taker_yuzde": 0.10}
     f.update(cfg.get("ucret") or {})
     return f
 
@@ -73,7 +73,8 @@ def migrate(ledger: dict, cfg: dict) -> dict:
             t.setdefault("qty_open", t["qty"])
             t.setdefault("partials", [])
             t.setdefault("partial_pnl_usd", 0.0)
-            t.setdefault("risk_usd", t["qty"] * abs(t["entry"] - t.get("sl_init", t["sl"])))
+            if "risk_usd" not in t and (t.get("sl_init") or t.get("sl")) is not None:
+                t["risk_usd"] = t["qty"] * abs(t["entry"] - (t.get("sl_init") or t["sl"]))
     ledger["version"] = 3
     return ledger
 
@@ -87,13 +88,28 @@ def _booked(t: dict) -> float:
     return t.get("partial_pnl_usd", 0.0) - t["fee_entry_usd"] - t.get("funding_usd", 0.0)
 
 
+def live_trades(trades: list[dict], mgr: str | None = None) -> list[dict]:
+    """Gölge (sermayesiz) işlemler hariç; mgr verilirse sadece o yöneticinin işlemleri."""
+    return [t for t in trades if not t.get("shadow") and (mgr is None or t.get("mgr") == mgr)]
+
+
+def pnl_parts(closed: list[dict], open_: list[dict]) -> dict:
+    """Bir işlem grubunun gerçekleşen/açık K/Z'si ve bağlı teminatı."""
+    booked = sum(_booked(t) for t in open_)
+    unreal_total = sum(t.get("upnl_usd", 0.0) for t in open_)
+    in_use = sum(t.get("margin_usd", 0.0) * (t.get("qty_open", t.get("qty", 1)) / (t.get("qty") or 1)) for t in open_)
+    realized = sum(t.get("pnl_usd", 0.0) for t in closed) + booked
+    return {"realized": realized, "unrealized": unreal_total - booked, "in_use": in_use}
+
+
 def balance(ledger: dict, cfg: dict) -> dict:
     dc = demo_cfg(cfg)
-    closed = sum(t.get("pnl_usd", 0.0) for t in ledger["closed"])
-    booked = sum(_booked(t) for t in ledger["open"])
-    unreal_total = sum(t.get("upnl_usd", 0.0) for t in ledger["open"])
+    closed_l, open_l = live_trades(ledger["closed"]), live_trades(ledger["open"])
+    closed = sum(t.get("pnl_usd", 0.0) for t in closed_l)
+    booked = sum(_booked(t) for t in open_l)
+    unreal_total = sum(t.get("upnl_usd", 0.0) for t in open_l)
     in_use = sum(t.get("margin_usd", 0.0) * (t.get("qty_open", t.get("qty", 1)) / (t.get("qty") or 1))
-                 for t in ledger["open"])
+                 for t in open_l)
     realized = closed + booked
     cash = dc["baslangic_bakiye"] + realized
     unreal = unreal_total - booked
@@ -103,6 +119,8 @@ def balance(ledger: dict, cfg: dict) -> dict:
 
 def open_risk(t: dict) -> float:
     """Pozisyonun şu anki riski: stop'a gidilirse kaybedilecek tutar (başabaşın ötesindeyse 0)."""
+    if t.get("carry"):
+        return t.get("risk_usd", 0.0)
     if not t.get("real"):
         return t.get("notional_usd", 20.0) * t.get("sl_pct", 0) / 100
     sgn = 1 if t["side"] == "long" else -1
@@ -312,15 +330,26 @@ def take_partial(t: dict, px: float, ts: int, cfg: dict) -> dict | None:
     if t.get("tp1_done") or not t.get("tp1"):
         return None
     fc, rc = fees_cfg(cfg), risk_cfg(cfg)
+    pp = t.get("pp") or {}
+    frac = pp.get("partial_frac", rc["kismi_kar_oran"])
+    trail_k = pp.get("trail_atr", rc["iz_suren_atr"])
+    be_on = pp.get("basabas", rc["basabas"])
     sgn = 1 if t["side"] == "long" else -1
-    q = t["qty_open"] * rc["kismi_kar_oran"]
+    if frac <= 0:
+        t["tp1_done"] = True
+        t["trail"] = trail_k > 0
+        if be_on:
+            _breakeven(t, cfg)
+        return None
+    q = t["qty_open"] * frac
     if t.get("contracts") and t["qty"] and t["contracts"] > 0:
         ct = t["qty"] / t["contracts"]                 # kontrat başına coin
         nc = math.floor(q / ct + 1e-9)
         if nc <= 0 or nc * ct >= t["qty_open"] - 1e-12:
             t["tp1_done"] = True                        # bölünemeyecek kadar küçük → kısmi yok, sadece yönetim
-            t["trail"] = True
-            _breakeven(t, cfg)
+            t["trail"] = trail_k > 0
+            if be_on:
+                _breakeven(t, cfg)
             return None
         q = nc * ct
     fee = q * px * fc["maker_yuzde"] / 100
@@ -329,8 +358,8 @@ def take_partial(t: dict, px: float, ts: int, cfg: dict) -> dict | None:
     t["partials"].append({"ts": ts, "px": px, "qty": q, "fee": round(fee, 6), "pnl": round(pnl, 6)})
     t["partial_pnl_usd"] = round(t.get("partial_pnl_usd", 0.0) + pnl, 6)
     t["tp1_done"] = True
-    t["trail"] = rc["iz_suren_atr"] > 0
-    if rc["basabas"]:
+    t["trail"] = trail_k > 0
+    if be_on:
         _breakeven(t, cfg)
     return t["partials"][-1]
 
@@ -352,7 +381,9 @@ def trail(t: dict, best_px: float, cfg: dict) -> bool:
     sgn = 1 if t["side"] == "long" else -1
     if sgn * (best_px - t.get("hw", t["entry"])) > 0:
         t["hw"] = best_px
-    k = risk_cfg(cfg)["iz_suren_atr"]
+    k = (t.get("pp") or {}).get("trail_atr", risk_cfg(cfg)["iz_suren_atr"])
+    if k <= 0:
+        return False
     new_sl = t["hw"] - sgn * k * t["atr"]
     if sgn * (new_sl - t["sl"]) > 0:
         t["sl"] = new_sl
@@ -366,6 +397,8 @@ def close_trade(t: dict, exit_px: float, exit_ts: int, outcome: str, cfg: dict, 
     """Kalan pozisyonu kapatır. Toplam K/Z = kısmi kârlar + kalan brüt − tüm ücretler − funding."""
     if not t.get("real"):
         return _close_legacy(t, exit_px, exit_ts, outcome, cfg)
+    if t.get("carry"):
+        return close_carry(t, exit_px, t.get("spot_last", t["spot_entry"]), exit_ts, outcome, cfg)
     fc = fees_cfg(cfg)
     sgn = 1 if t["side"] == "long" else -1
     q = t.get("qty_open", t["qty"])
@@ -445,6 +478,13 @@ def apply_funding(ledger: dict, inst: str, rate: float, settle_ts: int, price: f
 def upnl(t: dict, px: float, cfg: dict | None = None) -> float:
     """'Şimdi kapatsam net ne olur': kısmi kârlar + kalan brüt − giriş ücreti − funding − tahmini çıkış ücreti."""
     sgn = 1 if t["side"] == "long" else -1
+    if t.get("carry"):
+        spot = t.get("spot_last", t["spot_entry"])
+        q = t["qty"]
+        fc = fees_cfg(cfg) if cfg else {"taker_yuzde": 0.05, "spot_taker_yuzde": 0.1}
+        exit_fee = q * px * fc["taker_yuzde"] / 100 + q * spot * fc.get("spot_taker_yuzde", 0.1) / 100
+        return (q * (spot - t["spot_entry"]) + q * (t["entry"] - px) - t["fee_entry_usd"]
+                - t.get("funding_usd", 0.0) - exit_fee)
     if t.get("real"):
         q = t.get("qty_open", t["qty"])
         taker = (fees_cfg(cfg)["taker_yuzde"] if cfg else 0.05) / 100
@@ -468,6 +508,9 @@ def update(ledger: dict, fetch, prices: dict[str, float], cfg: dict,
     slip = cfg["defter"].get("kayma", 0.05) / 100
     closed, still = [], []
     for t in ledger["open"]:
+        if t.get("carry"):
+            still.append(t)
+            continue
         sgn = 1 if t["side"] == "long" else -1
         deadline = t["entry_ts"] + t["max_saat"] * 3600 * 1000
         try:
@@ -530,6 +573,14 @@ def mark(ledger: dict, prices: dict[str, float], cfg: dict | None = None) -> Non
     for t in ledger["open"]:
         px = prices.get(t["inst"])
         if not px:
+            continue
+        if t.get("carry"):
+            sp = prices.get(t["spot_inst"])
+            if sp:
+                t["spot_last"] = sp
+            t["last"] = px
+            t["upnl_usd"] = round(upnl(t, px, cfg), 4)
+            t["r_now"] = round(t["upnl_usd"] / (t.get("risk_usd") or 1e-9), 2)
             continue
         sgn = 1 if t["side"] == "long" else -1
         risk = abs(t["entry"] - t.get("sl_init", t["sl"])) or 1e-12
@@ -633,7 +684,8 @@ def perf_metrics(eq_hist: list, start: float) -> dict:
 
 def stats(ledger: dict, cfg: dict, tfs: list[str] | None = None, eq_hist: list | None = None) -> dict:
     min_n = cfg["defter"]["min_ornek"]
-    closed = ledger["closed"]
+    closed = live_trades(ledger["closed"])
+    ledger = {**ledger, "open": live_trades(ledger["open"]), "closed": closed}
     out = {"overall": _summ(closed), "by_setup": {}, "by_score": {}, "by_tag": [], "by_tf": {},
            "by_setup_tf": {}, "open_count": len(ledger["open"])}
     out["overall"]["verdict"] = verdict(out["overall"], min_n)
@@ -691,3 +743,86 @@ def stats(ledger: dict, cfg: dict, tfs: list[str] | None = None, eq_hist: list |
     }
     out["perf"] = perf_metrics(eq_hist or [], start)
     return out
+
+
+# ── ekip (yönetici) işlemleri ──────────────────────────────────────────
+
+def build_trade(idea: dict, entry: float, qty: float, contracts: float, lev: float, cfg: dict, now_ms: int,
+                equity_ref: float, src: str = "piyasa", slip_bp: float = 0.0, maker_entry: bool = False,
+                shadow: bool = False) -> dict:
+    """Bir yönetici fikrinden pozisyon kaydı oluşturur (boyut ve fiyat risk müdürü tarafından belirlenmiştir)."""
+    fc = fees_cfg(cfg)
+    sgn = 1 if idea["side"] == "long" else -1
+    shift = entry - idea["entry"]
+    sl, tp = idea["sl"] + shift, idea["tp"] + shift
+    tp1 = idea.get("tp1")
+    if tp1 is not None:
+        tp1 += shift
+    notional = qty * entry
+    fee_entry = notional * (fc["maker_yuzde"] if maker_entry else fc["taker_yuzde"]) / 100
+    liq = liq_price(idea["side"], entry, lev, fc["mmr_yuzde"])
+    sl_eff, liq_first = sl, False
+    if liq is not None and ((sgn > 0 and liq >= sl) or (sgn < 0 and liq <= sl)):
+        sl_eff, liq_first = liq, True
+    risk_now = qty * abs(entry - sl)
+    return {
+        "id": uuid.uuid4().hex[:10], "real": True, "v": 4, "mgr": idea["mgr"], "shadow": shadow,
+        "inst": idea["inst"], "sym": idea["sym"], "setup": idea.get("setup", idea["mgr"]), "side": idea["side"],
+        "kind": idea.get("kind", "trend"), "tf": idea["tf"], "score": int(round(idea.get("conviction", 0) * 100)),
+        "raw": int(round(idea.get("conviction", 0) * 100)), "conviction": idea.get("conviction", 0),
+        "checks": idea.get("checks", []), "plan": idea.get("plan", ""),
+        "entry_ts": now_ms, "entry": entry, "entry_src": src, "signal_px": idea["entry"], "slip_bp": round(slip_bp, 2),
+        "sl": sl_eff, "sl_init": sl, "tp": tp, "tp1": tp1, "tp1_done": False, "trail": False,
+        "atr": idea.get("atr") or abs(entry - sl), "hw": entry, "liq": liq, "liq_first": liq_first,
+        "sl_pct": abs(entry - sl_eff) / entry * 100, "tp_pct": abs(tp - entry) / entry * 100,
+        "max_saat": idea["max_saat"], "pp": idea.get("pp") or {},
+        "contracts": contracts, "qty": qty, "qty_open": qty, "margin_usd": notional / lev, "lev": lev,
+        "notional_usd": notional, "risk_usd": risk_now,
+        "risk_pct": risk_now / equity_ref * 100 if equity_ref else 0,
+        "fee_entry_usd": fee_entry, "funding_usd": 0.0, "funding_events": 0, "fund_done": [],
+        "partials": [], "partial_pnl_usd": 0.0,
+        "funding_rate": idea.get("funding_rate", 0.0) or 0.0, "interval_h": idea.get("interval_h", 8) or 8,
+        "regime": idea.get("regime", 0), "tags": idea.get("tags", []), "reasons": idea.get("reasons", [])[:8],
+        "last": entry, "r_now": 0.0, "upnl_usd": -fee_entry, "mfe_r": 0.0, "mae_r": 0.0,
+    }
+
+
+def build_carry(mgr: str, inst: str, sym: str, spot_inst: str, perp_px: float, spot_px: float, qty: float,
+                cfg: dict, now_ms: int, info: dict, shadow: bool = False) -> dict:
+    """Delta-nötr funding pozisyonu: spot long + perpetual short (aynı miktar). Fiyat riski ~0, funding toplanır."""
+    fc = fees_cfg(cfg)
+    notional = qty * perp_px
+    fee_entry = qty * perp_px * fc["taker_yuzde"] / 100 + qty * spot_px * fc["spot_taker_yuzde"] / 100
+    margin = qty * spot_px + notional / 5          # spot tam ödenir, vadeli 5x teminat
+    return {
+        "id": uuid.uuid4().hex[:10], "real": True, "v": 4, "carry": True, "mgr": mgr, "shadow": shadow,
+        "inst": inst, "sym": sym, "spot_inst": spot_inst, "setup": "carry", "side": "short", "kind": "carry",
+        "tf": "8H", "score": int(min(99, info.get("stability", 0))), "raw": 0, "conviction": info.get("stability", 0) / 100,
+        "entry_ts": now_ms, "entry": perp_px, "spot_entry": spot_px, "spot_last": spot_px, "entry_src": "piyasa",
+        "sl": None, "sl_init": None, "tp": None, "tp1": None, "tp1_done": True, "trail": False,
+        "sl_pct": 0, "tp_pct": 0, "max_saat": 24 * 45, "pp": {},
+        "contracts": 0, "qty": qty, "qty_open": qty, "margin_usd": margin, "lev": 1, "notional_usd": notional,
+        "risk_usd": notional * 0.01,          # baz riski ve olası funding dönüşü için %1 varsayım
+        "risk_pct": 0, "fee_entry_usd": fee_entry, "funding_usd": 0.0, "funding_events": 0, "fund_done": [],
+        "partials": [], "partial_pnl_usd": 0.0, "funding_rate": 0.0, "interval_h": info.get("interval_h", 8),
+        "neg_count": 0, "ann_entry": info.get("ann_30d"), "reasons": info.get("reasons", []),
+        "plan": f"Spot al + vadeli short. 30g funding ort. %{info.get('ann_30d', 0):.0f}/yıl, istikrar {info.get('stability', 0)}.",
+        "last": perp_px, "r_now": 0.0, "upnl_usd": -fee_entry, "mfe_r": 0.0, "mae_r": 0.0,
+    }
+
+
+def close_carry(t: dict, perp_px: float, spot_px: float, exit_ts: int, outcome: str, cfg: dict) -> dict:
+    fc = fees_cfg(cfg)
+    q = t["qty"]
+    fee_exit = q * perp_px * fc["taker_yuzde"] / 100 + q * spot_px * fc["spot_taker_yuzde"] / 100
+    basis = q * (spot_px - t["spot_entry"]) + q * (t["entry"] - perp_px)
+    pnl = basis - t["fee_entry_usd"] - fee_exit - t.get("funding_usd", 0.0)
+    hours = max(0.0, (exit_ts - t["entry_ts"]) / 3.6e6)
+    t.update({"exit_ts": exit_ts, "exit": perp_px, "spot_exit": spot_px, "outcome": outcome, "exit_liq": "taker",
+              "gross_usd": round(basis, 4), "fee_exit_usd": round(fee_exit, 4),
+              "fee_usd": round(t["fee_entry_usd"] + fee_exit, 4), "pnl_usd": round(pnl, 4),
+              "pnl_pct": round(pnl / t["notional_usd"] * 100, 3), "roi_pct": round(pnl / t["margin_usd"] * 100, 2),
+              "r": round(pnl / (t.get("risk_usd") or 1e-9), 3), "hours": round(hours, 2), "qty_open": 0.0})
+    for k in ("last", "r_now", "upnl_usd", "fund_done"):
+        t.pop(k, None)
+    return t

@@ -19,7 +19,7 @@ from . import signals as sg
 from . import store
 from .config import load_config
 
-VERSION = "6.0"
+VERSION = "7.0"
 
 
 def _f(x, d=float("nan")):

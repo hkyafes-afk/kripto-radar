@@ -100,14 +100,40 @@ panel:
   telegram_panel: true       # Telegram'da sabitlenmiş, kendiliğinden güncellenen canlı panel mesajı
   panel_sn: 15               # kaç saniyede bir güncellensin
 
+# ── YATIRIM EKİBİ ── 7 yönetici + risk müdürü. Başlangıç sermayesi demo.baslangic_bakiye, eşit dağıtılır.
+# Her yönetici kendi sermayesinin yüzdesi kadar risk alır: taban (az kanıt) → tavan (tüm doğrulamalar tuttu).
+ekip:
+  aktif: true
+  yoneticiler:
+    kemal: {aktif: true, taban_risk: 1.5, tavan_risk: 2.5, yedek_dusus: 20}   # Swing (4S)
+    deniz: {aktif: true, taban_risk: 1.5, tavan_risk: 2.5, yedek_dusus: 20}   # Gün içi (15dk)
+    ayse:  {aktif: true, taban_risk: 1.5, tavan_risk: 2.5, yedek_dusus: 20}   # Kontrarian (1S)
+    murat: {aktif: true, taban_risk: 1.5, tavan_risk: 2.5, yedek_dusus: 20}   # Teknik / Fibonacci (1S, 4S)
+    elif:  {aktif: true}                                                       # Piyasa-nötr funding (spot + vadeli)
+    kaan:  {aktif: true, taban_risk: 3.0, tavan_risk: 5.0, yedek_dusus: 30}   # Kırılım, agresif (1S, 4S)
+    selin: {aktif: true, taban_risk: 3.0, tavan_risk: 5.0, yedek_dusus: 30}   # Squeeze, agresif (15dk, 1S)
+  firma:                       # risk müdürünün firma geneli limitleri (işlem SAYISI sınırı yok, sınırlar risk cinsinden)
+    gunluk_kayip_yuzde: 3.0    # % firma bugün bu kadar kaybederse o gün yeni işlem yok
+    max_dusus_yuzde: 15.0      # % firma zirveden bu kadar düşerse durur (/devam)
+    max_isi_yuzde: 10.0        # % tüm açık işlemlerin toplam riski
+    coin_risk_yuzde: 2.5       # % aynı coinde (tüm yöneticiler toplamı) en fazla risk
+    yon_risk_yuzde: 6.0        # % aynı yönde (long ya da short) toplam risk
+    max_nominal_kat: 2.0       # tek pozisyon en fazla yönetici sermayesinin 2 katı nominal
+    tekrar_bekleme_mum: 3      # aynı yönetici aynı coinde kapanıştan sonra kaç mum bekler
+    yeniden_dagitim_gun: 7     # risk müdürü kaç günde bir sermayeyi performansa göre dağıtır
+    dagitim_min_islem: 15
+    carry_max_cift: 3          # Elif aynı anda en fazla kaç funding pozisyonu tutar
+    carry_min_yillik: 15       # % 30 günlük funding ortalaması en az
+
 # Gerçek OKX ücretleri (VIP0). Giriş ve stop/süre çıkışı piyasa emri (taker), hedef limit emir (maker).
 ucret:
   taker_yuzde: 0.05
   maker_yuzde: 0.02
+  spot_taker_yuzde: 0.10     # spot piyasa emri (Elif'in spot bacağı)
   mmr_yuzde: 0.5             # bakım marjı (kaldıraçta likidasyon hesabı için)
 
 canli:
-  dongu_dakika: 330          # GitHub'da tek çalışma süresi (en fazla ~350); bitince yenisi devralır
+  dongu_dakika: 14           # GitHub'da tek çalışma süresi (en fazla ~350); bitince yenisi devralır
   websocket: true            # OKX canlı fiyat akışı (her fiyat değişiminde stop/hedef kontrolü)
   bitget_ws: true            # Bitget canlı fiyat akışı (borsalar arası fark)
   fiyat_kontrol_sn: 60       # ek güvenlik: 1 dk'lık mumlarla kaç saniyede bir kontrol edilsin

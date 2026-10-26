@@ -1,20 +1,20 @@
 name: Canlı döngü
 
-# Sürekli açık kalan tarama + demo hesap. Tek çalışma ~5,5 saat sürer.
-# Saatlik tetik, çalışan döngü varken sıraya girer ve o bitince hemen devralır
-# (aynı anda en fazla 1 çalışan + 1 bekleyen; fazlası GitHub tarafından iptal edilir, bu normaldir).
+# 7/24 çalışma: her döngü ~5,5 saat sürer ve bitmeden halefini kendisi başlatır (devir=1).
+# Halef ısınıp bekler, nöbet bırakıldığı an en güncel durumla devralır (birkaç saniye).
+# Zamanlanmış tetik bekçidir: nöbetteki döngü sağlıklıysa hemen kapanır; nabız durmuşsa devralır.
 on:
   schedule:
-    - cron: "4 * * * *"
+    - cron: "*/15 * * * *"
   workflow_dispatch:
+    inputs:
+      devir:
+        description: "Önceki döngüden devir (otomatik)"
+        default: "0"
 
 permissions:
   contents: write
   actions: write
-
-concurrency:
-  group: radar
-  cancel-in-progress: false
 
 jobs:
   live:
@@ -23,34 +23,56 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - name: Nöbet kontrolü
+        id: nobet
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEVIR: ${{ github.event.inputs.devir || '0' }}
+        run: |
+          d=$(mktemp -d)
+          if git clone -q --depth 1 --branch kalp "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "$d" 2>/dev/null && [ -f "$d/lease.json" ]; then
+            live=$(python3 -c "import json,time;l=json.load(open('$d/lease.json'));print(1 if (not l.get('released') and time.time()-l.get('hb',0)/1000<180) else 0)")
+          else
+            live=0
+          fi
+          echo "Nöbette sağlıklı döngü: $live, devir: $DEVIR"
+          if [ "$live" = "1" ] && [ "$DEVIR" != "1" ]; then echo "calis=0" >> "$GITHUB_OUTPUT"; else echo "calis=1" >> "$GITHUB_OUTPUT"; fi
+
       - uses: actions/setup-python@v6
+        if: steps.nobet.outputs.calis == '1'
         with:
           python-version: "3.12"
           cache: pip
 
       - name: Kütüphaneleri kur
+        if: steps.nobet.outputs.calis == '1'
         run: pip install -r requirements.txt
 
-      - name: Önceki durumu al (demo hesap, ayarlar, dashboard)
+      - name: Önceki durumu al (dashboard)
+        if: steps.nobet.outputs.calis == '1'
         run: bash scripts/site.sh pull
 
       - name: Canlı döngü
+        if: steps.nobet.outputs.calis == '1'
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           CALLMEBOT_PHONE: ${{ secrets.CALLMEBOT_PHONE }}
           CALLMEBOT_APIKEY: ${{ secrets.CALLMEBOT_APIKEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEVIR: ${{ github.event.inputs.devir || '0' }}
         run: python -m radar live --site site
 
       - name: Son durumu yayınla
-        if: always()
+        if: always() && steps.nobet.outputs.calis == '1'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: bash scripts/site.sh push "döngü sonu"
+        run: |
+          if [ -f site/.nobet_yok ]; then echo "Nöbet alınmadı, yayın atlandı."; exit 0; fi
+          bash scripts/site.sh push "döngü sonu"
 
       - name: Haftalık karneyi kaydet
-        if: always()
+        if: always() && steps.nobet.outputs.calis == '1'
         run: |
           if [ -f data/KARNE.md ]; then
             git config user.name "kripto-radar"

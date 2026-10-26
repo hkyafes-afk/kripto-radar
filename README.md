@@ -77,6 +77,38 @@ Bitti. Bundan sonra kendi kendine sürekli çalışır.
 
 ---
 
+## Yatırım ekibi (v7)
+
+1.000$ başlangıç sermayesi 7 yöneticiye eşit dağıtılır. Her yönetici kendi tarzıyla fikir üretir; risk müdürü onaylar.
+
+| Yönetici | Tarz | Periyot | İşlem başı risk |
+|---|---|---|---|
+| 🧭 Kemal | Swing: trend + günlük trend, geri çekilmede limit emir | 4S | %1,5–2,5 |
+| ⚡ Deniz | Gün içi: trend içi RSI geri çekilmesinden dönüş, en fazla 8 saat | 15dk | %1,5–2,5 |
+| 🔄 Ayşe | Kontrarian: funding uçta + aşırı uzama → ortalamaya dönüş | 1S | %1,5–2,5 |
+| 📐 Murat | Teknik: son dalganın %50–70,5 Fibonacci bölgesinde dönüş onayı | 1S, 4S | %1,5–2,5 |
+| ⚖️ Elif | Piyasa-nötr: spot al + vadeli short, istikrarlı funding toplar | 8 saatlik funding | yön riski yok |
+| 🚀 Kaan | Kırılım (agresif): hacimli aralık kırılımı + yeni para girişi | 1S, 4S | %3–5 |
+| 🌪 Selin | Squeeze (agresif): en dar volatiliteden patlama + sıkışan kalabalık | 15dk, 1S | %3–5 |
+
+- **Güven = tutan doğrulama oranı.** Risk tabandan tavana kanıtla büyür; az kanıtla büyük oynanamaz.
+- **Risk müdürü:** işlem sayısı sınırı yok; sınırlar risk cinsinden: firma toplam riski %10, aynı coinde %2,5, aynı yönde %6,
+  günlük kayıp %3 (o gün durur), zirveden %15 düşüş (durur, /devam).
+- **Yedek kulübesi:** zirvesinden %20 (agresiflerde %30) düşen yönetici gölgede sermayesiz işlem yapar; 10 işlemde +0,1R
+  ortalama yaparsa geri döner. **Haftalık sermaye dağıtımı:** son 30 günün ortalama R'sine göre.
+- **Maliyetler kâra dahil:** OKX vadeli piyasa %0,05 / limit %0,02, spot %0,10, gerçek bid/ask ve derinlik (VWAP), funding
+  gerçek kesim anında, stop'ta kötü dolum.
+- **Karar günlüğü:** her açılış, red, iptal ve sermaye kararı gerekçesiyle kaydedilir (dashboard → Ekip).
+
+## 7/24 çalışma ve sağlık
+
+- Her döngü ~5,5 saat sürer; bitmeden 6 dk önce halefini başlatır, halef ısınıp bekler ve nöbeti **birkaç saniyede** devralır.
+  Durum her dakika `kalp` dalına yedeklenir. Döngü çökerse 15 dakikalık bekçi devralır.
+- **Sağlık denetçisi (30 sn):** donmuş/kopuk akışı yeniden bağlar, ölen thread'leri yeniden başlatır, gecikmiş taramayı,
+  muhasebe tutarlılığını (yönetici bakiyeleri toplamı = firma bakiyesi) ve geçersiz pozisyonları kontrol eder; kritik sorunu Telegram'a bildirir.
+- **Veri sağlığı:** eksik/gecikmiş mum, canlı fiyatla tutarsızlık ya da Bitget ile %3+ fark olan coinde işlem açılmaz.
+- Telegram: `/ekip`, `/yonetici kaan`, `/emirler`, `/saglik`, `/risk`.
+
 ## Orijinal prompt'a göre neler değişti ve neden?
 
 | Orijinal (Mac versiyonu) | Bu versiyon | Neden |

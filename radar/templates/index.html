@@ -157,6 +157,8 @@ input.search:focus{border-color:var(--muted)}
     <div id="sigBody"></div>
   </section>
 
+  <section id="t-team"><div id="teamBody"></div></section>
+
   <section id="t-demo">
     <p class="note">Bot her güçlü sinyalde kendi kendine <b>sanal işlem</b> açar ve stop, hedef ya da süre dolunca kapatır. Komisyon, kayma ve funding düşülür.
     Gerçek para yoktur; amaç sinyallerin para kazandırıp kazandırmadığını ölçmek.</p>
@@ -200,10 +202,12 @@ window.__DATA__ = /*__DATA__*/null;
 "use strict";
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const LBL = {trend_long:"Trend Long",trend_short:"Trend Short",donus_long:"Dönüş Long",donus_short:"Dönüş Short"};
+const LBL = {trend_long:"Trend Long",trend_short:"Trend Short",donus_long:"Dönüş Long",donus_short:"Dönüş Short",carry:"Funding carry"};
+const who = t => { const m = D && D.team && D.team[t.mgr]; return m ? `<span class="badge b-dim">${m.emoji} ${esc(m.name)}${t.shadow?" · gölge":""}</span>` : ""; };
+const slbl = t => LBL[t.setup] || (D.team && D.team[t.mgr] ? D.team[t.mgr].title : (t.setup||""));
 let D = window.__DATA__, BT = null;
-let state = {tab:"sig", filter:"all", raw:false, sort:{k:"vol24_usd",d:-1}, q:""};
-try { const s = JSON.parse(localStorage.getItem("kr_ui")||"{}"); Object.assign(state, {tab:s.tab||"sig", filter:s.filter||"all", raw:!!s.raw}); } catch(e){}
+let state = {tab:"team", filter:"all", raw:false, sort:{k:"vol24_usd",d:-1}, q:""};
+try { const s = JSON.parse(localStorage.getItem("kr_ui")||"{}"); Object.assign(state, {tab:s.tab||"team", filter:s.filter||"all", raw:!!s.raw}); } catch(e){}
 const save = () => { try { localStorage.setItem("kr_ui", JSON.stringify({tab:state.tab,filter:state.filter,raw:state.raw})); } catch(e){} };
 
 // tema
@@ -253,14 +257,14 @@ function render(){
     <div class="kpi"><div class="l">Rejim</div><div class="v">${reg}</div><div class="s">EMA200 ${fp(b.ema200)}</div></div>
     <div class="kpi"><div class="l">Güçlü sinyal</div><div class="v num">${D.counts.strong}</div><div class="s">${D.counts.scanned} coin tarandı</div></div>
     <div class="kpi"><div class="l">Demo bakiye</div><div class="v num" id="kpiEq">${money(DM.equity,false)}</div><div class="s num ${cls(DM.return_pct)}" id="kpiRet">${pct(DM.return_pct,2)} · ${D.ledger.open.length} açık</div></div>`;
-  const tabs = [["sig","Sinyaller",D.counts.strong],["demo","Demo",D.ledger.open.length],["led","Karne",L.n||0],["fund","Funding",D.harvest.length],["coins","Coinler",D.coins.length]];
+  const tabs = (D.team ? [["team","Ekip",Object.keys(D.team).length]] : []).concat([["demo","İşlemler",D.ledger.open.length],["sig","Sinyaller",D.counts.strong]]).concat([["led","Karne",L.n||0],["fund","Funding",D.harvest.length],["coins","Coinler",D.coins.length]]);
   if (BT) tabs.push(["bt","Backtest",""]);
   tabs.push(["guide","Rehber",""]);
-  if (!tabs.find(t=>t[0]===state.tab)) state.tab = "sig";
+  if (!tabs.find(t=>t[0]===state.tab)) state.tab = tabs[0][0];
   $("#tabs").innerHTML = tabs.map(([k,n,c]) => `<button class="tab ${state.tab===k?"on":""}" data-t="${k}">${n}${c!==""?`<span class="c">${c}</span>`:""}</button>`).join("");
   document.querySelectorAll(".tab").forEach(el => el.onclick = () => { state.tab = el.dataset.t; save(); render(); scrollTo({top:0}); });
   document.querySelectorAll("section").forEach(s => s.classList.toggle("on", s.id === "t-"+state.tab));
-  ({sig:renderSignals,demo:renderDemo,fund:()=>{renderFunding();renderArb();},led:renderLedger,coins:renderCoins,bt:renderBT,guide:renderGuide})[state.tab]();
+  ({team:renderTeam,sig:renderSignals,demo:renderDemo,fund:()=>{renderFunding();renderArb();},led:renderLedger,coins:renderCoins,bt:renderBT,guide:renderGuide})[state.tab]();
   $("#foot").innerHTML = `v${esc(D.version)} · ${D.counts.scanned}/${D.counts.universe} coin · ${D.duration_s!=null ? D.duration_s+" sn · " : ""}${D.scan_times ? "son tarama "+Object.entries(D.scan_times).map(([k,v])=>tfl(k)+" "+v).join(", ")+" · " : ""}OI: ${esc(D.oi_source)} · taker verisi: ${D.taker_real}/${D.coins.length}<br>Karar destek aracıdır · otomatik emir vermez · yatırım tavsiyesi değildir`;
 }
 
@@ -396,6 +400,55 @@ function eqChart(eq, start){
     <div class="row" style="justify-content:space-between;font-size:11.5px;color:var(--muted)"><span>başlangıç ${money(start,false)}</span><span class="num">min ${money(mn,false)} · max ${money(mx,false)}</span></div>`;
 }
 
+function renderTeam(){
+  const T = D.team || {}, R = D.risk || {}, DM = D.ledger.stats.demo || {}, F = (D.risk||{}).cfg || {};
+  const ms = Object.values(T).sort((a,b) => b.equity - a.equity);
+  const tot = ms.reduce((a,m)=>a+m.equity,0), start = (D.ledger.stats.demo||{}).start || 1000;
+  const halt = R.halt==="dusus" ? `<span class="badge b-red">🛑 durduruldu</span>` : R.halt==="gunluk" ? `<span class="badge b-amber">⏸ günlük limit</span>` : `<span class="badge b-green">işlem açık</span>`;
+  const hs = D.health || {}, hsb = hs.status==="sağlıklı" ? "b-green" : hs.status==="kritik" ? "b-red" : hs.status==="uyarı" ? "b-amber" : "b-dim";
+  let h = `<div class="card"><div class="hd"><div><div class="lbl">Firma bakiyesi · ${ms.length} yönetici</div>
+      <div class="num" id="teamEq" style="font-size:30px;font-weight:800;margin-top:4px">${money(tot,false)}</div></div>
+      <div class="score"><div class="v ${cls(tot-start)}" style="font-size:20px">${pct((tot/start-1)*100,2)}</div><div class="raw">başlangıç ${money(start,false)}</div></div></div>
+    <div class="chipline">${halt}<span class="badge ${hsb}">sistem ${esc(hs.status||"?")}</span>
+      <span class="badge b-dim">açık risk ${money(DM.heat_usd,false)} (%${(DM.heat_pct||0).toFixed(1).replace(".",",")})</span>
+      <span class="badge b-dim">bugün ${money(R.day_pnl||0)}</span><span class="badge b-dim">${(D.orders||[]).length} bekleyen emir</span></div>
+    ${(hs.issues||[]).length ? `<p class="note">${hs.issues.map(esc).join("<br>")}</p>` : ""}</div>`;
+  h += `<h2>Yöneticiler</h2><div class="grid">` + ms.map(m => {
+    const s = m.stats || {}, w = Math.max(4, Math.min(100, m.equity / (tot||1) * 100 * ms.length / 2));
+    const st = m.benched ? `<span class="badge b-amber">🪑 yedekte</span>` : `<span class="badge b-green">aktif</span>`;
+    return `<div class="card" style="border-left:3px solid ${m.aggressive ? "var(--amber)" : m.kind==="carry" ? "var(--blue)" : "var(--green)"}">
+      <div class="hd"><div style="min-width:0"><div class="sym">${m.emoji} ${esc(m.name)}</div><div class="lbl">${esc(m.title)} · ${m.kind==="carry" ? "yön riski yok" : "risk %"+String(m.base_risk).replace(".",",")+"–%"+String(m.max_risk).replace(".",",")}</div></div>
+        <div class="score"><div class="v num ${cls(m.pnl)}" style="font-size:18px">${money(m.equity,false)}</div><div class="raw ${cls(m.return_pct)}">${pct(m.return_pct,2)}</div></div></div>
+      <div class="bar"><i style="width:${w}%;background:${m.pnl>=0?"var(--green)":"var(--red)"}"></i></div>
+      <div class="stat">
+        <div><div class="k">İşlem</div><div class="x">${s.n||0}</div></div>
+        <div><div class="k">İsabet</div><div class="x">${s.n?"%"+Math.round(s.win_rate):"–"}</div></div>
+        <div><div class="k">Ort. R</div><div class="x ${cls(s.avg_r)}">${s.n?(s.avg_r>0?"+":"")+s.avg_r.toFixed(2):"–"}</div></div>
+        <div><div class="k">Açık</div><div class="x">${m.open}${m.orders?" +"+m.orders:""}</div></div>
+      </div>
+      <p class="note" style="margin:8px 0 0">${esc(m.style)}</p>
+      <div class="chipline">${st}${m.aggressive?`<span class="badge b-amber">agresif</span>`:""}<span class="badge b-dim">${(m.tfs||[]).map(tfl).join(" · ")||"8 saatlik funding"}</span>
+        ${m.dd_pct<0?`<span class="badge b-dim">zirveden %${Math.abs(m.dd_pct).toFixed(1).replace(".",",")}</span>`:""}${m.loss_streak>=2?`<span class="badge b-red">${m.loss_streak} kayıp üst üste</span>`:""}
+        ${m.shadow && m.shadow.closed ? `<span class="badge b-dim">gölge ${m.shadow.closed} işlem · ${m.shadow.avg_r>0?"+":""}${(m.shadow.avg_r||0).toFixed(2)}R</span>` : ""}</div>
+    </div>`; }).join("") + `</div>`;
+  const O = D.orders || [];
+  h += `<h2>Bekleyen limit emirler <span class="n">${O.length}</span></h2>`;
+  h += O.length ? `<div class="list">` + O.map(o => { const m = T[o.mgr] || {};
+      return `<div class="li"><div style="min-width:0"><div>${m.emoji||""} <b>${esc(m.name||o.mgr)}</b> · <b>${esc(o.sym)}</b> <span class="badge ${o.side==="long"?"b-green":"b-red"}">${o.side==="long"?"LONG":"SHORT"}</span> <span class="m">${tfl(o.tf)} · güven %${Math.round(o.conviction*100)}</span></div>
+      <div class="m num">emir ${fp(o.px)} · şu an ${fp(o.market)} · ${Math.max(0, Math.round((o.expire_ts - Date.now())/60000))} dk geçerli</div><div class="m">${esc(o.plan||"")}</div></div></div>`; }).join("") + `</div>`
+    : `<div class="empty">Bekleyen emir yok. Yöneticiler geri çekilme beklediklerinde burada görünür.</div>`;
+  const J = (D.journal || []).slice().reverse().slice(0, 40);
+  h += `<h2>Karar günlüğü</h2>`;
+  h += J.length ? `<div class="list">` + J.map(j => { const m = T[j.mgr] || {};
+      const col = /açtı|doldu|döndü/.test(j.action) ? "b-green" : /redd|iptal|vazgeç|yedeğe/.test(j.action) ? "b-amber" : "b-dim";
+      return `<div class="li"><div style="min-width:0"><div>${m.emoji||""} <b>${esc(m.name||j.mgr)}</b> ${j.sym!=="-"?"· <b>"+esc(j.sym)+"</b> "+tfl(j.tf):""} <span class="badge ${col}">${esc(j.action)}</span></div>
+      <div class="m">${esc(j.reason)} · ${ago(j.ts)}</div></div></div>`; }).join("") + `</div>`
+    : `<div class="empty">Henüz karar yok.</div>`;
+  const A = D.archive || {};
+  if (A.n) h += `<p class="note">Eski sistemin ${A.n} işlemi arşivde (${(A.periods||[]).map(p=>money(p.pnl_usd)).join(", ")}). Ekip ${D.team_started?ago(D.team_started).replace(" önce",""):""} önce temiz bir sayfayla başladı.</p>`;
+  $("#teamBody").innerHTML = h;
+}
+
 function riskCard(){
   const R = D.risk || {}, C = R.cfg || {}, DM = D.ledger.stats.demo || {};
   if (!C.risk_yuzde) return "";
@@ -441,7 +494,7 @@ function perfCard(){
 const LIVE = {px:{}, ws:null, last:0, ticks:0, want:"", tries:0, prev:{}};
 function liveWanted(){
   const s = new Set(["BTC-USDT-SWAP"]);
-  if (D) D.ledger.open.forEach(t => s.add(t.inst));
+  if (D) D.ledger.open.forEach(t => { s.add(t.inst); if (t.spot_inst) s.add(t.spot_inst); });
   return [...s].sort();
 }
 function liveConnect(){
@@ -463,6 +516,7 @@ function liveConnect(){
 setInterval(() => { try { if (LIVE.ws && LIVE.ws.readyState === 1) LIVE.ws.send("ping"); } catch(e){} }, 20000);
 function liveUpnl(t, px){
   const sg = t.side === "long" ? 1 : -1, tk = ((D.fees||{}).taker_yuzde ?? 0.05) / 100;
+  if (t.carry){ const sp = LIVE.px[t.spot_inst] || t.spot_last || t.spot_entry, q = t.qty; return q*(sp - t.spot_entry) + q*(t.entry - px) - (t.fee_entry_usd||0) - (t.funding_usd||0) - q*px*tk - q*sp*0.001; }
   if (t.real){ const q = t.qty_open ?? t.qty; return (t.partial_pnl_usd||0) + sg*q*(px - t.entry) - (t.fee_entry_usd||0) - (t.funding_usd||0) - q*px*tk; }
   return (t.notional_usd||20) * sg * (px / t.entry - 1);
 }
@@ -484,9 +538,9 @@ function liveRender(){
   let snap = 0, live = 0;
   D.ledger.open.forEach(t => {
     const px = LIVE.px[t.inst]; const u = px ? liveUpnl(t, px) : (t.upnl_usd||0);
-    snap += t.upnl_usd||0; live += u;
+    if (!t.shadow){ snap += t.upnl_usd||0; live += u; }
     if (px){
-      const sg = t.side === "long" ? 1 : -1, risk = Math.abs(t.entry - (t.sl_init ?? t.sl)) || 1e-12, r = sg*(px - t.entry)/risk;
+      const sg = t.side === "long" ? 1 : -1, risk = t.carry ? 0 : (Math.abs(t.entry - (t.sl_init ?? t.sl)) || 1e-12), r = t.carry ? (u / (t.risk_usd || 1)) : sg*(px - t.entry)/risk;
       const ep = document.querySelector(`[data-lpx="${t.id}"]`); if (ep) ep.textContent = fp(px);
       const el = document.querySelector(`[data-lpnl="${t.id}"]`); if (el){ el.dataset.k = "p"+t.id; setTxt(el, money(u), u); }
       const er = document.querySelector(`[data-lr="${t.id}"]`); if (er) er.textContent = pct(t.notional_usd ? u/t.notional_usd*100 : 0, 2) + " · " + (r>0?"+":"") + r.toFixed(2) + "R";
@@ -496,6 +550,7 @@ function liveRender(){
   const e1 = $("#kpiEq"); if (e1){ e1.dataset.k = "eq"; setTxt(e1, money(eq,false), null); }
   const r1 = $("#kpiRet"); if (r1) r1.textContent = pct(ret,2) + " · " + D.ledger.open.length + " açık";
   const e2 = $("#demoEq"); if (e2){ e2.dataset.k = "eq2"; setTxt(e2, money(eq,false), null); }
+  const e3 = $("#teamEq"); if (e3){ e3.dataset.k = "eq3"; setTxt(e3, money(eq,false), null); }
   const r2 = $("#demoRet"); if (r2){ r2.textContent = pct(ret,2); r2.className = "v " + cls(ret); }
   const u2 = $("#demoUnr"); if (u2){ u2.dataset.k = "unr"; setTxt(u2, money(unr), unr); }
   const bt = LIVE.px["BTC-USDT-SWAP"]; const kb = $("#kpiBtc"); if (bt && kb) kb.textContent = fp(bt);
@@ -531,15 +586,16 @@ function renderDemo(){
     const pnl = t.upnl_usd||0, pc = t.notional_usd ? pnl/t.notional_usd*100 : 0;
     const st = t.tp1_done ? `<span class="badge b-blue">🔒 yarısı alındı · ${t.trail?"iz stop":"başabaş"}</span>` : (t.tp1 ? `<span class="m">1R ${fp(t.tp1)}</span>` : "");
     return `<div class="li"><div style="min-width:0">
-      <div><span class="badge ${t.side==="long"?"b-green":"b-red"}">${t.side==="long"?"LONG":"SHORT"}</span> <b>${esc(t.sym)}</b> <span class="m">${tfl(t.tf)} · ${LBL[t.setup]} · ${t.score}</span> ${st}</div>
-      <div class="m num">${fp(t.entry)} → <span data-lpx="${t.id}">${fp(t.last)}</span> · stop ${fp(t.sl)} · hedef ${fp(t.tp)}</div>
+      <div><span class="badge ${t.side==="long"?"b-green":"b-red"}">${t.side==="long"?"LONG":"SHORT"}</span> <b>${esc(t.sym)}</b> ${who(t)} <span class="m">${tfl(t.tf)} · ${slbl(t)}${t.conviction!=null?" · güven %"+Math.round(t.conviction*100):""}</span> ${st}</div>
+      ${t.carry ? `<div class="m num">spot ${fp(t.spot_entry)} → ${fp(t.spot_last)} · vadeli short ${fp(t.entry)} → <span data-lpx="${t.id}">${fp(t.last)}</span> · toplanan funding ${money(-(t.funding_usd||0))}</div>`
+        : `<div class="m num">${fp(t.entry)} → <span data-lpx="${t.id}">${fp(t.last)}</span> · stop ${fp(t.sl)} · hedef ${fp(t.tp)}</div>`}
       ${t.risk_usd!=null ? `<div class="m">risk ${money(t.risk_usd,false)} (%${(t.risk_pct||0).toFixed(2).replace(".",",")}) · teminat ${money(t.margin_usd,false)}</div>` : ""}
       <div class="m">${money(t.notional_usd,false)}${t.contracts?" · "+t.contracts+" kontrat":""}${t.entry_src==="kitap"?" · kitaptan":""} · ${ago(t.entry_ts)} açıldı${Math.abs(t.funding_usd||0)>=0.005?" · funding "+money(-(t.funding_usd||0)):""}</div></div>
       <div class="r ${cls(pnl)}" data-lpnl="${t.id}">${money(pnl)}<div class="m" data-lr="${t.id}">${pct(pc,2)} · ${(t.r_now>0?"+":"")+(t.r_now||0).toFixed(2)}R</div></div></div>`; }).join("") + `</div>`
     : `<div class="empty">Şu an açık demo işlem yok. Güçlü sinyal geldiğinde bot kendisi açar ve Telegram'a yazar.</div>`;
   h += `<h2>İşlem geçmişi <span class="n">${O.n||0}</span></h2>`;
   h += cl.length ? `<div class="list">` + cl.slice(0,80).map(t => `<div class="li"><div style="min-width:0">
-      <div>${icon[t.outcome]||"•"} <b>${esc(t.sym)}</b> <span class="m">${t.side==="long"?"long":"short"} · ${tfl(t.tf)} · ${LBL[t.setup]}</span></div>
+      <div>${icon[t.outcome]||"•"} <b>${esc(t.sym)}</b> ${who(t)} <span class="m">${t.carry?"nötr":(t.side==="long"?"long":"short")} · ${tfl(t.tf)} · ${slbl(t)}</span></div>
       <div class="m num">${fp(t.entry)} → ${fp(t.exit)} · ${what[t.outcome]||t.outcome} · ${dur(t.hours)}${(t.partials&&t.partials.length)?" · yarısı "+fp(t.partials[0].px)+"'den alındı":""}</div>
       <div class="m">${ago(t.exit_ts)} kapandı${t.fee_usd!=null?" · ücret "+money(t.fee_usd,false):""}${Math.abs(t.funding_usd||0)>=0.005?" · funding "+money(-t.funding_usd):""}</div></div>
       <div class="r ${cls(t.pnl_usd)}">${money(t.pnl_usd)}<div class="m">${pct(t.pnl_pct,2)} · ${(t.r>0?"+":"")+t.r.toFixed(2)}R</div></div></div>`).join("") + `</div>`
@@ -587,6 +643,11 @@ function renderBT(){
 
 function feedLines(){
   const f = D.feeds || {}, L = [];
+  const hs = D.health || {};
+  if (hs.status) L.push(`Sistem: <b>${esc(hs.status)}</b>${(hs.issues||[]).length ? " · "+hs.issues.map(esc).join(" · ") : ""}`);
+  const ls = D.lease || {};
+  if (ls.holder) L.push(`Nöbetteki döngü: ${esc(String(ls.holder))}${ls.handoff_s!=null ? " · son devir "+String(ls.handoff_s).replace(".",",")+" sn" : ""}${ls.ok===false ? " · ⚠ nabız yazılamadı" : ""}`);
+  if ((hs.suspect||[]).length) L.push(`Şüpheli veri (işlem açılmıyor): ${hs.suspect.map(x=>esc(x.sym)+" ("+esc(x.reason)+")").join(", ")}`);
   for (const [k,v] of Object.entries(f)){
     if (k === "telegram") L.push(`Telegram: ${v.listening?"🟢 dinliyor":"🟡 bekliyor"} · ${v.sent} mesaj gönderildi${v.median_send_ms!=null?" · ort. "+v.median_send_ms+" ms":""}${v.failed?" · "+v.failed+" hata":""}`);
     else L.push(`${k.toUpperCase()} akışı: ${v.healthy?"🟢 canlı":"🔴 kopuk"} · ${v.ticks} fiyat · ${v.reconnects} yeniden bağlanma${v.error?" · "+esc(v.error):""}`);

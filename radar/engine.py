@@ -26,8 +26,13 @@ from zoneinfo import ZoneInfo
 
 import pandas as pd
 
+import json
+
 from . import commands as cm
+from . import desk as dk
 from . import harvest as hv
+from . import lease
+from . import team
 from . import ledger as lg
 from . import notify as nt
 from . import other_exchanges as ox
@@ -132,6 +137,27 @@ class Engine:
         self.state.setdefault("risk", {})
         self.state.setdefault("eq_hist", [])
         self.halt = self.state["risk"].get("halt")
+        # ── ekip ──
+        self.team_on = (self.cfg.get("ekip") or {}).get("aktif", True)
+        self.desk: dk.Desk | None = None
+        if self.team_on and self.state.get("team_started"):
+            self.desk = dk.Desk(self.cfg, self.state, self.ledger)
+        self.order_watch: dict = {}
+        self.order_hits: dict = {}
+        self.pending_ideas: list = []
+        self.pending_carry: list = []
+        self.ideas_seen = 0
+        # ── sağlık ──
+        self.health: dict = {"status": "başlıyor", "issues": [], "checked": 0}
+        self.suspect: dict = {}
+        self.alerted: dict = {}
+        self.successor_sent = False
+        self.lost_lease = False
+        self.my_hb = 0
+        self.lease_thread: threading.Thread | None = None
+        self.lease_ok = None
+        self.t.update({"health": 0.0, "mgr": 0.0, "orders": 0.0, "lease": 0.0, "rebal": 0.0})
+        self.stats_counter.update({"ideas": 0, "rejected": 0, "orders": 0, "fills": 0, "carry": 0})
 
     def _setup_cfg(self):
         c = self.cfg
@@ -152,6 +178,11 @@ class Engine:
         self.book[key] = (last, bid, ask, now)
         self.prices[key] = last
         self._check_watch(key, last, bid, ask, ts)
+        ow = self.order_watch.get(key)
+        if ow:
+            for oid, side, px in ow:
+                if oid not in self.order_hits and ((side == "long" and last < px) or (side == "short" and last > px)):
+                    self.order_hits[oid] = (px, ts)        # limit emir: fiyat seviyenin içinden geçti → doldu
 
     def _check_watch(self, inst, last, bid, ask, ts):
         w = self.watch.get(inst)
@@ -203,9 +234,15 @@ class Engine:
     def rebuild_watch(self):
         w: dict[str, list] = {}
         for t in self.ledger["open"]:
+            if t.get("carry") or t.get("sl") is None:
+                continue
             tp1 = t.get("tp1") if (t.get("real") and not t.get("tp1_done")) else None
             w.setdefault(t["inst"], []).append((t["id"], t["side"], t["sl"], t["tp"], bool(t.get("liq_first")), tp1))
         self.watch = {k: tuple(v) for k, v in w.items()}
+        ow: dict[str, list] = {}
+        for o in self.ledger.get("orders", []):
+            ow.setdefault(o["idea"]["inst"], []).append((o["oid"], o["idea"]["side"], o["px"]))
+        self.order_watch = {k: tuple(v) for k, v in ow.items()}
 
     def _quote(self, inst):
         b = self.book.get(inst)
@@ -214,7 +251,8 @@ class Engine:
         return None
 
     def _feed_symbols(self):
-        insts = {r["inst"] for r in self.universe} | {t["inst"] for t in self.ledger["open"]}
+        insts = ({r["inst"] for r in self.universe} | {t["inst"] for t in self.ledger["open"]}
+                 | {t["spot_inst"] for t in self.ledger["open"] if t.get("carry")})
         if "okx" in self.feeds:
             self.feeds["okx"].set_symbols(sorted(insts))
         if "bitget" in self.feeds:
@@ -253,6 +291,18 @@ class Engine:
                 self.prices[inst] = v
                 if inst in self.watch:
                     self._check_watch(inst, v, bid, ask, int(now * 1000))
+        if self.team_on:
+            try:
+                for x in self.client.tickers("SPOT"):
+                    iid = x.get("instId", "")
+                    v = _f(x.get("last"))
+                    if iid.endswith("-USDT") and v == v and v > 0:
+                        b = self.book.get(iid)
+                        if not (b and live and now - b[3] < 15):
+                            self.prices[iid] = v
+                            self.book[iid] = (v, _f(x.get("bidPx"), 0.0), _f(x.get("askPx"), 0.0), now)
+            except Exception as e:  # noqa: BLE001
+                print(f"[uyarı] spot fiyat alınamadı: {e}")
         for r in self.universe:
             x = by.get(r["inst"])
             if x:
@@ -350,7 +400,8 @@ class Engine:
         d1 = self._d1(inst)
         if len(df) < 120 or len(d1) < 40:
             raise ValueError(f"yetersiz veri ({len(df)} {tf}, {len(d1)} 1G)")
-        f = sg.frame_features(df, self.cfg, bh).iloc[-1]
+        ff = sg.frame_features(df, self.cfg, bh)
+        f = ff.iloc[-1]
         fd = sg.daily_features(d1, self.cfg).iloc[-1]
         cur = self.fund_cur.get(inst)
         fr = self.funding.get(inst) or {}
@@ -394,7 +445,41 @@ class Engine:
             "taker_src": taker_src, "tf": tf, "other_funding": self.other.get(row["sym"]),
             "best": {"label": best["label"], "score": best["score"], "side": best["side"]} if best else None,
         }
-        return {"coin": coin, "signals": sigs}
+        ctx = None
+        if self.team_on:
+            ex = team.extra_features(df, ff)
+            ctx = {**ex, "inst": inst, "sym": row["sym"], "tf": tf, "bar_ms": TF_SEC[tf] * 1000,
+                   "price": feat["price"], "d_trend": feat["d_trend"], "tsmom": feat["tsmom"], "regime": regime,
+                   "funding_ann": feat["funding_ann"], "funding_rate": rate, "interval_h": iv,
+                   "oi_chg24": feat["oi_chg24"], "taker_imb": feat["taker_imb"], "ret24": feat["ret24"],
+                   "chg24": row.get("chg24"), "cvd_div": feat["cvd_div"], "signals": sigs, "vol24_usd": row["vol24_usd"]}
+            issue = self._data_issue(df, tf, feat["price"], row["sym"])
+            if issue:
+                ctx["suspect"] = issue
+                self.suspect[inst] = {"sym": row["sym"], "tf": tf, "reason": issue, "ts": int(time.time() * 1000)}
+            else:
+                self.suspect.pop(inst, None)
+            coin["suspect"] = issue
+        return {"coin": coin, "signals": sigs, "ctx": ctx}
+
+    def _data_issue(self, df, tf: str, live_px: float, sym: str) -> str | None:
+        """Veri sağlığı: eksik/gecikmiş mum, tutarsız fiyat, borsalar arası büyük fark → bu coinde işlem açılmaz."""
+        tail = df["close"].iloc[-30:]
+        if tail.isna().any() or (tail <= 0).any():
+            return "mum verisinde boşluk"
+        if not df.index.is_monotonic_increasing:
+            return "mum sırası bozuk"
+        tf_ms = TF_SEC[tf] * 1000
+        age = time.time() * 1000 - (_ms(df.index[-1]) + tf_ms)
+        if age > 2 * tf_ms + 180_000:
+            return f"son mum {age / 60000:.0f} dk gecikmiş"
+        last_close = float(df["close"].iloc[-1])
+        if live_px and abs(live_px / last_close - 1) > 0.08:
+            return f"canlı fiyat ile mum farkı %{abs(live_px / last_close - 1) * 100:.1f}"
+        bg = self.bg_book.get(sym)
+        if bg and live_px and time.time() - bg[3] < 30 and abs(bg[0] / live_px - 1) > 0.03:
+            return f"Bitget ile fiyat farkı %{abs(bg[0] / live_px - 1) * 100:.1f} (farklı coin olabilir)"
+        return None
 
     def scan_tf(self, tf: str, boundary: float | None = None) -> list[dict]:
         t0 = time.time()
@@ -421,6 +506,18 @@ class Engine:
             self.stats_counter["signal_latency_s"] = round(time.time() - boundary, 1)
         self.dirty = True
         strong = [s for s in sigs if s["score"] >= self.cfg["sinyal"]["guclu_esik"]]
+        if self.team_on and self.desk:
+            ideas = []
+            for x in results:
+                c = x.get("ctx")
+                if c and not c.get("suspect"):
+                    ideas += team.ideas_for(c, self.desk.mgrs, self.cfg)
+            self.stats_counter["ideas"] += len(ideas)
+            self.ideas_seen += len(ideas)
+            with self.lock:
+                self.pending_ideas.extend(ideas)
+            if ideas:
+                print(f"[{tf}] ekip fikirleri: " + ", ".join(f"{i['mgr']}:{i['sym']} {i['side']} %{i['conviction'] * 100:.0f}" for i in ideas[:12]))
         print(f"[{tf}] {len(results)}/{len(uni)} coin, {len(sigs)} sinyal, {len(strong)} güçlü, "
               f"{time.time() - t0:.1f} sn" + (f" (mum kapanışından {time.time() - boundary:.1f} sn sonra)" if boundary else ""))
         return strong
@@ -444,8 +541,9 @@ class Engine:
                     strong = []
                     for tf in tfs.split(","):
                         strong += self.scan_tf(tf, float(b) if b else None)
-                    with self.lock:
-                        self.pending_open.extend(strong)
+                    if not (self.team_on and self.desk):
+                        with self.lock:
+                            self.pending_open.extend(strong)
                 elif name == "funding":
                     self.refresh_funding()
                 elif name == "hourly":
@@ -453,6 +551,7 @@ class Engine:
                     self.refresh_funding()
                     self.refresh_hourly()
                     self.maybe_reload_config()
+                    self.plan_carry()
             except Exception as e:  # noqa: BLE001
                 print(f"[işçi] {name} hata: {e}")
                 traceback.print_exc()
@@ -554,6 +653,9 @@ class Engine:
             if not px:
                 continue
             pays = lg.apply_funding(self.ledger, inst, rate, int(settle), px)
+            for t, _pay in pays:
+                if t.get("carry"):
+                    t["neg_count"] = t.get("neg_count", 0) + 1 if rate < 0 else 0
             if pays:
                 self.stats_counter["funding_events"] += len(pays)
                 self.dirty = True
@@ -787,6 +889,17 @@ class Engine:
             "risk": {**self.state.get("risk", {}), "cfg": lg.risk_cfg(self.cfg), "halt": self.halt,
                      "risk_mult": self.risk_mult},
             "eq_hist": self.state.get("eq_hist", [])[-600:],
+            "team": self.desk.summary(now_ms) if self.desk else None,
+            "team_started": self.state.get("team_started"),
+            "orders": [{"oid": o["oid"], "mgr": o["mgr"], "sym": o["idea"]["sym"], "tf": o["idea"]["tf"],
+                        "side": o["idea"]["side"], "px": o["px"], "market": self.prices.get(o["idea"]["inst"]),
+                        "expire_ts": o["expire_ts"], "conviction": o["idea"]["conviction"], "shadow": o.get("shadow"),
+                        "plan": o["idea"].get("plan", "")} for o in self.ledger.get("orders", [])],
+            "journal": (self.desk.st["journal"][-80:] if self.desk else []),
+            "archive": {"periods": (self.ledger.get("archive") or {}).get("periods", []),
+                        "n": len((self.ledger.get("archive") or {}).get("closed", []))},
+            "health": self.health,
+            "lease": {"holder": lease.run_id(), "handoff_s": self.state.get("handoff_s"), "ok": self.lease_ok},
             "ledger": {
                 "stats": lstats,
                 "open": sorted(self.ledger["open"], key=lambda t: t["entry_ts"], reverse=True),
@@ -882,8 +995,56 @@ class Engine:
         L.append("<i>Sanal işlemdir, gerçek emir verilmez. Yatırım tavsiyesi değildir.</i>")
         return "\n".join(L)
 
+    def msg_team_opened(self, opened: list[dict], fill: bool = False) -> str:
+        fp = nt.fmt_price
+        mx = self.cfg["bildirim"]["max_sinyal_mesaj"]
+        L = ["✅ <b>Limit emir doldu</b>" if fill else f"🚨 <b>Yeni işlem{'ler' if len(opened) > 1 else ''}</b>"]
+        for t in sorted(opened, key=lambda x: -x.get("conviction", 0))[:mx]:
+            m = team.BY_ID.get(t.get("mgr") or "")
+            side = "LONG" if t["side"] == "long" else "SHORT"
+            sl_s, tp_s = ("−", "+") if t["side"] == "long" else ("+", "−")
+            chk = t.get("checks") or []
+            passed = sum(1 for c in chk if c[1])
+            L.append("")
+            L.append(f"{m.emoji if m else ''} <b>{m.name if m else '?'}</b>{' (gölgede, sermayesiz)' if t.get('shadow') else ''} · "
+                     f"{'🟢' if t['side'] == 'long' else '🔴'} <b>{nt.esc(t['sym'])} {side}</b> · {sg.TF_LABEL.get(t['tf'], t['tf'])} · "
+                     f"güven %{t.get('conviction', 0) * 100:.0f} ({passed}/{len(chk)} doğrulama)")
+            src = t.get("entry_src", "")
+            L.append(f"💵 Pozisyon {_usd(t['notional_usd'], False)} · teminat {_usd(t['margin_usd'], False)} · "
+                     f"<b>risk {_usd(t.get('risk_usd', 0), False)}</b> (sermayesinin %{_p(t.get('risk_pct', 0), 2)}'i)")
+            L.append(f"Giriş {fp(t['entry'])} ({src}) · Stop {fp(t['sl'])} ({sl_s}%{_p(t['sl_pct'])}) · "
+                     f"Hedef {fp(t['tp'])} ({tp_s}%{_p(t['tp_pct'])})")
+            if t.get("plan"):
+                L.append(f"<i>{nt.esc(t['plan'])}</i>")
+            ok = [c[0] for c in chk if c[1]][:4]
+            if ok:
+                L.append("✓ " + " · ".join(nt.esc(x) for x in ok))
+        if len(opened) > mx:
+            L.append(f"\n…ve {len(opened) - mx} işlem daha")
+        b = lg.balance(self.ledger, self.cfg)
+        heat = sum(lg.open_risk(t) for t in self.ledger["open"] if not t.get("shadow"))
+        lat = self.stats_counter.get("signal_latency_s")
+        L.append(f"\nFirma bakiyesi {_usd(b['equity'], False)} · açık risk {_usd(heat, False)} "
+                 f"(%{_p(heat / b['equity'] * 100 if b['equity'] else 0)})"
+                 + (f" · mum kapanışından {lat:g} sn sonra" if lat is not None and not fill else ""))
+        L.append("<i>Sanal işlemdir, komisyon ve funding dahil hesaplanır. Yatırım tavsiyesi değildir.</i>")
+        return "\n".join(L)
+
+    def msg_orders(self, orders: list[dict]) -> str:
+        L = []
+        for o in orders:
+            m = team.BY_ID.get(o["mgr"])
+            i = o["idea"]
+            mins = (o["expire_ts"] - o["created"]) / 60000
+            L.append(f"📌 {m.emoji} <b>{m.name}</b>{' (gölgede)' if o.get('shadow') else ''} limit emir verdi: "
+                     f"<b>{nt.esc(i['sym'])} {'LONG' if i['side'] == 'long' else 'SHORT'}</b> {nt.fmt_price(o['px'])}'den "
+                     f"(şu an {nt.fmt_price(i.get('market_px'))}) · {_fmt_dur(mins / 60)} geçerli · güven %{i['conviction'] * 100:.0f}"
+                     f"\n<i>{nt.esc(i.get('plan', ''))}</i>")
+        return "\n".join(L)
+
     def msg_closed(self, closed: list[dict]) -> str:
-        icon = {"hedef": "✅", "stop": "❌", "süre": "⏱", "manuel": "✋", "likidasyon": "💥", "iz stop": "🔒"}
+        icon = {"hedef": "✅", "stop": "❌", "süre": "⏱", "manuel": "✋", "likidasyon": "💥", "iz stop": "🔒",
+                "devir": "📦", "carry çıkış": "⚖️"}
         what = {"hedef": "hedefte", "stop": "stopta", "süre": "süre dolunca", "manuel": "elle",
                 "likidasyon": "LİKİDASYONLA", "iz stop": "iz süren stopta"}
         L = []
@@ -895,8 +1056,11 @@ class Engine:
                     extra += f" · kısmi kâr dahil ({_usd(t.get('partial_pnl_usd', 0))})"
                 if abs(t.get("funding_usd", 0)) >= 0.005:
                     extra += f" · funding {_usd(-t['funding_usd'])}"
-            L.append(f"{icon.get(t['outcome'], '•')} <b>{nt.esc(t['sym'])}</b> {t['side']} "
-                     f"({sg.TF_LABEL.get(t.get('tf'), t.get('tf'))} {sg.SETUP_LABELS[t['setup']]}) "
+            m = team.BY_ID.get(t.get("mgr") or "")
+            who = (f"{m.emoji} {m.name}{' (gölgede)' if t.get('shadow') else ''} · ") if m else ""
+            setup_lbl = sg.SETUP_LABELS.get(t["setup"], m.title if m else t["setup"])
+            L.append(f"{icon.get(t['outcome'], '•')} {who}<b>{nt.esc(t['sym'])}</b> {t['side']} "
+                     f"({sg.TF_LABEL.get(t.get('tf'), t.get('tf'))} {setup_lbl}) "
                      f"{what.get(t['outcome'], t['outcome'])} kapandı → <b>{_usd(t['pnl_usd'])}</b> "
                      f"({_p(t['r'], 2, True)}R) · {_fmt_dur(t['hours'])}"
                      f"\n   {nt.fmt_price(t['entry'])} → {nt.fmt_price(t['exit'])}{extra}")
@@ -908,12 +1072,14 @@ class Engine:
     def msg_partial(self, items) -> str:
         L = []
         for t, part in items:
+            m = team.BY_ID.get(t.get("mgr") or "")
+            who = f"{m.emoji} {m.name} · " if m else ""
             if part:
-                L.append(f"🎯 <b>{nt.esc(t['sym'])}</b> {t['side']} +1R'ye ulaştı: pozisyonun yarısı {nt.fmt_price(part['px'])}'den "
-                         f"kapandı → <b>{_usd(part['pnl'])}</b>. Stop başabaşa ({nt.fmt_price(t['sl'])}) çekildi, "
-                         f"kalan kısım iz süren stop ile takipte. Bu işlem artık zararla kapanamaz.")
+                L.append(f"🎯 {who}<b>{nt.esc(t['sym'])}</b> {t['side']} ilk hedefe ulaştı: pozisyonun yarısı {nt.fmt_price(part['px'])}'den "
+                         f"kısmen kapandı → <b>{_usd(part['pnl'])}</b>. Stop başabaşa ({nt.fmt_price(t['sl'])}) çekildi"
+                         + (", kalan kısım iz süren stop ile takipte." if t.get("trail") else ".") + " Bu işlem artık zararla kapanamaz.")
             else:
-                L.append(f"🎯 <b>{nt.esc(t['sym'])}</b> +1R: pozisyon bölünemeyecek kadar küçük; stop başabaşa çekildi, iz süren stop açık.")
+                L.append(f"🎯 {who}<b>{nt.esc(t['sym'])}</b> ilk hedef: pozisyon bölünemeyecek kadar küçük; stop başabaşa çekildi.")
         return "\n".join(L)
 
     def panel_text(self) -> str:
@@ -928,9 +1094,19 @@ class Engine:
              f"Bakiye <b>{_usd(b['equity'], False)}</b> (%{_p(ret, 2, True)}) · bugün {_usd(rs.get('day_pnl', 0))}",
              f"Açık K/Z {_usd(b['unrealized'])} · risk {_usd(heat, False)} (%{_p(heat / b['equity'] * 100 if b['equity'] else 0)})"
              + (f" · ⛔ {self.halt}" if self.halt else "")]
-        op = sorted(self.ledger["open"], key=lambda t: -abs(t.get("upnl_usd", 0)))
+        if self.desk:
+            L.append("")
+            for m in self.desk.mgrs:
+                eq = self.desk.equity(m.id)
+                base = self.desk.st["alloc"].get(m.id) or 1
+                n_open = sum(1 for t in self.ledger["open"] if t.get("mgr") == m.id and not t.get("shadow"))
+                L.append(f"{m.emoji} {m.name} {_usd(eq, False)} ({_p((eq / base - 1) * 100, 1, True)}%)"
+                         + (f" · {n_open} açık" if n_open else "") + (" · 🪑 yedekte" if self.desk.benched(m.id) else ""))
+            L.append("")
+        op = sorted([t for t in self.ledger["open"] if not t.get("shadow")], key=lambda t: -abs(t.get("upnl_usd", 0)))
         for t in op[:10]:
-            mark = "🔒" if t.get("tp1_done") else ("🟢" if t["side"] == "long" else "🔴")
+            mk = team.BY_ID.get(t.get("mgr") or "")
+            mark = (mk.emoji if mk else "") + ("🔒" if t.get("tp1_done") and not t.get("carry") else ("🟢" if t["side"] == "long" else "🔴"))
             L.append(f"{mark} {nt.esc(t['sym'])} {sg.TF_LABEL.get(t.get('tf'), t.get('tf'))} "
                      f"{nt.fmt_price(t.get('last', t['entry']))} · <b>{_usd(t.get('upnl_usd', 0))}</b> ({_p(t.get('r_now', 0), 2, True)}R)")
         if len(op) > 10:
@@ -962,8 +1138,10 @@ class Engine:
             p = self.payload or self.build_payload()
             dm = p["ledger"]["stats"]["demo"]
             txt = msg_daily(p, self.cfg) + (
-                f"\n💼 <b>Demo hesap</b>: {_usd(dm['equity'], False)} (%{_p(dm['return_pct'], 2, True)}) · "
+                f"\n💼 <b>Firma bakiyesi</b>: {_usd(dm['equity'], False)} (%{_p(dm['return_pct'], 2, True)}) · "
                 f"açık {len(self.ledger['open'])} işlem")
+            if p.get("team"):
+                txt += "\n\n" + cm.cmd_ekip(p)
             self._notify(txt, buttons=self._dash_button())
             self.state["last_daily"] = today
             self.dirty = True
@@ -1016,6 +1194,289 @@ class Engine:
             self.dirty = True
 
     # ── akışlar ──────────────────────────────────────────────────────
+    # ── ekip: kuruluş, fikirler, emirler, carry ───────────────────────
+    def ensure_team(self):
+        """İlk kez ekip moduna geçerken eski sistemin işlemlerini arşivler ve ekibi 1.000$ ile başlatır."""
+        if not self.team_on or self.state.get("team_started"):
+            if self.team_on and self.desk is None:
+                self.desk = dk.Desk(self.cfg, self.state, self.ledger)
+            return
+        now_ms = int(time.time() * 1000)
+        closed_now = []
+        for t in list(self.ledger["open"]):
+            q = self._quote(t["inst"])
+            px = (q[0] if t["side"] == "long" else q[1]) if q else self.prices.get(t["inst"], t.get("last", t["entry"]))
+            closed_now.append(lg.close_trade(t, px, now_ms, "devir", self.cfg))
+        old_closed = self.ledger["closed"] + closed_now
+        arch = self.ledger.setdefault("archive", {"closed": [], "periods": []})
+        arch["closed"] = (arch.get("closed") or []) + old_closed
+        arch["periods"].append({"until": now_ms, "n": len(old_closed),
+                                "pnl_usd": round(sum(t.get("pnl_usd", 0) for t in old_closed), 2)})
+        self.ledger["open"], self.ledger["closed"], self.ledger["orders"] = [], [], []
+        self.state["risk"] = {}
+        self.state["eq_hist"] = []
+        self.state.pop("desk", None)
+        self.state["team_started"] = now_ms
+        self.halt = None
+        self.desk = dk.Desk(self.cfg, self.state, self.ledger)
+        self.rebuild_watch()
+        self.dirty = True
+        roster = "\n".join(f"{m.emoji} <b>{m.name}</b> · {m.title} · {m.style}" for m in self.desk.mgrs)
+        pnl_old = arch["periods"][-1]["pnl_usd"]
+        self._notify("🏢 <b>Kripto Radar yatırım ekibi göreve başladı</b>\n"
+                     f"Başlangıç sermayesi {_usd(self.desk.st['start'], False)}, yöneticilere eşit dağıtıldı "
+                     f"({_usd(self.desk.st['start'] / len(team.ROSTER), False)}).\n\n{roster}\n\n"
+                     f"Eski sistemin {len(old_closed)} işlemi arşive alındı (toplam {_usd(pnl_old)}).\n"
+                     "Normal yöneticiler işlem başı %1,5–2,5, agresif ikili %3–5 risk alır; risk kanıt arttıkça büyür.")
+
+    def process_ideas(self):
+        with self.lock:
+            ideas, self.pending_ideas = self.pending_ideas, []
+        if not ideas or not self.desk:
+            return
+        now_ms = int(time.time() * 1000)
+        fresh = []
+        for i in ideas:
+            px = self.prices.get(i["inst"])
+            if i["entry_type"] == "piyasa" and px and abs(px / i["entry"] - 1) > 0.01:
+                self.desk.journal(i["mgr"], i["sym"], i["tf"], i["side"], "vazgeçti", "fiyat tarama sonrası %1'den fazla kaçtı")
+                continue
+            fresh.append(i)
+        self.risk_tick()
+        halted = {"dusus": "zirveden düşüş limiti", "gunluk": "günlük kayıp limiti"}.get(self.halt)
+        opened, orders, rejected = self.desk.execute(fresh, now_ms, quote=self._quote,
+                                                     meta=lambda x: self.meta.get(x), book=self._book, halted=halted)
+        self.stats_counter["rejected"] += len(rejected)
+        if opened or orders:
+            self.stats_counter["opened"] += len(opened)
+            self.stats_counter["orders"] += len(orders)
+            self.dirty = True
+            self.rebuild_watch()
+            self._feed_symbols()
+        if opened:
+            self._notify(self.msg_team_opened(opened), buttons=self._open_buttons(opened))
+        if orders:
+            self._notify(self.msg_orders(orders))
+
+    def process_orders(self):
+        if not self.desk:
+            return
+        if self.order_hits:
+            filled = []
+            for oid in list(self.order_hits):
+                px, ts = self.order_hits.pop(oid)
+                t = self.desk.fill_order(oid, px, int(ts))
+                if t:
+                    filled.append(t)
+            if filled:
+                self.stats_counter["fills"] += len(filled)
+                self.stats_counter["opened"] += len(filled)
+                self.dirty = True
+                self.rebuild_watch()
+                self._notify(self.msg_team_opened(filled, fill=True), buttons=self._open_buttons(filled))
+        now = time.time()
+        if now - self.t["orders"] >= 20:
+            self.t["orders"] = now
+            if self.desk.expire_orders(int(now * 1000)):
+                self.rebuild_watch()
+                self.dirty = True
+
+    def plan_carry(self):
+        """(işçi thread'i) Elif'in funding pozisyonları için plan; ana döngü uygular."""
+        if not self.desk or not self.harvest:
+            return
+        plan = self.desk.carry_plan(self.harvest, dict(self.prices), int(time.time() * 1000))
+        if plan[0] or plan[1]:
+            with self.lock:
+                self.pending_carry.append(plan)
+
+    def process_carry(self):
+        with self.lock:
+            plans, self.pending_carry = self.pending_carry, []
+        if not plans:
+            return
+        now_ms = int(time.time() * 1000)
+        msgs = []
+        for to_open, to_close in plans:
+            for t, why in to_close:
+                if t not in self.ledger["open"]:
+                    continue
+                qp, qs = self._quote(t["inst"]), self._quote(t["spot_inst"])
+                perp = qp[1] if qp else self.prices.get(t["inst"], t["entry"])          # short kapatma: ask'tan alınır
+                spot = qs[0] if qs else self.prices.get(t["spot_inst"], t["spot_last"])  # spot satış: bid'e
+                t["spot_last"] = spot
+                self.ledger["open"].remove(t)
+                c = lg.close_carry(t, perp, spot, now_ms, "carry çıkış", self.cfg)
+                self.ledger["closed"].append(c)
+                self.stats_counter["closed"] += 1
+                msgs.append(f"⚖️ <b>Elif</b> {nt.esc(t['sym'])} funding pozisyonunu kapattı ({why}) → <b>{_usd(c['pnl_usd'])}</b> "
+                            f"· {_fmt_dur(c['hours'])} · toplanan funding {_usd(-c.get('funding_usd', 0))}")
+                self.desk.journal("elif", t["sym"], "8H", "nötr", "kapattı", why)
+            for h, spot, perp, qty, shadow in to_open:
+                if any(t.get("carry") and t["inst"] == h["inst"] and t.get("mgr") == "elif" for t in self.ledger["open"]):
+                    continue
+                qp, qs = self._quote(h["inst"]), self._quote(f"{h['sym']}-USDT")
+                perp_px = qp[0] if qp else perp       # vadeli short: bid'e satılır
+                spot_px = qs[1] if qs else spot       # spot alış: ask'tan
+                t = lg.build_carry("elif", h["inst"], h["sym"], f"{h['sym']}-USDT", perp_px, spot_px, qty,
+                                   self.cfg, now_ms, h, shadow=shadow)
+                self.ledger["open"].append(t)
+                self.stats_counter["carry"] += 1
+                msgs.append(f"⚖️ <b>Elif</b> {'(gölgede) ' if shadow else ''}{nt.esc(h['sym'])} için spot alıp vadelide short açtı: "
+                            f"{_usd(t['notional_usd'], False)} · 30g funding %{h['ann_30d']:.0f}/yıl · istikrar {h['stability']} · "
+                            f"başabaş {h.get('breakeven_days') or '?'} gün")
+                self.desk.journal("elif", h["sym"], "8H", "nötr", "açtı", f"30g funding %{h['ann_30d']:.0f}")
+        if msgs:
+            self.dirty = True
+            self._feed_symbols()
+            self._notify("\n".join(msgs))
+
+    def manager_tick(self):
+        if not self.desk:
+            return
+        now_ms = int(time.time() * 1000)
+        for m in self.desk.manager_tick(now_ms):
+            self._notify(m)
+            self.dirty = True
+        if time.time() - self.t["rebal"] >= 3600:
+            self.t["rebal"] = time.time()
+            txt = self.desk.maybe_rebalance(now_ms)
+            if txt:
+                self._notify(txt)
+                self.dirty = True
+
+    # ── sağlık denetçisi ─────────────────────────────────────────────
+    def health_tick(self):
+        """Her 30 sn: akışlar, thread'ler, tarama tazeliği, muhasebe tutarlılığı. Bozulanı onarır, kalıcı sorunu bildirir."""
+        self.t["health"] = time.time()
+        now = time.time()
+        issues = []
+        for name, f in list(self.feeds.items()):
+            if not f.is_alive():
+                from . import ws
+                cls = ws.OKXFeed if name == "okx" else ws.BitgetFeed
+                nf = cls(self._on_tick, self._on_funding)
+                nf.set_symbols(f.symbols)
+                nf.start()
+                self.feeds[name] = nf
+                issues.append(("warn", f"{name}-akis", f"{name.upper()} akış thread'i durmuştu, yeniden başlatıldı"))
+            elif f.connected and f.last_msg and now - f.last_msg > 45 and f.conn:
+                f.conn.close()                    # donmuş bağlantı → zorla yeniden bağlan
+                issues.append(("warn", f"{name}-donma", f"{name.upper()} akışı 45 sn sessizdi, yeniden bağlanıldı"))
+            elif not f.healthy() and now - self.started > 120:
+                issues.append(("warn", f"{name}-kopuk", f"{name.upper()} akışı kopuk (REST yedeği devrede)"))
+        if self.worker and not self.worker.is_alive():
+            self.worker = threading.Thread(target=self._worker_loop, daemon=True, name="isci")
+            self.worker.start()
+            issues.append(("warn", "isci", "arka plan işçisi durmuştu, yeniden başlatıldı"))
+        if self.tg and not (self.tg.t_poll.is_alive() and self.tg.t_send.is_alive()):
+            pid = self.tg.panel_id
+            self.tg.stop(flush_s=0)
+            self.tg = nt.TelegramWorker(self._on_tg_updates).start()
+            self.tg.panel_id = pid
+            issues.append(("warn", "telegram", "Telegram bağlantısı yeniden kuruldu"))
+        for tf in self.tfs:
+            last = self.scan_at.get(tf, 0)
+            if last and now - last > TF_SEC[tf] + 900:
+                issues.append(("crit", f"tarama-{tf}", f"{sg.TF_LABEL.get(tf, tf)} taraması {int((now - last) / 60)} dk gecikti"))
+        if self.desk:
+            diff = abs(self.desk.firm_equity() - lg.balance(self.ledger, self.cfg)["equity"])
+            if diff > 0.05:
+                issues.append(("crit", "muhasebe", f"yönetici bakiyeleri ile firma bakiyesi arasında {diff:.2f}$ fark"))
+        bad_open = [t["sym"] for t in self.ledger["open"] if not t.get("carry") and t.get("real")
+                    and (t.get("qty_open", 0) <= 0 or t.get("sl") is None)]
+        if bad_open:
+            issues.append(("crit", "defter", f"geçersiz açık pozisyon: {', '.join(bad_open[:5])}"))
+        if len(self.suspect) > max(5, len(self.universe) // 4):
+            issues.append(("warn", "veri", f"{len(self.suspect)} coinde şüpheli veri (bu coinlerde işlem açılmıyor)"))
+        if self.lease_ok is False:
+            issues.append(("warn", "nobet", "nöbet nabzı yazılamadı (devir yedeği eski olabilir)"))
+        status = "kritik" if any(k == "crit" for k, *_ in issues) else ("uyarı" if issues else "sağlıklı")
+        self.health = {"status": status, "issues": [m for _, _, m in issues], "checked": int(now * 1000),
+                       "suspect": list(self.suspect.values())[:15]}
+        for kind, key, msg in issues:
+            if kind == "crit" and now - self.alerted.get(key, 0) > 3600:
+                self.alerted[key] = now
+                self._notify(f"🩺 <b>Sistem uyarısı</b>: {msg}")
+
+    # ── nöbet (7/24 devir) ───────────────────────────────────────────
+    def _snapshot(self) -> dict:
+        return {"ledger.json": json.dumps(store.clean(self.ledger), ensure_ascii=False, separators=(",", ":")),
+                "state.json": json.dumps(store.clean(self.state), ensure_ascii=False, separators=(",", ":"))}
+
+    def acquire_lease(self) -> bool:
+        me = lease.run_id()
+        devir = os.environ.get("DEVIR") == "1"
+        t0 = time.time()
+        waited = False
+        while True:
+            L, files = lease.read()
+            if not lease.is_live(L, me):
+                break
+            if not devir:
+                print(f"[nöbet] {L.get('holder')} nöbette ve sağlıklı; bu çalışma kapanıyor.")
+                return False
+            if not waited:
+                print(f"[nöbet] devir bekleniyor ({L.get('holder')} nöbette)…")
+                waited = True
+            if time.time() - t0 > 900:
+                print("[nöbet] 15 dk beklendi, nöbet bırakılmadı; çıkılıyor.")
+                return False
+            time.sleep(4)
+        if files.get("state.json") and files.get("ledger.json"):
+            try:
+                st = json.loads(files["state.json"])
+                if (st.get("last_alive") or 0) >= (self.state.get("last_alive") or 0):
+                    self.state = st
+                    self.ledger = lg.migrate(json.loads(files["ledger.json"]), self.cfg)
+                    self.state.setdefault("risk", {})
+                    self.state.setdefault("eq_hist", [])
+                    self.halt = self.state["risk"].get("halt")
+                    if self.team_on and self.state.get("team_started"):
+                        self.desk = dk.Desk(self.cfg, self.state, self.ledger)
+                    print(f"[nöbet] durum devralındı (son kayıt {(time.time() * 1000 - (st.get('last_alive') or 0)) / 1000:.0f} sn önce)")
+            except Exception as e:  # noqa: BLE001
+                print(f"[nöbet] devir yedeği okunamadı: {e}")
+        now_ms = int(time.time() * 1000)
+        self.my_hb = now_ms
+        lease.write({"holder": me, "hb": now_ms, "released": False, "started": now_ms}, self._snapshot())
+        time.sleep(3)
+        L2, _ = lease.read()
+        if L2 and L2.get("holder") != me:
+            print(f"[nöbet] nöbeti {L2.get('holder')} aldı; çekiliyorum.")
+            return False
+        self.state["handoff_s"] = round(time.time() - t0, 1) if waited else None
+        return True
+
+    def lease_heartbeat(self, force: bool = False, released: bool = False):
+        if not self.publish_on:
+            return
+        now = time.time()
+        if not force and (now - self.t["lease"] < 60 or (self.lease_thread and self.lease_thread.is_alive())):
+            return
+        self.t["lease"] = now
+        self.state["last_alive"] = int(now * 1000)
+        snap = self._snapshot()
+        me = lease.run_id()
+        info = {"holder": me, "hb": int(now * 1000), "released": released}
+
+        def push():
+            if not released:
+                L, _ = lease.read()
+                if L and L.get("holder") != me and not L.get("released") and (L.get("hb") or 0) > self.my_hb:
+                    self.lost_lease = True          # başka bir döngü nöbeti aldı → çekil, hiçbir şey yazma
+                    print(f"[nöbet] nöbet {L.get('holder')} tarafından alındı; bu döngü çekiliyor.")
+                    return
+            self.my_hb = info["hb"]
+            self.lease_ok = lease.write(info, snap)
+
+        if force:
+            push()
+        else:
+            self.lease_thread = threading.Thread(target=push, daemon=True, name="nabiz")
+            self.lease_thread.start()
+
+    # ── akışlar ──────────────────────────────────────────────────────
     def full_refresh(self):
         self.refresh_universe()
         if not self.universe:
@@ -1028,12 +1489,18 @@ class Engine:
         t0 = time.time()
         self.full_refresh()
         self.refresh_prices()
+        self.ensure_team()
         self.rebuild_watch()
         self.reconcile(catchup=True)
         strong = []
         for tf in self.tfs:
             strong += self.scan_tf(tf)
-        self.open_positions(strong)
+        if self.team_on and self.desk:
+            self.process_ideas()
+            self.plan_carry()
+            self.process_carry()
+        else:
+            self.open_positions(strong)
         self.maybe_daily()
         p = self.save()
         p["duration_s"] = round(time.time() - t0, 1)
@@ -1051,8 +1518,7 @@ class Engine:
                 bnd = max(bnd or 0, boundary)
         return due, bnd
 
-    def start_live(self):
-        """WebSocket akışları ve Telegram işçisini başlatır."""
+    def start_feeds(self):
         from . import ws
         if self.live.get("websocket", True) and not self.demo:
             self.feeds["okx"] = ws.OKXFeed(self._on_tick, self._on_funding)
@@ -1061,11 +1527,17 @@ class Engine:
             self._feed_symbols()
             for f in self.feeds.values():
                 f.start()
-        if nt.tg_token() and self.notify_on:
+
+    def start_live(self):
+        """WebSocket akışları (başlamadıysa), Telegram işçisi ve arka plan işçisi."""
+        if not self.feeds:
+            self.start_feeds()
+        if nt.tg_token() and self.notify_on and not self.tg:
             self.tg = nt.TelegramWorker(self._on_tg_updates).start()
             self.tg.panel_id = self.state.get("panel_msg_id")
-        self.worker = threading.Thread(target=self._worker_loop, daemon=True, name="isci")
-        self.worker.start()
+        if not self.worker:
+            self.worker = threading.Thread(target=self._worker_loop, daemon=True, name="isci")
+            self.worker.start()
 
     def stop_live(self):
         for f in self.feeds.values():
@@ -1078,11 +1550,18 @@ class Engine:
         minutes = minutes or self.live["dongu_dakika"]
         end = self.started + minutes * 60
         print(f"▶ Canlı döngü başladı: {minutes:.0f} dk, periyotlar {self.tfs}, yayın={self.publish_on}")
-        gap_min = (time.time() * 1000 - (self.state.get("last_alive") or 0)) / 60000 if self.state.get("last_alive") else 0
+        # Isınma: veri ve canlı akış nöbet beklenirken hazırlanır (devir saniyeler sürer)
         self.full_refresh()
-        self.t["hourly"] = self.t["funding"] = time.time()   # açılışta yapıldı, döngü hemen tekrarlamasın
+        self.t["hourly"] = self.t["funding"] = time.time()
+        self.start_feeds()
+        if self.publish_on and not self.acquire_lease():
+            self.stop_live()
+            (Path(self.site) / ".nobet_yok").write_text("1", encoding="utf-8")
+            return
+        gap_min = (time.time() * 1000 - (self.state.get("last_alive") or 0)) / 60000 if self.state.get("last_alive") else 0
         self.start_live()
         self.refresh_prices()
+        self.ensure_team()
         self.rebuild_watch()
         t_ws = time.time()
         while time.time() - t_ws < 8 and not self.okx_live() and self.feeds:
@@ -1091,37 +1570,51 @@ class Engine:
         self.reconcile(catchup=True)
         if gap_min > 15:
             self._notify(f"⚠️ <b>Kripto Radar</b> {_fmt_dur(gap_min / 60)} kapalı kaldı, tekrar çalışıyor. "
-                         f"Bu sürede stop/hedefe değen demo işlemler dakikalık mumlarla kontrol edildi.")
+                         f"Bu sürede stop/hedefe değen işlemler dakikalık mumlarla kontrol edildi.")
         strong = []
         for tf in self.tfs:
             strong += self.scan_tf(tf)
-        self.open_positions(strong)
+        if self.team_on and self.desk:
+            self.process_ideas()
+            self.plan_carry()
+            self.process_carry()
+        else:
+            self.open_positions(strong)
         self.publish(force=True)
+        self.lease_heartbeat(force=True)
         try:
-            while time.time() < end:
+            while time.time() < end and not self.lost_lease:
                 now = time.time()
                 try:
                     self.process_hits()
+                    self.process_orders()
                     self.process_trailing()
                     self.process_manual()
                     self.process_time_exits()
                     self.process_funding()
                     if now - self.t["risk"] >= 1:
                         self.risk_tick()
+                    if now - self.t["mgr"] >= 10:
+                        self.t["mgr"] = now
+                        self.manager_tick()
                     self.maybe_panel()
-                    with self.lock:
-                        pend, self.pending_open = self.pending_open, []
-                    if pend:
-                        for s in pend:        # giriş: tarama bittiği andaki gerçek fiyat
-                            px = self.prices.get(s["inst"])
-                            if px and abs(px / s["entry"] - 1) < 0.01:
-                                shift = px - s["entry"]
-                                s["entry"], s["sl"], s["tp"] = px, s["sl"] + shift, s["tp"] + shift
-                        self.open_positions(pend)
+                    if self.team_on and self.desk:
+                        self.process_ideas()
+                        self.process_carry()
+                    else:
+                        with self.lock:
+                            pend, self.pending_open = self.pending_open, []
+                        if pend:
+                            for s in pend:
+                                px = self.prices.get(s["inst"])
+                                if px and abs(px / s["entry"] - 1) < 0.01:
+                                    shift = px - s["entry"]
+                                    s["entry"], s["sl"], s["tp"] = px, s["sl"] + shift, s["tp"] + shift
+                            self.open_positions(pend)
                     due, bnd = self._due_tfs(now)
                     if due:
                         for tf in due:
-                            self.scan_at[tf] = now      # tekrar kuyruğa girmesin
+                            self.scan_at[tf] = now
                         self.enqueue(f"scan:{','.join(due)}:{bnd or ''}")
                     if now - self.t["hourly"] >= 3600:
                         self.t["hourly"] = now
@@ -1134,6 +1627,8 @@ class Engine:
                         self.refresh_prices()
                     if now - self.t["reconcile"] >= self.live["fiyat_kontrol_sn"]:
                         self.reconcile()
+                    if now - self.t["health"] >= 30:
+                        self.health_tick()
                     if not self.tg and now - self.t["cmd"] >= self.live["komut_kontrol_sn"]:
                         self.poll_commands()
                     self.maybe_daily()
@@ -1141,7 +1636,11 @@ class Engine:
                     if self.dirty:
                         self.publish()
                     elif now - self.t["pub"] >= 15 * 60:
-                        self.publish()       # açık K/Z ve "canlı" göstergesi tazelensin
+                        self.publish()
+                    self.lease_heartbeat()
+                    if self.publish_on and not self.successor_sent and end - now <= 360:
+                        self.successor_sent = True
+                        lease.dispatch_successor()
                     self.cycles += 1
                     self.fail_streak = 0
                     if self.state.get("loop_alarm"):
@@ -1160,13 +1659,17 @@ class Engine:
                     continue
                 time.sleep(0.25)
         finally:
-            self.publish(force=True)
+            if self.lost_lease:
+                (Path(self.site) / ".nobet_yok").write_text("1", encoding="utf-8")
+            else:
+                self.publish(force=True)
+                self.lease_heartbeat(force=True, released=True)
             self.stop_live()
         o = self.stats_counter
         dm = (self.payload or {}).get("ledger", {}).get("stats", {}).get("demo", {})
         fs = {k: f.status() for k, f in self.feeds.items()}
         print(f"::notice title=Canlı döngü bitti::{(time.time() - self.started) / 60:.0f} dk, "
-              f"{o['scans']} tarama, {o['opened']} açıldı, {o['closed']} kapandı "
+              f"{o['scans']} tarama, {o.get('ideas', 0)} fikir, {o['opened']} açıldı, {o['closed']} kapandı "
               f"(akıştan {o.get('ws_closes', 0)}, mumdan {o.get('rest_closes', 0)}), "
-              f"funding {o['funding_events']}, demo bakiye {dm.get('equity')}, "
+              f"funding {o['funding_events']}, bakiye {dm.get('equity')}, "
               f"akış: " + ", ".join(f"{k} {v['ticks']} fiyat/{v['reconnects']} kopma" for k, v in fs.items()))
