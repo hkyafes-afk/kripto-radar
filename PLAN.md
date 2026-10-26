@@ -283,6 +283,16 @@ Diğer 39 uzman da bu formatta yazılacak: fonksiyon listesi + görüş formatı
 
 Not: Öğrenmenin hızını takvim değil veri belirler. Ayarları az veriyle her gün değiştirmek şansı öğrenmek olur; bu yüzden her değişiklik doğrulama şartına bağlı.
 
+### 9.10 Ek notlar (26 Ekim 21:00)
+- **Döngü süresi sayacı:** Her 60 sn'lik döngünün süresi ölçülür; 10 sn'yi aşarsa Telegram uyarısı gönderilir ve hangi uzmanın yavaşlattığı gösterilir (hız kuralı).
+- **Canlıda görülen hatalar (Faz 0'ın gerekçesi, 26 Ekim 20:58 verisi):**
+  - Ters pozisyonlar: ENA (Kemal long / Murat short), ASTER (Kemal long / Murat short), RLS (Kemal long / Ayşe short).
+  - Aynı coine yığılma: LIGHT (Kemal, Selin, Ortak), CAP (Kemal, Selin, Ortak), GRASS ve BABY (Kemal, Ortak).
+  - Ortak Masa yeni ve hype'lı coinlere 150–200$ riskle girdi (LIGHT −16.6$).
+  - Elif tarz dışına çıktı: PONS'ta short (küçük coin).
+  - Eski sürüm işlemleri eski hedeflerle duruyor (ör. INJ tp1 2.87R); riskleri 3–6$, yani 10 bin dolarlık bütçeden önce açılmışlar.
+  - Kemal birkaç saatte 13 pozisyon açtı (birikmiş fırsatlar tek seferde açıldı).
+
 ### 9.7 Dürüst uyarılar
 - 40 uzman demek çok ayar demek, bu da aşırı uyum riski getirir. Bu yüzden uzmanlar ortak araçları kullanır; her parça kendi testini ve Deflated Sharpe kontrolünü geçer.
 - Meta-labeling sihirli değnek değil; zayıf bir ana sinyali kurtarmaz, iyi sinyali seçici yapar.
