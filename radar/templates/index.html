@@ -535,6 +535,7 @@ function learnCard(){
       <span class="badge ${LR.limits_on?"b-green":"b-amber"}">${LR.limits_on?"firma kısıtları açık":"firma kısıtları kapalı (demo)"}</span></div>
     <p class="note">Her kapanan işlem için ders yazılır (işleme tıkla). İşlem türleri canlı kanıta göre açılıp kapanır: gölgedeki tür 30 işlemde ort. +0,10R ve kâr faktörü 1,2 yaparsa gerçeğe geçer; gerçek tür 30 işlemde ort. −0,10R'ye düşerse gölgeye alınır. Haftalık öğrenme koşusu stop ve iz stop ayarlarını sınırlar içinde 5 yıllık veride dener, yalnızca hem eski hem görülmemiş veride iyileştirirse benimser.</p>
     ${lrows ? `<p class="note">Öğrenilmiş ayarlar${(LR.learned||{}).generated?" ("+esc(LR.learned.generated)+")":""}: ${lrows}</p>` : `<p class="note">Haftalık ayar öğrenmesi henüz çalışmadı; tüm yöneticiler varsayılan ayarlarla.</p>`}
+    ${Object.keys(LR.variants||{}).length ? `<p class="note">5 yıllık yarışı kazanan ayarlar (3 coin evreninde en az 2 kez): ${Object.entries(LR.variants).map(([mid,v])=>esc((T[mid]||{}).name||mid)+": "+v.map(x=>({ttm:"TTM sıkışması",cikis_iz_tp1:"kısmi kâr yok, ilk hedefte iz stop",cikis_iz:"baştan iz stop",cikis_hedef:"tek hedef",adx25:"ADX>25",retest:"retest",fitil_stop:"fitil stop"})[x]||x).join(", ")).join(" · ")}. Gerisi reddedildi (data/YARIS_KARAR.md).</p>` : ""}
     ${rows ? `<div class="list">${rows}</div>` : ""}</div>`;
 }
 

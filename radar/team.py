@@ -314,8 +314,9 @@ def a_selin(ctx, mgr, cfg):
               ("hacim 2 katın üstünde", vr >= 2.0),
               ("yanlış tarafta kalabalık (sıkışma yakıtı)", _live(ctx, "funding_ann", lambda x: x < 5 if side == "long" else x > 30)),
               ("yeni para giriyor (OI)", _live(ctx, "oi_chg24", lambda x: x > 0))]
-    plan = ("Bollinger bantları 120 günün en dar %20'sindeydi; fiyat şimdi "
-            f"{vr:.1f}x hacimle bandın {'üstünde' if sgn > 0 else 'altında'} kapandı. Stop orta bandın ötesinde; "
+    pre = ("Bollinger bantları Keltner kanalının içine girmişti (TTM sıkışması — 5 yıllık yarışı kazanan tanım); fiyat şimdi "
+           if "ttm" in variants(cfg, "selin") else "Bollinger bantları 120 günün en dar %20'sindeydi; fiyat şimdi ")
+    plan = (pre + f"{vr:.1f}x hacimle bandın {'üstünde' if sgn > 0 else 'altında'} kapandı. Stop orta bandın ötesinde; "
             "1,5R'de yarısını alıp kalanı 2 ATR iz süren stopla taşırım. Fiyat orta banda dönerse patlama başarısız sayılır, "
             "çıkarım. En fazla 20 gün.")
     idea = _idea(ctx, mgr, side, sl, tp, checks, "günlük volatilite sıkışmasından patlama", plan, tp1_r=1.5,

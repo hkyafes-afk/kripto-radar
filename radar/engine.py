@@ -1350,6 +1350,7 @@ class Engine:
             "weather": self.weather or None,
             "learning": {"segments": (self.desk.st.get("segments") if self.desk else None) or {},
                          "default_shadow": sorted(learn.DEFAULT_SHADOW),
+                         "variants": ((self.cfg.get("ekip") or {}).get("varyant") or {}),
                          "learned": {k: v for k, v in (self.cfg.get("_learned") or {}).items() if k in ("managers", "generated", "split")},
                          "stops_on": bool((self.desk.fc if self.desk else {}).get("durdurma_aktif", True)),
                          "limits_on": bool((self.desk.fc if self.desk else {}).get("sinirlar_aktif", True))},
