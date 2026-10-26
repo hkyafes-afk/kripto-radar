@@ -99,6 +99,8 @@ def test_telegram_commands():
             if method == "getUpdates":
                 confirmed.append(payload["offset"])
                 return {"ok": True, "result": []}
+            if method in ("getMe", "getWebhookInfo", "deleteWebhook"):
+                return {"ok": True, "result": {"username": "test_bot"}}
             sent.append((payload["chat_id"], payload["text"]))
             return {"ok": True}
 
