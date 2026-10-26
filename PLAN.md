@@ -270,6 +270,19 @@ Yönetici kararı = uzman görüşlerinin karne ağırlıklı birleşimi + yöne
 
 Diğer 39 uzman da bu formatta yazılacak: fonksiyon listesi + görüş formatı + karne ölçüsü + öğrenme ayarları. Uygulama Faz 2–4 içinde yapılacak.
 
+### 9.9 Öğrenme hızı (kullanıcı: "haftalık test aşaması için uzun")
+Üç katmanlı öğrenme:
+- **Anlık (her kapanan işlemde, gerçek ve gölge):**
+  - Ders yazılır.
+  - Uzman karneleri ve etki ağırlıkları küçük adımlarla güncellenir (Bayes büzülmesi: tek işlem ağırlığı az oynatır, çok işlem çok).
+  - Segment istatistikleri güncellenir.
+- **Günlük (her gece, ayrı workflow):**
+  - Analist-Hakem modeli 5 yıllık test işlemleri + birikmiş canlı ve gölge işlemlerle yeniden eğitilir.
+  - Doğrulamada daha iyiyse benimsenir, değilse eski model kalır.
+- **Haftalık:** Yapısal ayarlar (stop, iz stop, çıkış türü) değişir; daha fazla veri ister, sık değişirse gürültü kovalanır.
+
+Not: Öğrenmenin hızını takvim değil veri belirler. Ayarları az veriyle her gün değiştirmek şansı öğrenmek olur; bu yüzden her değişiklik doğrulama şartına bağlı.
+
 ### 9.7 Dürüst uyarılar
 - 40 uzman demek çok ayar demek, bu da aşırı uyum riski getirir. Bu yüzden uzmanlar ortak araçları kullanır; her parça kendi testini ve Deflated Sharpe kontrolünü geçer.
 - Meta-labeling sihirli değnek değil; zayıf bir ana sinyali kurtarmaz, iyi sinyali seçici yapar.
