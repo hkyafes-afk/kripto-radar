@@ -536,6 +536,11 @@ ROSTER = [
             "pozisyonları) tek puanda birleştirir; her an long/short karar verir, boyutu ve kaldıracı güvene ve "
             "oynaklığa göre ayarlar, kârı iz süren stopla korur. Genel Müdür kısıtlarına tabi değildir.",
             ["1D"], 0.5, 2.5, 30, aggressive=True, analyze=a_bas, extra={"lev_cap": 20, "tam_yetki": True}),
+    Manager("turbo", "Turbo", "Agresif Baş Trader (risk deneyi)", "🔥",
+            "Baş Trader'la aynı beyin, aynı veri, aynı giriş/çıkış; tek fark para kazanma iştahı: işlem başına çok daha "
+            "yüksek risk, kazanana tam boyutla ekleme, 50x'e kadar kaldıraç. 'Daha çok risk daha çok para mı?' deneyi.",
+            ["1D"], 5.0, 10.0, 60, aggressive=True, analyze=a_bas,
+            extra={"lev_cap": 50, "tam_yetki": True, "piramit_tam": True}),
     Manager("kemal", "Kemal", "Trend Yöneticisi (çekirdek)", "🧭",
             "Günlük trend takibi: 50 günlük ortalama + 20/100 trend filtresi. Trend bitene kadar tutar, stop 3 ATR geriden izler.",
             ["1D"], 1.5, 2.5, 20, analyze=a_kemal, extra={"lev_cap": 10}),

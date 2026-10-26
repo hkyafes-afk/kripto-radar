@@ -32,6 +32,7 @@ from . import commands as cm
 from . import desk as dk
 from . import director as gmd
 from . import bas
+BAS_IDS = ("bas", "turbo")      # Baş Trader beyniyle çalışan tam yetkili ajanlar
 from . import experts as ex
 from . import hakem as hk
 from . import harvest as hv
@@ -696,7 +697,7 @@ class Engine:
                 continue
             for idea in team.ideas_for(c, mgrs, self.cfg):
                 if (idea["mgr"], idea["inst"]) in held:       # zaten pozisyonu/emri var → değerlendirmeye gerek yok
-                    if not (idea["mgr"] == "bas" and self._bas_pyramid(idea)):
+                    if not (idea["mgr"] in BAS_IDS and self._bas_pyramid(idea)):
                         continue
                 key = (idea["mgr"], idea["inst"], idea["side"])
                 if now - self.live_seen.get(key, 0) < 1800:
@@ -719,7 +720,7 @@ class Engine:
         """Baş Trader bütün kulvarları izler: diğer yöneticilerin bu coindeki gerçek pozisyonları."""
         out = {"long": 0, "short": 0, "who": []}
         for t in list(self.ledger["open"]):
-            if t.get("inst") != inst or t.get("shadow") or t.get("carry") or t.get("mgr") in (None, "bas", "ortak"):
+            if t.get("inst") != inst or t.get("shadow") or t.get("carry") or t.get("mgr") in (None, "ortak", *BAS_IDS):
                 continue
             out[t["side"]] = out.get(t["side"], 0) + 1
             m = self.desk.by_id.get(t["mgr"]) if self.desk else None
@@ -730,8 +731,9 @@ class Engine:
         """Kazanana ekleme (piramit): Baş Trader bu coinde aynı yönde kârdaysa (son kat ≥ +1R ve stop'u başabaş ya da
         ötesinde, yani o katların riski sıfır) ve puan hâlâ eşiğin üstündeyse yeni bir kat ekler. En fazla 3 kat; her
         yeni kat bir öncekinin yarısı kadar risk alır. Önceki katlar başabaşta olduğu için açık risk sadece yeni kat kadardır."""
-        mine = [t for t in self.ledger["open"] if t.get("mgr") == "bas" and t["inst"] == idea["inst"]]
-        if not mine or any(o["mgr"] == "bas" and o["idea"]["inst"] == idea["inst"] for o in self.ledger.get("orders") or []):
+        me = idea["mgr"]
+        mine = [t for t in self.ledger["open"] if t.get("mgr") == me and t["inst"] == idea["inst"]]
+        if not mine or any(o["mgr"] == me and o["idea"]["inst"] == idea["inst"] for o in self.ledger.get("orders") or []):
             return False
         if any(t["side"] != idea["side"] for t in mine) or len(mine) >= 3:
             return False
@@ -740,10 +742,42 @@ class Engine:
             return False
         idea["pyramid"] = True
         idea["layer"] = len(mine) + 1
-        idea["risk_scale"] = 0.5 ** len(mine)
+        full_layers = bool(((self.desk.by_id.get(me).extra if self.desk and self.desk.by_id.get(me) else {}) or {}).get("piramit_tam"))
+        idea["risk_scale"] = 1.0 if full_layers else 0.5 ** len(mine)
         idea["plan"] = (f"Kazanana ekleme: {len(mine)}. kat +{last.get('r_now', 0):.1f}R kârda ve stop'u başabaşta (riski "
-                        f"sıfır); puan hâlâ güçlü → {idea['layer']}. kat, yarım risk. ") + idea["plan"]
+                        f"sıfır); puan hâlâ güçlü → {idea['layer']}. kat, {'tam' if full_layers else 'yarım'} risk. ") + idea["plan"]
         return True
+
+    def daily_tick(self, hour: int = 9):
+        """Her sabah (yerel 09:00 sonrası ilk tur) Telegram'a kısa özet: dünden bu yana kim ne kazandı/kaybetti."""
+        loc = datetime.now(self.tz)
+        if loc.hour < hour:
+            return
+        day = loc.strftime("%Y-%m-%d")
+        st = self.state.setdefault("daily", {})
+        if st.get("date") == day:
+            return
+        summ = self.desk.summary(int(time.time() * 1000))
+        eq = {k: v["equity"] for k, v in summ.items() if v.get("active")}
+        prev, since = st.get("eq") or {}, int(st.get("ts") or 0)
+        st.update({"date": day, "eq": eq, "ts": int(time.time() * 1000)})
+        self.dirty = True
+        if not prev:
+            return
+        closed = [t for t in self.ledger["closed"] if (t.get("exit_ts") or 0) > since and not t.get("shadow")]
+        L = [f"☀️ <b>Sabah özeti</b> · {loc.strftime('%d.%m')}"]
+        tot0, tot1 = sum(prev.get(k, 0) for k in eq), sum(eq.values())
+        L.append(f"Firma: {_usd(tot1, False)} ({_usd(tot1 - tot0)} dünden beri) · {len(closed)} işlem kapandı")
+        rows = sorted(((summ[k], eq[k] - prev.get(k, eq[k])) for k in eq), key=lambda x: -x[1])
+        for m, d in rows:
+            nc = [t for t in closed if t.get("mgr") == m["id"]]
+            wr = sum(1 for t in nc if (t.get("r") or 0) > 0)
+            L.append(f"{m['emoji']} {nt.esc(m['name'])}: {_usd(d)} · {m['open']} açık" +
+                     (f" · {len(nc)} kapandı ({wr} kâr)" if nc else ""))
+        w = (getattr(self, "bas_watch", None) or {}).get("rows") or []
+        if w:
+            L.append("👑 Radarda: " + ", ".join(f"{r['sym']} {r['score']:+.2f}" for r in w[:4]))
+        self._notify("\n".join(L))
 
     def _bas_public(self) -> dict | None:
         if not self.desk or "bas" not in self.desk.by_id:
@@ -753,7 +787,7 @@ class Engine:
         cl = [t for t in self.ledger["closed"] if t.get("mgr") == "bas"]
         lanes = []
         for m in self.desk.mgrs:
-            if m.id == "bas":
+            if m.id in BAS_IDS:
                 continue
             mo = [t for t in self.ledger["open"] if t.get("mgr") == m.id and not t.get("shadow")]
             lanes.append({"id": m.id, "name": m.name, "emoji": m.emoji, "open": len(mo),
@@ -2427,6 +2461,8 @@ class Engine:
                     if self.team_on and self.desk and now - self.t["live1d"] >= float(self.live.get("gunici_sn", 60)):
                         self.t["live1d"] = now
                         self.enqueue("live1d")
+                    if self.team_on and self.desk:
+                        pm("sabah özeti", self.daily_tick)
                     if now - self.t["news"] >= 600:
                         self.t["news"] = now
                         self.enqueue("news")

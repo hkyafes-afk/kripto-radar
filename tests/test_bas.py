@@ -143,6 +143,26 @@ def test_pyramid_adds_only_to_risk_free_winner():
         assert det2 and det2["risk_pct"] > 0
 
 
+def test_turbo_same_brain_more_appetite_and_morning_summary():
+    T, B = team.BY_ID["turbo"], team.BY_ID["bas"]
+    assert T.analyze is B.analyze and T.extra["tam_yetki"] and T.extra["piramit_tam"]
+    assert T.base_risk > 3 * B.base_risk and T.extra["lev_cap"] > B.extra["lev_cap"]
+    import tempfile
+    from tests.test_engine_live import _engine
+    with tempfile.TemporaryDirectory() as d:
+        e = _engine(d)
+        sent = []
+        e._notify = lambda txt, buttons=None: sent.append(txt)
+        e.state.pop("daily", None)
+        e.daily_tick(hour=0)
+        assert not sent and e.state["daily"]["eq"], "ilk gün sadece başlangıç kaydı"
+        e.state["daily"]["date"] = "2000-01-01"
+        e.daily_tick(hour=0)
+        assert sent and "Sabah özeti" in sent[0] and "Firma" in sent[0]
+        e.daily_tick(hour=0)
+        assert len(sent) == 1, "günde bir kez"
+
+
 if __name__ == "__main__":
     for name, fn in list(globals().items()):
         if name.startswith("test_"):
