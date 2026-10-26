@@ -186,6 +186,84 @@ Kullanıcı kuralı: "başla" denmeden hiçbiri uygulanmaz.
 
 - Kullanıcının OKX hesabı: global mi, TR mi? Vadeli açık mı? Ücret seviyesi ne?
 
+## 9. v9 "Fabrika" planı — her yönetici bir fon yöneticisi + 5 kişilik masası (ONAY BEKLİYOR)
+
+Kullanıcı isteği (26 Ekim 20:49): planların hepsi gerçek araştırmayla taransın; her ana ajanın altında 5 uzman ajan olsun; ana ajanlar Buffett / borsa balinası gibi donanımlı olsun; hiçbir şey indirgenmesin.
+
+### 9.1 İlkeler (Buffett + balina → bizim kurallara çeviri)
+1. **Önce batma (Buffett kural 1):** Kasayı koru; tek coin, tek ajan, tek olay firmayı yakamaz.
+2. **Yetkinlik çemberi:** Kanıtımız olmayan coinde büyük oynanmaz. Coin kanıt sınıfı:
+   - **A** = 5 yıllık testteki oturmuş coinler, tam boyut.
+   - **B** = en az 1 yıllık geçmiş, testle doğrulanana kadar yarım boyut.
+   - **C** = 180 günden yeni listeleme, sadece gölge ya da en küçük boyut.
+   - Kanıt: Messari, 2025'te Binance'te listelenen 92 coini eşit ağırlıkla izledi; Mart 2026'da portföy ortalama %71 eksideydi. BitMEX'in 2025 Ç1 raporuna göre OKX'teki vadeli listelemelerin %71'i zirvesini ilk gün gördü; listeleme sonrası medyan zirve kazancı %0.
+3. **Güvenlik marjı:** Beklenen kazanç toplam maliyetin (komisyon + kayma + fonlama) en az 3 katı değilse girilmez.
+4. **En iyi fikre yoğunlaş:** Boyut = çeyrek Kelly × Analist güven yüzdesi. Kanıtlanan büyür, kötüleşen küçülür.
+5. **Sabır:** İşlem sayısı hedef değildir (Kaan modeli). Ama öğrenme yavaşlamaz; her sinyal gölgede izlenir (madde 2d-7).
+6. **Balina gözü:** Likidite ve kalabalık nerede? Açık pozisyon (OI), fonlama, long/short oranı, likidasyon kümeleri, emir defteri derinliği, akıllı para cüzdanları.
+7. **Kârı koştur, zararı kes:** Çıkışı her ajan için test seçer (madde 2d-1).
+
+### 9.2 Firma yapısı
+- **Yatırım Komitesi (firma geneli, Faz 0):**
+  - Coin başına tek defter. Bir coinde bir ajan varken diğerleri ters yönde giremez (şu an ENA ve ASTER'de Kemal long / Murat short; OKX tek hesapta bunları birbirinden düşer).
+  - Coin başına toplam risk tavanı.
+  - Ortak Masa kuralları: güven ağırlıklı oy, en az iki farklı tarzdan onay, %5 katkı. Ajanlar zaten girmişse masa yeni pozisyon açmaz, onların payını büyütür.
+- **Araştırma Departmanı (canlı döngü dışında, ayrı workflow'lar):** 5 yıllık testler, Analist modelinin eğitimi, dış veri toplama (Hyperliquid, OKX), haftalık öğrenme. Canlı döngü sadece hazır özet dosyalarını okur (hız kuralı, 2d-8).
+- **8 yönetici × 5 uzman = 40 uzman.** Uzmanlar ortak araçları paylaşır (aynı Bloomberg terminalini kullanan analistler gibi). Her uzmanın ayarı, hafızası ve karnesi kendi yöneticisine özeldir.
+
+### 9.3 Her yöneticinin 5 uzmanı (roller)
+1. **Gözcü:** Yöneticinin kurulumunu bütün coinlerde her 60 sn'de tarar. Göreli güç sıralaması tutar (BTC'ye göre en güçlü/zayıf coinler). Coin kanıt sınıfını bilir.
+2. **Balina Gözü (piyasa yapısı):** OI değişimi (fiyat↑ + OI↑ = sağlam, fiyat↑ + OI↓ = short sıkışması ya da zayıf), fonlama uç değerleri, long/short kalabalığı, likidasyon dalgaları, emir defteri derinliği ve dengesizliği, Hyperliquid akıllı para yönü.
+3. **Analist-Hakem ("tutar mı?" + otopsi):**
+   - Meta-labeling ile her sinyale güven yüzdesi verir: benzer koşullarda geçmişte kaç kez tuttu.
+   - Etiket tipi üçlü bariyer (hedef / stop / süre).
+   - İşlem kapanınca otopsi yapar ve sebep etiketi koyar: sahte kırılım, BTC çekti, haber, dar stop, kalabalık tuzağı.
+   - Model haftalık yeniden eğitilir.
+4. **Risk Sorumlusu:** Stop, boyut (çeyrek Kelly × güven), kaldıraç (likidasyon her zaman stop'un ötesinde), coin/küme/firma riski, ters pozisyon kontrolü, olay takvimi, haber bayrakları.
+5. **Trader (icra + pozisyon yönetimi):** Maker/taker kararı, kayma, giriş zamanlaması. Açık pozisyonu yönetir: testin seçtiği çıkış, iz stop, kârı koşturma. Pozisyon büyütme (pyramiding) yalnızca testte kanıtlanırsa.
+
+### 9.4 Yöneticiye özel uzmanlık (her rolün o yöneticideki işi)
+| Yönetici | Gözcü | Balina Gözü | Analist-Hakem | Risk | Trader |
+|---|---|---|---|---|---|
+| Kemal (trend) | Göreli güç ilk %20, A/B sınıfı | OI trendi teyit ediyor mu | Trend yaşı / aşırı uzama güveni | Çeyrek Kelly, coin tavanı | Kârı koştur, iz stop (öğrenilmiş 0.8 / 1.25) |
+| Kaan (kırılım) | 20 gün kırılımı, en güçlü 5 coin | Kırılımda OI↑ + fonlama aşırı değil | Sahte kırılım olasılığı | Kalabalık aşırıysa yarım boyut | Kısmi kâr kalkıyor mu: çıkış yarışı |
+| Selin (sıkışma) | Bant daralması + rejim | Sıkışmada OI birikimi (patlama yakıtı) | Kırılım yönü güveni | Oynaklık rejimine göre boyut | Çıkış yarışı sonucu |
+| Murat (baş analist) | HVN / hacim profili geri çekilmeleri | Destek bölgesinde likidasyon kümeleri | İkinci görüş: diğer ajanların sinyallerine itiraz ya da onay | Gölgede, kanıtlayana kadar | Yeniden tasarım adayı (Faz 6) |
+| Ayşe (kapitülasyon) | Sert düşüş + hacim patlaması | Gerçek kapitülasyon = likidasyon dalgası + fonlama eksi + OI çöküşü | Sekme olasılığı | Gölgede | Hedefte çık (tepki kısa sürer) |
+| Deniz (15m maker) | BTC/ETH kısa vade | Emir defteri dengesizliği, fon akışı | Mikro güven | Gölgede | Sadece maker; kuyruk sırası gerçekçi |
+| Elif (carry) | Yalnız A sınıfı likit coinler | Fonlama tahmini, spot-vadeli farkı (basis) | Fonlamanın süreceği güveni | Düşük kaldıraç, delta nötr | Fonlama dönmeden çık |
+| Ortak Masa | Ajan anlaşmaları | Kalabalık ters mi | Güven ağırlıklı oy | %5 katkı, coin tavanı | Ajanlar içerdeyse pay büyütür |
+
+### 9.5 Veriler (hepsi ücretsiz)
+- **OKX:** OI, fonlama, long/short oranı, likidasyon akışı (public API ve WebSocket). Herkese açık kopya trade lider sıralaması ve pozisyonları.
+- **Hyperliquid:** Herkese açık info API'den cüzdan işlemleri (userFills, cüzdan başına son 2.000 işlem), pozisyonlar ve likidasyonlar. Lider tablosu kaynağı doğrulanacak. GitHub Actions'ta internet açık.
+- **Önemli:** OI ve long/short geçmişi borsalarda kısa tutuluyor (çoğu yerde günler ya da haftalar). Bu yüzden toplayıcı workflow **en başta** kurulmalı ki geçmiş birikmeye başlasın.
+- **Kendi 5 yıllık testimiz:** Binlerce simüle işlem ve her birinin giriş koşulları. Analist-Hakem'in ana eğitim verisi.
+
+### 9.6 Fazlar (her faz kendi testini geçmeden canlıya girmez)
+- **Faz 0 — Güvenlik:** Coin başına defter, ters pozisyon yasağı, coin risk tavanı, coin kanıt sınıfı; Murat, Ayşe ve Deniz gölgeye. Aynı anda veri toplayıcı workflow başlar.
+- **Faz 1 — Çıkış yarışı + ölçü değişimi:** 2d-1 ve 2d-2.
+- **Faz 2 — Balina Gözü:** OKX verileri canlıda boyut ayarı olarak kullanılır (gir/girme kapısı değil). Testi, toplanan veri biriktikçe yapılır.
+- **Faz 3 — Analist-Hakem:** 5 yıllık test işlemleriyle meta-labeling; walk-forward. Doğrulama döneminde bileşik büyümeyi artırırsa kabul edilir. Otopsi etiketleri de bu fazda gelir.
+- **Faz 4 — Yatırım Komitesi:** Ortak Masa güven kuralı ve %5 katkı.
+- **Faz 5 — Dış trader verisi:** Hyperliquid akıllı para ve OKX liderleri; ders ve kalabalık sinyali.
+- **Faz 6 — Yeniden tasarım:** Murat, Ayşe ve Deniz yeni verilerle yeniden kurulur; kanıtlarlarsa gerçek bütçeye döner.
+
+### 9.7 Dürüst uyarılar
+- 40 uzman demek çok ayar demek, bu da aşırı uyum riski getirir. Bu yüzden uzmanlar ortak araçları kullanır; her parça kendi testini ve Deflated Sharpe kontrolünü geçer.
+- Meta-labeling sihirli değnek değil; zayıf bir ana sinyali kurtarmaz, iyi sinyali seçici yapar.
+- Lider tablolarında hayatta kalan yanılgısı var. Başkasını kopyalamak değil, ders çıkarmak amaç.
+- Beklenti: daha az kötü işlem ve daha doğru boyut. Mucize değil.
+
+Kaynaklar (ek):
+- [Messari: Binance 2025 listelemeleri ortalama −%71 (AMBCrypto)](https://ambcrypto.com/messari-data-shows-binances-2025-listings-down-71-on-average/)
+- [BitMEX 2025 Ç1: vadeli listelemeler zirve sinyali mi?](https://blog.bitmex.com/2025q1-derivatives-report)
+- [Hyperliquid userFills (QuickNode)](https://www.quicknode.com/docs/hyperliquid/info-endpoints/userFills)
+- [OKX public lead traders endpoint](https://qveris.ai/tools/okx_api_v5.copytrading.public-lead-traders.list.v5.2bfcea0c)
+- [Meta-Labeling (Wikipedia)](https://en.wikipedia.org/wiki/Meta-Labeling)
+- [Why meta-labeling is not a silver bullet (QuantConnect)](https://www.quantconnect.com/forum/discussion/14706/why-meta-labeling-is-not-a-silver-bullet/)
+- [Reconciling Open Interest with Traded Volume in Perpetual Swaps](https://arxiv.org/html/2310.14973v2)
+
 ## Kaynaklar
 
 - [Quantopian 888 strateji çalışması (CXO Advisory)](https://www.cxoadvisory.com/big-ideas/in-sample-vs-out-of-sample-performance-of-888-trading-strategies)
