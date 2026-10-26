@@ -307,6 +307,35 @@ Karar zinciri: Yönetici (kendi 5 uzmanıyla) öneri hazırlar → Genel Müdür
 
 Gerçek API: kullanıcı kararı — uygulama tam hazır olunca; acele yok.
 
+### 9.12 Kullanıcının ajan planı → nihai uygulama ve test listesi (26 Ekim 21:16)
+Sıra: Faz 0 (güvenlik + Genel Müdür'ün ilk hali) her zaman önce gelir.
+
+**Doğrudan uygulanacaklar** (küçük bir akıl sağlığı testiyle; tam 5 yıllık test şartı yok):
+- **Elif delta-nötr carry:** Spot alım ve vadeli short aynı anda açılır, fiyat riski sıfır.
+  - Pozisyon, toplanan fonlama toplam maliyeti (4 bacak komisyon + kayma) geçip hedef net kâra ulaşana kadar günlerce tutulur.
+  - Fonlama eksiye dönerse ya da beklenen getiri maliyetin altına düşerse çıkılır.
+  - Sadece A sınıfı likit coinler. Spot bacağı tam ödenir, bu yüzden sermaye iki bacağa bölünür.
+  - Akıl sağlığı testi: OKX fonlama geçmişiyle "hangi eşikte net kâr" hesabı.
+- **Deniz dinamik likidite:** Saat kuralı silinir. Son 15 dakikanın hacmi 24 saatlik ortalamayı aşınca çalışır. Spread şartı BTC/ETH'de ayırt edici olmadığı için ikincil. Deniz zaten gölgede çalışacak.
+- **Çift katmanlı icra:**
+  - Kemal, Kaan, Selin ve Ortak Masa (günlük): 10 dk maker limit; dolmazsa piyasa emri yerine IOC limit (aktif fiyat ±%0,1).
+  - Ayşe ve Deniz (hızlı): doğrudan IOC limit.
+  - Çıplak piyasa emri hiç kullanılmaz; stop çıkışları için de IOC limit, kısmi dolumda tekrar denenir.
+
+**5 yıllık veride yarıştırılacaklar** (Faz 1 çıkış yarışıyla birlikte):
+- **Kemal:** Mevcut kural vs + ADX > 25 (gecikmenin büyük trendleri ne kadar budadığı).
+- **Kaan giriş:** Direkt kırılım vs ilk geri çekilmeyi (retest) bekleme.
+- **Kaan stop:** 10 günlük kanal çıkışı vs kırılım mumu fitili.
+- **Selin:** Mevcut bant genişliği vs TTM Squeeze (Bollinger, Keltner içinde).
+- **Ayşe:** Günlük vs 15 dk (RSI < 20 + hacim patlaması, %1–2 hedef). Çöküş anı kayması sert modellenir; 15 dk OKX geçmiş verisi indirilecek.
+- **BTC kuralı:** BTC < SMA50 iken long yarım boyut (mevcut) vs long tamamen yasak.
+- **Çıkış yarışı (2d-1):** Kısmi kâr + iz stop vs sadece iz stop vs tam hedef (Kaan, Selin, Murat, Ortak).
+
+**Reddedilenler (gerekçeli):**
+- Elif'in sadece fonlama saatini atlatıp kapatması: 4 bacak ~%0,5 maliyet, tek fonlama ~%0,01–0,1.
+- %80 korelasyonda tek işlem yasağı: kriptoda düşüşte her şey korele olur; korele gruba toplam %4 risk kuralı kalır, korelasyon penceresi 30 gün.
+- Makro veriden önce stop'u başabaşa çekmek: veri anı iğneleri stop'ları patlatır.
+
 ### 9.7 Dürüst uyarılar
 - 40 uzman demek çok ayar demek, bu da aşırı uyum riski getirir. Bu yüzden uzmanlar ortak araçları kullanır; her parça kendi testini ve Deflated Sharpe kontrolünü geçer.
 - Meta-labeling sihirli değnek değil; zayıf bir ana sinyali kurtarmaz, iyi sinyali seçici yapar.
