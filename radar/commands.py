@@ -129,10 +129,16 @@ def run(site: Path, cfg_path=None) -> bool:
     if not nt.tg_token():
         print("TELEGRAM_BOT_TOKEN yok, komut dinleyici atlandı.")
         return False
+    me = nt.tg_call("getMe", {})
+    wh = nt.tg_call("getWebhookInfo", {})
+    if wh.get("ok") and (wh.get("result") or {}).get("url"):
+        nt.tg_call("deleteWebhook", {})   # webhook varsa getUpdates çalışmaz
     res = nt.tg_call("getUpdates", {"timeout": 0, "allowed_updates": ["message"]})
     if not res.get("ok"):
-        print(f"getUpdates hata: {res.get('description')}")
+        print(f"::warning title=Telegram::getMe={me.get('ok')} getUpdates hata: {res.get('description')}")
         return False
+    print(f"::notice title=Telegram::bot=@{(me.get('result') or {}).get('username')} "
+          f"güncelleme={len(res.get('result', []))} sahip_kayıtlı={bool(state.get('owner_chat_id') or os.environ.get('TELEGRAM_CHAT_ID'))}")
     updates = res.get("result", [])
     changed = False
     owner = os.environ.get("TELEGRAM_CHAT_ID", "").strip() or str(state.get("owner_chat_id") or "")
