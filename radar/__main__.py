@@ -45,6 +45,9 @@ def main(argv=None) -> int:
         except Exception:  # noqa: BLE001
             err = traceback.format_exc()
             print(err, file=sys.stderr)
+            # GitHub arayüzünde "annotation" olarak görünsün (log açmadan okunabilir)
+            short = " | ".join(err.strip().splitlines()[-4:]).replace("%", "%25")
+            print(f"::error title=Tarama hatası::{short[:900]}")
             scan.record_failure(Path(a.site), err, a.config)
             return 1
         # Haftalık karne → repoya (main dalına) yazılır; repo "aktif" kalır

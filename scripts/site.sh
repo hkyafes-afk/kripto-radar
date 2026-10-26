@@ -19,8 +19,8 @@ case "$cmd" in
     ;;
   push)
     msg=${2:-güncelleme}
-    if [ ! -f "$SITE/index.html" ]; then
-      echo "site/index.html yok, yayın atlandı."
+    if [ ! -f "$SITE/index.html" ] && [ ! -f "$SITE/state.json" ]; then
+      echo "site içeriği yok, yayın atlandı."
       exit 0
     fi
     cd "$SITE"
