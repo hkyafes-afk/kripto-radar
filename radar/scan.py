@@ -19,7 +19,7 @@ from . import signals as sg
 from . import store
 from .config import load_config
 
-VERSION = "4.0"
+VERSION = "5.0"
 
 
 def _f(x, d=float("nan")):
@@ -65,8 +65,11 @@ def build_universe(client, cfg) -> tuple[list[dict], dict[str, float]]:
         if lt and now_ms - lt < 35 * 86400 * 1000:    # en az 35 günlük veri gerek
             continue
         open24 = _f(x.get("open24h"))
+        ins = insts[iid]
         rows.append({
             "inst": iid, "sym": base, "price": last, "vol24_usd": vol_usd,
+            "ct_val": _f(ins.get("ctVal"), 0.0), "lot_sz": _f(ins.get("lotSz"), 0.0),
+            "min_sz": _f(ins.get("minSz"), 0.0),
             "chg24": (last / open24 - 1) * 100 if open24 and open24 == open24 else float("nan"),
             "high24": _f(x.get("high24h")), "low24": _f(x.get("low24h")),
         })

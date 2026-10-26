@@ -75,7 +75,8 @@ class DemoClient:
     def instruments(self, inst_type="SWAP"):
         self.calls += 1
         return [{"instId": f"{c}-USDT-SWAP", "settleCcy": "USDT", "state": "live", "ctType": "linear",
-                 "listTime": "1500000000000", "instCategory": "1", "ruleType": "normal"} for c in COINS] + [
+                 "listTime": "1500000000000", "instCategory": "1", "ruleType": "normal",
+                 "ctVal": "1", "lotSz": "0.01", "minSz": "0.01"} for c in COINS] + [
                 {"instId": "CL-USDT-SWAP", "settleCcy": "USDT", "state": "live", "ctType": "linear",
                  "listTime": "1500000000000", "instCategory": "4", "ruleType": "normal"}]
 

@@ -10,7 +10,7 @@ import yaml
 ROOT = Path(__file__).resolve().parent.parent
 
 DEFAULTS: dict = {
-    "borsa": {"ana": "okx", "funding_karsilastir": ["binance", "bybit", "bitget", "gate"]},
+    "borsa": {"ana": "okx", "funding_karsilastir": ["bitget", "gate", "mexc", "htx", "binance", "bybit"]},
     "tarama": {
         "coin_sayisi": 100,
         "min_hacim_usd": 5_000_000,
@@ -53,7 +53,9 @@ DEFAULTS: dict = {
     },
     "demo": {"baslangic_bakiye": 1000, "islem_tutari_usd": 20, "kaldirac": 1,
              "max_acik_toplam": 20, "max_acik_periyot": 8},
-    "canli": {"dongu_dakika": 330, "fiyat_kontrol_sn": 60, "komut_kontrol_sn": 15, "yayin_min_dakika": 6},
+    "canli": {"dongu_dakika": 330, "fiyat_kontrol_sn": 60, "komut_kontrol_sn": 15, "yayin_min_dakika": 6,
+              "websocket": True, "bitget_ws": True},
+    "ucret": {"taker_yuzde": 0.05, "maker_yuzde": 0.02, "mmr_yuzde": 0.5},
     "defter": {
         "komisyon_gidis_donus": 0.10,
         "kayma": 0.05,

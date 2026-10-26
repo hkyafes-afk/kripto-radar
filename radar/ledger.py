@@ -56,10 +56,49 @@ def balance(ledger: dict, cfg: dict) -> dict:
             "cash": cash, "in_use": in_use, "free": cash - in_use, "equity": cash + unreal}
 
 
-def open_new(ledger: dict, signals: list[dict], cfg: dict, now_ms: int | None = None) -> list[dict]:
-    """Güçlü sinyallerden yeni demo pozisyon açar. Açılanları (sinyal bilgisiyle) döner."""
+def fees_cfg(cfg: dict) -> dict:
+    f = {"taker_yuzde": 0.05, "maker_yuzde": 0.02, "mmr_yuzde": 0.5}
+    f.update(cfg.get("ucret") or {})
+    return f
+
+
+def round_contracts(notional: float, price: float, meta: dict | None) -> tuple[float, float, str]:
+    """OKX kontrat kuralları: adet = taban(nominal / (ctVal*fiyat) / lotSz) * lotSz, en az minSz.
+
+    Döner: (kontrat_adedi, coin_miktarı, hata_mesajı). meta yoksa coin cinsinden serbest miktar.
+    """
+    if not meta or not meta.get("ct_val"):
+        return 0.0, notional / price, ""
+    ct, lot, mn = float(meta["ct_val"]), float(meta.get("lot_sz") or 1), float(meta.get("min_sz") or 0)
+    per = ct * price
+    raw = notional / per
+    n = int(raw / lot + 1e-9) * lot
+    if n < mn:
+        min_val = mn * per
+        if min_val > notional * 1.5:
+            return 0.0, 0.0, f"en küçük lot {min_val:.2f}$ (işlem tutarının çok üstünde)"
+        n = mn
+    n = round(n, 8)
+    return n, n * ct, ""
+
+
+def liq_price(side: str, entry: float, lev: float, mmr_pct: float) -> float | None:
+    """İzole marjinde yaklaşık likidasyon fiyatı. 1x long'da pratikte yok."""
+    if lev <= 1 and side == "long":
+        return None
+    m = mmr_pct / 100
+    return entry * (1 - 1 / lev + m) if side == "long" else entry * (1 + 1 / lev - m)
+
+
+def open_new(ledger: dict, signals: list[dict], cfg: dict, now_ms: int | None = None,
+             quote=None, meta=None, skipped: list | None = None) -> list[dict]:
+    """Güçlü sinyallerden demo pozisyon açar.
+
+    quote(inst) → (bid, ask, last) | None : gerçek kitap fiyatından giriş (long ask'tan, short bid'den alır)
+    meta(inst)  → {"ct_val", "lot_sz", "min_sz"} | None : OKX kontrat/lot kuralları
+    """
     now_ms = now_ms or _now_ms()
-    d, dc = cfg["defter"], demo_cfg(cfg)
+    d, dc, fc = cfg["defter"], demo_cfg(cfg), fees_cfg(cfg)
     cooldown = d["tekrar_bekleme_saat"] * 3600 * 1000
     opened = []
     open_keys = {(t["inst"], t["setup"], t.get("tf", "4H")) for t in ledger["open"]}
@@ -80,24 +119,46 @@ def open_new(ledger: dict, signals: list[dict], cfg: dict, now_ms: int | None = 
             break
         if sum(1 for t in ledger["open"] if t.get("tf", "4H") == tf) >= dc["max_acik_periyot"]:
             continue
-        margin = float(dc["islem_tutari_usd"])
-        if balance(ledger, cfg)["free"] < margin:
+        margin_target = float(dc["islem_tutari_usd"])
+        if balance(ledger, cfg)["free"] < margin_target:
             break
         lev = float(dc["kaldirac"])
-        notional = margin * lev
+        # ── gerçek giriş fiyatı: kitap ─────────────────────────────
+        entry, sl, tp, src = s["entry"], s["sl"], s["tp"], "son fiyat"
+        q = quote(s["inst"]) if quote else None
+        if q:
+            bid, ask, last = q
+            px = ask if s["side"] == "long" else bid
+            if px and px > 0 and abs(px / entry - 1) < 0.02:
+                shift = px - entry
+                entry, sl, tp, src = px, sl + shift, tp + shift, "kitap"
+        contracts, qty, err = round_contracts(margin_target * lev, entry, meta(s["inst"]) if meta else None)
+        if err or qty <= 0:
+            if skipped is not None:
+                skipped.append({"sym": s["sym"], "tf": tf, "reason": err or "miktar sıfır"})
+            continue
+        notional = qty * entry
+        margin = notional / lev
+        fee_entry = notional * fc["taker_yuzde"] / 100
+        liq = liq_price(s["side"], entry, lev, fc["mmr_yuzde"])
+        sl_eff, liq_first = sl, False
+        if liq is not None and ((s["side"] == "long" and liq >= sl) or (s["side"] == "short" and liq <= sl)):
+            sl_eff, liq_first = liq, True     # kaldıraç yüksekse stop'tan önce likidasyon gelir
         t = {
-            "id": uuid.uuid4().hex[:10],
+            "id": uuid.uuid4().hex[:10], "real": True,
             "inst": s["inst"], "sym": s["sym"], "setup": s["setup"], "side": s["side"],
             "kind": s["kind"], "tf": tf, "score": s["score"], "raw": s["raw"],
-            "entry_ts": now_ms, "entry": s["entry"], "sl": s["sl"], "tp": s["tp"],
-            "sl_pct": s["sl_pct"], "tp_pct": s["tp_pct"], "max_saat": s["max_saat"],
-            "margin_usd": margin, "lev": lev, "notional_usd": notional,
-            "qty": notional / s["entry"] if s["entry"] else 0.0,
+            "entry_ts": now_ms, "entry": entry, "entry_src": src, "signal_px": s["entry"],
+            "sl": sl_eff, "sl_init": sl, "tp": tp, "liq": liq, "liq_first": liq_first,
+            "sl_pct": abs(entry - sl_eff) / entry * 100, "tp_pct": abs(tp - entry) / entry * 100,
+            "max_saat": s["max_saat"],
+            "contracts": contracts, "qty": qty, "margin_usd": margin, "lev": lev, "notional_usd": notional,
+            "fee_entry_usd": fee_entry, "funding_usd": 0.0, "funding_events": 0, "fund_done": [],
             "funding_rate": s.get("funding_rate", 0.0) or 0.0,
             "interval_h": s.get("interval_h", 8) or 8,
             "regime": s.get("regime", 0), "tags": s.get("tags", []),
             "reasons": s.get("reasons", [])[:6],
-            "last": s["entry"], "r_now": 0.0, "upnl_usd": 0.0, "mfe_r": 0.0, "mae_r": 0.0,
+            "last": entry, "r_now": 0.0, "upnl_usd": -fee_entry, "mfe_r": 0.0, "mae_r": 0.0,
         }
         ledger["open"].append(t)
         open_keys.add(k)
@@ -105,7 +166,36 @@ def open_new(ledger: dict, signals: list[dict], cfg: dict, now_ms: int | None = 
     return opened
 
 
-def _close(t: dict, exit_px: float, exit_ts: int, outcome: str, cfg: dict) -> dict:
+def close_trade(t: dict, exit_px: float, exit_ts: int, outcome: str, cfg: dict, maker: bool = False) -> dict:
+    """Pozisyonu kapatır. Gerçekçi kayıtlarda: brüt K/Z − giriş ücreti − çıkış ücreti − ödenen funding."""
+    if not t.get("real"):
+        return _close_legacy(t, exit_px, exit_ts, outcome, cfg)
+    fc = fees_cfg(cfg)
+    sgn = 1 if t["side"] == "long" else -1
+    qty = t["qty"]
+    gross = sgn * qty * (exit_px - t["entry"])
+    fee_exit = qty * exit_px * (fc["maker_yuzde"] if maker else fc["taker_yuzde"]) / 100
+    if outcome == "likidasyon":
+        pnl = -t["margin_usd"] - t["fee_entry_usd"]
+        fee_exit = 0.0
+    else:
+        pnl = gross - t["fee_entry_usd"] - fee_exit - t.get("funding_usd", 0.0)
+    risk_usd = qty * abs(t["entry"] - t.get("sl_init", t["sl"])) or 1e-9
+    hours = max(0.0, (exit_ts - t["entry_ts"]) / 3.6e6)
+    t.update({
+        "exit_ts": exit_ts, "exit": exit_px, "outcome": outcome, "exit_liq": "maker" if maker else "taker",
+        "gross_usd": round(gross, 4), "fee_exit_usd": round(fee_exit, 4),
+        "fee_usd": round(t["fee_entry_usd"] + fee_exit, 4),
+        "pnl_usd": round(pnl, 4), "pnl_pct": round(pnl / t["notional_usd"] * 100, 3),
+        "roi_pct": round(pnl / t["margin_usd"] * 100, 2),
+        "r": round(pnl / risk_usd, 3), "hours": round(hours, 2),
+    })
+    for k in ("last", "r_now", "upnl_usd", "fund_done"):
+        t.pop(k, None)
+    return t
+
+
+def _close_legacy(t: dict, exit_px: float, exit_ts: int, outcome: str, cfg: dict) -> dict:
     d = cfg["defter"]
     sgn = 1 if t["side"] == "long" else -1
     gross = sgn * (exit_px / t["entry"] - 1) * 100
@@ -128,14 +218,48 @@ def _close(t: dict, exit_px: float, exit_ts: int, outcome: str, cfg: dict) -> di
     return t
 
 
+_close = close_trade   # geriye dönük uyumluluk
+
+
+def apply_funding(ledger: dict, inst: str, rate: float, settle_ts: int, price: float) -> list[tuple[dict, float]]:
+    """Funding kesim anı geçtiğinde o coindeki açık pozisyonlara gerçek ödemeyi uygular.
+
+    Long, pozitif oranda öder (maliyet +); short alır (maliyet −). Ödeme = miktar × fiyat × oran.
+    """
+    out = []
+    for t in ledger["open"]:
+        if t["inst"] != inst or not t.get("real") or t["entry_ts"] >= settle_ts:
+            continue
+        done = t.setdefault("fund_done", [])
+        if settle_ts in done:
+            continue
+        sgn = 1 if t["side"] == "long" else -1
+        pay = sgn * t["qty"] * price * rate
+        t["funding_usd"] = round(t.get("funding_usd", 0.0) + pay, 6)
+        t["funding_events"] = t.get("funding_events", 0) + 1
+        done.append(settle_ts)
+        del done[:-6]
+        out.append((t, pay))
+    return out
+
+
+def _upnl(t: dict, px: float) -> float:
+    sgn = 1 if t["side"] == "long" else -1
+    if t.get("real"):
+        return sgn * t["qty"] * (px - t["entry"]) - t["fee_entry_usd"] - t.get("funding_usd", 0.0)
+    return t.get("notional_usd", 20.0) * sgn * (px / t["entry"] - 1)
+
+
 def update(ledger: dict, fetch, prices: dict[str, float], cfg: dict,
            now_ms: int | None = None, bar_ms: int = 3600_000) -> list[dict]:
-    """Açık pozisyonları mumlarla değerlendirir. Kapananları döner.
+    """Açık pozisyonları mumlarla değerlendirir (canlı akış dışında kalan anlar için yedek kontrol).
 
     fetch(inst) → DataFrame(open/high/low/close, UTC index = mum açılışı), bar süresi bar_ms.
     Aynı mumda hem stop hem hedef görüldüyse muhafazakâr olarak STOP sayılır.
+    Mumdan tespit edilen stop'ta gerçek dolum bilinmediği için stop fiyatına kayma eklenir.
     """
     now_ms = now_ms or _now_ms()
+    slip = cfg["defter"].get("kayma", 0.05) / 100
     closed, still = [], []
     for t in ledger["open"]:
         sgn = 1 if t["side"] == "long" else -1
@@ -146,9 +270,8 @@ def update(ledger: dict, fetch, prices: dict[str, float], cfg: dict,
             print(f"[defter] {t['inst']} mum alınamadı: {e}")
             df = None
         result = None
-        risk = abs(t["entry"] - t["sl"]) or 1e-12
+        risk = abs(t["entry"] - t.get("sl_init", t["sl"])) or 1e-12
         if df is not None and len(df):
-            # pandas sürümünden bağımsız (ns/ms çözünürlük) milisaniye dönüşümü
             ts_ms = ((df.index - pd.Timestamp(0, tz="UTC")) // pd.Timedelta(milliseconds=1)).to_numpy()
             # Giriş anından SONRA açılan mumlar (girişten önceki fiyatlar sayılmasın)
             mask = (ts_ms >= t["entry_ts"]) & (ts_ms < deadline)
@@ -160,30 +283,31 @@ def update(ledger: dict, fetch, prices: dict[str, float], cfg: dict,
                 t["mfe_r"] = round(max(t.get("mfe_r", 0.0), fav / risk), 2)
                 t["mae_r"] = round(max(t.get("mae_r", 0.0), adv / risk), 2)
                 hit_sl = row["low"] <= t["sl"] if sgn > 0 else row["high"] >= t["sl"]
-                hit_tp = row["high"] >= t["tp"] if sgn > 0 else row["low"] <= t["tp"]
+                # limit emir: fiyatın hedefin İÇİNDEN geçmesi gerekir (dokunmak yetmez)
+                hit_tp = row["high"] > t["tp"] if sgn > 0 else row["low"] < t["tp"]
                 bar_end = min(int(bts) + bar_ms, now_ms)
                 if hit_sl:
-                    result = (t["sl"], bar_end, "stop")
+                    kind = "likidasyon" if t.get("liq_first") else "stop"
+                    result = (t["sl"] * (1 - sgn * slip), bar_end, kind, False)
                     break
                 if hit_tp:
-                    result = (t["tp"], bar_end, "hedef")
+                    result = (t["tp"], bar_end, "hedef", True)
                     break
             if result is None and now_ms >= deadline:
                 px = prices.get(t["inst"]) or (float(sub["close"].iloc[-1]) if len(sub) else None)
                 if px:
-                    result = (px, min(now_ms, deadline + bar_ms), "süre")
+                    result = (px * (1 - sgn * slip), min(now_ms, deadline + bar_ms), "süre", False)
         if result is None and now_ms >= deadline + 6 * 3600 * 1000:
-            # Veri hiç gelmiyorsa (coin delist vb.) son bilinen fiyattan kapat
             px = prices.get(t["inst"], t.get("last", t["entry"]))
-            result = (px, now_ms, "süre")
+            result = (px, now_ms, "süre", False)
         if result:
-            closed.append(_close(t, result[0], result[1], result[2], cfg))
+            closed.append(close_trade(t, result[0], result[1], result[2], cfg, maker=result[3]))
         else:
             px = prices.get(t["inst"])
             if px:
                 t["last"] = px
                 t["r_now"] = round(sgn * (px - t["entry"]) / risk, 2)
-                t["upnl_usd"] = round(t.get("notional_usd", 20.0) * sgn * (px / t["entry"] - 1), 4)
+                t["upnl_usd"] = round(_upnl(t, px), 4)
             still.append(t)
     ledger["open"] = still
     ledger["closed"].extend(closed)
@@ -197,10 +321,13 @@ def mark(ledger: dict, prices: dict[str, float]) -> None:
         if not px:
             continue
         sgn = 1 if t["side"] == "long" else -1
-        risk = abs(t["entry"] - t["sl"]) or 1e-12
+        risk = abs(t["entry"] - t.get("sl_init", t["sl"])) or 1e-12
         t["last"] = px
         t["r_now"] = round(sgn * (px - t["entry"]) / risk, 2)
-        t["upnl_usd"] = round(t.get("notional_usd", 20.0) * sgn * (px / t["entry"] - 1), 4)
+        t["upnl_usd"] = round(_upnl(t, px), 4)
+        fav, adv = sgn * (px - t["entry"]) / risk, -sgn * (px - t["entry"]) / risk
+        t["mfe_r"] = round(max(t.get("mfe_r", 0.0), fav), 2)
+        t["mae_r"] = round(max(t.get("mae_r", 0.0), adv), 2)
 
 
 def near_levels(ledger: dict, prices: dict[str, float]) -> list[dict]:

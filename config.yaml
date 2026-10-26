@@ -8,8 +8,9 @@ borsa:
   # OKX: GitHub sunucularından (ABD) erişilebilen, likit vadeli piyasa.
   # Binance ABD IP'lerine 451 hatası veriyor, o yüzden ana veri kaynağı OKX.
   ana: okx
-  # Diğer borsaların funding oranlarını karşılaştırma için çek (erişilemeyen atlanır)
-  funding_karsilastir: [binance, bybit, bitget, gate]
+  # Diğer borsaların funding oranlarını karşılaştırma için çek (erişilemeyen atlanır).
+  # bitget, gate, mexc, htx: Çin kökenli borsalar. Binance/Bybit GitHub sunucularını (ABD) engelliyor.
+  funding_karsilastir: [bitget, gate, mexc, htx, binance, bybit]
 
 tarama:
   coin_sayisi: 100          # 24s hacme göre en likit N perpetual
@@ -70,16 +71,24 @@ demo:
   max_acik_toplam: 20        # aynı anda en fazla açık işlem
   max_acik_periyot: 8        # bir periyottan (ör. 15m) aynı anda en fazla açık işlem
 
+# Gerçek OKX ücretleri (VIP0). Giriş ve stop/süre çıkışı piyasa emri (taker), hedef limit emir (maker).
+ucret:
+  taker_yuzde: 0.05
+  maker_yuzde: 0.02
+  mmr_yuzde: 0.5             # bakım marjı (kaldıraçta likidasyon hesabı için)
+
 canli:
   dongu_dakika: 330          # GitHub'da tek çalışma süresi (en fazla ~350); bitince yenisi devralır
-  fiyat_kontrol_sn: 60       # demo pozisyonları kaç saniyede bir kontrol edilsin
+  websocket: true            # OKX canlı fiyat akışı (her fiyat değişiminde stop/hedef kontrolü)
+  bitget_ws: true            # Bitget canlı fiyat akışı (borsalar arası fark)
+  fiyat_kontrol_sn: 60       # ek güvenlik: 1 dk'lık mumlarla kaç saniyede bir kontrol edilsin
   komut_kontrol_sn: 15       # Telegram komutlarına bakma sıklığı
   yayin_min_dakika: 6        # dashboard en sık kaç dakikada bir güncellensin (GitHub Pages sınırı)
 
 defter:
   # Kağıt üstü işlem defteri: gerçek para yok, sadece sinyallerin karnesi.
   komisyon_gidis_donus: 0.10   # %  (OKX taker 0.05 x2)
-  kayma: 0.05                  # %  tahmini slippage
+  kayma: 0.05                  # %  sadece mumdan tespit edilen stop'larda (canlı akışta gerçek bid/ask kullanılır)
   tekrar_bekleme_saat: 24      # aynı coin+setup kapandıktan sonra yeniden açılmadan önce
   min_ornek: 30                # karar için gereken kapanmış işlem sayısı
 

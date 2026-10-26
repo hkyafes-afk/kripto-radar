@@ -1,0 +1,119 @@
+"""Canlı motor: WebSocket fiyatı → stop/hedef tetik → gerçekçi kapanış, funding kesimi, elle kapatma."""
+from __future__ import annotations
+
+import json
+import sys
+import tempfile
+import time
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from radar import ledger as lg  # noqa: E402
+from radar import ws  # noqa: E402
+from radar.demo import DemoClient  # noqa: E402
+from radar.engine import Engine  # noqa: E402
+from test_ws import FakeServer, _frame  # noqa: E402
+
+
+def _engine(d):
+    e = Engine(Path(d), client=DemoClient(), notify=False, demo=True)
+    e.run_once()
+    e.rebuild_watch()
+    return e
+
+
+def test_tick_triggers_stop_and_target():
+    with tempfile.TemporaryDirectory() as d:
+        e = _engine(d)
+        assert e.ledger["open"], "demo taramada işlem açılmalıydı"
+        t = e.ledger["open"][0]
+        n0 = len(e.ledger["closed"])
+        sgn = 1 if t["side"] == "long" else -1
+        # hedefe tam dokunmak limit emri doldurmaz
+        e._on_tick("okx", t["inst"], t["tp"], t["tp"], t["tp"], 1)
+        assert t["id"] not in e.hits
+        # stop seviyesini geçen fiyat → bid/ask'tan (daha kötü) dolum
+        px = t["sl"] - sgn * t["entry"] * 0.002
+        bid, ask = px - 0.0001 * px, px + 0.0001 * px
+        e._on_tick("okx", t["inst"], px, bid, ask, int(time.time() * 1000))
+        assert e.hits[t["id"]][0] == "stop"
+        e.process_hits()
+        c = e.ledger["closed"][-1]
+        assert len(e.ledger["closed"]) == n0 + 1 and c["id"] == t["id"] and c["outcome"] == "stop"
+        assert c["exit"] == (bid if sgn > 0 else ask) and c["exit_liq"] == "taker"
+        assert c["pnl_usd"] < 0 and t["inst"] not in e.watch or all(w[0] != t["id"] for w in e.watch.get(t["inst"], ()))
+        # ikinci işlem hedefin içinden geçince maker dolum
+        t2 = e.ledger["open"][0]
+        s2 = 1 if t2["side"] == "long" else -1
+        px2 = t2["tp"] + s2 * t2["entry"] * 0.001
+        e._on_tick("okx", t2["inst"], px2, px2, px2, int(time.time() * 1000))
+        e.process_hits()
+        c2 = e.ledger["closed"][-1]
+        assert c2["outcome"] == "hedef" and c2["exit"] == t2["tp"] and c2["exit_liq"] == "maker" and c2["pnl_usd"] > 0
+
+
+def test_funding_settlement_and_manual_close():
+    with tempfile.TemporaryDirectory() as d:
+        e = _engine(d)
+        t = e.ledger["open"][0]
+        now = int(time.time() * 1000)
+        e._set_fund(t["inst"], 0.0005, now + 1000, "ws")
+        e._set_fund(t["inst"], 0.0001, now + 8 * 3600_000, "ws")   # dönem değişti → önceki kesim olayı
+        e.prices[t["inst"]] = t["entry"]
+        e.process_funding()   # kesim zamanı gelmeden olay işlenir (giriş kesimden önce)
+        assert t["funding_events"] == 1
+        sgn = 1 if t["side"] == "long" else -1
+        assert abs(t["funding_usd"] - sgn * t["qty"] * t["entry"] * 0.0005) < 1e-6
+        e.process_funding()
+        assert t["funding_events"] == 1, "aynı kesim iki kez uygulanmamalı"
+        # elle kapatma: sembolle
+        e.book[t["inst"]] = (t["entry"], t["entry"] * 0.999, t["entry"] * 1.001, time.time())
+        msg = e.on_close_request(t["sym"])
+        assert "kapatılıyor" in msg
+        e.process_manual()
+        c = e.ledger["closed"][-1]
+        assert c["outcome"] == "manuel" and c["exit"] == (t["entry"] * 0.999 if sgn > 0 else t["entry"] * 1.001)
+        assert "yok" in e.on_close_request("YOKCOIN")
+
+
+def test_feed_to_engine_end_to_end():
+    """Sahte OKX WebSocket sunucusu stop'u geçen fiyat yayınlar; motor işlemi kapatır."""
+    with tempfile.TemporaryDirectory() as d:
+        e = _engine(d)
+        t = e.ledger["open"][0]
+        sgn = 1 if t["side"] == "long" else -1
+        px = t["sl"] - sgn * t["entry"] * 0.003
+
+        def beh(conn, recv):
+            recv()
+            conn.sendall(_frame(json.dumps({"arg": {"channel": "tickers", "instId": t["inst"]},
+                                            "data": [{"instId": t["inst"], "last": str(px), "bidPx": str(px),
+                                                      "askPx": str(px), "ts": str(int(time.time() * 1000))}]}).encode()))
+            time.sleep(1.5)
+
+        srv = FakeServer(beh)
+        srv.start()
+        f = ws.OKXFeed(e._on_tick, e._on_funding)
+        f.urls = [f"ws://127.0.0.1:{srv.port}/"]
+        e.feeds["okx"] = f
+        e._feed_symbols()
+        f.start()
+        t0 = time.time()
+        while t["id"] not in e.hits and time.time() - t0 < 5:
+            time.sleep(0.05)
+        latency = time.time() - t0
+        e.process_hits()
+        f.stop()
+        assert e.ledger["closed"][-1]["id"] == t["id"] and e.ledger["closed"][-1]["outcome"] == "stop"
+        assert latency < 3, latency
+        p = e.build_payload()
+        assert p["feeds"]["okx"]["ticks"] >= 1
+
+
+if __name__ == "__main__":
+    for name, fn in list(globals().items()):
+        if name.startswith("test_"):
+            fn()
+            print("✓", name)

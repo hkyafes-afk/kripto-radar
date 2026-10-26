@@ -159,6 +159,10 @@ input.search:focus{border-color:var(--muted)}
     <div class="warn">Araştırmalar kripto carry getirisinin 2024'ten beri ciddi daraldığını, 2025'te bazı dönemlerde negatife döndüğünü gösteriyor.
     Funding bir gecede tersine dönebilir; borsa riski ve short bacakta likidasyon riski vardır. Kaldıraç kullanma.</div>
     <div id="fundBody"></div>
+    <h2>Borsalar arası</h2>
+    <p class="note">Aynı coinin borsalar arasındaki funding farkı: düşük olanda long, yüksek olanda short açılırsa fiyat riski ~0 olur ve fark toplanır.
+    Teminatın iki borsaya bölünmesi, transfer ve komisyon gerçek getiriyi düşürür.</p>
+    <div id="arbBody"></div>
   </section>
 
   <section id="t-led">
@@ -226,7 +230,7 @@ function scoreColor(s){ return s>=75 ? "var(--green)" : s>=65 ? "#a3e635" : s>=5
 function render(){
   if (!D){ $("#sub").textContent = "Henüz veri yok — ilk tarama bekleniyor."; return; }
   const b = D.btc || {};
-  $("#sub").innerHTML = `OKX · ${esc(D.timeframe)}${D.live?' · <span class="badge b-green">● canlı</span>':''} · <span title="${esc(D.generated_local)}">${ago(D.generated_at)}</span>` + (D.demo ? ' · <span class="badge b-amber">ÖRNEK VERİ</span>' : "");
+  $("#sub").innerHTML = `OKX · ${esc(D.timeframe)}${D.live ? (D.feeds && D.feeds.okx && D.feeds.okx.healthy ? ' · <span class="badge b-green">● canlı akış</span>' : ' · <span class="badge b-amber">● REST</span>') : ''} · <span title="${esc(D.generated_local)}">${ago(D.generated_at)}</span>` + (D.demo ? ' · <span class="badge b-amber">ÖRNEK VERİ</span>' : "");
   const age = (Date.now()-D.generated_at)/60000;
   const st = $("#stale");
   const lim = D.live ? 25 : 100;
@@ -246,7 +250,7 @@ function render(){
   $("#tabs").innerHTML = tabs.map(([k,n,c]) => `<button class="tab ${state.tab===k?"on":""}" data-t="${k}">${n}${c!==""?`<span class="c">${c}</span>`:""}</button>`).join("");
   document.querySelectorAll(".tab").forEach(el => el.onclick = () => { state.tab = el.dataset.t; save(); render(); scrollTo({top:0}); });
   document.querySelectorAll("section").forEach(s => s.classList.toggle("on", s.id === "t-"+state.tab));
-  ({sig:renderSignals,demo:renderDemo,fund:renderFunding,led:renderLedger,coins:renderCoins,bt:renderBT,guide:renderGuide})[state.tab]();
+  ({sig:renderSignals,demo:renderDemo,fund:()=>{renderFunding();renderArb();},led:renderLedger,coins:renderCoins,bt:renderBT,guide:renderGuide})[state.tab]();
   $("#foot").innerHTML = `v${esc(D.version)} · ${D.counts.scanned}/${D.counts.universe} coin · ${D.duration_s!=null ? D.duration_s+" sn · " : ""}${D.scan_times ? "son tarama "+Object.entries(D.scan_times).map(([k,v])=>tfl(k)+" "+v).join(", ")+" · " : ""}OI: ${esc(D.oi_source)} · taker verisi: ${D.taker_real}/${D.coins.length}<br>Karar destek aracıdır · otomatik emir vermez · yatırım tavsiyesi değildir`;
 }
 
@@ -313,6 +317,22 @@ function renderFunding(){
     </div>`; }).join("") + `</div>`;
 }
 
+function renderArb(){
+  const A = D.arbitrage || [], S = D.spreads || [];
+  let h = A.length ? `<div class="grid">` + A.map(a => {
+    const v = Object.entries(a.venues||{}).sort((x,y)=>x[1]-y[1]).map(([k,x]) => `<span>${esc(k)} ${Math.round(x)}%</span>`).join("");
+    return `<div class="card"><div class="hd"><div><div class="sym">${esc(a.sym)}</div>
+      <div class="lbl"><span class="badge b-green">long ${esc(a.long_at)}</span> <span class="badge b-red">short ${esc(a.short_at)}</span></div></div>
+      <div class="score"><div class="v up">${Math.round(a.spread)}%</div><div class="raw">yıllık fark</div></div></div>
+      <div class="meta">${v}</div></div>`; }).join("") + `</div>`
+    : `<div class="empty">Şu an %15'in üzerinde funding farkı olan coin yok.</div>`;
+  h += `<h2>OKX ↔ Bitget fiyat farkı <span class="n">${D.spreads_n||0} coin canlı</span></h2>`;
+  h += S.length ? `<div class="list">` + S.map(x => `<div class="li"><b>${esc(x.sym)}</b><span class="m num">OKX ${fp(x.okx)} · Bitget ${fp(x.bitget)}</span>
+    <span class="r ${cls(x.bps)}">${x.bps>0?"+":""}${x.bps.toFixed(1).replace(".",",")} bp</span></div>`).join("") + `</div>`
+    : `<div class="empty">Bitget canlı fiyatı henüz yok.</div>`;
+  $("#arbBody").innerHTML = h;
+}
+
 function spark(eq){
   if (!eq || eq.length < 2) return "";
   const ys = eq.map(p=>p[1]), mn = Math.min(0,...ys), mx = Math.max(0,...ys), W=600, H=90, pad=6;
@@ -367,7 +387,7 @@ function eqChart(eq, start){
 
 function renderDemo(){
   const DM = D.ledger.stats.demo || {}, O = D.ledger.stats.overall, op = D.ledger.open, cl = D.ledger.closed;
-  const icon = {hedef:"✅",stop:"❌","süre":"⏱"}, what = {hedef:"hedef",stop:"stop","süre":"süre doldu"};
+  const icon = {hedef:"✅",stop:"❌","süre":"⏱",manuel:"✋",likidasyon:"💥"}, what = {hedef:"hedef (limit)",stop:"stop (piyasa)","süre":"süre doldu",manuel:"elle kapatıldı",likidasyon:"likidasyon"};
   let h = `<div class="card">
     <div class="hd"><div><div class="lbl">Demo bakiye · işlem başı ${DM.trade_size||20}$ · ${DM.lev||1}x</div>
       <div class="num" style="font-size:30px;font-weight:800;margin-top:4px">${money(DM.equity,false)}</div></div>
@@ -392,21 +412,25 @@ function renderDemo(){
     return `<div class="li"><div style="min-width:0">
       <div><span class="badge ${t.side==="long"?"b-green":"b-red"}">${t.side==="long"?"LONG":"SHORT"}</span> <b>${esc(t.sym)}</b> <span class="m">${tfl(t.tf)} · ${LBL[t.setup]} · ${t.score}</span></div>
       <div class="m num">${fp(t.entry)} → ${fp(t.last)} · stop ${fp(t.sl)} · hedef ${fp(t.tp)}</div>
-      <div class="m">${money(t.margin_usd,false)} · ${ago(t.entry_ts)} açıldı</div></div>
+      <div class="m">${money(t.notional_usd,false)}${t.contracts?" · "+t.contracts+" kontrat":""}${t.entry_src==="kitap"?" · kitaptan":""} · ${ago(t.entry_ts)} açıldı${Math.abs(t.funding_usd||0)>=0.005?" · funding "+money(-(t.funding_usd||0)):""}</div></div>
       <div class="r ${cls(pnl)}">${money(pnl)}<div class="m">${pct(pc,2)} · ${(t.r_now>0?"+":"")+(t.r_now||0).toFixed(2)}R</div></div></div>`; }).join("") + `</div>`
     : `<div class="empty">Şu an açık demo işlem yok. Güçlü sinyal geldiğinde bot kendisi açar ve Telegram'a yazar.</div>`;
   h += `<h2>İşlem geçmişi <span class="n">${O.n||0}</span></h2>`;
   h += cl.length ? `<div class="list">` + cl.slice(0,80).map(t => `<div class="li"><div style="min-width:0">
       <div>${icon[t.outcome]||"•"} <b>${esc(t.sym)}</b> <span class="m">${t.side==="long"?"long":"short"} · ${tfl(t.tf)} · ${LBL[t.setup]}</span></div>
       <div class="m num">${fp(t.entry)} → ${fp(t.exit)} · ${what[t.outcome]||t.outcome} · ${dur(t.hours)}</div>
-      <div class="m">${ago(t.exit_ts)} kapandı</div></div>
+      <div class="m">${ago(t.exit_ts)} kapandı${t.fee_usd!=null?" · ücret "+money(t.fee_usd,false):""}${Math.abs(t.funding_usd||0)>=0.005?" · funding "+money(-t.funding_usd):""}</div></div>
       <div class="r ${cls(t.pnl_usd)}">${money(t.pnl_usd)}<div class="m">${pct(t.pnl_pct,2)} · ${(t.r>0?"+":"")+t.r.toFixed(2)}R</div></div></div>`).join("") + `</div>`
     : `<div class="empty">Henüz kapanan işlem yok. İlk sonuçlar periyoda göre birkaç saat ile birkaç gün içinde gelir.</div>`;
+  const SK = D.ledger.skipped || [];
+  if (SK.length) h += `<h2>Açılamayan sinyaller</h2><div class="list">` + SK.map(x => `<div class="li"><b>${esc(x.sym)}</b><span class="m">${tfl(x.tf)} · ${esc(x.reason)}</span></div>`).join("") + `</div>`;
+  const F = D.fees || {};
+  h += `<p class="note">Ücretler OKX VIP0: piyasa emri %${String(F.taker_yuzde??0.05).replace(".",",")}, limit emir %${String(F.maker_yuzde??0.02).replace(".",",")}. Giriş ve stop piyasa emri, hedef limit emir sayılır; hedefe dokunmak yetmez, fiyatın içinden geçmesi gerekir. Funding, borsanın gerçek kesim saatinde gerçek oranla düşülür.</p>`;
   $("#demoBody").innerHTML = h;
 }
 
 function renderCoins(){
-  const cols = [["sym","Coin"],["price","Fiyat"],["chg24","24s"],["vol24_usd","Hacim","hm"],["rsi","RSI"],["adx","ADX","hm"],["funding_ann","Fund/yıl"],["oi_chg24","OI 24s"],["st","Trend"],["best","En iyi"]];
+  const cols = [["sym","Coin"],["price","Fiyat"],["chg24","24s"],["vol24_usd","Hacim","hm"],["rsi","RSI"],["adx","ADX","hm"],["funding_ann","Fund/yıl"],["oi_chg24","OI 24s"],["bitget_bps","Bitget","hm"],["st","Trend"],["best","En iyi"]];
   const q = state.q.trim().toUpperCase();
   let rows = D.coins.filter(c => !q || c.sym.includes(q));
   const k = state.sort.k, d = state.sort.d;
@@ -416,6 +440,7 @@ function renderCoins(){
     <td>${c.rsi!=null?Math.round(c.rsi):"–"}</td><td class="hm">${c.adx!=null?Math.round(c.adx):"–"}</td>
     <td class="${c.funding_ann>50?"down":c.funding_ann<-10?"up":""}">${c.funding_ann!=null?Math.round(c.funding_ann)+"%":"–"}</td>
     <td class="${cls(c.oi_chg24)}">${pct(c.oi_chg24)}</td>
+    <td class="hm">${c.bitget_bps!=null ? (c.bitget_bps>0?"+":"")+c.bitget_bps.toFixed(1).replace(".",",")+"bp" : "–"}</td>
     <td>${c.st===1?'<span class="up">▲</span>':'<span class="down">▼</span>'}${c.d_trend===1?'<span class="up">▲</span>':c.d_trend===-1?'<span class="down">▼</span>':'<span style="color:var(--dim)">•</span>'}</td>
     <td>${c.best?`<span class="${c.best.side==="long"?"up":"down"}">${c.best.score}</span> <span style="color:var(--muted);font-family:var(--sans);font-size:11px">${esc(c.best.label)}</span>`:"–"}</td></tr>`;
   $("#coinTbl").innerHTML = `<thead><tr>${cols.map(([k2,n,hc]) => `<th data-k="${k2}" class="${hc||""}">${n}${state.sort.k===k2?(state.sort.d>0?" ↑":" ↓"):""}</th>`).join("")}</tr></thead><tbody>${rows.map(tr).join("")}</tbody>`;
@@ -438,6 +463,18 @@ function renderBT(){
   $("#btBody").innerHTML = h;
 }
 
+function feedLines(){
+  const f = D.feeds || {}, L = [];
+  for (const [k,v] of Object.entries(f)){
+    if (k === "telegram") L.push(`Telegram: ${v.listening?"🟢 dinliyor":"🟡 bekliyor"} · ${v.sent} mesaj gönderildi${v.median_send_ms!=null?" · ort. "+v.median_send_ms+" ms":""}${v.failed?" · "+v.failed+" hata":""}`);
+    else L.push(`${k.toUpperCase()} akışı: ${v.healthy?"🟢 canlı":"🔴 kopuk"} · ${v.ticks} fiyat · ${v.reconnects} yeniden bağlanma${v.error?" · "+esc(v.error):""}`);
+  }
+  const lp = D.loop || {};
+  if (lp.signal_latency_s!=null) L.push(`Son tarama mum kapanışından ${String(lp.signal_latency_s).replace(".",",")} sn sonra bitti`);
+  if (lp.ws_closes!=null) L.push(`Kapanışlar: akıştan ${lp.ws_closes}, mum kontrolünden ${lp.rest_closes||0} · funding kesimi ${lp.funding_events||0}`);
+  return L.length ? L.join("<br>") : "Canlı akış bilgisi yok (tek seferlik tarama).";
+}
+
 function renderGuide(){
   const repo = D.repo || "";
   const act = repo ? `https://github.com/${repo}/actions/workflows/canli.yml` : "#";
@@ -449,7 +486,7 @@ function renderGuide(){
     <a class="btn" href="${act}" target="_blank" rel="noopener"${dis}>⟳ Canlı döngü</a>
     <a class="btn sec" href="${cfg}" target="_blank" rel="noopener"${dis}>⚙ Ayarlar</a>
   </div>${repo ? "" : `<p class="note">Bu butonlar bot GitHub reposunda çalışmaya başlayınca aktif olur.</p>`}
-  <p class="note">Bot GitHub'da sürekli açık bir döngüde çalışır: demo pozisyonları dakikada bir kontrol eder, 15 dakikalık, 1 saatlik ve 4 saatlik mumlar kapanır kapanmaz tarar. Her döngü ~5,5 saat sürer, bitince yenisi devralır. Telegram'dan <code>/tara</code> yazarsan hemen tarar.</p>
+  <p class="note">Bot GitHub'da sürekli açık bir döngüde çalışır: OKX ve Bitget'e WebSocket ile bağlıdır, demo pozisyonları her fiyat değişiminde kontrol eder, 15 dakikalık, 1 saatlik ve 4 saatlik mumlar kapanır kapanmaz tarar. Her döngü ~5,5 saat sürer, bitince yenisi devralır. Telegram'dan <code>/tara</code> yazarsan hemen tarar.</p>
   <h2>Setup'lar ne demek?</h2>
   <ul>
     <li><b>Trend Long/Short</b> — 4S SuperTrend, günlük trend ve 7/14/28 günlük momentum aynı yönde. Kriptoda en güçlü akademik kanıt zaman-serisi momentumunda; o yüzden ana setup bu.</li>
@@ -462,12 +499,15 @@ function renderGuide(){
   <ul><li><code>/durum</code> BTC ve en iyi sinyaller</li><li><code>/sinyaller</code> tüm güçlü sinyaller</li><li><code>/coin SOL</code> tek coin detayı</li>
   <li><code>/demo</code> demo bakiye ve kâr/zarar</li><li><code>/pozisyonlar</code> açık demo işlemler</li>
   <li><code>/funding</code> harvest listesi</li><li><code>/karne</code> setup ve periyot karnesi</li><li><code>/tara</code> hemen tarama başlat</li>
+  <li><code>/kapat SOL</code> demo işlemi elle kapat (mesajdaki ❌ butonu da aynı işi yapar)</li>
+  <li><code>/borsalar</code> borsalar arası funding ve fiyat farkı</li><li><code>/saglik</code> canlı akış ve bağlantı durumu</li>
   <li><code>/sessiz 8</code> 8 saat bildirim kapat · <code>/ac</code> aç</li></ul>
   <h2>Doğru kullanım</h2>
   <ul><li>Bu bir <b>radar</b>: “buna bak” der, “al/sat” demez. Otomatik emir vermez.</li>
   <li>Defter en az 30 kapanmış işlem toplamadan hiçbir setup'a para bağlama. Ortalama R negatifse o setup'ı görmezden gel.</li>
   <li>Stop seviyesine göre pozisyon büyüklüğü: hesabının en fazla %1'ini riske at. Kaldıraç kayıpları büyütür.</li></ul>
   <h2>Sistem durumu</h2>
+  <p class="note">${feedLines()}</p>
   <p class="note">Borsa: OKX (public API) · OI kaynağı: ${esc(D.oi_source)} · gerçek taker verisi: ${D.taker_real}/${D.coins.length} coin<br>Diğer borsalar: ${ex || "–"}
   ${D.errors && D.errors.length ? "<br>Atlanan coinler: "+D.errors.map(esc).join(", ") : ""}</p>`;
 }

@@ -24,6 +24,9 @@ HELP = (
     "/funding — funding harvest listesi\n"
     "/demo — demo hesap: bakiye, kâr/zarar\n"
     "/pozisyonlar — açık demo işlemler\n"
+    "/kapat SOL — demo işlemi elle kapat\n"
+    "/borsalar — borsalar arası funding ve fiyat farkı\n"
+    "/saglik — canlı veri ve bağlantı durumu\n"
     "/karne — setup ve periyot karnesi\n"
     "/tara — hemen yeni tarama başlat\n"
     "/sessiz 8 — 8 saat bildirimleri kapat\n"
@@ -151,11 +154,66 @@ def cmd_pozisyonlar(d: dict) -> str:
     return "\n".join(L)
 
 
-def handle(updates: list, state: dict, data: dict | None, on_scan=None) -> bool:
-    """Telegram güncellemelerini işler. Döner: state değişti mi."""
+def _strip(t: str) -> str:
+    import re
+    return re.sub(r"<[^>]+>", "", t)
+
+
+def cmd_borsalar(d: dict) -> str:
+    arb, spr = d.get("arbitrage") or [], d.get("spreads") or []
+    L = ["🌏 <b>Borsalar arası</b>"]
+    if arb:
+        L.append("\n<b>Funding farkı</b> (yıllık %, düşük olanda long + yüksek olanda short):")
+        for a in arb[:8]:
+            L.append(f"• <b>{nt.esc(a['sym'])}</b> {a['spread']:.0f}% → long {a['long_at']} ({a['lo']:.0f}%), "
+                     f"short {a['short_at']} ({a['hi']:.0f}%)")
+    else:
+        L.append("Şu an anlamlı funding farkı yok.")
+    if spr:
+        L.append("\n<b>OKX ↔ Bitget fiyat farkı</b>:")
+        for x in spr[:6]:
+            L.append(f"• {nt.esc(x['sym'])} {x['bps']:+.1f} bp")
+    L.append("\n<i>Farklar komisyon, transfer ve funding aralığı farkını içermez.</i>")
+    return "\n".join(L)
+
+
+def cmd_saglik(d: dict) -> str:
+    f = d.get("feeds") or {}
+    L = ["🩺 <b>Sistem sağlığı</b>"]
+    for k, v in f.items():
+        if k == "telegram":
+            L.append(f"Telegram: {'dinliyor' if v.get('listening') else 'bekliyor'} · gönderilen {v.get('sent')} · "
+                     f"hata {v.get('failed')} · gecikme {v.get('median_send_ms')} ms")
+        else:
+            L.append(f"{k}: {'🟢 canlı' if v.get('healthy') else '🔴 kopuk'} · son veri {v.get('last_msg_age_s')} sn önce · "
+                     f"{v.get('ticks')} fiyat · {v.get('reconnects')} yeniden bağlanma")
+    lp = d.get("loop") or {}
+    L.append(f"Döngü: {lp.get('scans', 0)} tarama · {lp.get('opened', 0)} açılış · {lp.get('closed', 0)} kapanış")
+    return "\n".join(L)
+
+
+def handle(updates: list, state: dict, data: dict | None, on_scan=None, on_close=None) -> bool:
+    """Telegram güncellemelerini işler. Döner: state değişti mi.
+
+    on_close(hedef) → cevap metni. hedef: işlem kimliği (butondan) ya da coin sembolü (/kapat SOL).
+    """
     changed = False
     owner = os.environ.get("TELEGRAM_CHAT_ID", "").strip() or str(state.get("owner_chat_id") or "")
     for u in updates:
+        cq = u.get("callback_query")
+        if cq:
+            cid = str(((cq.get("message") or {}).get("chat") or {}).get("id", ""))
+            dat = cq.get("data") or ""
+            if cid != owner:
+                nt.tg_call("answerCallbackQuery", {"callback_query_id": cq.get("id"), "text": "Bu bot özel."})
+                continue
+            if dat.startswith("kapat:") and on_close:
+                reply = on_close(dat.split(":", 1)[1])
+            else:
+                reply = "Bu buton artık geçerli değil."
+            nt.tg_call("answerCallbackQuery", {"callback_query_id": cq.get("id"), "text": _strip(reply)[:190]})
+            nt.tg_send(cid, reply)
+            continue
         msg = u.get("message") or {}
         chat = msg.get("chat") or {}
         cid = str(chat.get("id", ""))
@@ -202,6 +260,17 @@ def handle(updates: list, state: dict, data: dict | None, on_scan=None) -> bool:
             reply = cmd_demo(data)
         elif cmd in ("/pozisyonlar", "/pozisyon", "/acik"):
             reply = cmd_pozisyonlar(data)
+        elif cmd == "/kapat":
+            if not arg.strip():
+                reply = "Kullanım: /kapat SOL  (açık demo işlemi piyasa fiyatından kapatır)"
+            elif on_close:
+                reply = on_close(arg.strip().upper())
+            else:
+                reply = "Kapatma şu an sadece canlı döngü açıkken yapılabilir."
+        elif cmd in ("/borsalar", "/arbitraj"):
+            reply = cmd_borsalar(data)
+        elif cmd == "/saglik":
+            reply = cmd_saglik(data)
         else:
             reply = "Bilinmeyen komut. /yardim yaz."
         buttons = None

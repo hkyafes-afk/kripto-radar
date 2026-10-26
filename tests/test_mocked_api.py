@@ -146,3 +146,78 @@ if __name__ == "__main__":
         if name.startswith("test_"):
             fn()
             print("✓", name)
+
+
+def test_telegram_worker_queue_retry_and_buttons():
+    import os
+    from radar import notify
+    os.environ["TELEGRAM_BOT_TOKEN"] = "TEST"
+    calls, got_updates = [], []
+    state = {"n429": 0, "polled": 0}
+
+    def fake(method, payload, timeout=20):
+        calls.append(method)
+        if method == "sendMessage":
+            if state["n429"] == 0:
+                state["n429"] += 1
+                return {"ok": False, "error_code": 429, "parameters": {"retry_after": 0.1}}
+            return {"ok": True}
+        if method == "getUpdates":
+            state["polled"] += 1
+            if state["polled"] == 1:
+                return {"ok": True, "result": [{"update_id": 5, "callback_query": {
+                    "id": "q1", "data": "kapat:abc", "message": {"chat": {"id": 111}}}}]}
+            time.sleep(0.2)
+            return {"ok": True, "result": []}
+        return {"ok": True, "result": {"username": "t"}}
+
+    orig = notify.tg_call
+    notify.tg_call = fake
+    try:
+        w = notify.TelegramWorker(lambda ups: got_updates.extend(ups)).start()
+        assert notify.WORKER is w
+        notify.tg_send("111", "merhaba <b>dünya</b>", [[{"text": "x", "callback_data": "kapat:abc"}]])
+        t0 = time.time()
+        while w.sent < 1 and time.time() - t0 < 5:
+            time.sleep(0.05)
+        assert w.sent == 1 and state["n429"] == 1, "429 sonrası tekrar denenmeli"
+        while not got_updates and time.time() - t0 < 5:
+            time.sleep(0.05)
+        assert got_updates[0]["callback_query"]["data"] == "kapat:abc"
+        assert w.offset == 6
+        w.stop(flush_s=1)
+        assert notify.WORKER is None
+    finally:
+        notify.tg_call = orig
+        os.environ.pop("TELEGRAM_BOT_TOKEN", None)
+
+
+def test_callback_close_routing():
+    import os
+    from radar import commands, notify
+    os.environ["TELEGRAM_BOT_TOKEN"] = "TEST"
+    os.environ["TELEGRAM_CHAT_ID"] = "111"
+    sent = []
+    orig = notify.tg_call
+    notify.tg_call = lambda m, p, timeout=20: (sent.append((m, p)) or {"ok": True})
+    commands.nt.tg_call = notify.tg_call
+    try:
+        asked = []
+        commands.handle([{"update_id": 1, "callback_query": {"id": "q", "data": "kapat:id123",
+                                                              "message": {"chat": {"id": 111}}}},
+                         {"update_id": 2, "message": {"text": "/kapat sol", "chat": {"id": 111, "type": "private"}}},
+                         {"update_id": 3, "callback_query": {"id": "q2", "data": "kapat:x", "message": {"chat": {"id": 999}}}}],
+                        {}, {"ledger": {"open": []}}, on_close=lambda tgt: asked.append(tgt) or f"ok {tgt}")
+        assert asked == ["id123", "SOL"]
+        answers = [p for m, p in sent if m == "answerCallbackQuery"]
+        assert answers[0]["text"] == "ok id123" and answers[1]["text"] == "Bu bot özel."
+    finally:
+        notify.tg_call = orig
+        os.environ.pop("TELEGRAM_BOT_TOKEN", None)
+        os.environ.pop("TELEGRAM_CHAT_ID", None)
+
+
+if __name__ == "__main__":
+    for name in ("test_telegram_worker_queue_retry_and_buttons", "test_callback_close_routing"):
+        globals()[name]()
+        print("✓", name)

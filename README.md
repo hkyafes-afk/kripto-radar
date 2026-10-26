@@ -54,9 +54,12 @@ Bitti. Bundan sonra kendi kendine sürekli çalışır.
 
 | Bölüm | Açıklama |
 |---|---|
-| **Canlı döngü** | Fiyat ve demo pozisyonlar dakikada bir; 15dk, 1S ve 4S mumlar kapanır kapanmaz tarama; Telegram komutları 15 sn'de bir |
+| **Canlı veri** | OKX ve Bitget'e WebSocket ile sürekli bağlı; her fiyat değişiminde (~100 ms) stop/hedef kontrolü. Koparsa kendiliğinden yeniden bağlanır, bu arada REST ile 5 sn'de bir fiyat alınır |
+| **Sinyal hızı** | 15dk, 1S ve 4S mumlar kapanır kapanmaz tarama (mum kesinleşene kadar 1-2 sn aralıkla tekrar); tarama ayrı thread'de, stop takibini bekletmez |
+| **Telegram** | Long polling ile komutlara anında cevap, gönderim kuyruğu, hız sınırında bekleyip tekrar deneme, işlem mesajında ❌ Kapat butonu, bot kapalı kaldıysa haber |
 | **Tarama** | 24s hacme göre en likit 100 OKX USDT perpetual (sadece kripto; hisse ve emtia kontratları hariç) |
-| **Demo hesap** | 1.000$ sanal bakiye, her güçlü sinyalde 20$'lık işlem, coin başına tek pozisyon; komisyon, kayma ve funding düşülür |
+| **Demo hesap** | 1.000$ sanal bakiye, her güçlü sinyalde 20$'lık işlem, coin başına tek pozisyon. Gerçek kurallar: giriş kitaptaki ask/bid'den, OKX kontrat ve lot yuvarlaması, OKX ücretleri (piyasa %0,05 / limit %0,02), hedef limit emir (fiyat içinden geçmeli), stop piyasa emri (kötü dolum dahil), funding gerçek kesim saatinde gerçek oranla, kaldıraçta likidasyon |
+| **Çin borsaları** | Bitget canlı akış; Bitget, Gate, MEXC, HTX funding oranları; borsalar arası funding arbitraj listesi ve OKX↔Bitget fiyat farkı |
 | **Sinyaller** | 4 setup, her biri 0–100 puan: Trend Long/Short, Dönüş Long/Short |
 | **Rejim filtresi** | BTC günlük EMA200 altında long'lar %50, boğada short'lar kırpılır (ham puan ayrıca saklanır) |
 | **Funding harvest** | Spot+perp delta-nötr carry adayları: 30g ortalama, istikrar, başabaş gün, diğer borsalarla karşılaştırma |
@@ -65,7 +68,7 @@ Bitti. Bundan sonra kendi kendine sürekli çalışır.
 | **Backtest** | Her pazar walk-forward test (parametre ilk %70'te seçilir, son %30'da ölçülür) |
 
 ### Telegram komutları
-`/durum` · `/sinyaller` · `/demo` · `/pozisyonlar` · `/coin SOL` · `/funding` · `/karne` · `/tara` · `/sessiz 8` · `/ac`
+`/durum` · `/sinyaller` · `/demo` · `/pozisyonlar` · `/kapat SOL` · `/borsalar` · `/saglik` · `/coin SOL` · `/funding` · `/karne` · `/tara` · `/sessiz 8` · `/ac`
 (Döngü açıkken cevaplar birkaç saniyede gelir.)
 
 ---
@@ -95,11 +98,11 @@ Tek bir iyi haftaya göre ayar değiştirmek en klasik hatadır.
 
 ## Dosyalar
 ```
-radar/            Python paketi (göstergeler, sinyal motoru, defter, dashboard, Telegram)
+radar/            Python paketi (göstergeler, sinyal motoru, demo hesap, canlı motor, WebSocket, Telegram, dashboard)
 config.yaml       Ayarlar
 .github/workflows Canlı döngü (sürekli), Backtest (haftalık)
 scripts/site.sh   Dashboard + defter dosyalarını gh-pages dalında tutar (repo şişmez)
-tests/            Çevrimdışı testler: python tests/test_offline.py
+tests/            Çevrimdışı testler (sahte WebSocket sunucusu dahil): python tests/test_engine_live.py
 data/KARNE.md     Haftalık karne (otomatik)
 ```
 

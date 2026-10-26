@@ -95,7 +95,58 @@ def _gate() -> dict[str, float]:
     return out
 
 
-FETCHERS = {"binance": _binance, "bybit": _bybit, "bitget": _bitget, "gate": _gate}
+def _mexc() -> dict[str, float]:
+    js = _get("https://contract.mexc.com/api/v1/contract/funding_rate")
+    out = {}
+    for x in js.get("data", []) or []:
+        sym = x.get("symbol", "")
+        if sym.endswith("_USDT") and x.get("fundingRate") not in (None, ""):
+            iv = float(x.get("collectCycle") or 8)
+            out[sym[:-5]] = _ann(float(x["fundingRate"]), iv)
+    return out
+
+
+def _htx() -> dict[str, float]:
+    js = _get("https://api.hbdm.com/linear-swap-api/v1/swap_batch_funding_rate")
+    out = {}
+    for x in js.get("data", []) or []:
+        code = x.get("contract_code", "")
+        if code.endswith("-USDT") and x.get("funding_rate") not in (None, ""):
+            iv = 8.0
+            try:
+                ft, nft = float(x.get("funding_time") or 0), float(x.get("next_funding_time") or 0)
+                if nft > ft > 0:
+                    iv = max(1.0, min(8.0, (nft - ft) / 3.6e6))
+            except (TypeError, ValueError):
+                pass
+            out[code[:-5]] = _ann(float(x["funding_rate"]), iv)
+    return out
+
+
+FETCHERS = {"binance": _binance, "bybit": _bybit, "bitget": _bitget, "gate": _gate,
+            "mexc": _mexc, "htx": _htx}
+
+
+def arbitrage(by_coin: dict[str, dict[str, float]], universe_syms: set[str], min_spread: float = 15.0,
+              top: int = 15) -> list[dict]:
+    """Aynı coinin borsalar arasındaki yıllık funding farkı.
+
+    Mantık: funding'i düşük borsada long, yüksek borsada short → fiyat riski ~0, fark kadar funding toplanır.
+    Uyarı: borsa başına teminat, transfer, komisyon ve farklı funding aralıkları gerçek getiriyi düşürür.
+    """
+    out = []
+    for sym in universe_syms:
+        v = {k: x for k, x in (by_coin.get(sym) or {}).items() if x == x}
+        if len(v) < 2:
+            continue
+        lo_k = min(v, key=v.get)
+        hi_k = max(v, key=v.get)
+        spread = v[hi_k] - v[lo_k]
+        if spread >= min_spread:
+            out.append({"sym": sym, "spread": round(spread, 1), "long_at": lo_k, "lo": round(v[lo_k], 1),
+                        "short_at": hi_k, "hi": round(v[hi_k], 1), "venues": v})
+    out.sort(key=lambda r: -r["spread"])
+    return out[:top]
 
 
 def fetch_all(names: list[str]) -> tuple[dict[str, dict[str, float]], dict[str, str]]:

@@ -5,6 +5,8 @@ import sys
 import tempfile
 from pathlib import Path
 
+import json
+
 import numpy as np
 import pandas as pd
 
@@ -102,10 +104,11 @@ def test_demo_dollars_and_limits():
     idx_bars = _bars(t0 - 60_000, [(100, 120, 80, 100), (100, 101, 99, 100), (100, 110.5, 100, 110)])
     closed = lg.update(L, lambda i: idx_bars, {}, CFG, now_ms=t0 + 5 * 60_000, bar_ms=60_000)
     assert len(closed) == 1 and closed[0]["outcome"] == "hedef"
-    # %10 brüt − %0.15 masraf = %9.85 → 20$ * 0.0985 = 1.97$
-    assert abs(closed[0]["pnl_usd"] - 1.97) < 0.01, closed[0]["pnl_usd"]
+    # brüt 0.2 coin × 10$ = 2$ ; giriş taker %0.05 (0.01$) ; hedef limit → maker %0.02 (0.2×110×0.0002=0.0044$)
+    assert abs(closed[0]["pnl_usd"] - 1.9856) < 1e-6, closed[0]["pnl_usd"]
+    assert closed[0]["exit_liq"] == "maker"
     st = lg.stats(L, CFG)
-    assert abs(st["demo"]["equity"] - 1001.97) < 0.01 and st["demo"]["return_pct"] > 0
+    assert abs(st["demo"]["equity"] - 1001.99) < 0.006 and st["demo"]["return_pct"] > 0
     # limit: aynı periyotta en fazla max_acik_periyot
     L = lg.empty()
     sigs = []
@@ -119,6 +122,48 @@ def test_demo_dollars_and_limits():
     old = {"open": [{"inst": "X", "entry": 50.0}], "closed": [{"inst": "Y", "entry": 10.0, "pnl_pct": 5.0}]}
     lg.migrate(old, CFG)
     assert old["open"][0]["qty"] == 0.4 and old["closed"][0]["pnl_usd"] == 1.0
+
+
+def test_realistic_execution():
+    t0 = 1_700_000_000_000
+    # 1) Kitaptan giriş: long ask'tan alır, stop/hedef mesafesi korunur
+    L = lg.empty()
+    op = lg.open_new(L, [_signal()], CFG, now_ms=t0, quote=lambda i: (100.2, 100.4, 100.3))
+    t = L["open"][0]
+    assert t["entry"] == 100.4 and t["entry_src"] == "kitap"
+    assert abs(t["sl"] - 95.4) < 1e-9 and abs(t["tp"] - 110.4) < 1e-9
+    # 2) OKX kontrat kuralları: BTC ctVal 0.01, lot 0.01 → 20$ / (0.01*80000=800$) = 0.025 → 0.02 kontrat
+    L = lg.empty()
+    sig = _signal(); sig.update({"entry": 80000.0, "sl": 78000.0, "tp": 84000.0})
+    lg.open_new(L, [sig], CFG, now_ms=t0, meta=lambda i: {"ct_val": 0.01, "lot_sz": 0.01, "min_sz": 0.01})
+    t = L["open"][0]
+    assert t["contracts"] == 0.02 and abs(t["qty"] - 0.0002) < 1e-12 and abs(t["notional_usd"] - 16.0) < 1e-9
+    # 3) En küçük lot çok büyükse işlem açılmaz, nedeni kaydedilir
+    L, skipped = lg.empty(), []
+    lg.open_new(L, [sig], CFG, now_ms=t0, meta=lambda i: {"ct_val": 1, "lot_sz": 1, "min_sz": 1}, skipped=skipped)
+    assert not L["open"] and "en küçük lot" in skipped[0]["reason"]
+    # 4) Gerçek funding: kesim anında long öder, short alır; aynı kesim iki kez uygulanmaz
+    L = lg.empty()
+    lg.open_new(L, [_signal()], CFG, now_ms=t0)
+    pays = lg.apply_funding(L, "X-USDT-SWAP", 0.001, t0 + 3600_000, 100.0)
+    assert len(pays) == 1 and abs(pays[0][1] - 0.02) < 1e-12        # 0.2 × 100 × 0.001
+    assert not lg.apply_funding(L, "X-USDT-SWAP", 0.001, t0 + 3600_000, 100.0)
+    assert not lg.apply_funding(L, "X-USDT-SWAP", 0.001, t0 - 1, 100.0)  # girişten önceki kesim sayılmaz
+    c = lg.close_trade(L["open"].pop(), 100.0, t0 + 7200_000, "süre", CFG)
+    assert abs(c["pnl_usd"] - (-0.01 - 0.01 - 0.02)) < 1e-9, c["pnl_usd"]   # 2 taker ücret + funding
+    # 5) Mumdan tespit edilen stop'ta kayma eklenir (long: stop'un biraz altından dolum)
+    L = lg.empty()
+    lg.open_new(L, [_signal()], CFG, now_ms=t0)
+    cl = lg.update(L, lambda i: _bars(t0, [(100, 100, 94, 95)]), {}, CFG, now_ms=t0 + 2 * 3600_000)
+    assert cl[0]["outcome"] == "stop" and cl[0]["exit"] < 95.0
+    # 6) Kaldıraç: 20x long'da likidasyon stop'tan önce gelir
+    cfg = json.loads(json.dumps(CFG)); cfg["demo"]["kaldirac"] = 20
+    L = lg.empty()
+    lg.open_new(L, [_signal()], cfg, now_ms=t0)
+    t = L["open"][0]
+    assert t["liq_first"] and abs(t["liq"] - 100 * (1 - 1 / 20 + 0.005)) < 1e-9 and t["notional_usd"] == 400
+    cl = lg.update(L, lambda i: _bars(t0, [(100, 100, 90, 92)]), {}, cfg, now_ms=t0 + 2 * 3600_000)
+    assert cl[0]["outcome"] == "likidasyon" and abs(cl[0]["pnl_usd"] - (-20 - 0.2)) < 1e-9
 
 
 def test_scoring_scalar_vs_vector():
