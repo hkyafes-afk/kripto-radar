@@ -30,6 +30,7 @@ import json
 
 from . import commands as cm
 from . import desk as dk
+from . import director as gmd
 from . import harvest as hv
 from . import lease
 from . import learn
@@ -135,6 +136,7 @@ class Engine:
         self.payload: dict | None = None
         self.started = time.time()
         self.cycles = 0
+        self.perf = gmd.PerfMeter()          # v9: döngü hızı sayacı
         self.fail_streak = 0
         self.stats_counter = {"opened": 0, "closed": 0, "scans": 0, "ws_closes": 0, "rest_closes": 0,
                               "funding_events": 0, "signal_latency_s": None, "partials": 0, "trail_moves": 0}
@@ -287,7 +289,7 @@ class Engine:
                 self.prices.setdefault(r["inst"], r["price"])
                 if r.get("ct_val"):
                     self.meta[r["inst"]] = {"ct_val": r["ct_val"], "lot_sz": r["lot_sz"], "min_sz": r["min_sz"],
-                                            "max_lev": r.get("max_lev") or 0.0}
+                                            "max_lev": r.get("max_lev") or 0.0, "list_ts": r.get("list_ts") or 0.0}
             self._feed_symbols()
         self.t["universe"] = time.time()
 
@@ -788,6 +790,7 @@ class Engine:
             name = self.jobs.get()
             if name == "__stop__":
                 return
+            t_job = time.perf_counter()
             try:
                 if name.startswith("scan:"):
                     _, tfs, b = name.split(":")
@@ -817,6 +820,7 @@ class Engine:
                 traceback.print_exc()
                 self.errors = ([f"{name}: {e}"] + self.errors)[:20]
             finally:
+                self.perf.add("işçi:" + name.split(":")[0], time.perf_counter() - t_job)
                 with self.lock:
                     self.job_names.discard(name)
 
@@ -1234,10 +1238,12 @@ class Engine:
             "health": self.health,
             "weather": self.weather or None,
             "learning": {"segments": (self.desk.st.get("segments") if self.desk else None) or {},
+                         "default_shadow": sorted(learn.DEFAULT_SHADOW),
                          "learned": {k: v for k, v in (self.cfg.get("_learned") or {}).items() if k in ("managers", "generated", "split")},
                          "stops_on": bool((self.desk.fc if self.desk else {}).get("durdurma_aktif", True)),
                          "limits_on": bool((self.desk.fc if self.desk else {}).get("sinirlar_aktif", True))},
             "backtest_v8": self._bt8(),
+            "director": self._director(now_ms),
             "news": self.news.public(),
             "calendar": {"status": self.calendar.status, "upcoming": self.calendar.upcoming(),
                          "block": self.calendar.block()},
@@ -1643,13 +1649,39 @@ class Engine:
             with self.lock:
                 self.pending_ideas.extend(ideas)
 
+    def check_speed(self, dt: float):
+        """Döngü hızı (v9 hız kuralı): bir tur eşiği aşarsa ya da günlük değerlendirme 45 sn'yi geçerse uyarı (saatte en çok 1)."""
+        self.perf.loop_done(dt)
+        lim = float((self.desk.fc if self.desk else {}).get("dongu_uyari_sn", 10))
+        job = (self.perf.parts.get("işçi:live1d") or [0.0])[0]
+        if dt <= lim and job <= 45:
+            return
+        self.perf.slow += 1
+        if time.time() - self.perf.last_alert < 3600:
+            return
+        self.perf.last_alert = time.time()
+        top = ", ".join(f"{n} {v:.1f} sn" for n, v in self.perf.top(3))
+        self._notify(f"🐢 <b>Döngü yavaşladı</b>: son tur {dt:.1f} sn (eşik {lim:g} sn), günlük değerlendirme {job:.0f} sn.\n"
+                     f"En çok süren: {top}")
+
+    def _director(self, now_ms: int) -> dict | None:
+        if not self.desk:
+            return None
+        try:
+            out = gmd.audit(self.desk, lambda i: self.meta.get(i), now_ms)
+        except Exception as e:  # noqa: BLE001
+            out = {"error": str(e)[:200]}
+        out["perf"] = self.perf.report()
+        return out
+
     def learn_tick(self):
         """İşlem türü öğrenmesi (saatlik)."""
         if not self.desk:
             return
         self.t["learn"] = time.time()
         since = int(self.desk.st.get("started") or 0)
-        for msg in learn.segment_tick(self.desk, self.ledger, since, int(time.time() * 1000)):
+        now_ms = int(time.time() * 1000)
+        for msg in learn.segment_tick(self.desk, self.ledger, since, now_ms) + gmd.class_tick(self.desk, self.ledger, since, now_ms):
             self._notify(msg)
             self.desk.journal("-", "-", "-", "-", "öğrenme", msg.replace("<b>", "").replace("</b>", "")[:200])
             self.dirty = True
@@ -1712,6 +1744,10 @@ class Engine:
         opened, orders, rejected = self.desk.execute(fresh, now_ms, quote=self._quote,
                                                      meta=lambda x: self.meta.get(x), book=self._book, halted=halted)
         self.stats_counter["rejected"] += len(rejected)
+        if rejected:              # elenen fikirler gölgede izleniyor olabilir → fiyat takibine al
+            self.dirty = True
+            self.rebuild_watch()
+            self._feed_symbols()
         if opened or orders:
             self.stats_counter["opened"] += len(opened)
             self.stats_counter["orders"] += len(orders)
@@ -2114,24 +2150,25 @@ class Engine:
             while time.time() < end and not self.lost_lease:
                 now = time.time()
                 self.loop_beat = now
+                pm = self.perf.timed
                 try:
-                    self.process_hits()
-                    self.process_orders()
-                    self.process_trailing()
+                    pm("stop/hedef", self.process_hits)
+                    pm("emirler", self.process_orders)
+                    pm("iz stop", self.process_trailing)
                     self.process_manual()
-                    self.process_rule_exits()
+                    pm("kural çıkışı", self.process_rule_exits)
                     self.process_time_exits()
-                    self.process_funding()
+                    pm("fonlama", self.process_funding)
                     if now - self.t["risk"] >= 1:
-                        self.risk_tick()
+                        pm("risk", self.risk_tick)
                     if now - self.t["mgr"] >= 10:
                         self.t["mgr"] = now
-                        self.manager_tick()
-                    self.maybe_panel()
+                        pm("yönetici", self.manager_tick)
+                    pm("panel", self.maybe_panel)
                     if self.team_on and self.desk:
                         self.desk_env()
-                        self.process_ideas()
-                        self.process_carry()
+                        pm("fikir/karar", self.process_ideas)
+                        pm("Elif", self.process_carry)
                     else:
                         with self.lock:
                             pend, self.pending_open = self.pending_open, []
@@ -2148,7 +2185,7 @@ class Engine:
                             self.scan_at[tf] = now
                         self.enqueue(f"scan:{','.join(due)}:{bnd or ''}")
                     if self.team_on and self.desk and now - self.t["cons"] >= 60:
-                        self.consensus_tick()
+                        pm("Ortak Masa", self.consensus_tick)
                     if self.team_on and self.desk and now - self.t["learn"] >= 3600:
                         self.learn_tick()
                     if self.team_on and self.desk and now - self.t["live1d"] >= float(self.live.get("gunici_sn", 60)):
@@ -2178,9 +2215,9 @@ class Engine:
                     self.maybe_daily()
                     self.maybe_karne()
                     if self.dirty:
-                        self.publish()
+                        pm("yayın", self.publish)
                     elif now - self.t["pub"] >= 15 * 60:
-                        self.publish()
+                        pm("yayın", self.publish)
                     self.lease_heartbeat()
                     if (self.publish_on and not self.successor_sent and end - now <= 360
                             and now - self.t.get("succ_try", 0) >= 30):
@@ -2188,6 +2225,7 @@ class Engine:
                         self.call_successor("planlı devir")
                     self.cycles += 1
                     self.fail_streak = 0
+                    self.check_speed(time.time() - now)
                     if self.state.get("loop_alarm"):
                         self.state["loop_alarm"] = False
                 except Exception:  # noqa: BLE001

@@ -44,7 +44,7 @@ def test_tick_triggers_stop_and_target():
         c = e.ledger["closed"][-1]
         assert len(e.ledger["closed"]) == n0 + 1 and c["id"] == t["id"]
         assert c["outcome"] == ("iz stop" if t.get("trail") and t.get("tp1_done") else "stop")
-        slip = lg.fees_cfg(e.cfg).get("stop_kayma_bp", 0) / 1e4          # v8: stop emrine ek kayma
+        slip = lg.stop_slip_bp(t, lg.fees_cfg(e.cfg)) / 1e4            # v9: oynaklığa bağlı stop kayması
         exp_exit = (bid if sgn > 0 else ask) * (1 - sgn * slip)
         assert abs(c["exit"] - exp_exit) < 1e-9 * max(1, exp_exit) and c["exit_liq"] == "taker"
         assert c["pnl_usd"] < 0 and t["inst"] not in e.watch or all(w[0] != t["id"] for w in e.watch.get(t["inst"], ()))

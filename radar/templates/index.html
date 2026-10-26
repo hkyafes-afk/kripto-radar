@@ -424,7 +424,7 @@ function renderTeam(){
       <span class="badge b-dim">açık risk ${money(DM.heat_usd,false)} (%${(DM.heat_pct||0).toFixed(1).replace(".",",")})</span>
       <span class="badge b-dim">bugün ${money(R.day_pnl||0)}</span><span class="badge b-dim">${(D.orders||[]).length} bekleyen emir</span></div>
     ${(hs.issues||[]).length ? `<p class="note">${hs.issues.map(esc).join("<br>")}</p>` : ""}</div>`;
-  h += marketCard() + learnCard() + testCard();
+  h += marketCard() + gmCard() + learnCard() + testCard();
   h += `<h2>Yöneticiler</h2><div class="grid">` + ms.map(m => {
     const s = m.stats || {}, w = Math.max(4, Math.min(100, m.equity / (tot||1) * 100 * ms.length / 2));
     const st = m.benched ? `<span class="badge b-amber" title="${esc(m.bench_why||"")}">👤 gölgede${m.bench_why?" · "+esc(m.bench_why):""}</span>` : `<span class="badge b-green">sermayeli</span>`;
@@ -477,12 +477,37 @@ function marketCard(){
       :`<p class="note">Aktif haber uyarısı yok.</p>`}</div>`;
 }
 
+function gmCard(){
+  const G = D.director; if (!G) return "";
+  const T = D.team || {}, f2 = (x,d=2) => x==null ? "–" : (+x).toFixed(d).replace(".",",");
+  const P = G.perf || {}, C = G.classes || {};
+  const sp = P.loop_last_s==null ? ["?","b-dim"] : P.loop_last_s > 10 ? ["yavaş","b-red"] : ["hızlı","b-green"];
+  const live1d = ((P.parts||{})["işçi:live1d"]||{}).last;
+  const conf = (G.conflicts||[]).map(c => `<div class="li"><div style="min-width:0"><div>⚔️ <b>${esc(c.sym)}</b> <span class="badge b-red">ters pozisyon</span></div><div class="m">${c.who.map(esc).join(" · ")} — v9 öncesi açıldı; yenisi açılamaz, bunlar kendi kuralıyla kapanır</div></div></div>`).join("");
+  const crowd = (G.crowd||[]).slice(0,6).map(c => `<div class="li"><div style="min-width:0"><div><b>${esc(c.sym)}</b> <span class="badge ${c.over?"b-amber":"b-dim"}">${c.n} yönetici · risk ${money(c.risk,false)} / tavan ${money(c.cap,false)}</span></div><div class="m">${c.who.map(esc).join(", ")}${c.over?" — tavan üstünde (v9 öncesi); bu coine yeni gerçek risk eklenmez":""}</div></div></div>`).join("");
+  const filt = (G.filters||[]).slice(0,6).map(f => `<span class="badge ${f.verdict.startsWith("filtre kazananları")?"b-amber":f.verdict==="filtre işini yapıyor"?"b-green":"b-dim"}">${esc(f.kind)}: ${f.n} işlem · ort. ${f.avg_r>0?"+":""}${f2(f.avg_r)}R · ${esc(f.verdict)}</span>`).join("");
+  const cst = Object.entries(G.class_state||{}).map(([k,v]) => { const [mid,c] = k.split("|"); return `${esc((T[mid]||{}).name||mid)} ${esc(c)}: ${esc(v)}`; }).join(" · ");
+  return `<h2>🏛 Genel Müdür</h2><div class="card">
+    <div class="chipline"><span class="badge ${conf?"b-red":"b-green"}">${conf?(G.conflicts.length+" ters pozisyon"):"ters pozisyon yok"}</span>
+      <span class="badge b-dim">coin tavanı %${f2(G.coin_cap_pct)} · ${money(G.coin_cap_usd,false)}</span>
+      <span class="badge b-dim">açık gerçek: A ${C.A||0} · B ${C.B||0} · C ${C.C||0}</span>
+      <span class="badge ${sp[1]}">döngü ${sp[0]} · ${f2(P.loop_last_s,2)} sn${live1d!=null?" · günlük değerlendirme "+f2(live1d,1)+" sn":""}</span>
+      ${G.filtered_open?`<span class="badge b-dim">🧪 ${G.filtered_open} elenen fikir gölgede izleniyor</span>`:""}</div>
+    <p class="note">Yöneticiler ayrı departman; Genel Müdür tek defterden bakar. Aynı coinde ters gerçek pozisyon açılmaz (yeni gelen gölgede izlenir). Bir coinde bütün yöneticilerin toplam riski tavanı geçemez. Kanıt sınıfı: A = 3 yıl+ geçmişli coin (tam boyut), B = 1–3 yıl (yarım), C = 1 yıldan yeni (gölge; 2025 listelemeleri bir yılda ort. −%71). Sınıflar öğrenir: 30+ işlemde kanıtlayan yönetici o sınıfta bir basamak büyür.</p>
+    ${conf?`<div class="list">${conf}</div>`:""}
+    ${crowd?`<h4 style="margin:10px 0 4px">Aynı coinde birden çok yönetici</h4><div class="list">${crowd}</div>`:""}
+    ${filt?`<h4 style="margin:10px 0 4px">Filtre karnesi (elenen fikirler gölgede nasıl sonuçlandı)</h4><div class="chipline">${filt}</div>`:""}
+    ${cst?`<p class="note">Sınıf öğrenmesi: ${cst}</p>`:""}
+    ${(G.off_style||[]).length?`<p class="note">Denetçi: ${G.off_style.map(o=>esc(o.mgr+" "+o.sym+": "+o.why)).join(" · ")}</p>`:""}</div>`;
+}
+
 function learnCard(){
   const LR = D.learning; if (!LR) return "";
   const T = D.team || {}, f2 = (x,d=2) => x==null ? "–" : (+x).toFixed(d).replace(".",",");
-  const segs = Object.entries(LR.segments || {});
+  const DEF = new Set(LR.default_shadow || ["kaan|short","selin|short"]);
+  const segs = Object.entries(Object.assign(Object.fromEntries([...DEF].map(k=>[k,{}])), LR.segments || {}));
   const lm = ((LR.learned||{}).managers) || {};
-  const rows = segs.map(([k,v]) => { const [mid, side] = k.split("|"), m = T[mid] || {}, st = v.state || (/^(kaan|selin)\|short$/.test(k) ? "golge" : "gercek");
+  const rows = segs.map(([k,v]) => { const [mid, side] = k.split("|"), m = T[mid] || {}, st = v.state || (DEF.has(k) ? "golge" : "gercek");
     const r = v.real || {}, sh = v.shadow || {};
     return `<div class="li"><div style="min-width:0"><div>${m.emoji||""} <b>${esc(m.name||mid)}</b> ${side} <span class="badge ${st==="gercek"?"b-green":"b-amber"}">${st==="gercek"?"gerçek":"gölge"}</span></div>
       <div class="m">gerçek ${r.n||0} işlem ${r.n?"· ort. "+((r.avg_r>0?"+":"")+f2(r.avg_r))+"R":""} · gölge ${sh.n||0} işlem ${sh.n?"· ort. "+((sh.avg_r>0?"+":"")+f2(sh.avg_r))+"R":""} · 30 işlemde karar verilir</div></div></div>`; }).join("");
@@ -612,6 +637,9 @@ function explainTrade(t, closed){
   if (miss.length) h += `<p class="m">✗ ${miss.join(" · ")}</p>`;
   if (card) h += `<p>Baş analist: ${card}</p>`;
   if (learned) h += `<p>${esc(learned)}</p>`;
+  if (t.coin_class) h += `<p class="m">Coin kanıt sınıfı: <b>${esc(t.coin_class)}</b> ${({A:"(3 yıl+ geçmiş, tam boyut)",B:"(1–3 yıl, yarım boyut)",C:"(1 yıldan yeni; kanıtlanana kadar gölge)"})[t.coin_class]||""}</p>`;
+  if (t.gm && t.gm.length) h += `<p>🏛 Genel Müdür: ${t.gm.map(esc).join("; ")}</p>`;
+  if (t.filtered) h += `<p>🧪 Bu fikir elendi ama gölgede izleniyor (filtre de sınanıyor): <b>${esc(t.filtered)}</b></p>`;
   h += `<h4>Para dökümü${closed?"":" (canlı)"}</h4><div class="k2">`
      + `<span>Pozisyon büyüklüğü</span><span>${money(t.notional_usd,false)} · ${fp(t.qty)} ${esc(t.sym)}</span>`
      + (t.lev ? `<span>Kaldıraç / teminat</span><span>${t.lev}x · ${money(t.margin_usd,false)}</span>` : "")

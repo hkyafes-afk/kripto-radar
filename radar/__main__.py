@@ -46,6 +46,10 @@ def main(argv=None) -> int:
     p.add_argument("--demo", action="store_true")
     p.add_argument("--config", default=None)
 
+    p = sub.add_parser("veri", help="v9 veri toplayıcı: OI, long/short, taker, likidasyon (saatlik, ayrı iş)")
+    p.add_argument("--out", default="veri/okx")
+    p.add_argument("--coins", type=int, default=40)
+
     p = sub.add_parser("backtest", help="walk-forward backtest")
     p.add_argument("--coins", type=int, default=30)
     p.add_argument("--days", type=int, default=365)
@@ -53,6 +57,11 @@ def main(argv=None) -> int:
     p.add_argument("--config", default=None)
 
     a = ap.parse_args(argv)
+
+    if a.cmd == "veri":
+        from . import collect
+        collect.run(out_dir=Path(a.out), n_coins=a.coins)
+        return 0
 
     if a.cmd == "scan":
         from . import scan

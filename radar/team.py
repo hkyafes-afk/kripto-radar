@@ -380,12 +380,13 @@ DENIZ_COINS = ("BTC", "ETH")
 
 
 def a_deniz(ctx, mgr, cfg):
-    """BTC/ETH 15dk, sadece yoğun saatlerde (12–20 UTC, hafta içi): trend içi geri çekilmede limit emirle (maker)
-    girer, hedef de limit emir. Gün içi hareketin kaynağı likidite sağlamak (Shen ve ark. 2022)."""
+    """BTC/ETH 15dk, sadece piyasa canlıyken: trend içi geri çekilmede limit emirle (maker) girer, hedef de limit emir.
+    v9 (kullanıcı kararı): saat kuralı kalktı. Yerine dinamik likidite: son 15 dakikanın hacmi son 24 saatin 15 dakikalık
+    ortalamasını aşmalı. Gün içi hareketin kaynağı likidite sağlamak (Shen ve ark. 2022)."""
     if ctx.get("sym") not in DENIZ_COINS:
         return None
-    hour, dow = ctx.get("hour"), ctx.get("dow")
-    if hour is None or not (12 <= hour < 20) or (dow is not None and dow >= 5):
+    vol, vma = ctx.get("volume"), ctx.get("vol_ma96")
+    if not (_ok(vol) and _ok(vma) and vma > 0 and vol > vma):
         return None
     c, atr = ctx["close"], ctx["atr"]
     if not (_ok(ctx["sma200"]) and _ok(atr) and atr > 0):
@@ -403,7 +404,7 @@ def a_deniz(ctx, mgr, cfg):
               ("BTC havası aynı yönde", bool(ctx.get("btc_bull")) if side == "long" else bool(ctx.get("btc_bear"))),
               ("alıcı/satıcı baskısı tükeniyor", _live(ctx, "taker_imb", lambda x: sgn * x > -0.05)),
               ("funding kalabalık değil", _live(ctx, "funding_ann", lambda x: x < 30 if side == "long" else x > -10))]
-    plan = (f"Yoğun saatte trend içi geri çekilme (RSI {ctx['rsi']:.0f}). {nfp(lim)} seviyesine limit emir koydum "
+    plan = (f"Piyasa canlı (son 15 dk hacmi 24 saat ortalamasının {vol / vma:.1f} katı), trend içi geri çekilme (RSI {ctx['rsi']:.0f}). {nfp(lim)} seviyesine limit emir koydum "
             "(maker ücret, kayma yok). Hedef de limit emir: +1,5 ATR; stop 1,5 ATR. 1 saatte dolmazsa iptal, en fazla 8 saat.")
     return _idea(ctx, mgr, side, sl, tp, checks, "15dk trend içi geri çekilme (maker)", plan, tp1_r=None,
                  pp={"partial_frac": 0.0, "trail_atr": 0.0, "basabas": False}, max_saat=8, min_checks=0,

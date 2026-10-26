@@ -70,7 +70,7 @@ def build_universe(client, cfg) -> tuple[list[dict], dict[str, float]]:
             "inst": iid, "sym": base, "price": last, "vol24_usd": vol_usd,
             "ct_val": _f(ins.get("ctVal"), 0.0), "lot_sz": _f(ins.get("lotSz"), 0.0),
             "max_lev": _f(ins.get("lever"), 0.0),
-            "min_sz": _f(ins.get("minSz"), 0.0),
+            "min_sz": _f(ins.get("minSz"), 0.0), "list_ts": lt or 0.0,
             "chg24": (last / open24 - 1) * 100 if open24 and open24 == open24 else float("nan"),
             "high24": _f(x.get("high24h")), "low24": _f(x.get("low24h")),
         })

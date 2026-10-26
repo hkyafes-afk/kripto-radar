@@ -394,6 +394,20 @@ def trail(t: dict, best_px: float, cfg: dict) -> bool:
 
 # ── kapanış ────────────────────────────────────────────────────────────
 
+def stop_slip_bp(t: dict, fc: dict) -> float:
+    """v9: oynaklığa bağlı stop kayması. Sabit taban + günlük ATR'nin %5'i; genç (C sınıfı) coinde ×1,5; en çok 150 bp.
+    Sakin BTC'de ~15 bp, %8 ATR'li bir altcoinde ~45 bp, genç coinde ~65 bp. Sabit kayma backtest'leri iyimser yapar."""
+    base = float(fc.get("stop_kayma_bp") or 0)
+    k = float(fc.get("stop_kayma_atr_oran", 0.05))
+    atr_bp = (t.get("atr") or 0) / t["entry"] * 1e4 if t.get("entry") else 0.0
+    if t.get("tf") in ("15m", "1H", "4H"):          # gün içi ATR'yi günlüğe yaklaştır
+        atr_bp *= {"15m": 9.8, "1H": 4.9, "4H": 2.45}[t["tf"]]      # √zaman ölçeklemesi
+    bp = base + k * atr_bp
+    if t.get("coin_class") == "C":
+        bp *= 1.5
+    return min(bp, float(fc.get("stop_kayma_max_bp", 150)))
+
+
 def close_trade(t: dict, exit_px: float, exit_ts: int, outcome: str, cfg: dict, maker: bool = False) -> dict:
     """Kalan pozisyonu kapatır. Toplam K/Z = kısmi kârlar + kalan brüt − tüm ücretler − funding."""
     if not t.get("real"):
@@ -404,7 +418,9 @@ def close_trade(t: dict, exit_px: float, exit_ts: int, outcome: str, cfg: dict, 
     sgn = 1 if t["side"] == "long" else -1
     q = t.get("qty_open", t["qty"])
     if not maker and outcome in ("stop", "iz stop") and fc.get("stop_kayma_bp"):
-        exit_px = exit_px * (1 - sgn * fc["stop_kayma_bp"] / 1e4)   # stop-market emri stres anında kötü dolar
+        sb = stop_slip_bp(t, fc)                                     # stop-market emri stres anında kötü dolar
+        t["stop_slip_bp"] = round(sb, 1)
+        exit_px = exit_px * (1 - sgn * sb / 1e4)
     gross = sgn * q * (exit_px - t["entry"])
     fee_exit = q * exit_px * (fc["maker_yuzde"] if maker else fc["taker_yuzde"]) / 100
     partial = t.get("partial_pnl_usd", 0.0)

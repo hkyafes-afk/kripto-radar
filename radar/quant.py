@@ -33,6 +33,7 @@ def features(df: pd.DataFrame) -> pd.DataFrame:
     F["hc20"] = c.shift(1).rolling(20, min_periods=20).max()      # önceki 20 mumun en yüksek kapanışı
     F["lc20"] = c.shift(1).rolling(20, min_periods=20).min()
     F["vol_ma20"] = v.shift(1).rolling(20, min_periods=20).mean()
+    F["vol_ma96"] = v.shift(1).rolling(96, min_periods=48).mean()     # 15dk'da son 24 saatin ortalaması (Deniz)
     F["vol_ratio"] = v / F["vol_ma20"]
     F["rsi"] = ind.rsi(c, 14)
     F["rsi2"] = ind.rsi(c, 2)

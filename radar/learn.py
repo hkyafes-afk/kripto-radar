@@ -24,7 +24,11 @@ import numpy as np
 from .config import ROOT
 
 MIN_N = 30
-DEFAULT_SHADOW = {"kaan|short", "selin|short"}     # 5 yıllık test: masraf sonrası ~0R → gölgeden başlar
+# Kanıtlanana kadar gölgede başlayan türler. 5 yıllık test (v8): Kaan/Selin short ~0R; Murat, Ayşe, Deniz masraf sonrası
+# eksi (v9 Faz 0, kullanıcı kararı 26.10.2026). Gölgede işlem açmaya ve öğrenmeye devam ederler; 30+ işlemde
+# ort. ≥ +0,10R ve PF ≥ 1,2 yaparlarsa gerçeğe kendiliğinden dönerler.
+DEFAULT_SHADOW = {"kaan|short", "selin|short", "murat|long", "murat|short", "ayse|long", "ayse|short",
+                  "deniz|long", "deniz|short"}
 
 
 def lesson(t: dict) -> str:

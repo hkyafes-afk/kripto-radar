@@ -20,7 +20,7 @@ import uuid
 import numpy as np
 
 from . import ledger as lg
-from . import macro, quant
+from . import director, learn, macro, quant
 from . import team
 
 
@@ -36,7 +36,10 @@ def firm_cfg(cfg: dict) -> dict:
          "carry_max_cift": 3, "carry_min_yillik": 15, "carry_min_pozitif": 80, "carry_min_istikrar": 45,
          "carry_cikis_yillik": 5, "carry_max_gun": 45, "kume_risk_yuzde": 4.0, "kume_korelasyon": 0.7,
          "sinirlar_aktif": True, "durdurma_aktif": True, "yedek_kulubesi": True,
-         "gunluk_ek_hak_yuzde": 1.5, "gunluk_ek_hak_sayisi": 1}
+         "gunluk_ek_hak_yuzde": 1.5, "gunluk_ek_hak_sayisi": 1,
+         # v9 Faz 0 — Genel Müdür (her zaman açık; demo limitlerinden bağımsız güvenlik kuralları)
+         "carpisma_yasak": True, "coin_tavan_yuzde": 1.25, "coin_tavan_min_oran": 0.25,
+         "sinif_a_gun": 1095, "sinif_c_gun": 365, "ioc_bant_bp": 10, "ioc_min_dolum": 0.5, "dongu_uyari_sn": 10}
     f.update(((cfg.get("ekip") or {}).get("firma")) or {})
     return f
 
@@ -92,7 +95,11 @@ class Desk:
 
     def segment(self, mid: str, side: str) -> str | None:
         """Öğrenme: işlem türü (yönetici|yön) canlı kanıta göre 'gercek' ya da 'golge' olarak açılıp kapanır."""
-        return (self.st.get("segments") or {}).get(f"{mid}|{side}", {}).get("state")
+        key = f"{mid}|{side}"
+        st = (self.st.get("segments") or {}).get(key, {}).get("state")
+        if st is None and key in learn.DEFAULT_SHADOW:
+            return "golge"          # kanıtlanana kadar gölgede başlayan türler (5 yıllık testte eksi ya da ~0R)
+        return st
 
     def loss_streak(self, mid: str) -> int:
         cl, _ = self.mgr_trades(mid)
@@ -156,6 +163,22 @@ class Desk:
         card = idea.get("card") or {}
         if card.get("mult", 1.0) <= 0:
             return "red", None, "baş analist: " + "; ".join(card.get("notes") or ["uygun değil"])
+        # ── Genel Müdür (v9 Faz 0): kanıt sınıfı + çatışma hakemi ──
+        gm: list[str] = []
+        cls = director.coin_class(meta(idea["inst"]) if meta else None, now_ms, self.fc)
+        cstate = director.class_state(self, m.id, cls)
+        cm = director.STEP_MULT[cstate]
+        if not shadow and cm <= 0:
+            shadow = True
+            gm.append(f"kanıt sınıfı {director.CLASS_TEXT[cls]}: bu coinde kanıtımız yok, kanıtlanana kadar gölgede")
+        elif not shadow and cm < 1:
+            gm.append(f"kanıt sınıfı {director.CLASS_TEXT[cls]}: yarım boyut")
+        if not shadow and self.fc.get("carpisma_yasak", True):
+            opp = director.opposite_holder(self, idea)
+            if opp:
+                shadow = True
+                who = self.by_id[opp["mgr"]].name if opp["mgr"] in self.by_id else opp["mgr"]
+                gm.append(f"çatışma hakemi: {who} bu coinde {opp['side']} tarafında; ters pozisyon açılmaz, gölgede izleniyor")
         eq_m = self.equity(m.id)
         if shadow:   # gölge: kanıt toplamak için bütçe kadar sanal sermayeyle ölçülür (firma bakiyesine dokunmaz)
             eq_m = max(eq_m, self.budget)
@@ -166,9 +189,21 @@ class Desk:
         fm = env["fng_mult"](side) if env.get("fng_mult") else 1.0
         km = float(card.get("mult", 1.0))
         hm = macro.weekend_mult(now_ms, tf)
-        ext = wm * fm * km * hm
+        ext = wm * fm * km * hm * (cm if (cm > 0 and not shadow) else 1.0)
         risk_pct = (m.base_risk + (m.max_risk - m.base_risk) * idea["conviction"]) * mult * ext
         risk_usd = eq_m * risk_pct / 100
+        if not shadow:      # coin risk tavanı: tüm yöneticilerin bu coindeki toplam riski
+            cap, used, room = director.coin_room(self, idea["inst"])
+            if risk_usd > room:
+                if room >= risk_usd * self.fc["coin_tavan_min_oran"]:
+                    gm.append(f"coin tavanı: {sym}'de firma riski {used:.0f}$ / {cap:.0f}$ → boyut {risk_usd:.0f}$'dan "
+                              f"{room:.0f}$'a küçültüldü")
+                    risk_usd = room
+                else:
+                    shadow = True
+                    gm.append(f"coin tavanı dolu: {sym}'de firma riski {used:.0f}$ / {cap:.0f}$; gölgede izleniyor")
+                    eq_m = max(eq_m, self.budget)
+                    risk_usd = eq_m * risk_pct / 100
         # giriş fiyatı
         limit = idea.get("entry_type") == "limit" and idea.get("limit_px")
         entry, src, slip_bp = idea["entry"], "piyasa", 0.0
@@ -199,9 +234,21 @@ class Desk:
             bk = book(idea["inst"])
             if bk:
                 lv = bk.get("asks" if side == "long" else "bids") or []
-                vwap, got = lg.vwap_fill(lv, qty)
-                if vwap is None or got < qty * 0.999:
-                    return "red", None, "kitap derinliği yetersiz"
+                if not lv:
+                    return "red", None, "kitap boş"
+                # IOC limit (v9): çıplak piyasa emri yok; en iyi fiyatın ±bant ötesine geçilmez, dolmayan kısım iptal
+                band = float(idea.get("ioc_bp") or self.fc.get("ioc_bant_bp", 10))
+                lim_px = lv[0][0] * (1 + band / 1e4) if side == "long" else lv[0][0] * (1 - band / 1e4)
+                lvb = [x for x in lv if (x[0] <= lim_px if side == "long" else x[0] >= lim_px)]
+                vwap, got = lg.vwap_fill(lvb, qty)
+                if vwap is None or got < qty * self.fc.get("ioc_min_dolum", 0.5):
+                    return "red", None, f"IOC limit: ±%{band / 100:.2f} bant içinde yeterli karşı emir yok"
+                if got < qty * 0.999:
+                    want = qty
+                    contracts, qty, err = lg.round_contracts(got * vwap, vwap, meta(idea["inst"]) if meta else None)
+                    if err or qty <= 0:
+                        return "red", None, err or "IOC kısmi dolum lot altında"
+                    gm.append(f"IOC kısmi dolum: bant içinde istenenin %{got / want * 100:.0f}'i doldu, kalan iptal")
                 slip_bp = abs(vwap / lv[0][0] - 1) * 1e4
                 if slip_bp > lg.risk_cfg(self.cfg)["max_kayma_bp"]:
                     return "red", None, f"tahmini kayma yüksek ({slip_bp:.1f} bp)"
@@ -231,8 +278,46 @@ class Desk:
                   "lot_sz": (meta(idea["inst"]) or {}).get("lot_sz") if meta else None,
                   "risk_usd": risk_now, "risk_pct": risk_now / eq_m * 100, "margin_usd": margin, "shadow": shadow,
                   "eq_m": eq_m, "mult": mult, "ext": round(ext, 3), "lev_why": lev_why,
-                  "mults": {"hava": round(wm, 2), "korku": round(fm, 2), "analist": round(km, 2), "haftasonu": round(hm, 2)}}
+                  "mults": {"hava": round(wm, 2), "korku": round(fm, 2), "analist": round(km, 2), "haftasonu": round(hm, 2),
+                            "sinif": round(cm, 2)},
+                  "coin_class": cls, "gm": gm}
         return ("limit" if limit else "market"), detail, None
+
+    # Filtre kategorileri: elenen fikir gölgede izlenir ki "filtre haklı mıydı?" ölçülebilsin (v9: öğrenme yavaşlamaz).
+    # Veri/yapı sebepleri (sıfır stop, lot, kitap yok) sınanacak bir karar değildir → izlenmez.
+    NO_SHADOW = ("stop mesafesi", "miktar sıfır", "kitap boş", "en küçük lot", "lot altında", "yönetici pasif",
+                 "sermayesi tükendi", "teminatı yetersiz")
+
+    @staticmethod
+    def filter_kind(why: str) -> str:
+        w = why.lower()
+        for key, name in (("olay takvimi", "olay takvimi"), ("fed", "olay takvimi"), ("baş analist", "baş analist"),
+                          ("spread", "spread"), ("kayma", "kayma"), ("derinli", "derinlik"), ("ioc", "IOC bandı"),
+                          ("devre kesici", "devre kesici"), ("yığılma", "yığılma"), ("riski dolu", "firma limiti"),
+                          ("risk limiti", "firma limiti")):
+            if key in w:
+                return name
+        return why.split(":")[0][:40]
+
+    def shadow_rejected(self, idea: dict, why: str, now_ms: int, meta=None) -> dict | None:
+        """Reddedilen fikri gölgede (sermayesiz) açar; sonucu filtrenin karnesine yazılır."""
+        m = self.by_id.get(idea.get("mgr"))
+        if not m or idea.get("kind") == "carry" or any(k in why for k in self.NO_SHADOW):
+            return None
+        if any(t.get("mgr") == m.id and t["inst"] == idea["inst"] for t in self.ledger["open"]):
+            return None
+        entry = idea.get("limit_px") if idea.get("entry_type") == "limit" and idea.get("limit_px") else idea["entry"]
+        stop_dist = abs(idea["entry"] - idea["sl"])
+        if not entry or stop_dist <= 0:
+            return None
+        risk_usd = self.budget * (m.base_risk + (m.max_risk - m.base_risk) * idea.get("conviction", 0.5)) / 100
+        qty = risk_usd / stop_dist
+        t = lg.build_trade(idea, entry, qty, 0.0, 1.0, self.cfg, now_ms, self.budget, src="gölge (elendi)", shadow=True)
+        t["filtered"] = why[:160]
+        t["filter_kind"] = self.filter_kind(why)
+        t["coin_class"] = director.coin_class(meta(idea["inst"]) if meta else None, now_ms, self.fc)
+        self.ledger["open"].append(t)
+        return t
 
     def choose_leverage(self, m, idea: dict, stop_frac: float, meta: dict | None) -> tuple[float, str]:
         """Yöneticinin kaldıraç kararı. Kaldıraç kârı/riski değiştirmez (risk stop × miktar ile belirlenir); teminatı
@@ -261,26 +346,31 @@ class Desk:
             if kind == "red":
                 if why:
                     rejected.append((idea, why))
-                    self.journal(idea["mgr"], idea["sym"], idea["tf"], idea["side"], "reddedildi", why)
+                    sh = self.shadow_rejected(idea, why, now_ms, meta)
+                    self.journal(idea["mgr"], idea["sym"], idea["tf"], idea["side"], "reddedildi",
+                                 why + (" → gölgede izleniyor (filtre de sınanır)" if sh else ""))
                 continue
             if kind == "market":
                 t = lg.build_trade(idea, d["entry"], d["qty"], d["contracts"], d["lev"], self.cfg, now_ms,
                                    d["eq_m"], src=d["src"], slip_bp=d["slip_bp"], shadow=d["shadow"])
                 t["lot_sz"] = d.get("lot_sz")
                 t["lev_why"] = d.get("lev_why")
+                t["coin_class"], t["gm"] = d.get("coin_class"), d.get("gm") or []
                 self.ledger["open"].append(t)
                 opened.append({**idea, **t})
                 self.journal(idea["mgr"], idea["sym"], idea["tf"], idea["side"],
                              "gölgede açtı" if d["shadow"] else "açtı",
                              f"güven %{idea['conviction'] * 100:.0f}, risk {d['risk_usd']:.2f}$ (%{d['risk_pct']:.2f}), {d['lev']:g}x"
                              + (f", çarpan ×{d['ext']:g}" if d.get("ext", 1) != 1 else "")
-                             + ("; analist: " + "; ".join((idea.get("card") or {}).get("notes") or []) if (idea.get("card") or {}).get("notes") else ""))
+                             + ("; analist: " + "; ".join((idea.get("card") or {}).get("notes") or []) if (idea.get("card") or {}).get("notes") else "")
+                             + ("; Genel Müdür: " + "; ".join(d["gm"]) if d.get("gm") else ""))
             else:
                 o = {"oid": uuid.uuid4().hex[:10], "mgr": idea["mgr"], "idea": idea, "px": d["entry"], "qty": d["qty"],
                      "contracts": d["contracts"], "lev": d["lev"], "margin_usd": d["margin_usd"], "shadow": d["shadow"],
                      "eq_m": d["eq_m"], "created": now_ms, "expire_ts": now_ms + (idea.get("limit_valid_ms", 600_000) if idea.get("fallback_market")
                                                            else max(idea.get("limit_valid_ms", 0), 900_000)),
-                     "risk_usd": d["risk_usd"], "lot_sz": d.get("lot_sz"), "lev_why": d.get("lev_why")}
+                     "risk_usd": d["risk_usd"], "lot_sz": d.get("lot_sz"), "lev_why": d.get("lev_why"),
+                     "coin_class": d.get("coin_class"), "gm": d.get("gm") or []}
                 self.ledger["orders"].append(o)
                 orders.append(o)
                 self.journal(idea["mgr"], idea["sym"], idea["tf"], idea["side"], "limit emir",
@@ -297,6 +387,7 @@ class Desk:
                            src="limit (maker)", maker_entry=True, shadow=o["shadow"])
         t["lot_sz"] = o.get("lot_sz")
         t["lev_why"] = o.get("lev_why")
+        t["coin_class"], t["gm"] = o.get("coin_class"), o.get("gm") or []
         self.ledger["open"].append(t)
         self.journal(o["mgr"], t["sym"], t["tf"], t["side"], "limit doldu", f"{team.nfp(o['px'])} seviyesinden girdi")
         return {**o["idea"], **t}
@@ -442,20 +533,23 @@ class Desk:
 
     # ── Ortak Masa (konsensüs) ──────────────────────────────────────
     def consensus_plan(self, now_ms: int, prices: dict) -> tuple[list, list]:
-        """En az 2 yönetici aynı coinde aynı yönde pozisyondaysa (gerçek ya da gölge) Ortak Masa kendi bütçesiyle
-        ayrı bir işlem açar; uzlaşı 2'nin altına düşünce çıkar. Yöneticilerin kendi işlemleri etkilenmez."""
+        """En az 2 yönetici aynı coinde aynı yönde GERÇEK pozisyondaysa Ortak Masa kendi bütçesiyle ayrı bir işlem açar;
+        uzlaşı 2'nin altına düşünce çıkar. v9: gölgedeki oy sayılmaz (v9 öncesi açılan masa işlemleri eski sayımla izlenir)."""
         m = self.by_id.get("ortak")
         if not m:
             return [], []
         voters = {x.id for x in self.mgrs if x.kind == "directional"}
         groups: dict = {}
+        groups_all: dict = {}
         for t in self.ledger["open"]:
             if t.get("mgr") in voters and not t.get("carry"):
-                groups.setdefault((t["inst"], t["side"]), {}).setdefault(t["mgr"], t)
+                groups_all.setdefault((t["inst"], t["side"]), {}).setdefault(t["mgr"], t)
+                if not t.get("shadow"):        # gölgedeki oy sayılmaz
+                    groups.setdefault((t["inst"], t["side"]), {}).setdefault(t["mgr"], t)
         mine = {t["inst"]: t for t in self.ledger["open"] if t.get("mgr") == "ortak"}
         to_open, to_close = [], []
         for inst, t in mine.items():
-            g = groups.get((inst, t["side"]), {})
+            g = (groups if "gm" in t else groups_all).get((inst, t["side"]), {})
             if len(g) < 2:
                 to_close.append((t, f"uzlaşı dağıldı (aynı yönde {len(g)} yönetici kaldı)"))
         n_vot = max(len(voters), 2)

@@ -117,14 +117,14 @@ def test_ayse_capitulation_only():
     assert team.a_ayse(dict(c, vol_ratio=1.2), M["ayse"], CFG) is None, "hacimsiz düşüş kapitülasyon değil"
 
 
-def test_deniz_hours_coins_and_maker():
-    c = qctx(tf="15m", bar_ms=900_000, sym="BTC", rsi=35.0, hour=14, dow=2, atr=50.0, close=60000.0, price=60000.0,
-             sma50=59500.0, sma200=59000.0, d_up=True)
+def test_deniz_liquidity_coins_and_maker():
+    c = qctx(tf="15m", bar_ms=900_000, sym="BTC", rsi=35.0, hour=3, dow=6, atr=50.0, close=60000.0, price=60000.0,
+             sma50=59500.0, sma200=59000.0, d_up=True, volume=1500.0, vol_ma96=1000.0)
     idea = team.a_deniz(c, M["deniz"], CFG)
-    assert idea and idea["entry_type"] == "limit" and idea["limit_px"] < 60000 and idea["max_saat"] == 8
-    assert team.a_deniz(dict(c, hour=3), M["deniz"], CFG) is None, "yoğun saat dışı"
+    assert idea and idea["entry_type"] == "limit" and idea["limit_px"] < 60000 and idea["max_saat"] == 8, \
+        "v9: saat/gün kuralı yok; gece 3'te hafta sonu da piyasa canlıysa çalışır"
+    assert team.a_deniz(dict(c, volume=800.0), M["deniz"], CFG) is None, "piyasa durgun (hacim 24s ortalamasının altında)"
     assert team.a_deniz(dict(c, sym="DOGE"), M["deniz"], CFG) is None, "sadece BTC/ETH"
-    assert team.a_deniz(dict(c, dow=6), M["deniz"], CFG) is None, "hafta sonu yok"
 
 
 def test_analyst_card():
@@ -202,7 +202,8 @@ def test_desk_crowding_limit():
              for i, m in enumerate(["kaan", "selin", "kemal"] * 5)]
     o, _, r = d.execute(ideas, NOW)
     assert any("yığılma" in w for _, w in r), r
-    assert sum(lg.open_risk(t) for t in L["open"]) <= 1000 * 0.04 + 1e-6
+    assert sum(lg.open_risk(t) for t in L["open"] if not t.get("shadow")) <= 1000 * 0.04 + 1e-6
+    assert any(t.get("filter_kind") == "yığılma" for t in L["open"]), "elenenler gölgede izlenir"
 
 
 def test_maker_first_then_fallback():
@@ -304,16 +305,17 @@ def test_segment_learning_promotes_and_demotes():
     for i in range(30):
         L["closed"].append({"mgr": "kaan", "side": "short", "shadow": True, "r": 0.4 if i % 3 else -0.3,
                             "exit_ts": NOW + i, "inst": f"K{i}"})
-        L["closed"].append({"mgr": "murat", "side": "long", "shadow": False, "r": -0.3 if i % 4 else 0.2,
+        L["closed"].append({"mgr": "kemal", "side": "long", "shadow": False, "r": -0.3 if i % 4 else 0.2,
                             "exit_ts": NOW + i, "inst": f"M{i}"})
+    assert d.segment("murat", "long") == "golge", "v9: Murat kanıtlanana kadar gölgede başlar"
     msgs = learn.segment_tick(d, L, NOW - 1, NOW + 100)
-    assert d.segment("kaan", "short") == "gercek" and d.segment("murat", "long") == "golge"
+    assert d.segment("kaan", "short") == "gercek" and d.segment("kemal", "long") == "golge"
     assert len(msgs) == 2
     # öğrenilen durum desk kararına yansır: Kaan short artık gerçek, Murat long gölge
     s_idea = dict(_kaan_idea(), side="short", shadow_only=True, inst="Z-USDT-SWAP", sym="Z", sl=106.0, tp=85.0, tp1=None)
     k, det, _ = d.evaluate(s_idea, NOW)
     assert k == "market" and not det["shadow"]
-    k, det, _ = d.evaluate(dict(_kaan_idea(), mgr="murat", inst="Y-USDT-SWAP", sym="Y"), NOW)
+    k, det, _ = d.evaluate(dict(_kaan_idea(), mgr="kemal", inst="Y-USDT-SWAP", sym="Y"), NOW)
     assert det["shadow"]
 
 
