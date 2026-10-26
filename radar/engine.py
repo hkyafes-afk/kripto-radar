@@ -565,10 +565,23 @@ class Engine:
         arb = ox.arbitrage(by, {r["sym"] for r in self.universe})
         spreads = []
         now = time.time()
+        bps_by = {}
         for r in self.universe:
             a, b = self.book.get(r["inst"]), self.bg_book.get(r["sym"])
             if a and b and now - a[3] < 20 and now - b[3] < 20 and a[0] > 0 and b[0] > 0:
-                spreads.append({"sym": r["sym"], "okx": a[0], "bitget": b[0], "bps": round((b[0] / a[0] - 1) * 1e4, 1)})
+                bps = round((b[0] / a[0] - 1) * 1e4, 1)
+                bps_by[r["sym"]] = bps
+                spreads.append({"sym": r["sym"], "okx": a[0], "bitget": b[0], "bps": bps})
+        for x in arb:
+            # Aynı isimli farklı coin riskine karşı: iki bacağın fiyatı karşılaştırılabiliyorsa doğrula
+            legs = {x["long_at"], x["short_at"]}
+            if legs <= {"okx", "bitget"} and x["sym"] in bps_by:
+                x["check"] = "ok" if abs(bps_by[x["sym"]]) < 200 else "fark"
+            elif "bitget" in (x.get("venues") or {}) and x["sym"] in bps_by and abs(bps_by[x["sym"]]) >= 200:
+                x["check"] = "fark"
+            else:
+                x["check"] = "yok"
+        arb = [x for x in arb if x["check"] != "fark"]
         spreads.sort(key=lambda x: -abs(x["bps"]))
         return arb, spreads[:15], len(spreads)
 
@@ -854,6 +867,7 @@ class Engine:
         print(f"▶ Canlı döngü başladı: {minutes:.0f} dk, periyotlar {self.tfs}, yayın={self.publish_on}")
         gap_min = (time.time() * 1000 - (self.state.get("last_alive") or 0)) / 60000 if self.state.get("last_alive") else 0
         self.full_refresh()
+        self.t["hourly"] = self.t["funding"] = time.time()   # açılışta yapıldı, döngü hemen tekrarlamasın
         self.start_live()
         self.refresh_prices()
         self.rebuild_watch()

@@ -162,3 +162,37 @@ if __name__ == "__main__":
         if name.startswith("test_"):
             fn()
             print("✓", name)
+
+
+def test_incremental_subscribe_without_reconnect():
+    seen = []
+
+    def beh(conn, recv):
+        for _ in range(3):
+            op, data = recv()
+            seen.append(json.loads(data))
+        time.sleep(0.3)
+
+    srv = FakeServer(beh)
+    srv.start()
+    f = ws.OKXFeed()
+    f.urls = [f"ws://127.0.0.1:{srv.port}/"]
+    f.set_symbols(["A-USDT-SWAP"])
+    f.start()
+    t0 = time.time()
+    while not f.connected and time.time() - t0 < 5:
+        time.sleep(0.05)
+    f.set_symbols(["A-USDT-SWAP", "B-USDT-SWAP"])
+    f.set_symbols(["B-USDT-SWAP"])
+    t0 = time.time()
+    while len(seen) < 3 and time.time() - t0 < 5:
+        time.sleep(0.05)
+    f.stop()
+    assert seen[1]["op"] == "subscribe" and seen[1]["args"][0]["instId"] == "B-USDT-SWAP"
+    assert seen[2]["op"] == "unsubscribe" and seen[2]["args"][0]["instId"] == "A-USDT-SWAP"
+    assert f.reconnects == 0 and srv.connections == 1
+
+
+if __name__ == "__main__":
+    test_incremental_subscribe_without_reconnect()
+    print("✓ test_incremental_subscribe_without_reconnect")

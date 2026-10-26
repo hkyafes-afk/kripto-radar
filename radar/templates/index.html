@@ -322,7 +322,8 @@ function renderArb(){
   let h = A.length ? `<div class="grid">` + A.map(a => {
     const v = Object.entries(a.venues||{}).sort((x,y)=>x[1]-y[1]).map(([k,x]) => `<span>${esc(k)} ${Math.round(x)}%</span>`).join("");
     return `<div class="card"><div class="hd"><div><div class="sym">${esc(a.sym)}</div>
-      <div class="lbl"><span class="badge b-green">long ${esc(a.long_at)}</span> <span class="badge b-red">short ${esc(a.short_at)}</span></div></div>
+      <div class="lbl"><span class="badge b-green">long ${esc(a.long_at)}</span> <span class="badge b-red">short ${esc(a.short_at)}</span>
+      ${a.check==="ok" ? '<span class="badge b-blue">fiyat doğrulandı</span>' : '<span class="badge b-amber">aynı coin mi, kontrol et</span>'}</div></div>
       <div class="score"><div class="v up">${Math.round(a.spread)}%</div><div class="raw">yıllık fark</div></div></div>
       <div class="meta">${v}</div></div>`; }).join("") + `</div>`
     : `<div class="empty">Şu an %15'in üzerinde funding farkı olan coin yok.</div>`;

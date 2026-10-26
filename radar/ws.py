@@ -168,7 +168,7 @@ class Feed(threading.Thread):
         self._lock = threading.Lock()
 
     # alt sınıflar
-    def sub_messages(self, symbols: list[str]) -> list[str]:
+    def sub_messages(self, symbols: list[str], op: str = "subscribe") -> list[str]:
         raise NotImplementedError
 
     def handle(self, obj):
@@ -176,20 +176,31 @@ class Feed(threading.Thread):
 
     # dış arayüz
     def set_symbols(self, symbols: list[str]):
+        """Abonelik listesini günceller. Bağlıysa kopmadan ekler/çıkarır."""
         symbols = sorted(set(symbols))
         with self._lock:
             if symbols == self.symbols:
                 return
+            added = sorted(set(symbols) - set(self.symbols))
+            removed = sorted(set(self.symbols) - set(symbols))
             self.symbols = symbols
         c = self.conn
-        if c is not None:  # yeni liste için yeniden bağlan (en basit ve güvenilir yol)
-            c.close()
+        if c is None or not self.connected:
+            return                       # bağlanınca tam liste ile abone olunur
+        try:
+            for m in (self.sub_messages(added) if added else []) + \
+                     (self.sub_messages(removed, op="unsubscribe") if removed else []):
+                c.send(m)
+                time.sleep(0.12)
+        except Exception:  # noqa: BLE001
+            c.close()                    # gönderilemezse yeniden bağlanıp tam listeyle abone olur
 
     def healthy(self) -> bool:
         return self.connected and time.time() - self.last_msg < 15
 
     def status(self) -> dict:
-        return {"connected": self.connected, "healthy": self.healthy(), "url": self.url,
+        extra = {"missing": len(self.missing)} if hasattr(self, "missing") else {}
+        return {**extra, "connected": self.connected, "healthy": self.healthy(), "url": self.url,
                 "last_msg_age_s": round(time.time() - self.last_msg, 1) if self.last_msg else None,
                 "msgs": self.msgs, "ticks": self.ticks, "reconnects": self.reconnects,
                 "symbols": len(self.symbols), "error": self.error[:160],
@@ -267,10 +278,10 @@ class OKXFeed(Feed):
             "wss://wsus.okx.com:8443/ws/v5/public"]
     ping_every = 20.0
 
-    def sub_messages(self, symbols):
+    def sub_messages(self, symbols, op="subscribe"):
         args = [{"channel": "tickers", "instId": s} for s in symbols]
         args += [{"channel": "funding-rate", "instId": s} for s in symbols]
-        return [json.dumps({"op": "subscribe", "args": args[i:i + 40]}) for i in range(0, len(args), 40)]
+        return [json.dumps({"op": op, "args": args[i:i + 40]}) for i in range(0, len(args), 40)]
 
     def handle(self, obj):
         if "event" in obj:
@@ -296,14 +307,23 @@ class BitgetFeed(Feed):
     urls = ["wss://ws.bitget.com/v2/ws/public"]
     ping_every = 25.0
 
-    def sub_messages(self, symbols):
+    def __init__(self, *a, **k):
+        super().__init__(*a, **k)
+        self.missing: set[str] = set()
+
+    def sub_messages(self, symbols, op="subscribe"):
         args = [{"instType": "USDT-FUTURES", "channel": "ticker", "instId": f"{s}USDT"} for s in symbols]
-        return [json.dumps({"op": "subscribe", "args": args[i:i + 40]}) for i in range(0, len(args), 40)]
+        return [json.dumps({"op": op, "args": args[i:i + 40]}) for i in range(0, len(args), 40)]
 
     def handle(self, obj):
         if "event" in obj:
             if obj.get("event") == "error":
-                self.error = f"abonelik hatası: {obj.get('msg')}"
+                msg = str(obj.get("msg", ""))
+                if "doesn't exist" in msg or "not exist" in msg:
+                    arg = obj.get("arg") or {}
+                    self.missing.add(str(arg.get("instId") or msg)[:20])   # Bitget'te listelenmemiş coin: normal
+                else:
+                    self.error = f"abonelik hatası: {msg}"
             return
         for d in obj.get("data") or []:
             sym = (d.get("instId") or d.get("symbol") or "")
