@@ -32,7 +32,7 @@ def _bear(c):
 
 def test_score_reads_all_evidence():
     s, p = bas.score(_ctx())
-    assert s > 0.7 and set(p) == set(bas.W), (s, p)
+    assert s > 0.7 and set(p) == set(bas.W) - {"balina"}, (s, p)
     sb, _ = bas.score(_bear(_ctx()))
     assert sb < -0.6
     s2, p2 = bas.score(_ctx(oi_chg24=None, taker_imb=None, funding_ann=None))
@@ -84,6 +84,63 @@ def test_full_authority_skips_director_gates_but_keeps_stop_and_money():
                       "qty": 1, "qty_open": 1, "real": True})
     kind2, det2, _ = d.evaluate(idea, NOW, meta=OLD)
     assert kind2 != "red" and not det2.get("shadow"), "çatışma hakemi Baş Trader'ı gölgeye atmaz"
+
+
+def test_whale_component_reads_smart_money_crowd_and_liquidations():
+    up = {"hl": {"net": 0.8, "n_long": 6, "n_short": 1}, "ls_acct": 1.0, "ls_top": 2.0,
+          "liq_1h": {"short_usd": 3e6, "long_usd": 2e5}}
+    dn = {"hl": {"net": -0.7, "n_long": 1, "n_short": 5}, "ls_acct": 2.5, "ls_top": 1.0,
+          "liq_1h": {"short_usd": 1e5, "long_usd": 2e6}}
+    assert bas.parts(_ctx(crowd=up))["balina"] > 0.6
+    assert bas.parts(_ctx(crowd=dn))["balina"] < -0.6
+    assert "balina" not in bas.parts(_ctx(crowd={"hl": {"net": 1.0, "n_long": 1, "n_short": 0}}))
+
+
+def test_does_not_chase_extended_move():
+    M = team.BY_ID["bas"]
+    calm = team.a_bas(_ctx(ema20=104.0), M, {})
+    hot = team.a_bas(_ctx(ema20=90.0), M, {})                  # fiyat ortalamadan 4 ATR uzakta
+    assert calm["entry_type"] == "piyasa"
+    assert hot["entry_type"] == "limit" and hot["limit_px"] < 110 and "kovalamıyorum" in hot["plan"]
+    assert hot["limit_valid_ms"] == 86_400_000
+
+
+def test_learns_from_own_scorecard_after_enough_trades():
+    trs = []
+    for k in range(120):
+        win = k % 2 == 0
+        trs.append({"mgr": "bas", "side": "long", "r": 2.0 if win else -1.0,
+                    "bas_parts": {"akis": 0.8 if win else -0.2, "trend": 0.3 if win else 0.6}})
+    assert bas.learn(trs[:50])[0] == {}, "100 işlemden önce dokunmaz"
+    mult, rep = bas.learn(trs)
+    assert mult["akis"] > 1.2 and mult["trend"] < 0.8 and rep["n"] == 120
+    try:
+        bas.W_LEARN.update(mult)
+        assert bas.weights()["akis"] > bas.W["akis"]
+    finally:
+        bas.W_LEARN.clear()
+
+
+def test_pyramid_adds_only_to_risk_free_winner():
+    import tempfile
+    from tests.test_engine_live import _engine
+    with tempfile.TemporaryDirectory() as d:
+        e = _engine(d)
+        idea = team.a_bas(_ctx(inst="PYR-USDT-SWAP", sym="PYR"), team.BY_ID["bas"], {})
+        base = {"mgr": "bas", "inst": "PYR-USDT-SWAP", "sym": "PYR", "side": "long", "entry": 100.0, "sl": 95.0,
+                "qty": 1.0, "qty_open": 1.0, "real": True, "entry_ts": 1, "fee_entry_usd": 0.0}
+        e.ledger["open"].append(dict(base, r_now=0.5))
+        assert not e._bas_pyramid(dict(idea)), "kârda değil / stop başabaşa gelmedi → ekleme yok"
+        e.ledger["open"][-1].update({"r_now": 1.4, "sl": 100.5})
+        j = dict(idea)
+        assert e._bas_pyramid(j) and j["layer"] == 2 and j["risk_scale"] == 0.5
+        assert not e._bas_pyramid(dict(idea, side="short")), "ters yöne ekleme olmaz"
+        d2, st, L = _desk()
+        L["open"].append(dict(base, r_now=1.4, sl=100.5))
+        _, det1, _ = d2.evaluate(dict(idea), NOW, meta=OLD)
+        assert det1 is None, "piramit işareti olmadan aynı coine ikinci işlem açılmaz"
+        _, det2, _ = d2.evaluate(j, NOW, meta=OLD)
+        assert det2 and det2["risk_pct"] > 0
 
 
 if __name__ == "__main__":

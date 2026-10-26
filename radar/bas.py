@@ -11,6 +11,8 @@ puanda birleştirir ve her an (canlı mumla, her dakika) karar verir:
   kalabalık   funding: herkes aynı taraftaysa ters risk; karşı taraf ödüyorsa sıkışma yakıtı
   piyasa      BTC havası (altcoinler için)
   ekip        diğer 7 yöneticinin bu coindeki gerçek pozisyonları (bütün kulvarları izler)
+  balina      Hyperliquid'de kârlı büyük cüzdanların net yönü, büyük hesapların long/short oranı kalabalığa göre,
+              son 1 saatin likidasyonları (kim sıkışıyor)
 
 Puan −1 (güçlü short) … +1 (güçlü long). Eksik veri (ör. OI yoksa) o bileşeni dışarıda bırakır, ağırlıklar yeniden
 dağıtılır. Kararlar:
@@ -28,10 +30,13 @@ GIRIS_ESIK = 0.45
 CIKIS_ESIK = 0.15          # pozisyonun tersine bu kadar dönerse çık (long'da puan ≤ −0,15)
 
 W = {"trend": 0.22, "momentum": 0.18, "goreli": 0.10, "hacim": 0.10, "akis": 0.18, "kalabalik": 0.08,
-     "piyasa": 0.06, "ekip": 0.08}
+     "piyasa": 0.06, "ekip": 0.08, "balina": 0.12}
+W_LEARN: dict = {}         # kendi karnesinden öğrenilen çarpanlar (100+ kapanmış işlemden sonra; 0,5–1,5×)
+LEARN_MIN = 100
+KOVALAMA_ATR = 3.0         # fiyat 20 günlük ortalamadan bu kadar ATR uzaksa kovalamaz, geri çekilmede limitle girer
 
 LABEL = {"trend": "Trend", "momentum": "Momentum", "goreli": "Göreli güç", "hacim": "Hacim", "akis": "Para akışı",
-         "kalabalik": "Kalabalık", "piyasa": "Piyasa (BTC)", "ekip": "Ekip"}
+         "kalabalik": "Kalabalık", "piyasa": "Piyasa (BTC)", "ekip": "Ekip", "balina": "Balina"}
 
 
 def _ok(x) -> bool:
@@ -103,6 +108,20 @@ def parts(ctx: dict) -> dict:
             p["piyasa"] = 1.0
         elif ctx.get("btc_bear"):
             p["piyasa"] = -1.0
+    cr = ctx.get("crowd") or {}
+    bv = []
+    hl = cr.get("hl") or {}
+    if (hl.get("n_long") or 0) + (hl.get("n_short") or 0) >= 3 and _ok(hl.get("net")):
+        bv.append(_cl(hl["net"]))                         # kârlı büyük cüzdanlar net long (+) / short (−)
+    la, lt = cr.get("ls_acct"), cr.get("ls_top")
+    if _ok(la) and _ok(lt) and la > 0 and lt > 0:
+        bv.append(_cl(math.tanh(math.log(lt / la) * 2)))  # büyük hesaplar kalabalıktan daha long mu?
+    lq = cr.get("liq_1h") or {}
+    ls_, ll_ = float(lq.get("short_usd") or 0), float(lq.get("long_usd") or 0)
+    if ls_ + ll_ >= 50_000:
+        bv.append(_cl((ls_ - ll_) / (ls_ + ll_)))         # shortlar likide oluyorsa yukarı sıkışma (+)
+    if bv:
+        p["balina"] = _cl(sum(bv) / len(bv))
     pe = ctx.get("peers") or {}
     nl, ns = int(pe.get("long") or 0), int(pe.get("short") or 0)
     if nl + ns:
@@ -110,12 +129,55 @@ def parts(ctx: dict) -> dict:
     return p
 
 
+def weights() -> dict:
+    return {k: v * float(W_LEARN.get(k, 1.0)) for k, v in W.items()}
+
+
 def score(ctx: dict) -> tuple[float, dict]:
     p = parts(ctx)
-    wsum = sum(W[k] for k in p)
-    if wsum < 0.4:                                       # verinin yarısından azı varsa karar verme
+    w = weights()
+    if sum(W[k] for k in p) < 0.4:                       # verinin yarısından azı varsa karar verme
         return 0.0, p
-    return _cl(sum(W[k] * v for k, v in p.items()) / wsum), p
+    wsum = sum(w[k] for k in p)
+    return _cl(sum(w[k] * v for k, v in p.items()) / wsum), p
+
+
+def extension(ctx: dict, side: str) -> float | None:
+    """Fiyat hareketin ne kadar ilerisinde: 20 günlük ortalamaya ATR cinsinden uzaklık (pozisyon yönünde)."""
+    c, e, a = ctx.get("close"), ctx.get("ema20"), ctx.get("atr")
+    if not (_ok(c) and _ok(e) and _ok(a) and a > 0):
+        return None
+    return (1 if side == "long" else -1) * (c - e) / a
+
+
+def learn(trades: list[dict]) -> tuple[dict, dict]:
+    """Kendi karnesi: kapanmış işlemlerde her bileşenin (işlem yönünde) değeri ile sonucu (R) arasındaki ilişki.
+    Haklı çıkan bileşenin ağırlığı artar, yanılanınki azalır (0,5–1,5×). LEARN_MIN işlemden önce dokunmaz."""
+    rows = [t for t in trades if t.get("bas_parts") and t.get("r") is not None and not t.get("shadow")]
+    rep = {"n": len(rows), "min": LEARN_MIN, "corr": {}, "mult": {}}
+    if len(rows) < LEARN_MIN:
+        return {}, rep
+    out = {}
+    for k in W:
+        xs, ys = [], []
+        for t in rows:
+            v = (t["bas_parts"] or {}).get(k)
+            if v is None:
+                continue
+            xs.append((1 if t["side"] == "long" else -1) * float(v))
+            ys.append(float(t["r"]))
+        if len(xs) < 30:
+            continue
+        mx, my = sum(xs) / len(xs), sum(ys) / len(ys)
+        sx = math.sqrt(sum((x - mx) ** 2 for x in xs))
+        sy = math.sqrt(sum((y - my) ** 2 for y in ys))
+        if sx == 0 or sy == 0:
+            continue
+        corr = sum((x - mx) * (y - my) for x, y in zip(xs, ys)) / (sx * sy)
+        rep["corr"][k] = round(corr, 3)
+        out[k] = round(max(0.5, min(1.5, 1 + 2.5 * corr)), 3)
+    rep["mult"] = out
+    return out, rep
 
 
 def reasons(p: dict, side: str) -> list[str]:

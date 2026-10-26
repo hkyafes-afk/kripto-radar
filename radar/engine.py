@@ -673,6 +673,15 @@ class Engine:
         self._rel_strength(ctxs)
         for c in ctxs:
             c["peers"] = self._peers(c["inst"])
+            c["crowd"] = self.crowd(c["inst"], fetch=False)
+        # Balina verisi (long/short oranları, likidasyon) her coin için her dakika çekilmez (hız): puanı eşiğe yakın
+        # en fazla 8 coin için taze çekilir (10 dk önbellek), diğerleri önbellekten.
+        try:
+            near = sorted(((abs(bas.score(c)[0]), c) for c in ctxs), key=lambda x: -x[0])
+            for sc, c in [x for x in near if x[0] >= 0.3][:8]:
+                c["crowd"] = self.crowd(c["inst"], fetch=True)
+        except Exception as e:  # noqa: BLE001
+            print("[baş trader] balina verisi:", e)
         try:
             self.bas_watch = {"ts": int(time.time() * 1000), "rows": bas.watch(ctxs)}
         except Exception as e:  # noqa: BLE001
@@ -687,7 +696,8 @@ class Engine:
                 continue
             for idea in team.ideas_for(c, mgrs, self.cfg):
                 if (idea["mgr"], idea["inst"]) in held:       # zaten pozisyonu/emri var → değerlendirmeye gerek yok
-                    continue
+                    if not (idea["mgr"] == "bas" and self._bas_pyramid(idea)):
+                        continue
                 key = (idea["mgr"], idea["inst"], idea["side"])
                 if now - self.live_seen.get(key, 0) < 1800:
                     continue
@@ -716,6 +726,25 @@ class Engine:
             out["who"].append(f"{m.name if m else t['mgr']} {t['side']}")
         return out
 
+    def _bas_pyramid(self, idea: dict) -> bool:
+        """Kazanana ekleme (piramit): Baş Trader bu coinde aynı yönde kârdaysa (son kat ≥ +1R ve stop'u başabaş ya da
+        ötesinde, yani o katların riski sıfır) ve puan hâlâ eşiğin üstündeyse yeni bir kat ekler. En fazla 3 kat; her
+        yeni kat bir öncekinin yarısı kadar risk alır. Önceki katlar başabaşta olduğu için açık risk sadece yeni kat kadardır."""
+        mine = [t for t in self.ledger["open"] if t.get("mgr") == "bas" and t["inst"] == idea["inst"]]
+        if not mine or any(o["mgr"] == "bas" and o["idea"]["inst"] == idea["inst"] for o in self.ledger.get("orders") or []):
+            return False
+        if any(t["side"] != idea["side"] for t in mine) or len(mine) >= 3:
+            return False
+        last = max(mine, key=lambda t: t.get("entry_ts") or 0)
+        if (last.get("r_now") or 0) < 1.0 or any(lg.open_risk(t) > 0 for t in mine):
+            return False
+        idea["pyramid"] = True
+        idea["layer"] = len(mine) + 1
+        idea["risk_scale"] = 0.5 ** len(mine)
+        idea["plan"] = (f"Kazanana ekleme: {len(mine)}. kat +{last.get('r_now', 0):.1f}R kârda ve stop'u başabaşta (riski "
+                        f"sıfır); puan hâlâ güçlü → {idea['layer']}. kat, yarım risk. ") + idea["plan"]
+        return True
+
     def _bas_public(self) -> dict | None:
         if not self.desk or "bas" not in self.desk.by_id:
             return None
@@ -734,8 +763,10 @@ class Engine:
                 "giris_esik": bas.GIRIS_ESIK, "cikis_esik": bas.CIKIS_ESIK, "weights": bas.W, "labels": bas.LABEL,
                 "open": [{"sym": t["sym"], "side": t["side"], "entry": t.get("entry"), "sl": t.get("sl"),
                           "upnl": round(t.get("upnl_usd", 0.0), 2), "r": round(t.get("r_now", t.get("r", 0.0)) or 0.0, 2),
-                          "lev": t.get("lev"), "score": t.get("bas_score"), "ts": t.get("entry_ts")} for t in op],
+                          "lev": t.get("lev"), "score": t.get("bas_score"), "ts": t.get("entry_ts"),
+                          "layer": t.get("layer") or 1} for t in op],
                 "closed_n": len(cl), "closed_pnl": round(sum(t.get("pnl_usd", 0.0) for t in cl), 2),
+                "learn": self.desk.st.get("bas_learn"), "w_learn": bas.W_LEARN,
                 "lanes": lanes,
                 "decisions": [j for j in (self.desk.st.get("journal") or []) if j.get("mgr") == "bas"][-12:]}
 
@@ -1519,7 +1550,9 @@ class Engine:
                      f"{'🟢' if t['side'] == 'long' else '🔴'} <b>{nt.esc(t['sym'])} {side}</b> · {sg.TF_LABEL.get(t['tf'], t['tf'])} · "
                      f"güven %{t.get('conviction', 0) * 100:.0f} ({passed}/{len(chk)} doğrulama)")
             src = t.get("entry_src", "")
-            L.append(f"💵 Pozisyon {_usd(t['notional_usd'], False)} · teminat {_usd(t['margin_usd'], False)} · "
+            if t.get("pyramid"):
+                L.append(f"➕ <b>Kazanana ekleme · {t.get('layer', 2)}. kat</b>")
+            L.append(f"💵 Pozisyon {_usd(t['notional_usd'], False)} · teminat {_usd(t['margin_usd'], False)} · {t.get('lev', 1):g}x · "
                      f"<b>risk {_usd(t.get('risk_usd', 0), False)}</b> (sermayesinin %{_p(t.get('risk_pct', 0), 2)}'i)")
             L.append(f"Giriş {fp(t['entry'])} ({src}) · Stop {fp(t['sl'])} ({sl_s}%{_p(t['sl_pct'])}) · "
                      f"Hedef {fp(t['tp'])} ({tp_s}%{_p(t['tp_pct'])})")
@@ -1866,6 +1899,17 @@ class Engine:
         self.t["learn"] = time.time()
         since = int(self.desk.st.get("started") or 0)
         now_ms = int(time.time() * 1000)
+        try:      # 👑 Baş Trader kendi karnesinden öğrenir (100+ kapanmış işlemden sonra)
+            old = dict(bas.W_LEARN)
+            mult, rep = bas.learn([t for t in self.ledger["closed"] if t.get("mgr") == "bas"])
+            bas.W_LEARN.clear()
+            bas.W_LEARN.update(mult)
+            self.desk.st["bas_learn"] = rep
+            if mult and mult != old:
+                txt = ", ".join(f"{bas.LABEL[k]} ×{v:g}" for k, v in sorted(mult.items(), key=lambda kv: -kv[1]))
+                self._notify(f"👑 <b>Baş Trader öğrendi</b> ({rep['n']} işlem): {txt}")
+        except Exception as e:  # noqa: BLE001
+            print("[baş trader] öğrenme:", e)
         for msg in learn.segment_tick(self.desk, self.ledger, since, now_ms) + gmd.class_tick(self.desk, self.ledger, since, now_ms):
             self._notify(msg)
             self.desk.journal("-", "-", "-", "-", "öğrenme", msg.replace("<b>", "").replace("</b>", "")[:200])
