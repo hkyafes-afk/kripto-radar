@@ -249,6 +249,27 @@ Kullanıcı isteği (26 Ekim 20:49): planların hepsi gerçek araştırmayla tar
 - **Faz 5 — Dış trader verisi:** Hyperliquid akıllı para ve OKX liderleri; ders ve kalabalık sinyali.
 - **Faz 6 — Yeniden tasarım:** Murat, Ayşe ve Deniz yeni verilerle yeniden kurulur; kanıtlarlarsa gerçek bütçeye döner.
 
+### 9.8 Uzman ajan anayasası (kullanıcı: "tek göreve indirgenmesin")
+Her uzman tam bir ajandır. Görevi tek bir kontrol değil; şu beş özelliğin hepsine sahiptir:
+1. **Birden çok fonksiyon:** Kendi alanındaki bütün araçları kullanır (örnek aşağıda).
+2. **Kendi görüşü:** Her sinyale yön, güç ve gerekçe içeren bir görüş yazar; yöneticiye "gir / küçült / büyüt / bekle / çık" önerisi verir. Açık pozisyonda da sürekli görüş günceller (örneğin "kalabalık döndü, iz stop'u sıkılaştır").
+3. **Kendi hafızası ve karnesi:** Her görüşü kaydedilir ve sonuçla karşılaştırılır. "Bu uzman haklı çıktığında kâr ne kadar arttı?" ölçülür.
+4. **Kendi öğrenmesi:** Haftalık eğitimde kendi ayarlarını ve kurallarını günceller (walk-forward, doğrulama şartı).
+5. **Etki ağırlığı:** Yöneticinin kararındaki ağırlığı karnesine göre artar ya da azalır. Kâra katkısı kanıtlanan uzmanın sözü büyür. Katkı sağlamayan uzmanın ağırlığı sıfıra iner ve yeniden tasarım listesine girer.
+
+Yönetici kararı = uzman görüşlerinin karne ağırlıklı birleşimi + yöneticinin kendi kurulumu → daha tutarlı ve kâr odaklı.
+
+**Örnek — Kaan'ın Balina Gözü'nün fonksiyonları**
+- Kırılım anında OI değişimi: yeni para mı giriyor, yoksa short sıkışması mı?
+- Fonlama uç değeri ve yönü: kalabalık zaten long'a yığılmış mı?
+- Long/short oranı ve büyük hesapların oranı (OKX top trader).
+- Likidasyon haritası: yukarıda kümelenmiş short likidasyonları var mı (yakıt), aşağıda long likidasyon tuzağı var mı?
+- Emir defteri: kırılım seviyesinin üstünde satış duvarı var mı, alış tarafı derin mi?
+- Hyperliquid akıllı para: kârlı cüzdanlar bu coinde hangi yönde?
+- Açık pozisyonda: OI düşüp fonlama aşırılaşırsa "kârı koru" uyarısı verir.
+
+Diğer 39 uzman da bu formatta yazılacak: fonksiyon listesi + görüş formatı + karne ölçüsü + öğrenme ayarları. Uygulama Faz 2–4 içinde yapılacak.
+
 ### 9.7 Dürüst uyarılar
 - 40 uzman demek çok ayar demek, bu da aşırı uyum riski getirir. Bu yüzden uzmanlar ortak araçları kullanır; her parça kendi testini ve Deflated Sharpe kontrolünü geçer.
 - Meta-labeling sihirli değnek değil; zayıf bir ana sinyali kurtarmaz, iyi sinyali seçici yapar.
