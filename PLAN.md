@@ -320,7 +320,11 @@ Sıra: Faz 0 (güvenlik + Genel Müdür'ün ilk hali) her zaman önce gelir.
 - **Çift katmanlı icra:**
   - Kemal, Kaan, Selin ve Ortak Masa (günlük): 10 dk maker limit; dolmazsa piyasa emri yerine IOC limit (aktif fiyat ±%0,1).
   - Ayşe ve Deniz (hızlı): doğrudan IOC limit.
-  - Çıplak piyasa emri hiç kullanılmaz; stop çıkışları için de IOC limit, kısmi dolumda tekrar denenir.
+  - Girişlerde çıplak piyasa emri kullanılmaz.
+  - **Stop çıkışları istisnadır (düzeltme, kullanıcı itirazı 21:18):** Stop'ta öncelik kesin çıkıştır, fiyat ikinci planda.
+    - Gerçek API'de stop, **borsanın kendi sunucusunda** bekleyen stop-market emri olarak durur (OKX koşullu emir, reduce-only). Bizim bot (GitHub Actions) çökse ya da gecikse bile stop çalışır.
+    - Ne IOC ne de bantlı stop-limit kullanılır: fiyat bandın dışına boşluk yaparsa stop-limit dolmaz ve pozisyon açık kalır.
+    - Demo simülasyonu: stop kayması sabit 5 bp yerine oynaklığa bağlı (sert hareket ve ince likiditede daha büyük) modellenecek.
 
 **5 yıllık veride yarıştırılacaklar** (Faz 1 çıkış yarışıyla birlikte):
 - **Kemal:** Mevcut kural vs + ADX > 25 (gecikmenin büyük trendleri ne kadar budadığı).
@@ -335,6 +339,7 @@ Sıra: Faz 0 (güvenlik + Genel Müdür'ün ilk hali) her zaman önce gelir.
 - Elif'in sadece fonlama saatini atlatıp kapatması: 4 bacak ~%0,5 maliyet, tek fonlama ~%0,01–0,1.
 - %80 korelasyonda tek işlem yasağı: kriptoda düşüşte her şey korele olur; korele gruba toplam %4 risk kuralı kalır, korelasyon penceresi 30 gün.
 - Makro veriden önce stop'u başabaşa çekmek: veri anı iğneleri stop'ları patlatır.
+- Stop çıkışında IOC ya da dar stop-limit: çöküşte dolmama riski kaymadan çok daha tehlikeli (borsa tarafı stop-market seçildi).
 
 ### 9.7 Dürüst uyarılar
 - 40 uzman demek çok ayar demek, bu da aşırı uyum riski getirir. Bu yüzden uzmanlar ortak araçları kullanır; her parça kendi testini ve Deflated Sharpe kontrolünü geçer.
