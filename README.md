@@ -1,8 +1,8 @@
 # 🛰 Kripto Radar
 
-OKX perpetual piyasasını **her saat** tarayan, sinyalleri **Telegram'a** gönderen, sonuçları
-**telefondan açılan bir dashboard'da** gösteren ve her sinyalin karnesini **otomatik kağıt üstü
-defterde** tutan karar destek aracı. Bilgisayar gerekmez: her şey GitHub'ın ücretsiz sunucularında çalışır.
+OKX perpetual piyasasını **canlı** izleyen (15dk / 1S / 4S mum kapanır kapanmaz tarar), sinyalleri
+anında **Telegram'a** gönderen, her güçlü sinyalde **20$'lık demo işlem** açıp stop/hedefte kendisi
+kapatan ve kâr/zararı **telefondan açılan bir dashboard'da** gösteren karar destek aracı. Bilgisayar gerekmez: her şey GitHub'ın ücretsiz sunucularında çalışır.
 
 > ⚠️ **Otomatik emir vermez. Yatırım tavsiyesi değildir.** "Buna bak" diyen bir radardır.
 > Defter en az 30 kapanmış işlemde pozitif beklenti göstermeden hiçbir setup'a para bağlama.
@@ -32,9 +32,9 @@ sohbet ID'n herkese açık dosyalarda görünmez.
 
 > Telefonda GitHub ayarları görünmüyorsa tarayıcıda **"Masaüstü sitesi"** seçeneğini aç.
 
-### 3) İlk taramayı başlat
-**Actions** sekmesi → (sorarsa *I understand… enable* de) → soldan **Tarama** → **Run workflow** → yeşil buton.
-3–4 dakika sürer. Bitince yeşil tik görürsün.
+### 3) Canlı döngüyü başlat
+**Actions** sekmesi → soldan **Canlı döngü** → **Run workflow** → yeşil buton.
+Döngü ~5,5 saat açık kalır; saatlik tetik bir sonrakini sıraya koyar, böylece kesintisiz çalışır.
 
 ### 4) Dashboard'u aç
 **Settings** → **Pages** → *Source:* **Deploy from a branch** → *Branch:* **gh-pages** / **(root)** → **Save**.
@@ -46,7 +46,7 @@ CallMeBot'un numarasını rehbere ekle, ona WhatsApp'tan `I allow callmebot to s
 Gelen API anahtarını `CALLMEBOT_APIKEY`, numaranı `CALLMEBOT_PHONE` olarak ekle. Ücretsiz bir
 üçüncü parti servis olduğu için gecikebilir; ana kanal Telegram.
 
-Bitti. Bundan sonra her saat başı (~:07) kendiliğinden tarar.
+Bitti. Bundan sonra kendi kendine sürekli çalışır.
 
 ---
 
@@ -54,17 +54,19 @@ Bitti. Bundan sonra her saat başı (~:07) kendiliğinden tarar.
 
 | Bölüm | Açıklama |
 |---|---|
-| **Tarama** | 24s hacme göre en likit 100 OKX USDT perpetual, 4 saatlik kapanmış mumlar |
+| **Canlı döngü** | Fiyat ve demo pozisyonlar dakikada bir; 15dk, 1S ve 4S mumlar kapanır kapanmaz tarama; Telegram komutları 15 sn'de bir |
+| **Tarama** | 24s hacme göre en likit 100 OKX USDT perpetual (sadece kripto; hisse ve emtia kontratları hariç) |
+| **Demo hesap** | 1.000$ sanal bakiye, her güçlü sinyalde 20$'lık işlem, coin başına tek pozisyon; komisyon, kayma ve funding düşülür |
 | **Sinyaller** | 4 setup, her biri 0–100 puan: Trend Long/Short, Dönüş Long/Short |
 | **Rejim filtresi** | BTC günlük EMA200 altında long'lar %50, boğada short'lar kırpılır (ham puan ayrıca saklanır) |
 | **Funding harvest** | Spot+perp delta-nötr carry adayları: 30g ortalama, istikrar, başabaş gün, diğer borsalarla karşılaştırma |
-| **Kağıt üstü defter** | Her güçlü sinyal sanal pozisyon açar; stop/hedef/süre kurallarıyla otomatik kapanır, karne çıkar |
-| **Bildirim** | Yeni güçlü sinyal, kapanan işlem, günlük 09:00 özeti, art arda 2 hata uyarısı |
+| **Karne** | Setup, periyot ve gösterge bazında isabet, ortalama R ve dolar K/Z |
+| **Bildirim** | Yeni sinyal + açılan demo işlem, kapanan işlem (K/Z ile), günlük 09:00 özeti, art arda hata uyarısı |
 | **Backtest** | Her pazar walk-forward test (parametre ilk %70'te seçilir, son %30'da ölçülür) |
 
 ### Telegram komutları
-`/durum` · `/sinyaller` · `/coin SOL` · `/funding` · `/karne` · `/tara` · `/sessiz 8` · `/ac`
-(Cevaplar en geç ~10 dk içinde gelir; GitHub zamanlayıcısı böyle çalışıyor.)
+`/durum` · `/sinyaller` · `/demo` · `/pozisyonlar` · `/coin SOL` · `/funding` · `/karne` · `/tara` · `/sessiz 8` · `/ac`
+(Döngü açıkken cevaplar birkaç saniyede gelir.)
 
 ---
 
@@ -95,7 +97,7 @@ Tek bir iyi haftaya göre ayar değiştirmek en klasik hatadır.
 ```
 radar/            Python paketi (göstergeler, sinyal motoru, defter, dashboard, Telegram)
 config.yaml       Ayarlar
-.github/workflows Tarama (saatlik), Telegram komutları (10 dk), Backtest (haftalık)
+.github/workflows Canlı döngü (sürekli), Backtest (haftalık)
 scripts/site.sh   Dashboard + defter dosyalarını gh-pages dalında tutar (repo şişmez)
 tests/            Çevrimdışı testler: python tests/test_offline.py
 data/KARNE.md     Haftalık karne (otomatik)
@@ -106,4 +108,7 @@ data/KARNE.md     Haftalık karne (otomatik)
 - **Telegram mesajı gelmiyor:** Bota `/start` dedin mi? Secret adı tam olarak `TELEGRAM_BOT_TOKEN` mı?
 - **"Veri X saattir güncellenmedi":** Actions sekmesinde kırmızı çarpı var mı, logu aç. 60 gün hiç
   aktivite olmayan public repolarda GitHub zamanlanmış işleri durdurur; haftalık karne commit'i bunu önler.
+- **Actions'ta çok sayıda "iptal edildi" görmek normal:** döngü çalışırken gelen saatlik tetikler sıraya girer, fazlası iptal edilir.
+- **Uzun süreli döngü hakkında:** GitHub Actions asıl olarak derleme/test için tasarlandı. Sürekli açık döngü public
+  repoda ücretsizdir ama GitHub bir gün kısıtlarsa aynı kod küçük bir sunucuda `python -m radar live` ile çalışır.
 - **Maliyet:** Public repoda GitHub Actions ücretsizdir. Repo private olursa aylık dakika limiti dolar ve Pages ücretli plana kalır.

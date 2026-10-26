@@ -51,7 +51,7 @@ def _bars(start_ms, prices):
 def _signal(side="long"):
     return {"inst": "X-USDT-SWAP", "sym": "X", "setup": f"trend_{side}", "side": side, "kind": "trend",
             "score": 70, "raw": 70, "entry": 100.0, "sl": 95.0 if side == "long" else 105.0,
-            "tp": 110.0 if side == "long" else 90.0, "sl_pct": 5.0, "max_saat": 168,
+            "tp": 110.0 if side == "long" else 90.0, "sl_pct": 5.0, "tp_pct": 10.0, "max_saat": 168,
             "funding_rate": 0.0001, "interval_h": 8, "tags": ["adx"], "reasons": []}
 
 
@@ -89,6 +89,36 @@ def test_ledger_tp_sl_time():
     assert not lg.open_new(L, [_signal()], CFG, now_ms=t0 + 5 * 3600_000)   # zaten açık
     st = lg.stats(L, CFG)
     assert st["open_count"] == 1
+
+
+def test_demo_dollars_and_limits():
+    t0 = 1_700_000_000_000
+    L = lg.empty()
+    opened = lg.open_new(L, [_signal()], CFG, now_ms=t0)
+    t = L["open"][0]
+    assert t["margin_usd"] == 20 and t["notional_usd"] == 20 and abs(t["qty"] - 0.2) < 1e-9
+    assert opened[0]["label"] if "label" in opened[0] else True
+    # dakikalık mumla hedef: giriş anından önceki mum sayılmamalı
+    idx_bars = _bars(t0 - 60_000, [(100, 120, 80, 100), (100, 101, 99, 100), (100, 110.5, 100, 110)])
+    closed = lg.update(L, lambda i: idx_bars, {}, CFG, now_ms=t0 + 5 * 60_000, bar_ms=60_000)
+    assert len(closed) == 1 and closed[0]["outcome"] == "hedef"
+    # %10 brüt − %0.15 masraf = %9.85 → 20$ * 0.0985 = 1.97$
+    assert abs(closed[0]["pnl_usd"] - 1.97) < 0.01, closed[0]["pnl_usd"]
+    st = lg.stats(L, CFG)
+    assert abs(st["demo"]["equity"] - 1001.97) < 0.01 and st["demo"]["return_pct"] > 0
+    # limit: aynı periyotta en fazla max_acik_periyot
+    L = lg.empty()
+    sigs = []
+    for i in range(30):
+        s = _signal()
+        s.update({"inst": f"C{i}-USDT-SWAP", "sym": f"C{i}", "tf": "15m"})
+        sigs.append(s)
+    lg.open_new(L, sigs, CFG, now_ms=t0)
+    assert len(L["open"]) == CFG["demo"]["max_acik_periyot"]
+    # eski kayıt göçü
+    old = {"open": [{"inst": "X", "entry": 50.0}], "closed": [{"inst": "Y", "entry": 10.0, "pnl_pct": 5.0}]}
+    lg.migrate(old, CFG)
+    assert old["open"][0]["qty"] == 0.4 and old["closed"][0]["pnl_usd"] == 1.0
 
 
 def test_scoring_scalar_vs_vector():

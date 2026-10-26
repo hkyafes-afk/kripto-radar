@@ -16,6 +16,7 @@ DEFAULTS: dict = {
         "min_hacim_usd": 5_000_000,
         "periyot": "4H",
         "sadece_kripto": True,
+        "periyotlar": ["15m", "1H", "4H"],
         "haric": ["USDC", "DAI", "TUSD", "FDUSD", "USDE", "PYUSD", "USDG"],
     },
     "gostergeler": {
@@ -45,6 +46,14 @@ DEFAULTS: dict = {
         "trend": {"stop_atr": 1.5, "hedef_atr": 3.0, "max_saat": 168},
         "donus": {"stop_atr": 1.2, "hedef_atr": 2.0, "max_saat": 72},
     },
+    "periyot_ayar": {
+        "15m": {"trend_max_saat": 24, "donus_max_saat": 8},
+        "1H": {"trend_max_saat": 72, "donus_max_saat": 24},
+        "4H": {"trend_max_saat": 168, "donus_max_saat": 72},
+    },
+    "demo": {"baslangic_bakiye": 1000, "islem_tutari_usd": 20, "kaldirac": 1,
+             "max_acik_toplam": 20, "max_acik_periyot": 8},
+    "canli": {"dongu_dakika": 330, "fiyat_kontrol_sn": 60, "komut_kontrol_sn": 15, "yayin_min_dakika": 6},
     "defter": {
         "komisyon_gidis_donus": 0.10,
         "kayma": 0.05,

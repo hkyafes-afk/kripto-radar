@@ -112,7 +112,7 @@ def test_telegram_commands():
         assert confirmed == [16]
         texts = [t for cid, t in sent if cid == "111"]
         assert any("sahibi" in t for t in texts) and any("Durum" in t for t in texts)
-        assert any("SOL" in t for t in texts) and any("Defter karnesi" in t for t in texts)
+        assert any("SOL" in t for t in texts) and any("Karne" in t for t in texts)
         assert any(cid == "999" and "özel" in t for cid, t in sent)   # yabancıya cevap yok
         # sessizdeyken tarama bildirim göndermemeli
         sent.clear()
@@ -124,7 +124,7 @@ def test_telegram_commands():
         os.environ["TELEGRAM_CHAT_ID"] = "111"
         sent.clear()
         scan.run(Path(d2), client=DemoClient(), notify=True, demo=True)
-        assert any("Yeni güçlü sinyal" in t for _, t in sent), sent[:1]
+        assert any("demo işlem açıldı" in t and "20$" in t for _, t in sent), sent[:1]
         os.environ.pop("TELEGRAM_CHAT_ID", None)
         os.environ.pop("TELEGRAM_BOT_TOKEN", None)
 

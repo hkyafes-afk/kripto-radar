@@ -105,7 +105,9 @@ ul.why li.pos::first-letter{color:var(--green)} ul.why li.neg{color:var(--amber)
 input.search{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:12px;color:var(--text);padding:11px 13px;font-size:15px;outline:none}
 input.search:focus{border-color:var(--muted)}
 .stat{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
-.stat div{background:var(--panel2);border-radius:9px;padding:7px 8px}
+.stat div{background:var(--panel2);border-radius:9px;padding:7px 8px;min-width:0}
+.stat .x{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:440px){.stat{grid-template-columns:repeat(2,1fr)}}
 .stat .k{font-size:10.5px;color:var(--muted);text-transform:uppercase}
 .stat .x{font-family:var(--mono);font-weight:700;font-size:14px;margin-top:2px}
 .list{display:flex;flex-direction:column;gap:8px}
@@ -145,6 +147,12 @@ input.search:focus{border-color:var(--muted)}
     <div id="sigBody"></div>
   </section>
 
+  <section id="t-demo">
+    <p class="note">Bot her güçlü sinyalde kendi kendine <b>sanal işlem</b> açar ve stop, hedef ya da süre dolunca kapatır. Komisyon, kayma ve funding düşülür.
+    Gerçek para yoktur; amaç sinyallerin para kazandırıp kazandırmadığını ölçmek.</p>
+    <div id="demoBody"></div>
+  </section>
+
   <section id="t-fund">
     <p class="note">Delta-nötr carry: spot'tan al + perp'te aynı miktar short aç → fiyat riski ~0, pozitif funding'i toplarsın.
     Liste 30 günlük istikrara göre sıralı. <b>Başabaş gün</b> = 4 bacağın işlem maliyetini funding'in kaç günde çıkardığı.</p>
@@ -154,7 +162,7 @@ input.search:focus{border-color:var(--muted)}
   </section>
 
   <section id="t-led">
-    <p class="note">Her güçlü sinyal otomatik olarak sanal pozisyon açılır; stop / hedef / süre dolumu kurallarıyla kapanır.
+    <p class="note">Demo işlemlerin setup ve periyot bazında karnesi.
     <b>R</b> = risk birimi (stop'a gitmek −1R). 2R hedefte başabaş isabet oranı ≈ %33'tür, yani <b>isabetten çok ortalama R'ye bak</b>.
     Bir setup en az 30 işlemden sonra pozitif beklenti göstermiyorsa ona güvenme.</p>
     <div id="ledBody"></div>
@@ -201,6 +209,10 @@ function fp(p){
   return (+p.toPrecision(4)).toString().replace(".",",");
 }
 const pct = (v,d=1) => (v==null||isNaN(v)) ? "–" : (v>0?"+":"") + v.toFixed(d).replace(".",",") + "%";
+const money = (v,sign=true) => (v==null||isNaN(v)) ? "–" : (sign && v>0 ? "+" : "") + v.toLocaleString("tr-TR",{minimumFractionDigits:2,maximumFractionDigits:2}) + "$";
+const TFL = {"15m":"15dk","1H":"1S","4H":"4S","30m":"30dk","5m":"5dk","2H":"2S"};
+const tfl = t => TFL[t] || t || "4S";
+function dur(h){ if (h==null) return "–"; const m=Math.round(h*60); if (m<60) return m+" dk"; const hh=Math.floor(m/60), mm=m%60; if (hh<24) return hh+" sa"+(mm?" "+mm+" dk":""); const d=Math.floor(hh/24), r=hh%24; return d+" gün"+(r?" "+r+" sa":""); }
 const usd = v => v==null ? "–" : v>=1e9 ? "$"+(v/1e9).toFixed(1).replace(".",",")+"B" : v>=1e6 ? "$"+(v/1e6).toFixed(0)+"M" : "$"+Math.round(v/1e3)+"K";
 const cls = v => v>0 ? "up" : v<0 ? "down" : "";
 function ago(ms){
@@ -214,27 +226,28 @@ function scoreColor(s){ return s>=75 ? "var(--green)" : s>=65 ? "#a3e635" : s>=5
 function render(){
   if (!D){ $("#sub").textContent = "Henüz veri yok — ilk tarama bekleniyor."; return; }
   const b = D.btc || {};
-  $("#sub").innerHTML = `OKX · ${esc(D.timeframe)} · <span title="${esc(D.generated_local)}">${ago(D.generated_at)}</span>` + (D.demo ? ' · <span class="badge b-amber">ÖRNEK VERİ</span>' : "");
+  $("#sub").innerHTML = `OKX · ${esc(D.timeframe)}${D.live?' · <span class="badge b-green">● canlı</span>':''} · <span title="${esc(D.generated_local)}">${ago(D.generated_at)}</span>` + (D.demo ? ' · <span class="badge b-amber">ÖRNEK VERİ</span>' : "");
   const age = (Date.now()-D.generated_at)/60000;
   const st = $("#stale");
-  if (age > 100){ st.classList.add("on"); st.innerHTML = `⏳ Veri ${Math.round(age/60)} saattir güncellenmedi. GitHub Actions'ta tarama çalışmıyor olabilir — Rehber sekmesinden kontrol et.`; }
+  const lim = D.live ? 25 : 100;
+  if (age > lim){ st.classList.add("on"); st.innerHTML = `⏳ Veri ${age<120 ? Math.round(age)+" dakikadır" : Math.round(age/60)+" saattir"} güncellenmedi. Canlı döngü yeniden başlıyor olabilir; uzun sürerse Rehber sekmesinden kontrol et.`; }
   else st.classList.remove("on");
-  const L = D.ledger.stats.overall;
+  const L = D.ledger.stats.overall, DM = D.ledger.stats.demo || {};
   const reg = b.regime===1 ? '<span class="badge b-green">Boğa</span>' : b.regime===-1 ? '<span class="badge b-red">Ayı</span>' : '<span class="badge b-dim">?</span>';
   $("#kpis").innerHTML = `
     <div class="kpi"><div class="l">BTC</div><div class="v num">${fp(b.price)}</div><div class="s num ${cls(b.chg24)}">${pct(b.chg24)} · 24s</div></div>
     <div class="kpi"><div class="l">Rejim</div><div class="v">${reg}</div><div class="s">EMA200 ${fp(b.ema200)}</div></div>
     <div class="kpi"><div class="l">Güçlü sinyal</div><div class="v num">${D.counts.strong}</div><div class="s">${D.counts.scanned} coin tarandı</div></div>
-    <div class="kpi"><div class="l">Defter</div><div class="v num ${cls(L.avg_r)}">${L.n ? (L.avg_r>0?"+":"")+L.avg_r.toFixed(2)+"R" : D.ledger.open.length+" açık"}</div><div class="s">${L.n ? L.n+" işlem · %"+L.win_rate+" isabet" : "kapanmış işlem yok"}</div></div>`;
-  const tabs = [["sig","Sinyaller",D.counts.strong],["fund","Funding",D.harvest.length],["led","Defter",D.ledger.open.length],["coins","Coinler",D.coins.length]];
+    <div class="kpi"><div class="l">Demo bakiye</div><div class="v num">${money(DM.equity,false)}</div><div class="s num ${cls(DM.return_pct)}">${pct(DM.return_pct,2)} · ${D.ledger.open.length} açık</div></div>`;
+  const tabs = [["sig","Sinyaller",D.counts.strong],["demo","Demo",D.ledger.open.length],["led","Karne",L.n||0],["fund","Funding",D.harvest.length],["coins","Coinler",D.coins.length]];
   if (BT) tabs.push(["bt","Backtest",""]);
   tabs.push(["guide","Rehber",""]);
   if (!tabs.find(t=>t[0]===state.tab)) state.tab = "sig";
   $("#tabs").innerHTML = tabs.map(([k,n,c]) => `<button class="tab ${state.tab===k?"on":""}" data-t="${k}">${n}${c!==""?`<span class="c">${c}</span>`:""}</button>`).join("");
   document.querySelectorAll(".tab").forEach(el => el.onclick = () => { state.tab = el.dataset.t; save(); render(); scrollTo({top:0}); });
   document.querySelectorAll("section").forEach(s => s.classList.toggle("on", s.id === "t-"+state.tab));
-  ({sig:renderSignals,fund:renderFunding,led:renderLedger,coins:renderCoins,bt:renderBT,guide:renderGuide})[state.tab]();
-  $("#foot").innerHTML = `v${esc(D.version)} · ${D.counts.scanned}/${D.counts.universe} coin · ${D.duration_s} sn · OI: ${esc(D.oi_source)} · taker verisi: ${D.taker_real}/${D.coins.length}<br>Karar destek aracıdır · otomatik emir vermez · yatırım tavsiyesi değildir`;
+  ({sig:renderSignals,demo:renderDemo,fund:renderFunding,led:renderLedger,coins:renderCoins,bt:renderBT,guide:renderGuide})[state.tab]();
+  $("#foot").innerHTML = `v${esc(D.version)} · ${D.counts.scanned}/${D.counts.universe} coin · ${D.duration_s!=null ? D.duration_s+" sn · " : ""}${D.scan_times ? "son tarama "+Object.entries(D.scan_times).map(([k,v])=>tfl(k)+" "+v).join(", ")+" · " : ""}OI: ${esc(D.oi_source)} · taker verisi: ${D.taker_real}/${D.coins.length}<br>Karar destek aracıdır · otomatik emir vermez · yatırım tavsiyesi değildir`;
 }
 
 function sigCard(s){
@@ -244,7 +257,7 @@ function sigCard(s){
   const li = reasons.map((r,i) => `<li class="${r.startsWith("−")?"neg":"pos"}" ${i>=3?`data-x="${id}" hidden`:""}>${esc(r)}</li>`).join("");
   const slS = s.side==="long" ? "−" : "+", tpS = s.side==="long" ? "+" : "−";
   return `<div class="card ${s.side}">
-    <div class="hd"><div><div class="sym">${esc(s.sym)}</div><div class="lbl">${esc(s.label)} · <span class="num ${cls(s.chg24)}">${pct(s.chg24)}</span></div></div>
+    <div class="hd"><div><div class="sym">${esc(s.sym)}</div><div class="lbl"><span class="badge b-blue">${tfl(s.tf)}</span> ${esc(s.label)} · <span class="num ${cls(s.chg24)}">${pct(s.chg24)}</span></div></div>
       <div class="score"><div class="v" style="color:${scoreColor(sc)}">${sc}</div><div class="raw">${state.raw ? "rejimli "+s.score : (s.raw!==s.score ? "ham "+s.raw : "/100")}</div></div></div>
     <div class="bar"><i style="width:${sc}%;background:${scoreColor(sc)}"></i></div>
     <div class="lv">
@@ -255,17 +268,17 @@ function sigCard(s){
     <ul class="why">${li}</ul>
     ${reasons.length>3 ? `<button class="more" data-more="${id}">+${reasons.length-3} neden daha</button>` : ""}
     <div class="meta"><span>RSI ${s.rsi!=null?Math.round(s.rsi):"–"}</span><span>ADX ${s.adx!=null?Math.round(s.adx):"–"}</span>
-      <span>Fund ${s.funding_ann!=null?Math.round(s.funding_ann)+"%":"–"}</span><span>OI ${pct(s.oi_chg24)}</span><span>≤${Math.round(s.max_saat/24)}g</span></div>
+      <span>Fund ${s.funding_ann!=null?Math.round(s.funding_ann)+"%":"–"}</span><span>OI ${pct(s.oi_chg24)}</span><span>≤${dur(s.max_saat)}</span></div>
   </div>`;
 }
 
 function renderSignals(){
-  const F = [["all","Tümü"],["long","Long"],["short","Short"],["trend","Trend"],["donus","Dönüş"]];
+  const F = [["all","Tümü"],["long","Long"],["short","Short"],["trend","Trend"],["donus","Dönüş"]].concat((D.timeframes||[]).map(t => [t, tfl(t)]));
   $("#sigFilters").innerHTML = F.map(([k,n]) => `<button class="chip ${state.filter===k?"on":""}" data-f="${k}">${n}</button>`).join("");
   document.querySelectorAll("[data-f]").forEach(el => el.onclick = () => { state.filter = el.dataset.f; save(); renderSignals(); });
   const rt = $("#rawToggle"); rt.checked = state.raw; rt.onchange = () => { state.raw = rt.checked; save(); renderSignals(); };
   const thr = D.thresholds;
-  let list = D.signals.filter(s => state.filter==="all" || s.side===state.filter || s.kind===state.filter);
+  let list = D.signals.filter(s => state.filter==="all" || s.side===state.filter || s.kind===state.filter || s.tf===state.filter);
   const val = s => state.raw ? s.raw : s.score;
   list = list.slice().sort((a,b) => val(b)-val(a));
   const strong = list.filter(s => val(s) >= thr.strong), watch = list.filter(s => val(s) >= thr.watch && val(s) < thr.strong);
@@ -326,14 +339,70 @@ function renderLedger(){
     h += `<h2>Hangi malzeme işe yarıyor?</h2><p class="note">Sinyalde bu neden varken ve yokken ortalama R. Fark büyükse o gösterge gerçekten katkı veriyor.</p>
     <div class="list">` + S.by_tag.slice(0,12).map(t => `<div class="li"><b>${esc(t.tag)}</b><span class="m">${t.n} işlem</span><span class="r ${cls(t.avg_r)}">${t.avg_r.toFixed(2)}R <span class="m">/ yokken ${t.avg_r_without!=null?t.avg_r_without.toFixed(2):"–"}</span></span></div>`).join("") + `</div>`;
   }
-  h += `<h2>Açık pozisyonlar <span class="n">${D.ledger.open.length}</span></h2>`;
-  h += D.ledger.open.length ? `<div class="list">` + D.ledger.open.map(t => `<div class="li"><div><b>${esc(t.sym)}</b> <span class="m">${LBL[t.setup]} · ${t.score}</span><div class="m">giriş ${fp(t.entry)} · ${ago(t.entry_ts)}</div></div>
-    <div class="r ${cls(t.r_now)}">${(t.r_now>0?"+":"")+(t.r_now||0).toFixed(2)}R<div class="m">MFE ${t.mfe_r} · MAE ${t.mae_r}</div></div></div>`).join("") + `</div>` : `<div class="empty">Açık sanal pozisyon yok.</div>`;
-  const icon = {hedef:"✅",stop:"❌","süre":"⏱"};
-  h += `<h2>Son kapananlar</h2>`;
-  h += D.ledger.closed.length ? `<div class="list">` + D.ledger.closed.slice(0,30).map(t => `<div class="li"><div>${icon[t.outcome]||"•"} <b>${esc(t.sym)}</b> <span class="m">${LBL[t.setup]} · ${t.score}</span><div class="m">${t.outcome} · ${t.hours} sa · ${ago(t.exit_ts)}</div></div>
-    <div class="r ${cls(t.r)}">${(t.r>0?"+":"")+t.r.toFixed(2)}R<div class="m">${pct(t.pnl_pct,2)}</div></div></div>`).join("") + `</div>` : `<div class="empty">Henüz kapanan işlem yok.</div>`;
+  if (S.by_tf && Object.keys(S.by_tf).length){
+    h += `<h2>Periyot bazında</h2><div class="grid">` + Object.entries(S.by_tf).map(([tf,s]) => `<div class="card">
+      <div class="hd"><div><div class="sym" style="font-size:15px">${tfl(tf)} sinyalleri</div><div class="lbl">${s.n||0} kapanmış · ${s.open||0} açık</div></div>
+      <div class="score"><span class="badge ${vb[s.verdict.code]}">${esc(s.verdict.text)}</span></div></div>
+      ${s.n ? `<div class="stat"><div><div class="k">İsabet</div><div class="x">%${s.win_rate}</div></div><div><div class="k">Ort. R</div><div class="x ${cls(s.avg_r)}">${s.avg_r.toFixed(2)}</div></div>
+      <div><div class="k">K/Z</div><div class="x ${cls(s.pnl_usd)}">${money(s.pnl_usd)}</div></div><div><div class="k">Süre</div><div class="x">${dur(s.avg_hours)}</div></div></div>`:""}</div>`).join("") + `</div>`;
+  }
   $("#ledBody").innerHTML = h;
+}
+
+function eqChart(eq, start){
+  if (!eq || eq.length < 2) return `<p class="note">Bakiye eğrisi ilk işlemler kapandıkça çizilecek.</p>`;
+  const pts = [[eq[0][0]-1, start]].concat(eq);
+  const ys = pts.map(p=>p[1]), mn = Math.min(start,...ys), mx = Math.max(start,...ys), W=600, H=120, pl=6, pr=6, pt=10, pb=10;
+  const x = i => pl + i*(W-pl-pr)/(ys.length-1), y = v => H-pb - (v-mn)*(H-pt-pb)/((mx-mn)||1);
+  const line = ys.map((v,i)=>(i?"L":"M")+x(i).toFixed(1)+" "+y(v).toFixed(1)).join(" ");
+  const last = ys[ys.length-1], col = last>=start ? "var(--green)" : "var(--red)";
+  const area = line + ` L${x(ys.length-1).toFixed(1)} ${y(start).toFixed(1)} L${x(0).toFixed(1)} ${y(start).toFixed(1)} Z`;
+  return `<svg class="spark" style="height:120px" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Demo bakiye eğrisi">
+    <line x1="0" x2="${W}" y1="${y(start)}" y2="${y(start)}" stroke="var(--line)" stroke-dasharray="4 4" vector-effect="non-scaling-stroke"/>
+    <path d="${area}" fill="${col}" opacity=".12"/>
+    <path d="${line}" fill="none" stroke="${col}" stroke-width="2" vector-effect="non-scaling-stroke"/>
+    <circle cx="${x(ys.length-1)}" cy="${y(last)}" r="3.5" fill="${col}"/></svg>
+    <div class="row" style="justify-content:space-between;font-size:11.5px;color:var(--muted)"><span>başlangıç ${money(start,false)}</span><span class="num">min ${money(mn,false)} · max ${money(mx,false)}</span></div>`;
+}
+
+function renderDemo(){
+  const DM = D.ledger.stats.demo || {}, O = D.ledger.stats.overall, op = D.ledger.open, cl = D.ledger.closed;
+  const icon = {hedef:"✅",stop:"❌","süre":"⏱"}, what = {hedef:"hedef",stop:"stop","süre":"süre doldu"};
+  let h = `<div class="card">
+    <div class="hd"><div><div class="lbl">Demo bakiye · işlem başı ${DM.trade_size||20}$ · ${DM.lev||1}x</div>
+      <div class="num" style="font-size:30px;font-weight:800;margin-top:4px">${money(DM.equity,false)}</div></div>
+      <div class="score"><div class="v ${cls(DM.return_pct)}" style="font-size:20px">${pct(DM.return_pct,2)}</div><div class="raw">toplam getiri</div></div></div>
+    <div class="stat">
+      <div><div class="k">Gerçekleşen</div><div class="x ${cls(DM.realized)}">${money(DM.realized)}</div></div>
+      <div><div class="k">Açık K/Z</div><div class="x ${cls(DM.unrealized)}">${money(DM.unrealized)}</div></div>
+      <div><div class="k">İşlemde</div><div class="x">${money(DM.in_use,false)}</div></div>
+      <div><div class="k">Boşta</div><div class="x">${money(DM.free,false)}</div></div>
+    </div>
+    <div class="stat">
+      <div><div class="k">Kapanan</div><div class="x">${O.n||0}</div></div>
+      <div><div class="k">İsabet</div><div class="x">${O.n?"%"+O.win_rate:"–"}</div></div>
+      <div><div class="k">Komisyon</div><div class="x">${money(DM.fees_usd,false)}</div></div>
+      <div><div class="k">Funding</div><div class="x ${cls(-(DM.funding_usd||0))}">${money(-(DM.funding_usd||0))}</div></div>
+    </div>
+    <div style="margin-top:12px">${eqChart(DM.equity_curve, DM.start||1000)}</div>
+  </div>`;
+  h += `<h2>Açık işlemler <span class="n">${op.length}</span></h2>`;
+  h += op.length ? `<div class="list">` + op.map(t => {
+    const pnl = t.upnl_usd||0, pc = t.notional_usd ? pnl/t.notional_usd*100 : 0;
+    return `<div class="li"><div style="min-width:0">
+      <div><span class="badge ${t.side==="long"?"b-green":"b-red"}">${t.side==="long"?"LONG":"SHORT"}</span> <b>${esc(t.sym)}</b> <span class="m">${tfl(t.tf)} · ${LBL[t.setup]} · ${t.score}</span></div>
+      <div class="m num">${fp(t.entry)} → ${fp(t.last)} · stop ${fp(t.sl)} · hedef ${fp(t.tp)}</div>
+      <div class="m">${money(t.margin_usd,false)} · ${ago(t.entry_ts)} açıldı</div></div>
+      <div class="r ${cls(pnl)}">${money(pnl)}<div class="m">${pct(pc,2)} · ${(t.r_now>0?"+":"")+(t.r_now||0).toFixed(2)}R</div></div></div>`; }).join("") + `</div>`
+    : `<div class="empty">Şu an açık demo işlem yok. Güçlü sinyal geldiğinde bot kendisi açar ve Telegram'a yazar.</div>`;
+  h += `<h2>İşlem geçmişi <span class="n">${O.n||0}</span></h2>`;
+  h += cl.length ? `<div class="list">` + cl.slice(0,80).map(t => `<div class="li"><div style="min-width:0">
+      <div>${icon[t.outcome]||"•"} <b>${esc(t.sym)}</b> <span class="m">${t.side==="long"?"long":"short"} · ${tfl(t.tf)} · ${LBL[t.setup]}</span></div>
+      <div class="m num">${fp(t.entry)} → ${fp(t.exit)} · ${what[t.outcome]||t.outcome} · ${dur(t.hours)}</div>
+      <div class="m">${ago(t.exit_ts)} kapandı</div></div>
+      <div class="r ${cls(t.pnl_usd)}">${money(t.pnl_usd)}<div class="m">${pct(t.pnl_pct,2)} · ${(t.r>0?"+":"")+t.r.toFixed(2)}R</div></div></div>`).join("") + `</div>`
+    : `<div class="empty">Henüz kapanan işlem yok. İlk sonuçlar periyoda göre birkaç saat ile birkaç gün içinde gelir.</div>`;
+  $("#demoBody").innerHTML = h;
 }
 
 function renderCoins(){
@@ -371,26 +440,28 @@ function renderBT(){
 
 function renderGuide(){
   const repo = D.repo || "";
-  const act = repo ? `https://github.com/${repo}/actions/workflows/scan.yml` : "#";
+  const act = repo ? `https://github.com/${repo}/actions/workflows/canli.yml` : "#";
   const cfg = repo ? `https://github.com/${repo}/edit/main/config.yaml` : "#";
   const dis = repo ? "" : ' aria-disabled="true"';
   const ex = Object.entries(D.exchanges_status||{}).map(([k,v]) => `<code>${esc(k)}: ${esc(v)}</code>`).join(" ");
   $("#guideBody").innerHTML = `
   <div class="row" style="gap:8px;margin-bottom:6px">
-    <a class="btn" href="${act}" target="_blank" rel="noopener"${dis}>⟳ Şimdi tara</a>
+    <a class="btn" href="${act}" target="_blank" rel="noopener"${dis}>⟳ Canlı döngü</a>
     <a class="btn sec" href="${cfg}" target="_blank" rel="noopener"${dis}>⚙ Ayarlar</a>
   </div>${repo ? "" : `<p class="note">Bu butonlar bot GitHub reposunda çalışmaya başlayınca aktif olur.</p>`}
-  <p class="note">“Şimdi tara” GitHub'da tarama sayfasını açar → <b>Run workflow</b>'a bas. Telegram'dan <code>/tara</code> yazmak da aynı işi yapar. Otomatik tarama her saat başı ~7. dakikada.</p>
+  <p class="note">Bot GitHub'da sürekli açık bir döngüde çalışır: demo pozisyonları dakikada bir kontrol eder, 15 dakikalık, 1 saatlik ve 4 saatlik mumlar kapanır kapanmaz tarar. Her döngü ~5,5 saat sürer, bitince yenisi devralır. Telegram'dan <code>/tara</code> yazarsan hemen tarar.</p>
   <h2>Setup'lar ne demek?</h2>
   <ul>
     <li><b>Trend Long/Short</b> — 4S SuperTrend, günlük trend ve 7/14/28 günlük momentum aynı yönde. Kriptoda en güçlü akademik kanıt zaman-serisi momentumunda; o yüzden ana setup bu.</li>
     <li><b>Dönüş Long/Short</b> — aşırı satım/alım (RSI, Bollinger) + RSI uyumsuzluğu, kalabalık funding, OI ve alıcı/satıcı akışı. Trende karşı olduğu için daha riskli, hedefi daha kısa.</li>
     <li><b>Rejim</b> — BTC günlük EMA200 altındaysa long puanları %50 kırpılır; boğada short'lar kırpılır. Araştırmalar momentumun boğa piyasasında yoğunlaştığını, short tarafının zayıf olduğunu gösteriyor.</li>
-    <li><b>Puan</b> — 0–100. ${D.thresholds.strong}+ güçlü (bildirim gelir, deftere yazılır), ${D.thresholds.watch}+ izleme listesi.</li>
+    <li><b>Puan</b> — 0–100. ${D.thresholds.strong}+ güçlü (bildirim gelir, demo işlem açılır), ${D.thresholds.watch}+ izleme listesi.</li>
+    <li><b>Periyot</b> — 15dk çok sinyal ama gürültülü, 4S az ama daha güvenilir. Karne sekmesi hangisinin para kazandırdığını gösterir.</li>
   </ul>
   <h2>Telegram komutları</h2>
   <ul><li><code>/durum</code> BTC ve en iyi sinyaller</li><li><code>/sinyaller</code> tüm güçlü sinyaller</li><li><code>/coin SOL</code> tek coin detayı</li>
-  <li><code>/funding</code> harvest listesi</li><li><code>/karne</code> defter istatistiği</li><li><code>/tara</code> hemen tarama başlat</li>
+  <li><code>/demo</code> demo bakiye ve kâr/zarar</li><li><code>/pozisyonlar</code> açık demo işlemler</li>
+  <li><code>/funding</code> harvest listesi</li><li><code>/karne</code> setup ve periyot karnesi</li><li><code>/tara</code> hemen tarama başlat</li>
   <li><code>/sessiz 8</code> 8 saat bildirim kapat · <code>/ac</code> aç</li></ul>
   <h2>Doğru kullanım</h2>
   <ul><li>Bu bir <b>radar</b>: “buna bak” der, “al/sat” demez. Otomatik emir vermez.</li>

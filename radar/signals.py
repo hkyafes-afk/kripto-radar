@@ -169,9 +169,14 @@ def score_setup(setup: Setup, f: dict, regime, cfg: dict):
 
 # ── özellik hesaplama ──────────────────────────────────────────────────
 
-def frame_features(df4: pd.DataFrame, cfg: dict) -> pd.DataFrame:
-    """4S mumlarından vektörize göstergeler (backtest ve canlı ortak)."""
+BAR_HOURS = {"1m": 1 / 60, "5m": 5 / 60, "15m": 0.25, "30m": 0.5, "1H": 1, "2H": 2, "4H": 4, "1D": 24}
+TF_LABEL = {"15m": "15dk", "1H": "1S", "4H": "4S", "30m": "30dk", "5m": "5dk", "2H": "2S"}
+
+
+def frame_features(df4: pd.DataFrame, cfg: dict, bar_hours: float = 4) -> pd.DataFrame:
+    """Mumlardan vektörize göstergeler (backtest ve canlı ortak). 24 saatlik pencereler bar süresine göre."""
     g = cfg["gostergeler"]
+    n24 = max(1, int(round(24 / bar_hours)))
     o, h, l, c, v = df4["open"], df4["high"], df4["low"], df4["close"], df4["volume"]
     st_dir, st_line = ind.supertrend(h, l, c, g["supertrend_atr"], g["supertrend_carpan"])
     r = ind.rsi(c, g["rsi"])
@@ -179,9 +184,9 @@ def frame_features(df4: pd.DataFrame, cfg: dict) -> pd.DataFrame:
     _, bb_up, bb_lo = ind.bollinger(c, g["bollinger"], g["bollinger_std"])
     width = (bb_up - bb_lo).replace(0, np.nan)
     delta = ind.clv_delta(o, h, l, c, v)
-    delta24 = delta.rolling(6).sum()
-    vol24 = v.rolling(6).sum().replace(0, np.nan)
-    ret24 = c.pct_change(6)
+    delta24 = delta.rolling(n24).sum()
+    vol24 = v.rolling(n24).sum().replace(0, np.nan)
+    ret24 = c.pct_change(n24)
     out = pd.DataFrame({
         "close": c,
         "atr": ind.atr(h, l, c, 14),
@@ -233,8 +238,11 @@ def btc_regime_series(btc_d1: pd.DataFrame) -> pd.Series:
 
 # ── canlı tarama: tek coin ────────────────────────────────────────────
 
-def levels(side: str, kind: str, price: float, atr_v: float, cfg: dict) -> dict:
-    p = cfg["sinyal"][kind]
+def levels(side: str, kind: str, price: float, atr_v: float, cfg: dict, tf: str = "4H") -> dict:
+    p = dict(cfg["sinyal"][kind])
+    pa = (cfg.get("periyot_ayar") or {}).get(tf) or {}
+    if pa.get(f"{kind}_max_saat"):
+        p["max_saat"] = pa[f"{kind}_max_saat"]
     sgn = 1 if side == "long" else -1
     sl = price - sgn * p["stop_atr"] * atr_v
     tp = price + sgn * p["hedef_atr"] * atr_v
@@ -245,7 +253,7 @@ def levels(side: str, kind: str, price: float, atr_v: float, cfg: dict) -> dict:
     }
 
 
-def evaluate_coin(feat: dict, regime: int, setups: list[Setup], cfg: dict) -> list[dict]:
+def evaluate_coin(feat: dict, regime: int, setups: list[Setup], cfg: dict, tf: str = "4H") -> list[dict]:
     """feat: son bar için skaler özellikler. Gate geçen her setup için sinyal döner."""
     out = []
     for s in setups:
@@ -263,9 +271,10 @@ def evaluate_coin(feat: dict, regime: int, setups: list[Setup], cfg: dict) -> li
                 except (KeyError, ValueError):
                     txt = p.text
                 reasons.append(("−" if p.pts < 0 else "+") + " " + txt)
-        lv = levels(s.side, s.kind, feat["price"], feat["atr"], cfg)
+        lv = levels(s.side, s.kind, feat["price"], feat["atr"], cfg, tf)
         out.append({
             "setup": s.key, "label": SETUP_LABELS[s.key], "side": s.side, "kind": s.kind,
+            "tf": tf, "tf_label": TF_LABEL.get(tf, tf),
             "raw": int(raw), "score": int(score), "reasons": reasons, "tags": tags, **lv,
         })
     return out

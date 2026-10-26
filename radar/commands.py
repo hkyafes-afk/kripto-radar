@@ -22,11 +22,13 @@ HELP = (
     "/sinyaller — tüm güçlü sinyaller\n"
     "/coin SOL — tek coin detayı\n"
     "/funding — funding harvest listesi\n"
-    "/karne — kağıt üstü defter istatistiği\n"
+    "/demo — demo hesap: bakiye, kâr/zarar\n"
+    "/pozisyonlar — açık demo işlemler\n"
+    "/karne — setup ve periyot karnesi\n"
     "/tara — hemen yeni tarama başlat\n"
     "/sessiz 8 — 8 saat bildirimleri kapat\n"
     "/ac — bildirimleri aç\n\n"
-    "<i>Cevaplar en geç ~10 dk içinde gelir (GitHub zamanlayıcısı).</i>"
+    "<i>Bot canlı döngüdeyken cevaplar birkaç saniye içinde gelir.</i>"
 )
 
 
@@ -95,7 +97,7 @@ def cmd_funding(d: dict) -> str:
 def cmd_karne(d: dict) -> str:
     st = d["ledger"]["stats"]
     o = st["overall"]
-    L = ["📒 <b>Defter karnesi</b>"]
+    L = ["📒 <b>Karne</b> (setup ve periyot bazında)"]
     if o.get("n"):
         L.append(f"{o['n']} kapanmış · isabet %{o['win_rate']} · ort. {o['avg_r']:+.2f}R · toplam {o['sum_r']:+.1f}R · PF {o.get('pf') or '-'}")
     else:
@@ -105,41 +107,52 @@ def cmd_karne(d: dict) -> str:
             L.append(f"• {SETUP_LABELS[k]}: {s['n']} işlem, %{s['win_rate']}, {s['avg_r']:+.2f}R → {s['verdict']['text']}")
         else:
             L.append(f"• {SETUP_LABELS[k]}: veri yok ({s['open']} açık)")
+    for tf, s in (st.get("by_tf") or {}).items():
+        if s.get("n"):
+            L.append(f"⏱ {tf}: {s['n']} işlem, %{s['win_rate']}, {s['avg_r']:+.2f}R, {s.get('pnl_usd', 0):+.2f}$ → {s['verdict']['text']}")
     return "\n".join(L)
 
 
-def dispatch_scan() -> str:
-    repo, tok = os.environ.get("GITHUB_REPOSITORY"), os.environ.get("GITHUB_TOKEN")
-    if not (repo and tok):
-        return "Tarama başlatılamadı (GitHub bağlamı yok)."
-    r = requests.post(f"https://api.github.com/repos/{repo}/actions/workflows/scan.yml/dispatches",
-                      headers={"Authorization": f"Bearer {tok}", "Accept": "application/vnd.github+json"},
-                      json={"ref": os.environ.get("GITHUB_REF_NAME", "main")}, timeout=20)
-    if r.status_code in (201, 204):
-        return "⟳ Tarama başlatıldı. ~3-4 dk içinde sonuç dashboard'da; güçlü sinyal varsa mesaj gelir."
-    return f"Tarama başlatılamadı: HTTP {r.status_code} {r.text[:120]}"
+def _tr(v, d=2, sign=False) -> str:
+    s = f"{v:+,.{d}f}" if sign else f"{v:,.{d}f}"
+    return s.replace(",", "X").replace(".", ",").replace("X", ".")
 
 
-def run(site: Path, cfg_path=None) -> bool:
-    """Döner: state değişti mi (commit gerekli mi)."""
-    cfg = load_config(cfg_path)
-    site = Path(site)
-    state = store.load(site / "state.json", {})
-    data = store.load(site / "data.json", None)
-    if not nt.tg_token():
-        print("TELEGRAM_BOT_TOKEN yok, komut dinleyici atlandı.")
-        return False
-    me = nt.tg_call("getMe", {})
-    wh = nt.tg_call("getWebhookInfo", {})
-    if wh.get("ok") and (wh.get("result") or {}).get("url"):
-        nt.tg_call("deleteWebhook", {})   # webhook varsa getUpdates çalışmaz
-    res = nt.tg_call("getUpdates", {"timeout": 0, "allowed_updates": ["message"]})
-    if not res.get("ok"):
-        print(f"::warning title=Telegram::getMe={me.get('ok')} getUpdates hata: {res.get('description')}")
-        return False
-    print(f"::notice title=Telegram::bot=@{(me.get('result') or {}).get('username')} "
-          f"güncelleme={len(res.get('result', []))} sahip_kayıtlı={bool(state.get('owner_chat_id') or os.environ.get('TELEGRAM_CHAT_ID'))}")
-    updates = res.get("result", [])
+def _usd(v) -> str:
+    return _tr(v, 2, True) + "$"
+
+
+def cmd_demo(d: dict) -> str:
+    st = d["ledger"]["stats"]
+    dm = st.get("demo") or {}
+    o = st["overall"]
+    L = [f"💼 <b>Demo hesap</b> · işlem başı {dm.get('trade_size', 20):g}$ · {dm.get('lev', 1):g}x",
+         f"Bakiye: <b>{_tr(dm.get('equity', 0))}$</b> (başlangıç {_tr(dm.get('start', 0), 0)}$) · getiri <b>%{_tr(dm.get('return_pct', 0), 2, True)}</b>",
+         f"Gerçekleşen {_usd(dm.get('realized', 0))} · açık pozisyon K/Z {_usd(dm.get('unrealized', 0))}",
+         f"Ödenen komisyon {_tr(dm.get('fees_usd', 0))}$ · funding {_usd(dm.get('funding_usd', 0))}"]
+    if o.get("n"):
+        L.append(f"{o['n']} işlem kapandı · isabet %{o['win_rate']} · ort. {o['avg_r']:+.2f}R")
+    for tf, s in (st.get("by_tf") or {}).items():
+        if s.get("n") or s.get("open"):
+            L.append(f"• {tf}: {s.get('n', 0)} kapanmış, {s.get('open', 0)} açık"
+                     + (f", {_usd(s['pnl_usd'])}, %{s['win_rate']} isabet" if s.get("n") else ""))
+    return "\n".join(L)
+
+
+def cmd_pozisyonlar(d: dict) -> str:
+    op = d["ledger"]["open"]
+    if not op:
+        return "Açık demo pozisyon yok."
+    L = [f"📂 <b>Açık demo pozisyonlar</b> ({len(op)})"]
+    for t in op[:25]:
+        L.append(f"{'🟢' if t['side'] == 'long' else '🔴'} <b>{nt.esc(t['sym'])}</b> {t.get('tf', '4H')} "
+                 f"{SETUP_LABELS[t['setup']]} · giriş {nt.fmt_price(t['entry'])} → {nt.fmt_price(t.get('last'))}"
+                 f" · <b>{_usd(t.get('upnl_usd', 0))}</b> ({t.get('r_now', 0):+.2f}R)")
+    return "\n".join(L)
+
+
+def handle(updates: list, state: dict, data: dict | None, on_scan=None) -> bool:
+    """Telegram güncellemelerini işler. Döner: state değişti mi."""
     changed = False
     owner = os.environ.get("TELEGRAM_CHAT_ID", "").strip() or str(state.get("owner_chat_id") or "")
     for u in updates:
@@ -163,7 +176,7 @@ def run(site: Path, cfg_path=None) -> bool:
         if cmd in ("/start", "/yardim", "/help"):
             reply = HELP
         elif cmd == "/tara":
-            reply = dispatch_scan()
+            reply = on_scan() if on_scan else dispatch_scan()
         elif cmd == "/sessiz":
             hours = float(arg) if arg.strip().replace(".", "", 1).isdigit() else 8.0
             state["mute_until"] = int((time.time() + hours * 3600) * 1000)
@@ -174,7 +187,7 @@ def run(site: Path, cfg_path=None) -> bool:
             changed = True
             reply = "🔔 Bildirimler açık."
         elif data is None:
-            reply = "Henüz tarama verisi yok. /tara ile başlatabilirsin."
+            reply = "Henüz tarama verisi yok, birkaç dakika içinde hazır olur."
         elif cmd == "/durum":
             reply = cmd_durum(data)
         elif cmd == "/sinyaller":
@@ -185,15 +198,64 @@ def run(site: Path, cfg_path=None) -> bool:
             reply = cmd_funding(data)
         elif cmd in ("/karne", "/istatistik"):
             reply = cmd_karne(data)
+        elif cmd in ("/demo", "/bakiye", "/hesap"):
+            reply = cmd_demo(data)
+        elif cmd in ("/pozisyonlar", "/pozisyon", "/acik"):
+            reply = cmd_pozisyonlar(data)
         else:
             reply = "Bilinmeyen komut. /yardim yaz."
         buttons = None
-        if data and data.get("dashboard_url") and cmd in ("/durum", "/sinyaller", "/karne"):
+        if data and data.get("dashboard_url") and cmd in ("/durum", "/sinyaller", "/karne", "/demo"):
             buttons = [[{"text": "📊 Dashboard", "url": data["dashboard_url"]}]]
         nt.tg_send(cid, reply, buttons)
-    if updates:
-        nt.tg_call("getUpdates", {"offset": updates[-1]["update_id"] + 1, "timeout": 0})
+    return changed
+
+
+def poll(state: dict, data: dict | None, on_scan=None, first: bool = False) -> bool:
+    """getUpdates → işle → onayla. Döner: state değişti mi."""
+    if not nt.tg_token():
+        return False
+    if first:
+        me = nt.tg_call("getMe", {})
+        wh = nt.tg_call("getWebhookInfo", {})
+        if wh.get("ok") and (wh.get("result") or {}).get("url"):
+            nt.tg_call("deleteWebhook", {})   # webhook varsa getUpdates çalışmaz
+        print(f"::notice title=Telegram::bot=@{(me.get('result') or {}).get('username')} "
+              f"sahip_kayıtlı={bool(state.get('owner_chat_id') or os.environ.get('TELEGRAM_CHAT_ID'))}")
+    res = nt.tg_call("getUpdates", {"timeout": 0, "allowed_updates": ["message"]}, timeout=15)
+    if not res.get("ok"):
+        if first:
+            print(f"::warning title=Telegram::getUpdates hata: {res.get('description')}")
+        return False
+    updates = res.get("result", [])
+    if not updates:
+        return False
+    # Önce onayla: bir komut hata verse bile aynı mesaj tekrar tekrar işlenmesin
+    nt.tg_call("getUpdates", {"offset": updates[-1]["update_id"] + 1, "timeout": 0})
+    return handle(updates, state, data, on_scan)
+
+
+def dispatch_scan() -> str:
+    repo, tok = os.environ.get("GITHUB_REPOSITORY"), os.environ.get("GITHUB_TOKEN")
+    if not (repo and tok):
+        return "Tarama başlatılamadı (GitHub bağlamı yok)."
+    r = requests.post(f"https://api.github.com/repos/{repo}/actions/workflows/canli.yml/dispatches",
+                      headers={"Authorization": f"Bearer {tok}", "Accept": "application/vnd.github+json"},
+                      json={"ref": os.environ.get("GITHUB_REF_NAME", "main")}, timeout=20)
+    if r.status_code in (201, 204):
+        return "⟳ Canlı döngü başlatıldı; birkaç dakika içinde tarama yapılır."
+    return f"Başlatılamadı: HTTP {r.status_code} {r.text[:120]}"
+
+
+def run(site: Path, cfg_path=None) -> bool:
+    """Tek seferlik: dosyadaki son veriyle komutları işle (döngü dışı kullanım)."""
+    site = Path(site)
+    state = store.load(site / "state.json", {})
+    data = store.load(site / "data.json", None)
+    if not nt.tg_token():
+        print("TELEGRAM_BOT_TOKEN yok, komut dinleyici atlandı.")
+        return False
+    changed = poll(state, data, first=True)
     if changed:
         store.dump(site / "state.json", state, compact=True)
-    print(f"{len(updates)} güncelleme işlendi, state değişti: {changed}")
     return changed

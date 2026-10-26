@@ -14,7 +14,10 @@ borsa:
 tarama:
   coin_sayisi: 100          # 24s hacme göre en likit N perpetual
   min_hacim_usd: 5000000    # 24s hacmi bunun altındaki coinler taranmaz
-  periyot: 4H               # sinyal mumu (1H, 4H). 4H = daha az gürültü
+  periyot: 4H               # tek seferlik taramada kullanılan periyot (eski ayar)
+  # Canlı döngü bu periyotların HER BİRİNDE mum kapanır kapanmaz tarar.
+  # 15m = çok sinyal / çok gürültü, 4H = az ama daha güvenilir. Demo hesap hangisinin işe yaradığını ölçer.
+  periyotlar: [15m, 1H, 4H]
   sadece_kripto: true       # OKX'teki hisse (SOXS, EWZ...) ve emtia (petrol, altın) kontratlarını atla
   haric: [USDC, DAI, TUSD, FDUSD, USDE, PYUSD, USDG]  # stabil coinler
 
@@ -52,6 +55,26 @@ sinyal:
   # Risk seviyeleri ATR katı olarak. Defter bu kurallarla otomatik kapatır.
   trend:   {stop_atr: 1.5, hedef_atr: 3.0, max_saat: 168}
   donus:   {stop_atr: 1.2, hedef_atr: 2.0, max_saat: 72}
+
+# Periyoda göre en uzun tutma süresi (saat). Stop/hedef ATR'ye göre otomatik ölçeklenir.
+periyot_ayar:
+  15m: {trend_max_saat: 24, donus_max_saat: 8}
+  1H:  {trend_max_saat: 72, donus_max_saat: 24}
+  4H:  {trend_max_saat: 168, donus_max_saat: 72}
+
+# ── DEMO HESAP ── her güçlü sinyalde sanal işlem açılır, kâr/zarar dolar olarak kaydedilir
+demo:
+  baslangic_bakiye: 1000     # $ sanal başlangıç bakiyesi
+  islem_tutari_usd: 20       # $ her işleme konan teminat
+  kaldirac: 1                # 1 = kaldıraçsız (20$ teminat = 20$ pozisyon). Artırmak kayıpları da büyütür.
+  max_acik_toplam: 20        # aynı anda en fazla açık işlem
+  max_acik_periyot: 8        # bir periyottan (ör. 15m) aynı anda en fazla açık işlem
+
+canli:
+  dongu_dakika: 330          # GitHub'da tek çalışma süresi (en fazla ~350); bitince yenisi devralır
+  fiyat_kontrol_sn: 60       # demo pozisyonları kaç saniyede bir kontrol edilsin
+  komut_kontrol_sn: 15       # Telegram komutlarına bakma sıklığı
+  yayin_min_dakika: 6        # dashboard en sık kaç dakikada bir güncellensin (GitHub Pages sınırı)
 
 defter:
   # Kağıt üstü işlem defteri: gerçek para yok, sadece sinyallerin karnesi.

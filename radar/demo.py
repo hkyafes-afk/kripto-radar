@@ -66,7 +66,7 @@ class DemoClient:
         return inst.split("-")[0]
 
     def _resample(self, df, bar):
-        rule = {"1H": "1h", "4H": "4h", "1D": "1D"}[bar]
+        rule = {"1m": "1h", "15m": "1h", "1H": "1h", "4H": "4h", "1D": "1D"}[bar]
         return df.resample(rule, label="left", closed="left").agg(
             {"open": "first", "high": "max", "low": "min", "close": "last",
              "volume": "sum", "quote_volume": "sum"}).dropna()

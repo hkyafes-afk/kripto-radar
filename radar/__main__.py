@@ -21,6 +21,13 @@ def main(argv=None) -> int:
     p.add_argument("--demo", action="store_true", help="sahte veriyle çalış (test)")
     p.add_argument("--config", default=None)
 
+    p = sub.add_parser("live", help="canlı döngü (sürekli tarama + demo hesap)")
+    p.add_argument("--site", default="site")
+    p.add_argument("--minutes", type=float, default=None)
+    p.add_argument("--demo", action="store_true")
+    p.add_argument("--no-notify", action="store_true")
+    p.add_argument("--config", default=None)
+
     p = sub.add_parser("commands", help="Telegram komutlarını işle")
     p.add_argument("--site", default="site")
     p.add_argument("--config", default=None)
@@ -58,6 +65,28 @@ def main(argv=None) -> int:
             st["last_karne"] = int(time.time() * 1000)
             store.dump(Path(a.site) / "state.json", st, compact=True)
             print("✓ Haftalık karne yazıldı: data/KARNE.md")
+        return 0
+
+    if a.cmd == "live":
+        from .engine import Engine
+        client = None
+        if a.demo:
+            from .demo import DemoClient
+            client = DemoClient()
+        eng = Engine(Path(a.site), a.config, client=client, notify=not a.no_notify,
+                     demo=a.demo, publish=True)
+        try:
+            eng.run_loop(a.minutes)
+        except Exception:  # noqa: BLE001
+            err = traceback.format_exc()
+            print(err, file=sys.stderr)
+            short = " | ".join(err.strip().splitlines()[-4:]).replace("%", "%25")
+            print(f"::error title=Canlı döngü hatası::{short[:900]}")
+            try:
+                eng.publish(force=True)
+            except Exception:  # noqa: BLE001
+                pass
+            return 1
         return 0
 
     if a.cmd == "commands":
