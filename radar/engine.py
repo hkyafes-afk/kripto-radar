@@ -1464,7 +1464,7 @@ class Engine:
         op = sorted([t for t in self.ledger["open"] if not t.get("shadow")], key=lambda t: -abs(t.get("upnl_usd", 0)))
         for t in op[:10]:
             mk = team.BY_ID.get(t.get("mgr") or "")
-            mark = (mk.emoji if mk else "") + ("🔒" if t.get("tp1_done") and not t.get("carry") else ("🟢" if t["side"] == "long" else "🔴"))
+            mark = (mk.emoji if mk else "") + ("🔒" if t.get("partials") and not t.get("carry") else ("🟢" if t["side"] == "long" else "🔴"))
             L.append(f"{mark} {nt.esc(t['sym'])} {sg.TF_LABEL.get(t.get('tf'), t.get('tf'))} "
                      f"{nt.fmt_price(t.get('last', t['entry']))} · <b>{_usd(t.get('upnl_usd', 0))}</b> ({_p(t.get('r_now', 0), 2, True)}R)")
         if len(op) > 10:

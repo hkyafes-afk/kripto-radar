@@ -627,10 +627,11 @@ function explainTrade(t, closed){
   if (!closed && !t.carry){
     const nxt = [];
     if (t.tp1 && !t.tp1_done) nxt.push(`Fiyat ${fp(t.tp1)}'e gelirse kârın bir kısmını alıp stop'u başabaşa çeker.`);
-    if (t.tp1_done && (t.partials||[]).length) nxt.push(`Kârın bir kısmı ${fp(t.partials[0].px)}'den alındı; kalan pozisyon artık kayıpla kapanamaz.`);
+    if ((t.partials||[]).length) nxt.push(`Kârın bir kısmı ${fp(t.partials[0].px)}'den alındı; stop başabaşa çekildi, kalan pozisyon artık kayıpla kapanamaz.`);
     if (t.trail) nxt.push(`Stop fiyatla birlikte en iyi seviyenin ${((t.pp||{}).trail_atr||0).toString().replace(".",",")} ATR gerisinden takip ediyor (şu an ${fp(t.sl)}).`);
     else nxt.push(`Stop ${fp(t.sl)}: fiyat buraya gelirse çıkar.`);
-    if (t.tp && Math.abs(t.tp/t.entry-1) < 3) nxt.push(`Hedef ${fp(t.tp)}.`);
+    if (t.tp && !((t.pp||{}).trail_now && !t.tp1)) nxt.push(`Hedef ${fp(t.tp)}.`);
+    else if ((t.pp||{}).trail_now) nxt.push("Sabit hedef yok: trend sürdükçe tutar.");
     const er = t.exit_rule;
     if (er) nxt.push(er.type==="ma" ? `Fiyat ${er.n} günlük ortalamanın ${sg>0?"altına":"üstüne"} geçerse trend bitti sayıp çıkar.`
       : er.type==="chan" ? `Fiyat ${er.n} günlük ${sg>0?"dibi":"tepeyi"} kırarsa çıkar.` : er.type==="mid" ? "Fiyat orta banda dönerse (patlama başarısız) çıkar." : "Ortalamaya dönüş tamamlanınca çıkar.");
@@ -746,11 +747,14 @@ function renderDemo(){
   h += `<h2>Açık işlemler <span class="n">${op.length}</span></h2>`;
   h += op.length ? `<div class="list">` + op.map(t => {
     const pnl = t.upnl_usd||0, pc = t.notional_usd ? pnl/t.notional_usd*100 : 0;
-    const st = t.tp1_done ? `<span class="badge b-blue">🔒 yarısı alındı · ${t.trail?"iz stop":"başabaş"}</span>` : (t.tp1 ? `<span class="m">1R ${fp(t.tp1)}</span>` : "");
+    const parts = (t.partials||[]).length, noTgt = (t.pp||{}).trail_now && !t.tp1;
+    const st = parts ? `<span class="badge b-blue">🔒 kârın bir kısmı alındı · ${t.trail?"iz süren stop":"stop başabaşta"}</span>`
+      : noTgt ? `<span class="badge b-dim">↗ iz süren stop · hedef yok, trend bitince çıkar</span>`
+      : (t.tp1 ? `<span class="m">ara hedef ${fp(t.tp1)}</span>` : "");
     return `<div class="li" data-tx="${t.id}"><div style="min-width:0">
       <div><span class="badge ${t.side==="long"?"b-green":"b-red"}">${t.side==="long"?"LONG":"SHORT"}</span> <b>${esc(t.sym)}</b> ${who(t)} <span class="m">${tfl(t.tf)} · ${slbl(t)}${t.conviction!=null?" · güven %"+Math.round(t.conviction*100):""}</span> ${st}</div>
       ${t.carry ? `<div class="m num">spot ${fp(t.spot_entry)} → ${fp(t.spot_last)} · vadeli short ${fp(t.entry)} → <span data-lpx="${t.id}">${fp(t.last)}</span> · toplanan funding ${money(-(t.funding_usd||0))}</div>`
-        : `<div class="m num">${fp(t.entry)} → <span data-lpx="${t.id}">${fp(t.last)}</span> · stop ${fp(t.sl)} · hedef ${fp(t.tp)}</div>`}
+        : `<div class="m num">${fp(t.entry)} → <span data-lpx="${t.id}">${fp(t.last)}</span> · stop ${fp(t.sl)}${((t.pp||{}).trail_now && !t.tp1) ? "" : " · hedef "+fp(t.tp)}</div>`}
       ${t.risk_usd!=null ? `<div class="m">risk ${money(t.risk_usd,false)} (%${(t.risk_pct||0).toFixed(2).replace(".",",")}) · teminat ${money(t.margin_usd,false)}</div>` : ""}
       <div class="m">${money(t.notional_usd,false)}${t.contracts?" · "+t.contracts+" kontrat":""}${t.entry_src==="kitap"?" · kitaptan":""} · ${ago(t.entry_ts)} açıldı${Math.abs(t.funding_usd||0)>=0.005?" · funding "+money(-(t.funding_usd||0)):""}</div></div>
       <div class="r ${cls(pnl)}" data-lpnl="${t.id}">${money(pnl)}<div class="m" data-lr="${t.id}">${pct(pc,2)} · ${(t.r_now>0?"+":"")+(t.r_now||0).toFixed(2)}R</div></div></div>`; }).join("") + `</div>`
