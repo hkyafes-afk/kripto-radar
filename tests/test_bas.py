@@ -155,12 +155,12 @@ def test_turbo_same_brain_more_appetite_and_morning_summary():
         e._notify = lambda txt, buttons=None: sent.append(txt)
         e.state.pop("daily", None)
         e.daily_tick(hour=0)
-        assert not sent and e.state["daily"]["eq"], "ilk gün sadece başlangıç kaydı"
-        e.state["daily"]["date"] = "2000-01-01"
-        e.daily_tick(hour=0)
-        assert sent and "Sabah özeti" in sent[0] and "Firma" in sent[0]
+        assert sent and "başlangıçtan beri" in sent[0] and e.state["daily"]["eq"], "ilk özet başlangıca göre"
         e.daily_tick(hour=0)
         assert len(sent) == 1, "günde bir kez"
+        e.state["daily"]["date"] = "2000-01-01"
+        e.daily_tick(hour=0)
+        assert len(sent) == 2 and "dünden beri" in sent[1] and "Sabah özeti" in sent[1]
 
 
 if __name__ == "__main__":

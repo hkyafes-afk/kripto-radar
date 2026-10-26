@@ -760,14 +760,15 @@ class Engine:
         summ = self.desk.summary(int(time.time() * 1000))
         eq = {k: v["equity"] for k, v in summ.items() if v.get("active")}
         prev, since = st.get("eq") or {}, int(st.get("ts") or 0)
+        label = "dünden beri"
+        if not prev:      # ilk özet: başlangıç bütçesine göre
+            prev, since, label = {k: v["capital"] for k, v in summ.items()}, int(self.desk.st.get("started") or 0), "başlangıçtan beri"
         st.update({"date": day, "eq": eq, "ts": int(time.time() * 1000)})
         self.dirty = True
-        if not prev:
-            return
         closed = [t for t in self.ledger["closed"] if (t.get("exit_ts") or 0) > since and not t.get("shadow")]
         L = [f"☀️ <b>Sabah özeti</b> · {loc.strftime('%d.%m')}"]
         tot0, tot1 = sum(prev.get(k, 0) for k in eq), sum(eq.values())
-        L.append(f"Firma: {_usd(tot1, False)} ({_usd(tot1 - tot0)} dünden beri) · {len(closed)} işlem kapandı")
+        L.append(f"Firma: {_usd(tot1, False)} ({_usd(tot1 - tot0)} {label}) · {len(closed)} işlem kapandı")
         rows = sorted(((summ[k], eq[k] - prev.get(k, eq[k])) for k in eq), key=lambda x: -x[1])
         for m, d in rows:
             nc = [t for t in closed if t.get("mgr") == m["id"]]
