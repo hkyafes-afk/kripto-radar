@@ -1,0 +1,514 @@
+{
+ "managers": {
+  "kemal": {
+   "stop_k": 0.8,
+   "trail_k": 1.25,
+   "adopted": true,
+   "evidence": {
+    "current": {
+     "stop_k": 1.0,
+     "trail_k": 1.0,
+     "n_train": 531,
+     "train_r": 0.0558,
+     "n_val": 387,
+     "val_r": 0.0441
+    },
+    "best_train": {
+     "stop_k": 0.8,
+     "trail_k": 1.25,
+     "n_train": 489,
+     "train_r": 0.1109,
+     "n_val": 354,
+     "val_r": 0.12
+    }
+   },
+   "why": "eğitimde en iyi ve doğrulamada mevcut ayardan +0.076R iyi → benimsendi"
+  },
+  "ayse": {
+   "stop_k": 1.0,
+   "trail_k": 1.0,
+   "adopted": false,
+   "evidence": {
+    "current": {
+     "stop_k": 1.0,
+     "trail_k": 1.0,
+     "n_train": 25,
+     "train_r": -0.1491,
+     "n_val": 14,
+     "val_r": 0.1623
+    },
+    "best_train": {
+     "stop_k": 1.0,
+     "trail_k": 1.0,
+     "n_train": 25,
+     "train_r": -0.1491,
+     "n_val": 14,
+     "val_r": 0.1623
+    }
+   },
+   "why": "hiçbir değişiklik iki dönemde birden yeterince iyileştirmedi → ayar korundu"
+  },
+  "murat": {
+   "stop_k": 1.0,
+   "trail_k": 1.0,
+   "adopted": false,
+   "evidence": {
+    "current": {
+     "stop_k": 1.0,
+     "trail_k": 1.0,
+     "n_train": 504,
+     "train_r": -0.0528,
+     "n_val": 351,
+     "val_r": 0.0374
+    },
+    "best_train": {
+     "stop_k": 0.8,
+     "trail_k": 0.8,
+     "n_train": 555,
+     "train_r": -0.0139,
+     "n_val": 390,
+     "val_r": 0.0671
+    }
+   },
+   "why": "hiçbir değişiklik iki dönemde birden yeterince iyileştirmedi → ayar korundu"
+  },
+  "kaan": {
+   "stop_k": 1.0,
+   "trail_k": 1.0,
+   "adopted": false,
+   "evidence": {
+    "current": {
+     "stop_k": 1.0,
+     "trail_k": 1.0,
+     "n_train": 334,
+     "train_r": 0.1998,
+     "n_val": 251,
+     "val_r": 0.0899
+    },
+    "best_train": {
+     "stop_k": 1.0,
+     "trail_k": 1.0,
+     "n_train": 334,
+     "train_r": 0.1998,
+     "n_val": 251,
+     "val_r": 0.0899
+    }
+   },
+   "why": "hiçbir değişiklik iki dönemde birden yeterince iyileştirmedi → ayar korundu"
+  },
+  "selin": {
+   "stop_k": 1.0,
+   "trail_k": 1.0,
+   "adopted": false,
+   "evidence": {
+    "current": {
+     "stop_k": 1.0,
+     "trail_k": 1.0,
+     "n_train": 226,
+     "train_r": 0.1263,
+     "n_val": 173,
+     "val_r": 0.0674
+    },
+    "best_train": {
+     "stop_k": 1.25,
+     "trail_k": 1.0,
+     "n_train": 226,
+     "train_r": 0.1343,
+     "n_val": 173,
+     "val_r": 0.0211
+    }
+   },
+   "why": "hiçbir değişiklik iki dönemde birden yeterince iyileştirmedi → ayar korundu"
+  }
+ },
+ "trials": {
+  "kemal": [
+   {
+    "stop_k": 0.8,
+    "trail_k": 0.8,
+    "n_train": 611,
+    "train_r": 0.0234,
+    "n_val": 419,
+    "val_r": 0.0938
+   },
+   {
+    "stop_k": 0.8,
+    "trail_k": 1.0,
+    "n_train": 538,
+    "train_r": 0.081,
+    "n_val": 391,
+    "val_r": 0.0675
+   },
+   {
+    "stop_k": 0.8,
+    "trail_k": 1.25,
+    "n_train": 489,
+    "train_r": 0.1109,
+    "n_val": 354,
+    "val_r": 0.12
+   },
+   {
+    "stop_k": 1.0,
+    "trail_k": 0.8,
+    "n_train": 609,
+    "train_r": 0.0158,
+    "n_val": 418,
+    "val_r": 0.062
+   },
+   {
+    "stop_k": 1.0,
+    "trail_k": 1.0,
+    "n_train": 531,
+    "train_r": 0.0558,
+    "n_val": 387,
+    "val_r": 0.0441
+   },
+   {
+    "stop_k": 1.0,
+    "trail_k": 1.25,
+    "n_train": 477,
+    "train_r": 0.0793,
+    "n_val": 349,
+    "val_r": 0.0758
+   },
+   {
+    "stop_k": 1.25,
+    "trail_k": 0.8,
+    "n_train": 609,
+    "train_r": 0.0125,
+    "n_val": 418,
+    "val_r": 0.0496
+   },
+   {
+    "stop_k": 1.25,
+    "trail_k": 1.0,
+    "n_train": 531,
+    "train_r": 0.0443,
+    "n_val": 387,
+    "val_r": 0.0353
+   },
+   {
+    "stop_k": 1.25,
+    "trail_k": 1.25,
+    "n_train": 475,
+    "train_r": 0.0659,
+    "n_val": 348,
+    "val_r": 0.0591
+   }
+  ],
+  "ayse": [
+   {
+    "stop_k": 0.8,
+    "trail_k": 0.8,
+    "n_train": 25,
+    "train_r": -0.138,
+    "n_val": 14,
+    "val_r": -0.0628
+   },
+   {
+    "stop_k": 0.8,
+    "trail_k": 1.0,
+    "n_train": 25,
+    "train_r": -0.138,
+    "n_val": 14,
+    "val_r": -0.0628
+   },
+   {
+    "stop_k": 0.8,
+    "trail_k": 1.25,
+    "n_train": 25,
+    "train_r": -0.138,
+    "n_val": 14,
+    "val_r": -0.0628
+   },
+   {
+    "stop_k": 1.0,
+    "trail_k": 0.8,
+    "n_train": 25,
+    "train_r": -0.1491,
+    "n_val": 14,
+    "val_r": 0.1623
+   },
+   {
+    "stop_k": 1.0,
+    "trail_k": 1.0,
+    "n_train": 25,
+    "train_r": -0.1491,
+    "n_val": 14,
+    "val_r": 0.1623
+   },
+   {
+    "stop_k": 1.0,
+    "trail_k": 1.25,
+    "n_train": 25,
+    "train_r": -0.1491,
+    "n_val": 14,
+    "val_r": 0.1623
+   },
+   {
+    "stop_k": 1.25,
+    "trail_k": 0.8,
+    "n_train": 25,
+    "train_r": -0.0294,
+    "n_val": 14,
+    "val_r": 0.1543
+   },
+   {
+    "stop_k": 1.25,
+    "trail_k": 1.0,
+    "n_train": 25,
+    "train_r": -0.0294,
+    "n_val": 14,
+    "val_r": 0.1543
+   },
+   {
+    "stop_k": 1.25,
+    "trail_k": 1.25,
+    "n_train": 25,
+    "train_r": -0.0294,
+    "n_val": 14,
+    "val_r": 0.1543
+   }
+  ],
+  "murat": [
+   {
+    "stop_k": 0.8,
+    "trail_k": 0.8,
+    "n_train": 555,
+    "train_r": -0.0139,
+    "n_val": 390,
+    "val_r": 0.0671
+   },
+   {
+    "stop_k": 0.8,
+    "trail_k": 1.0,
+    "n_train": 554,
+    "train_r": -0.0262,
+    "n_val": 384,
+    "val_r": 0.0634
+   },
+   {
+    "stop_k": 0.8,
+    "trail_k": 1.25,
+    "n_train": 548,
+    "train_r": -0.0281,
+    "n_val": 382,
+    "val_r": 0.0597
+   },
+   {
+    "stop_k": 1.0,
+    "trail_k": 0.8,
+    "n_train": 510,
+    "train_r": -0.0483,
+    "n_val": 354,
+    "val_r": 0.0337
+   },
+   {
+    "stop_k": 1.0,
+    "trail_k": 1.0,
+    "n_train": 504,
+    "train_r": -0.0528,
+    "n_val": 351,
+    "val_r": 0.0374
+   },
+   {
+    "stop_k": 1.0,
+    "trail_k": 1.25,
+    "n_train": 495,
+    "train_r": -0.0541,
+    "n_val": 349,
+    "val_r": 0.0339
+   },
+   {
+    "stop_k": 1.25,
+    "trail_k": 0.8,
+    "n_train": 464,
+    "train_r": -0.0312,
+    "n_val": 321,
+    "val_r": 0.0401
+   },
+   {
+    "stop_k": 1.25,
+    "trail_k": 1.0,
+    "n_train": 459,
+    "train_r": -0.0294,
+    "n_val": 318,
+    "val_r": 0.0421
+   },
+   {
+    "stop_k": 1.25,
+    "trail_k": 1.25,
+    "n_train": 454,
+    "train_r": -0.0344,
+    "n_val": 317,
+    "val_r": 0.0347
+   }
+  ],
+  "kaan": [
+   {
+    "stop_k": 0.8,
+    "trail_k": 0.8,
+    "n_train": 360,
+    "train_r": 0.1207,
+    "n_val": 259,
+    "val_r": 0.1379
+   },
+   {
+    "stop_k": 0.8,
+    "trail_k": 1.0,
+    "n_train": 358,
+    "train_r": 0.1166,
+    "n_val": 259,
+    "val_r": 0.1225
+   },
+   {
+    "stop_k": 0.8,
+    "trail_k": 1.25,
+    "n_train": 356,
+    "train_r": 0.1221,
+    "n_val": 259,
+    "val_r": 0.0939
+   },
+   {
+    "stop_k": 1.0,
+    "trail_k": 0.8,
+    "n_train": 335,
+    "train_r": 0.1844,
+    "n_val": 251,
+    "val_r": 0.1091
+   },
+   {
+    "stop_k": 1.0,
+    "trail_k": 1.0,
+    "n_train": 334,
+    "train_r": 0.1998,
+    "n_val": 251,
+    "val_r": 0.0899
+   },
+   {
+    "stop_k": 1.0,
+    "trail_k": 1.25,
+    "n_train": 332,
+    "train_r": 0.1952,
+    "n_val": 251,
+    "val_r": 0.0747
+   },
+   {
+    "stop_k": 1.25,
+    "trail_k": 0.8,
+    "n_train": 321,
+    "train_r": 0.1701,
+    "n_val": 238,
+    "val_r": 0.1471
+   },
+   {
+    "stop_k": 1.25,
+    "trail_k": 1.0,
+    "n_train": 321,
+    "train_r": 0.1704,
+    "n_val": 238,
+    "val_r": 0.1434
+   },
+   {
+    "stop_k": 1.25,
+    "trail_k": 1.25,
+    "n_train": 319,
+    "train_r": 0.1646,
+    "n_val": 238,
+    "val_r": 0.1425
+   }
+  ],
+  "selin": [
+   {
+    "stop_k": 0.8,
+    "trail_k": 0.8,
+    "n_train": 228,
+    "train_r": 0.1099,
+    "n_val": 176,
+    "val_r": 0.0371
+   },
+   {
+    "stop_k": 0.8,
+    "trail_k": 1.0,
+    "n_train": 228,
+    "train_r": 0.1153,
+    "n_val": 176,
+    "val_r": 0.0402
+   },
+   {
+    "stop_k": 0.8,
+    "trail_k": 1.25,
+    "n_train": 228,
+    "train_r": 0.1099,
+    "n_val": 176,
+    "val_r": 0.0306
+   },
+   {
+    "stop_k": 1.0,
+    "trail_k": 0.8,
+    "n_train": 226,
+    "train_r": 0.1218,
+    "n_val": 173,
+    "val_r": 0.0639
+   },
+   {
+    "stop_k": 1.0,
+    "trail_k": 1.0,
+    "n_train": 226,
+    "train_r": 0.1263,
+    "n_val": 173,
+    "val_r": 0.0674
+   },
+   {
+    "stop_k": 1.0,
+    "trail_k": 1.25,
+    "n_train": 226,
+    "train_r": 0.1271,
+    "n_val": 173,
+    "val_r": 0.054
+   },
+   {
+    "stop_k": 1.25,
+    "trail_k": 0.8,
+    "n_train": 226,
+    "train_r": 0.1259,
+    "n_val": 173,
+    "val_r": 0.019
+   },
+   {
+    "stop_k": 1.25,
+    "trail_k": 1.0,
+    "n_train": 226,
+    "train_r": 0.1343,
+    "n_val": 173,
+    "val_r": 0.0211
+   },
+   {
+    "stop_k": 1.25,
+    "trail_k": 1.25,
+    "n_train": 226,
+    "train_r": 0.1313,
+    "n_val": 173,
+    "val_r": 0.0153
+   }
+  ]
+ },
+ "generated": "2026-10-26 17:20 UTC",
+ "generated_at": 1793034593000,
+ "years": 5.0,
+ "split": "2025-04-27",
+ "n_coins": 27,
+ "grid": {
+  "stop_k": [
+   0.8,
+   1.0,
+   1.25
+  ],
+  "trail_k": [
+   0.8,
+   1.0,
+   1.25
+  ]
+ },
+ "duration_s": 617.4
+}
