@@ -21,6 +21,7 @@ NOW = 1_800_000_000_000
 import copy  # noqa: E402
 CFG_LIVE = copy.deepcopy(CFG)                 # canlı ayar (yarışı kazanan varyantlar dahil)
 CFG["ekip"]["varyant"] = {}                   # kural testleri tabanı ölçer (varyantlar ayrı testte)
+CFG["ekip"]["yoneticiler"]["deniz"]["aktif"] = True   # kural testleri tüm kadroyla (canlıda Deniz 27.10 durduruldu)
 CFG_RISK = copy.deepcopy(CFG)
 CFG_RISK["ekip"]["firma"].update(sinirlar_aktif=True, durdurma_aktif=True, yedek_kulubesi=True, yeniden_dagitim_gun=7)
 CFG_RISK["demo"]["baslangic_bakiye"] = 1000

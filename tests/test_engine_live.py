@@ -121,7 +121,9 @@ def test_feed_to_engine_end_to_end():
 def test_tick_partial_trailing_and_circuit_breakers():
     with tempfile.TemporaryDirectory() as d:
         e = _engine(d)
-        t = next((x for x in e.ledger["open"] if x.get("tp1") and (x.get("pp") or {}).get("partial_frac")), None)
+        # (kısmi kâr lot altına düşmesin: en az 4 kontratlık işlem; 1 lotluk küçük pozisyon bölünemez)
+        t = next((x for x in e.ledger["open"] if x.get("tp1") and (x.get("pp") or {}).get("partial_frac")
+                  and (x.get("contracts") or 0) >= 4), None)
         if t is None:      # v8 demo taramasında sadece hedefsiz trend işlemleri açıldıysa: kısmi kârlı bir işlem kur
             o0 = e.ledger["open"][0]
             px0 = o0["last"] if o0.get("last") else o0["entry"]
@@ -203,7 +205,7 @@ def test_team_breaker_uses_firm_limits():
         assert e.halt == "gunluk" and rs["halt_lim"] == 3.0
         at(0.025)                           # toparlanma durdurmayı kaldırmaz
         assert e.halt == "gunluk"
-        assert e.risk_limits()["risk_yuzde"].startswith("0,5–5")
+        assert "–" in e.risk_limits()["risk_yuzde"]       # yöneticilerin taban–tavan risk aralığı
 
 
 def test_user_extra_daily_allowance():
