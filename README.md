@@ -77,6 +77,25 @@ Bitti. Bundan sonra kendi kendine sürekli çalışır.
 
 ---
 
+## v8: kanıta dayalı ekip (Ekim 2026)
+
+Bütün kararlar ve araştırma kaynakları: **[PLAN.md](PLAN.md)**. 5 yıllık test raporu: **[data/BACKTEST.md](data/BACKTEST.md)**.
+
+- **Yöntemler araştırmadan, parametreler önceden sabit.** Canlı sistem ve test aynı kodu kullanır (`radar/quant.py`, `radar/team.py`).
+- **5 yıllık test** (`python -m radar test8`, GitHub → Actions → Backtest): sert maliyet (komisyon 2 kat, stop kayması,
+  long funding), Deflated Sharpe, örneklem içi/dışı ve yıllara göre sonuç.
+- **Sermaye politikası:** testte kazandıranlar (Kaan, Selin, Kemal) + Elif sermaye alır. Diğerleri gölgede çalışır,
+  kendini kanıtlayınca döner.
+- **Baş analist Murat:** her fikre coin karnesi (likidite, kalabalık, trend uyumu, haber).
+- **Haber Masası** (`radar/news.py`): borsa duyuruları, haber akışları, Korku-Açgözlülük, Reddit, DefiLlama.
+  Al-sat sinyali vermez; kırmızı/sarı uyarıyla sigorta görevi görür. Telegram: `/haber`.
+- **Olay takvimi** (`radar/macro.py`): Fed kararları ve yüksek etkili ABD verilerinde ±60 dk yeni işlem yok. Telegram: `/hava`.
+- **Risk katmanları:**
+  - Piyasa havası (BTC 50 günlük ortalama + oynaklık).
+  - Yığılma kontrolü: birlikte hareket eden pozisyonların toplam riski %4.
+  - Önce limit (maker) giriş.
+  - Kaldıraç her işlemde likidasyon stop'un ötesinde kalacak şekilde seçilir.
+
 ## Yatırım ekibi (v7)
 
 1.000$ başlangıç sermayesi 7 yöneticiye eşit dağıtılır. Her yönetici kendi tarzıyla fikir üretir; risk müdürü onaylar.
