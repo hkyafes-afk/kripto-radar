@@ -113,6 +113,7 @@ def test_demo_scan_end_to_end():
     with tempfile.TemporaryDirectory() as d:
         p = scan.run(Path(d), client=DemoClient(), notify=False, demo=True)
         assert p["counts"]["scanned"] >= 30
+        assert not any(c["sym"] == "CL" for c in p["coins"]), "emtia kontratı filtrelenmeli"
         assert (Path(d) / "index.html").read_text().count("window.__DATA__ = {") == 1
         # ikinci tarama: defter tekrar açmamalı
         p2 = scan.run(Path(d), client=DemoClient(), notify=False, demo=True)

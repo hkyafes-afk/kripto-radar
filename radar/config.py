@@ -15,6 +15,7 @@ DEFAULTS: dict = {
         "coin_sayisi": 100,
         "min_hacim_usd": 5_000_000,
         "periyot": "4H",
+        "sadece_kripto": True,
         "haric": ["USDC", "DAI", "TUSD", "FDUSD", "USDE", "PYUSD", "USDG"],
     },
     "gostergeler": {

@@ -33,9 +33,13 @@ def _f(x, d=float("nan")):
 def build_universe(client, cfg) -> tuple[list[dict], dict[str, float]]:
     t = cfg["tarama"]
     excl = {s.upper() for s in t["haric"]}
+    only_crypto = t.get("sadece_kripto", True)
+    # OKX instCategory: 1 = kripto, 3 = hisse/ETF, 4 = emtia (petrol, altın...). Alan yoksa kripto sayılır.
     insts = {i["instId"]: i for i in client.instruments("SWAP")
              if i.get("settleCcy") == "USDT" and i.get("state") == "live"
-             and i.get("ctType", "linear") == "linear"}
+             and i.get("ctType", "linear") == "linear"
+             and i.get("ruleType", "normal") == "normal"
+             and (not only_crypto or str(i.get("instCategory") or "1") == "1")}
     spot_vol: dict[str, float] = {}
     try:
         for x in client.tickers("SPOT"):
