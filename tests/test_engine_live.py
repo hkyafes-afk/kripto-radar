@@ -154,6 +154,24 @@ def test_tick_partial_trailing_and_circuit_breakers():
         assert "canlı panel" in txt and "Bakiye" in txt
 
 
+def test_data_issue_scales_with_volatility():
+    """Kapanmış 4H mumdan bu yana sert ama gerçek hareket 'bozuk veri' sayılmamalı; kaba hatalar yakalanmalı."""
+    import pandas as pd
+    with tempfile.TemporaryDirectory() as d:
+        e = Engine(Path(d), client=DemoClient(), notify=False, demo=True)
+        now = pd.Timestamp.now(tz="UTC").floor("4h")
+        idx = pd.date_range(end=now - pd.Timedelta(hours=4), periods=50, freq="4h")
+        df = pd.DataFrame({"close": [0.0015] * 50}, index=idx)
+        # oynak meme coin: 4H ATR %8 → %31 sapma eşik içinde (5 ATR = %40)
+        assert e._data_issue(df, "4H", 0.0015 * 1.31, "DOOD", atr=0.0015 * 0.08) is None
+        # aynı coinde 2 kat fark (yanlış enstrüman / ondalık hatası) → şüpheli
+        assert "mum farkı" in (e._data_issue(df, "4H", 0.0030, "DOOD", atr=0.0015 * 0.08) or "")
+        # sakin coin (ATR %1): %10 sapma → şüpheli (taban eşik %8)
+        assert "eşik %8" in (e._data_issue(df, "4H", 0.0015 * 1.10, "BTC", atr=0.0015 * 0.01) or "")
+        # ATR bilinmiyorsa eski davranış (%8)
+        assert e._data_issue(df, "4H", 0.0015 * 1.05, "X") is None
+
+
 if __name__ == "__main__":
     for name, fn in list(globals().items()):
         if name.startswith("test_"):

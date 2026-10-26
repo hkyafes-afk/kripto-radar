@@ -453,7 +453,7 @@ class Engine:
                    "funding_ann": feat["funding_ann"], "funding_rate": rate, "interval_h": iv,
                    "oi_chg24": feat["oi_chg24"], "taker_imb": feat["taker_imb"], "ret24": feat["ret24"],
                    "chg24": row.get("chg24"), "cvd_div": feat["cvd_div"], "signals": sigs, "vol24_usd": row["vol24_usd"]}
-            issue = self._data_issue(df, tf, feat["price"], row["sym"])
+            issue = self._data_issue(df, tf, feat["price"], row["sym"], feat.get("atr"))
             if issue:
                 ctx["suspect"] = issue
                 self.suspect[inst] = {"sym": row["sym"], "tf": tf, "reason": issue, "ts": int(time.time() * 1000)}
@@ -462,8 +462,12 @@ class Engine:
             coin["suspect"] = issue
         return {"coin": coin, "signals": sigs, "ctx": ctx}
 
-    def _data_issue(self, df, tf: str, live_px: float, sym: str) -> str | None:
-        """Veri sağlığı: eksik/gecikmiş mum, tutarsız fiyat, borsalar arası büyük fark → bu coinde işlem açılmaz."""
+    def _data_issue(self, df, tf: str, live_px: float, sym: str, atr: float | None = None) -> str | None:
+        """Veri sağlığı: eksik/gecikmiş mum, tutarsız fiyat, borsalar arası büyük fark → bu coinde işlem açılmaz.
+
+        Mumlar yalnızca kapanmış mumlardır; son kapanıştan bu yana en fazla 1 mum süresi geçer. Bu yüzden canlı fiyat
+        sapma eşiği coinin kendi oynaklığına göre ölçeklenir (en az %8, 5 ATR): sert ama gerçek hareketler (hacimli
+        kırılım) "bozuk veri" sayılmaz; yanlış enstrüman / ondalık hatası gibi kaba hatalar yine yakalanır."""
         tail = df["close"].iloc[-30:]
         if tail.isna().any() or (tail <= 0).any():
             return "mum verisinde boşluk"
@@ -474,8 +478,10 @@ class Engine:
         if age > 2 * tf_ms + 180_000:
             return f"son mum {age / 60000:.0f} dk gecikmiş"
         last_close = float(df["close"].iloc[-1])
-        if live_px and abs(live_px / last_close - 1) > 0.08:
-            return f"canlı fiyat ile mum farkı %{abs(live_px / last_close - 1) * 100:.1f}"
+        atr_frac = (atr / last_close) if (atr and atr == atr and last_close > 0) else 0.0
+        thr = max(0.08, 5 * atr_frac)
+        if live_px and abs(live_px / last_close - 1) > thr:
+            return f"canlı fiyat ile mum farkı %{abs(live_px / last_close - 1) * 100:.1f} (eşik %{thr * 100:.0f})"
         bg = self.bg_book.get(sym)
         if bg and live_px and time.time() - bg[3] < 30 and abs(bg[0] / live_px - 1) > 0.03:
             return f"Bitget ile fiyat farkı %{abs(bg[0] / live_px - 1) * 100:.1f} (farklı coin olabilir)"
