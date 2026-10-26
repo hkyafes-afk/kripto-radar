@@ -685,7 +685,7 @@ class Desk:
             eq = cap + p["realized"] + p["unrealized"]
             peak = self.st["peak"].get(m.id) or eq
             s = lg._summ(cl)
-            out[m.id] = {**m.public(), "active": m.id in self.by_id,
+            out[m.id] = {**self.by_id.get(m.id, m).public(), "active": m.id in self.by_id,   # config ayarlı risk
                          "capital": round(cap, 2), "equity": round(eq, 2),
                          "pnl": round(eq - cap, 2),
                          "return_pct": round((eq / cap - 1) * 100, 2) if cap > 0 else 0,
