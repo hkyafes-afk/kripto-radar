@@ -24,6 +24,10 @@ from . import macro, quant
 from . import team
 
 
+def sym_side(side: str) -> str:
+    return "long (yükseliş)" if side == "long" else "short (düşüş)"
+
+
 def firm_cfg(cfg: dict) -> dict:
     f = {"gunluk_kayip_yuzde": 3.0, "max_dusus_yuzde": 15.0, "max_isi_yuzde": 10.0, "coin_risk_yuzde": 2.5,
          "yon_risk_yuzde": 6.0, "max_nominal_kat": 2.0, "max_kaldirac": 5, "tekrar_bekleme_mum": 3,
@@ -31,6 +35,7 @@ def firm_cfg(cfg: dict) -> dict:
          "kayip_serisi": 4, "seri_carpan": 0.5,
          "carry_max_cift": 3, "carry_min_yillik": 15, "carry_min_pozitif": 80, "carry_min_istikrar": 45,
          "carry_cikis_yillik": 5, "carry_max_gun": 45, "kume_risk_yuzde": 4.0, "kume_korelasyon": 0.7,
+         "sinirlar_aktif": True, "durdurma_aktif": True, "yedek_kulubesi": True,
          "gunluk_ek_hak_yuzde": 1.5, "gunluk_ek_hak_sayisi": 1}
     f.update(((cfg.get("ekip") or {}).get("firma")) or {})
     return f
@@ -47,8 +52,9 @@ class Desk:
         st.setdefault("start", start)
         st.setdefault("started", int(time.time() * 1000))
         alloc = st.setdefault("alloc", {})
+        self.budget = float(((cfg.get("ekip") or {}).get("butce") or {}).get("yonetici_usd") or start / len(team.ROSTER))
         for m in self.mgrs:
-            alloc.setdefault(m.id, start / len(team.ROSTER))
+            alloc.setdefault(m.id, self.budget)
         st.setdefault("adj", {})
         st.setdefault("peak", {})
         st.setdefault("bench", {})
@@ -82,7 +88,11 @@ class Desk:
         return self.capital(mid) + p["realized"] - p["in_use"] - reserved
 
     def benched(self, mid: str) -> bool:
-        return mid in self.st["bench"]
+        return bool(self.fc.get("yedek_kulubesi", True)) and mid in self.st["bench"]
+
+    def segment(self, mid: str, side: str) -> str | None:
+        """Öğrenme: işlem türü (yönetici|yön) canlı kanıta göre 'gercek' ya da 'golge' olarak açılıp kapanır."""
+        return (self.st.get("segments") or {}).get(f"{mid}|{side}", {}).get("state")
 
     def loss_streak(self, mid: str) -> int:
         cl, _ = self.mgr_trades(mid)
@@ -125,8 +135,9 @@ class Desk:
         m = self.by_id.get(idea["mgr"])
         if not m:
             return "red", None, "yönetici pasif"
-        shadow = self.benched(m.id) or bool(idea.get("shadow_only"))
         sym, tf, side = idea["sym"], idea["tf"], idea["side"]
+        seg = self.segment(m.id, side)
+        shadow = self.benched(m.id) or (seg == "golge") or (bool(idea.get("shadow_only")) and seg != "gercek")
         if any(t["mgr"] == m.id and t["inst"] == idea["inst"] for t in self.ledger["open"] if t.get("mgr")):
             return "red", None, None                         # zaten pozisyonu var (sessiz)
         if any(o["mgr"] == m.id and o["idea"]["inst"] == idea["inst"] for o in self.ledger["orders"]):
@@ -146,8 +157,8 @@ class Desk:
         if card.get("mult", 1.0) <= 0:
             return "red", None, "baş analist: " + "; ".join(card.get("notes") or ["uygun değil"])
         eq_m = self.equity(m.id)
-        if shadow:   # gölgede sermaye yok: kanıt toplamak için başlangıç payı kadar sanal sermayeyle ölçülür
-            eq_m = max(eq_m, float(self.st.get("start", 1000.0)) / len(team.ROSTER))
+        if shadow:   # gölge: kanıt toplamak için bütçe kadar sanal sermayeyle ölçülür (firma bakiyesine dokunmaz)
+            eq_m = max(eq_m, self.budget)
         if eq_m <= 0:
             return "red", None, "yönetici sermayesi tükendi"
         mult = self.fc["seri_carpan"] if self.loss_streak(m.id) >= self.fc["kayip_serisi"] else 1.0
@@ -177,10 +188,10 @@ class Desk:
         stop_dist = abs(entry - (idea["sl"] + (entry - idea["entry"])))
         if stop_dist <= 0:
             return "red", None, "stop mesafesi sıfır"
-        # kaldıraç: likidasyon stop'un en az 1,5 katı ötede kalacak kadar (geniş günlük stoplarda 5x likide eder)
-        mmr = lg.fees_cfg(self.cfg)["mmr_yuzde"] / 100
-        lev = float(min(self.fc["max_kaldirac"], max(1, math.floor(1 / (stop_dist / entry * 1.5 + mmr)))))
-        notional_t = min(risk_usd / stop_dist * entry, eq_m * self.fc["max_nominal_kat"])
+        lev, lev_why = self.choose_leverage(m, idea, stop_dist / entry, meta(idea["inst"]) if meta else None)
+        notional_t = risk_usd / stop_dist * entry
+        if self.fc.get("sinirlar_aktif", True):
+            notional_t = min(notional_t, eq_m * self.fc["max_nominal_kat"])
         contracts, qty, err = lg.round_contracts(notional_t, entry, meta(idea["inst"]) if meta else None)
         if err or qty <= 0:
             return "red", None, err or "miktar sıfır"
@@ -197,7 +208,7 @@ class Desk:
                 entry, src = vwap, "derinlik (VWAP)"
         risk_now = qty * stop_dist
         margin = qty * entry / lev
-        if not shadow:
+        if not shadow and self.fc.get("sinirlar_aktif", True):
             firm_eq = self.firm_equity()
             if self.heat() + risk_now > firm_eq * self.fc["max_isi_yuzde"] / 100:
                 return "red", None, f"firma toplam risk limiti (%{self.fc['max_isi_yuzde']:g})"
@@ -214,13 +225,28 @@ class Desk:
                 if cl + risk_now > firm_eq * self.fc["kume_risk_yuzde"] / 100:
                     return "red", None, (f"yığılma: {len(peers)} pozisyon {sym} ile birlikte hareket ediyor "
                                          f"(ρ≥{rho:g}); bu bahsin riski dolu (%{self.fc['kume_risk_yuzde']:g})")
-            if self.mgr_free(m.id) < margin:
-                return "red", None, "yöneticinin boşta teminatı yetersiz"
+        if not shadow and self.mgr_free(m.id) < margin:     # olmayan parayla işlem açılamaz (kısıt değil, gerçeklik)
+            return "red", None, f"yöneticinin boşta teminatı yetersiz ({self.mgr_free(m.id):.0f}$ < {margin:.0f}$)"
         detail = {"entry": entry, "qty": qty, "contracts": contracts, "lev": lev, "src": src, "slip_bp": slip_bp,
+                  "lot_sz": (meta(idea["inst"]) or {}).get("lot_sz") if meta else None,
                   "risk_usd": risk_now, "risk_pct": risk_now / eq_m * 100, "margin_usd": margin, "shadow": shadow,
-                  "eq_m": eq_m, "mult": mult, "ext": round(ext, 3),
+                  "eq_m": eq_m, "mult": mult, "ext": round(ext, 3), "lev_why": lev_why,
                   "mults": {"hava": round(wm, 2), "korku": round(fm, 2), "analist": round(km, 2), "haftasonu": round(hm, 2)}}
         return ("limit" if limit else "market"), detail, None
+
+    def choose_leverage(self, m, idea: dict, stop_frac: float, meta: dict | None) -> tuple[float, str]:
+        """Yöneticinin kaldıraç kararı. Kaldıraç kârı/riski değiştirmez (risk stop × miktar ile belirlenir); teminatı
+        küçültüp aynı parayla daha çok fırsata girmeyi sağlar. Mutlak kural: likidasyon stop'un en az 1,5 katı ötede."""
+        mmr = lg.fees_cfg(self.cfg)["mmr_yuzde"] / 100
+        safe = max(1, math.floor(1 / (stop_frac * 1.5 + mmr)))
+        cap = float((m.extra or {}).get("lev_cap", self.fc["max_kaldirac"]))
+        want = max(1, round(1 + (cap - 1) * float(idea.get("conviction", 0.5))))
+        okx = float((meta or {}).get("max_lev") or 0) or cap
+        lev = float(max(1, min(safe, want, okx, cap)))
+        why = (f"{lev:g}x: güven %{idea.get('conviction', 0) * 100:.0f} → istenen {want:g}x, "
+               f"stop %{stop_frac * 100:.1f} uzakta → likidasyon güvenliği en fazla {safe}x"
+               + (f", OKX sınırı {okx:g}x" if okx < cap else ""))
+        return lev, why
 
     def execute(self, ideas: list[dict], now_ms: int, quote=None, meta=None, book=None, halted=None):
         """Fikirleri sırayla (güven yüksekten düşüğe) değerlendirir. Döner: (açılanlar, emirler, redler)."""
@@ -240,11 +266,13 @@ class Desk:
             if kind == "market":
                 t = lg.build_trade(idea, d["entry"], d["qty"], d["contracts"], d["lev"], self.cfg, now_ms,
                                    d["eq_m"], src=d["src"], slip_bp=d["slip_bp"], shadow=d["shadow"])
+                t["lot_sz"] = d.get("lot_sz")
+                t["lev_why"] = d.get("lev_why")
                 self.ledger["open"].append(t)
                 opened.append({**idea, **t})
                 self.journal(idea["mgr"], idea["sym"], idea["tf"], idea["side"],
                              "gölgede açtı" if d["shadow"] else "açtı",
-                             f"güven %{idea['conviction'] * 100:.0f}, risk {d['risk_usd']:.2f}$ (%{d['risk_pct']:.2f})"
+                             f"güven %{idea['conviction'] * 100:.0f}, risk {d['risk_usd']:.2f}$ (%{d['risk_pct']:.2f}), {d['lev']:g}x"
                              + (f", çarpan ×{d['ext']:g}" if d.get("ext", 1) != 1 else "")
                              + ("; analist: " + "; ".join((idea.get("card") or {}).get("notes") or []) if (idea.get("card") or {}).get("notes") else ""))
             else:
@@ -252,7 +280,7 @@ class Desk:
                      "contracts": d["contracts"], "lev": d["lev"], "margin_usd": d["margin_usd"], "shadow": d["shadow"],
                      "eq_m": d["eq_m"], "created": now_ms, "expire_ts": now_ms + (idea.get("limit_valid_ms", 600_000) if idea.get("fallback_market")
                                                            else max(idea.get("limit_valid_ms", 0), 900_000)),
-                     "risk_usd": d["risk_usd"]}
+                     "risk_usd": d["risk_usd"], "lot_sz": d.get("lot_sz"), "lev_why": d.get("lev_why")}
                 self.ledger["orders"].append(o)
                 orders.append(o)
                 self.journal(idea["mgr"], idea["sym"], idea["tf"], idea["side"], "limit emir",
@@ -267,6 +295,8 @@ class Desk:
         self.ledger["orders"].remove(o)
         t = lg.build_trade(o["idea"], o["px"], o["qty"], o["contracts"], o["lev"], self.cfg, ts, o["eq_m"],
                            src="limit (maker)", maker_entry=True, shadow=o["shadow"])
+        t["lot_sz"] = o.get("lot_sz")
+        t["lev_why"] = o.get("lev_why")
         self.ledger["open"].append(t)
         self.journal(o["mgr"], t["sym"], t["tf"], t["side"], "limit doldu", f"{team.nfp(o['px'])} seviyesinden girdi")
         return {**o["idea"], **t}
@@ -291,7 +321,7 @@ class Desk:
             dd = (eq / peak - 1) * 100 if peak > 0 else 0
             if m.kind == "carry":
                 continue
-            if not self.benched(m.id) and dd <= -m.dd_bench:
+            if self.fc.get("yedek_kulubesi", True) and not self.benched(m.id) and dd <= -m.dd_bench:
                 self.st["bench"][m.id] = now_ms
                 msgs.append(f"🪑 <b>{m.emoji} {m.name}</b> yedek kulübesine alındı: zirvesinden %{abs(dd):.1f} düştü "
                             f"(limit %{m.dd_bench:g}). Gölgede sermayesiz işlem yapmaya devam edecek; kendini kanıtlarsa geri dönecek.")
@@ -339,7 +369,7 @@ class Desk:
 
     def maybe_rebalance(self, now_ms: int) -> str | None:
         days = self.fc["yeniden_dagitim_gun"]
-        if now_ms - self.st["last_rebalance"] < days * 86400_000:
+        if not days or days <= 0 or now_ms - self.st["last_rebalance"] < days * 86400_000:
             return None
         self.st["last_rebalance"] = now_ms
         cut = now_ms - 30 * 86400_000
@@ -408,6 +438,56 @@ class Desk:
                 if not shadow and self.mgr_free("elif") < qty * (spot + perp / 5):
                     break
                 to_open.append((h, spot, perp, qty, shadow))
+        return to_open, to_close
+
+    # ── Ortak Masa (konsensüs) ──────────────────────────────────────
+    def consensus_plan(self, now_ms: int, prices: dict) -> tuple[list, list]:
+        """En az 2 yönetici aynı coinde aynı yönde pozisyondaysa (gerçek ya da gölge) Ortak Masa kendi bütçesiyle
+        ayrı bir işlem açar; uzlaşı 2'nin altına düşünce çıkar. Yöneticilerin kendi işlemleri etkilenmez."""
+        m = self.by_id.get("ortak")
+        if not m:
+            return [], []
+        voters = {x.id for x in self.mgrs if x.kind == "directional"}
+        groups: dict = {}
+        for t in self.ledger["open"]:
+            if t.get("mgr") in voters and not t.get("carry"):
+                groups.setdefault((t["inst"], t["side"]), {}).setdefault(t["mgr"], t)
+        mine = {t["inst"]: t for t in self.ledger["open"] if t.get("mgr") == "ortak"}
+        to_open, to_close = [], []
+        for inst, t in mine.items():
+            g = groups.get((inst, t["side"]), {})
+            if len(g) < 2:
+                to_close.append((t, f"uzlaşı dağıldı (aynı yönde {len(g)} yönetici kaldı)"))
+        n_vot = max(len(voters), 2)
+        for (inst, side), g in groups.items():
+            if len(g) < 2 or inst in mine:
+                continue
+            if any(o["mgr"] == "ortak" and o["idea"]["inst"] == inst for o in self.ledger["orders"]):
+                continue
+            px = prices.get(inst)
+            trs = list(g.values())
+            if not px or px <= 0:
+                continue
+            sgn = 1 if side == "long" else -1
+            dist = float(np.median([abs(x["entry"] - (x.get("sl_init") or x["sl"])) / x["entry"] for x in trs])) * px
+            atr = float(np.median([(x.get("atr") or 0) / x["entry"] for x in trs])) * px or dist / 2
+            if dist <= 0:
+                continue
+            names = [self.by_id[mid].name if mid in self.by_id else mid for mid in sorted(g)]
+            conv = min(1.0, (len(g) - 1) / max(n_vot - 2, 1) * 2)
+            to_open.append({
+                "mgr": "ortak", "inst": inst, "sym": trs[0]["sym"], "tf": "1D", "side": side, "entry": px, "market_px": px,
+                "sl": px - sgn * dist,
+                "tp": px + 3 * dist if sgn > 0 else max(px - 3 * dist, px * 0.05),
+                "tp1": px + 2 * dist if sgn > 0 else max(px - 2 * dist, px * 0.1), "atr": atr,
+                "max_saat": 30 * 24, "pp": {"partial_frac": 0.3, "trail_atr": 2.5, "basabas": True},
+                "conviction": round(conv, 3), "checks": [[f"{n} aynı yönde", True] for n in names],
+                "core": f"{len(g)} yönetici hemfikir", "reasons": [f"{len(g)} yönetici hemfikir: {', '.join(names)}"],
+                "plan": (f"{', '.join(names)} aynı anda {sym_side(side)} tarafında. Stop, onların stop mesafelerinin ortancası; "
+                         f"2R'de %30 alıp kalanı 2,5 ATR iz süren stopla taşırım. Hemfikir sayısı 2'nin altına düşerse çıkarım."),
+                "entry_type": "piyasa", "limit_px": None, "limit_valid_ms": 0, "setup": "ortak", "kind": "consensus",
+                "funding_rate": trs[0].get("funding_rate", 0.0), "interval_h": trs[0].get("interval_h", 8), "regime": 0,
+                "rr": 3.0, "tags": names, "exit": None, "maker_first": True, "consensus": sorted(g)})
         return to_open, to_close
 
     # ── rapor ────────────────────────────────────────────────────────

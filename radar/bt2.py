@@ -207,7 +207,7 @@ def run_manager(mgr, F, sym, inst, bar_h, warm, ctx_extra_fn, cfg, cooldown_bars
             ctx["hvn"] = hv_cache[i]
         ctx.update({"price": ctx["close"], "sym": sym, "inst": inst, "tf": "1D" if bar_h == 24 else "15m",
                     "bar_ms": int(bar_h * 3.6e6)})
-        idea = mgr.analyze(ctx, mgr, cfg)
+        idea = team.apply_learned(mgr.analyze(ctx, mgr, cfg), cfg)
         if not idea:
             i += 1
             continue
@@ -625,7 +625,7 @@ def _intraday_coin(sym, inst, D, H, mgrs, cfg, wx, vol, start_ts):
                     "btc_bear": w.get("btc_bear", False), "btc_bull": w.get("btc_bull", False),
                     "w_trend": w.get("trend"), "high_vol": w.get("high_vol")})
         for m in free:
-            idea = m.analyze(ctx, m, cfg)
+            idea = team.apply_learned(m.analyze(ctx, m, cfg), cfg)
             if not idea:
                 continue
             t = simulate_trade(idea, H, k, 4.0, exit_ctx)

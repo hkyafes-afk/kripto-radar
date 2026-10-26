@@ -54,6 +54,37 @@ Testte bulunup düzeltilen hatalar:
 Uygulanan politika (config `ekip.politika`): Kemal, Kaan, Selin eşit pay + Elif %15 sabit. Deniz, Murat (kendi işlemleri),
 Ayşe gölgede; 10 gölge işlemde ort. +0,1R yapan geri döner. Murat'ın baş analist karnesi her fikre uygulanıyor.
 
+## 2c. v8.1 – v8.2 (26 Ekim 2026 akşamı, kullanıcı kararları)
+
+- **Kesintisiz karar (v8.1):** Günlük yöneticiler gece yarısını beklemez. Her dakika "kapanmış günler + bugünün canlı mumu"
+  (canlı fiyat, kayan 24 saatlik hacim) ile değerlendirilir; kırılım/trend oluştuğu an işlem açılır, kural çıkışları da anlıktır.
+  5 yıllık test (4 saatlik adımla, canlıdan yavaş = kötümser): kesintisiz + Kaan/Selin sadece long → **yıllık %14,4, maks. düşüş
+  −%14,2, Sharpe 0,96**. Gün sonu modu %11,5 / −%11,6 / 0,76 idi. (`data/BACKTEST_KESINTISIZ.md`)
+- **Kaan ve Selin short'ları gölgede:** Kesintisiz testte Kaan long +0,31R / short −0,05R, Selin long +0,18R / short ±0R.
+  Öğrenme 30 gölge işlemde kanıt görürse gerçeğe alır.
+- **Gölge işlemler ayrı sekmede:** İşlemler sayfası, /pozisyonlar ve Telegram yalnızca gerçek işlemleri gösterir.
+- **/devam evet:** Kullanıcı onayıyla günde 1 kez %1,5 ek günlük kayıp hakkı (durdurmalar açıkken geçerli).
+- **v8.2 bütçe:** Her yöneticiye ayrı **10.000 $** demo bütçe (8 masa, toplam 80.000 $). 1.000 $'lık ilk dönem arşivde.
+- **Gerçek API'ye kadar kapalı:** Günlük kayıp/zirveden düşüş durdurması, firma risk/coin/yön/yığılma/nominal sınırları,
+  yedek kulübesi. Gerçek paraya geçişte config `ekip.firma` içinde `durdurma_aktif`, `sinirlar_aktif` ve `yedek_kulubesi`
+  **true** yapılacak. Her zaman geçerli olanlar: her işlemin stop'u, riske göre boyut, "olmayan parayla işlem yok".
+- **Kaldıraç yetkisi:** Her yönetici kaldıracını kendi seçer: güven × tavan (normal 10x, agresif ve Deniz 20x, Ortak Masa 10x,
+  Elif 1x), OKX azami kaldıracı ve likidasyon güvenliği (likidasyon stop'un en az 1,5 katı ötede). Kaldıraç riski
+  değiştirmez (risk = stop × miktar), teminatı küçültür.
+- **🤝 Ortak Masa:** En az 2 yönetici aynı coinde aynı yönde pozisyondaysa ayrı bütçeyle ortak işlem açar.
+  Stop, onların stop mesafelerinin ortancasıdır; 2R'de %30 alır, kalanı iz süren stopla taşır; uzlaşı dağılınca çıkar.
+  Yöneticilerin kendi işlemleri etkilenmez.
+- **İşlem açıklaması:** Panelde işleme tıklayınca canlı açıklama açılır: ne oldu, neden açtı, para dökümü (brüt, komisyon,
+  funding, net, risk, MFE/MAE), kaldıraç kararı, sırada ne var. Kapanan işlemde ajanın dersi de yazar.
+- **Öğrenme (`radar/learn.py`):**
+  1. Her kapanışta ders yazılır.
+  2. İşlem türü (yönetici|yön) canlı kanıta göre gerçek/gölge arasında taşınır (30 işlem; +0,10R ve PF 1,2 / −0,10R ya da PF < 0,8).
+  3. Haftalık ayar öğrenmesi (pazar, `Öğrenme` iş akışı): stop ve iz stop katsayısı {0,8 / 1,0 / 1,25} ızgarasında, 5 yılın
+     ilk %70'inde eğitilir. Sadece son %30'da (görülmemiş) da +0,02R iyileşirse benimsenir. Sınırlar 0,7–1,5.
+     Canlı motor `data/learned.json`'u saatte bir okur.
+- **Düzeltilen hata:** Kısmi kâr alma kontratı tam sayıya yuvarlıyordu; 0,01/0,1 lotlu küçük pozisyonlarda kısmi kâr hiç
+  alınmıyordu. Artık OKX lot büyüklüğüne göre yuvarlıyor.
+
 ## 3. Araştırma özeti (kaynaklar aşağıda)
 
 - **Aşırı uydurma:** Geçmiş testteki Sharpe canlıyı yalnızca **%1–2** açıklıyor; oynaklık (R² 0,67) ve maks. düşüş (0,34) tekrarlanıyor (Quantopian, 888 strateji). Çok denemeyle seçilen strateji canlıda çöker (Bailey ve López de Prado). → Az ayar, deneme sayısına göre indirimli Sharpe, sermaye riske göre dağıtılır.

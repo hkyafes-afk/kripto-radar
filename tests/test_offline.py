@@ -26,6 +26,7 @@ PRO = load_config()
 # Eski (tekli) sistemin hesap mantığı testleri OKX liste ücretleriyle yazıldı; v8'in sert ücretleri ayrıca test edilir.
 for _c in (CFG, PRO):
     _c["ucret"].update({"taker_yuzde": 0.05, "maker_yuzde": 0.02, "spot_taker_yuzde": 0.10, "stop_kayma_bp": 0})
+    _c["demo"]["baslangic_bakiye"] = 1000
 
 
 def test_no_lookahead():

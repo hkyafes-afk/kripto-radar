@@ -344,7 +344,8 @@ def take_partial(t: dict, px: float, ts: int, cfg: dict) -> dict | None:
     q = t["qty_open"] * frac
     if t.get("contracts") and t["qty"] and t["contracts"] > 0:
         ct = t["qty"] / t["contracts"]                 # kontrat başına coin
-        nc = math.floor(q / ct + 1e-9)
+        lot = float(t.get("lot_sz") or 1.0)            # OKX lot büyüklüğü (0,01 / 0,1 / 1 kontrat)
+        nc = math.floor(q / ct / lot + 1e-9) * lot
         if nc <= 0 or nc * ct >= t["qty_open"] - 1e-12:
             t["tp1_done"] = True                        # bölünemeyecek kadar küçük → kısmi yok, sadece yönetim
             t["trail"] = trail_k > 0

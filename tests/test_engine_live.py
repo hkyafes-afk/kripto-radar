@@ -150,7 +150,9 @@ def test_tick_partial_trailing_and_circuit_breakers():
         e.process_hits()
         c = next(x for x in e.ledger["closed"] if x["id"] == t["id"])
         assert c["outcome"] == "iz stop" and c["pnl_usd"] > 0
-        # devre kesici: günlük kayıp
+        # devre kesici: günlük kayıp (gerçek paraya geçişte açılacak; demo modunda kapalı)
+        if e.desk:
+            e.desk.fc["durdurma_aktif"] = True
         e.risk_tick()
         rs = e.state["risk"]
         lim = e.risk_limits()["gunluk_kayip_yuzde"] / 100      # ekip modunda firma limiti (%3)
@@ -177,6 +179,7 @@ def test_team_breaker_uses_firm_limits():
         e = _engine(d)
         if not e.desk:
             e.ensure_team()
+        e.desk.fc["durdurma_aktif"] = True        # bu test durdurmayı ölçer (demo modunda kapalı)
         assert e.desk, "ekip başlamalıydı"
         rc = e.risk_limits()
         assert rc["gunluk_kayip_yuzde"] == 3.0 and rc["max_dusus_yuzde"] == 15.0 and rc["kaynak"] == "firma"
@@ -185,18 +188,18 @@ def test_team_breaker_uses_firm_limits():
         eq = rs["equity"]
         today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
-        def at(loss):
-            rs.update(day=today, day_start=eq + loss, peak=eq)
+        def at(frac):                       # günün başına göre kayıp oranı
+            rs.update(day=today, day_start=eq / (1 - frac), peak=eq)
             e.risk_tick()
 
         rs.update(halt="gunluk")            # eski sürümün %2 limitiyle konmuş durdurma (halt_lim yok)
-        at(24)
+        at(0.024)
         assert rs.get("halt") is None and e.halt is None, rs
-        at(25)                              # %3'ün içinde: açık kalır
+        at(0.025)                           # %3'ün içinde: açık kalır
         assert e.halt is None
-        at(31)                              # %3 aşıldı → durur
+        at(0.031)                           # %3 aşıldı → durur
         assert e.halt == "gunluk" and rs["halt_lim"] == 3.0
-        at(25)                              # toparlanma durdurmayı kaldırmaz
+        at(0.025)                           # toparlanma durdurmayı kaldırmaz
         assert e.halt == "gunluk"
         assert e.risk_limits()["risk_yuzde"].startswith("1–5")
 
@@ -208,6 +211,7 @@ def test_user_extra_daily_allowance():
         e = _engine(d)
         if not e.desk:
             e.ensure_team()
+        e.desk.fc["durdurma_aktif"] = True        # bu test durdurmayı ölçer (demo modunda kapalı)
         e.risk_tick()
         rs = e.state["risk"]
         eq = rs["equity"]

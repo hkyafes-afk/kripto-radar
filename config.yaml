@@ -65,7 +65,7 @@ periyot_ayar:
 
 # ── DEMO HESAP ── her güçlü sinyalde sanal işlem açılır, kâr/zarar dolar olarak kaydedilir
 demo:
-  baslangic_bakiye: 1000     # $ sanal başlangıç bakiyesi
+  baslangic_bakiye: 80000    # $ sanal başlangıç bakiyesi (v8.2: 8 yönetici × 10.000$; ekip.butce ile aynı olmalı)
   # risk  = profesyonel yöntem: her işlemde bakiyenin risk_yuzde'si kadar risk (stop uzaksa pozisyon küçülür)
   # sabit = her işleme islem_tutari_usd kadar teminat
   boyut_modu: risk
@@ -112,14 +112,18 @@ ekip:
     elif:  {aktif: true}                                                       # Piyasa-nötr funding (spot + vadeli)
     kaan:  {aktif: true, taban_risk: 3.0, tavan_risk: 5.0, yedek_dusus: 30}   # Günlük kanal kırılımı, agresif (1G)
     selin: {aktif: true, taban_risk: 3.0, tavan_risk: 5.0, yedek_dusus: 30}   # Günlük sıkışma patlaması, agresif (1G)
-  # Kanıta dayalı sermaye politikası (PLAN.md): 5 yıllık testte örneklem içi VE dışı ortalaması pozitif olanlar
-  # sermaye alır; diğerleri gölgede işlem yapar ve 10 gölge işlemde ort. +0,1R yaparsa geri döner.
-  politika:
-    surum: 8
-    aktif: [kemal, kaan, selin, elif]
-    sabit_pay: {elif: 0.15}
-    kaynak: "5 yıllık test (data/BACKTEST.md, 26.10.2026)"
+  # v8.2 (kullanıcı kararı, 26.10.2026): her yöneticiye ayrı 10.000$ demo bütçe. Gölge politikası kalktı; herkes kendi
+  # bütçesiyle işlem yapar. Öğrenme, işlem türlerini (yönetici|yön) canlı kanıta göre gerçek/gölge arasında taşır.
+  butce:
+    surum: 1
+    yonetici_usd: 10000
+    onceki_etiket: "v8 · 1.000$ ekip (26.10.2026)"
   firma:                       # risk müdürünün firma geneli limitleri (işlem SAYISI sınırı yok, sınırlar risk cinsinden)
+    # GERÇEK API'YE KADAR (kullanıcı kararı): işlemi durduran limitler ve firma kısıtları kapalı. Gerçek paraya geçerken
+    # üçü de true yapılır. Her işlemin stop'u, riske göre boyutu ve "olmayan parayla işlem yok" kuralı her zaman geçerli.
+    durdurma_aktif: false      # günlük kayıp / zirveden düşüş durdurması
+    sinirlar_aktif: false      # firma toplam risk, coin, yön, yığılma ve nominal sınırları
+    yedek_kulubesi: false      # zirveden düşen yöneticiyi gölgeye alma
     gunluk_kayip_yuzde: 3.0    # % firma bugün bu kadar kaybederse o gün yeni işlem yok
     gunluk_ek_hak_yuzde: 1.5   # % /devam evet ile kullanıcı onayıyla bugün için ek kayıp hakkı
     gunluk_ek_hak_sayisi: 1    # günde en fazla kaç kez
@@ -129,7 +133,7 @@ ekip:
     yon_risk_yuzde: 6.0        # % aynı yönde (long ya da short) toplam risk
     max_nominal_kat: 2.0       # tek pozisyon en fazla yönetici sermayesinin 2 katı nominal
     tekrar_bekleme_mum: 3      # aynı yönetici aynı coinde kapanıştan sonra kaç mum bekler
-    yeniden_dagitim_gun: 7     # risk müdürü kaç günde bir sermayeyi performansa göre dağıtır
+    yeniden_dagitim_gun: 0     # 0 = kapalı (her yöneticinin kendi bütçesi var); açıkken performansa göre yeniden dağıtır
     dagitim_min_islem: 15
     carry_max_cift: 3          # Elif aynı anda en fazla kaç funding pozisyonu tutar
     carry_min_yillik: 15       # % 30 günlük funding ortalaması en az

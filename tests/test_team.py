@@ -17,6 +17,12 @@ from radar.config import load_config  # noqa: E402
 
 CFG = load_config()
 NOW = 1_800_000_000_000
+# Limit/politika testleri: gerçek paraya geçişte açılacak kısıtlar açık ve eski tek bütçe (1.000$) ile
+import copy  # noqa: E402
+CFG_RISK = copy.deepcopy(CFG)
+CFG_RISK["ekip"]["firma"].update(sinirlar_aktif=True, durdurma_aktif=True, yedek_kulubesi=True, yeniden_dagitim_gun=7)
+CFG_RISK["demo"]["baslangic_bakiye"] = 1000
+CFG_RISK["ekip"].pop("butce", None)
 M = team.BY_ID
 
 
@@ -162,9 +168,9 @@ def test_deflated_sharpe_penalizes_many_trials():
 
 
 # ── risk müdürü ──
-def _desk():
+def _desk(cfg=None):
     st, L = {}, lg.empty()
-    return dk.Desk(CFG, st, L), st, L
+    return dk.Desk(cfg or CFG_RISK, st, L), st, L
 
 
 def _kaan_idea(**kw):
@@ -255,6 +261,77 @@ def test_carry_plan_and_pnl():
     L["open"].append(t2)
     _, to_close = d.carry_plan(hv, prices, NOW)
     assert to_close and "negatif" in to_close[0][1]
+
+
+# ── v8.2: ajan başı bütçe, sınırsız demo, kaldıraç yetkisi, Ortak Masa, öğrenme ──
+def test_budget_mode_no_limits_and_leverage():
+    d, st, L = _desk(CFG)                     # varsayılan config: 10.000$/yönetici, kısıtlar kapalı
+    assert abs(d.capital("kaan") - 10_000) < 1e-9 and abs(d.firm_equity() - 80_000) < 1e-6
+    ideas = [dict(_kaan_idea(), inst=f"C{i}-USDT-SWAP", sym=f"C{i}") for i in range(12)]
+    o, _, r = d.execute(ideas, NOW)
+    assert len(o) == 12, ("kısıtlar kapalıyken firma risk sınırına takılmamalı", r)
+    t = o[0]
+    stop_frac = abs(t["entry"] - t["sl"]) / t["entry"]
+    assert t["lev"] >= 2 and t["liq"] is not None and not t["liq_first"], "likidasyon stop'un ötesinde olmalı"
+    assert abs(t["entry"] - t["liq"]) / t["entry"] >= stop_frac * 1.4
+    # düşük güven → daha az kaldıraç
+    lo, _ = d.choose_leverage(M["kaan"], {"conviction": 0.0}, 0.03, None)
+    hi, why = d.choose_leverage(M["kaan"], {"conviction": 1.0}, 0.03, None)
+    assert lo == 1 and hi > lo and "likidasyon" in why
+    cap, _ = d.choose_leverage(M["kaan"], {"conviction": 1.0}, 0.002, {"max_lev": 5})
+    assert cap == 5, "OKX sınırı aşılmaz"
+
+
+def test_consensus_desk():
+    d, st, L = _desk(CFG)
+    a = dict(_kaan_idea(), inst="Q-USDT-SWAP", sym="Q")
+    d.execute([a], NOW)
+    assert d.consensus_plan(NOW, {"Q-USDT-SWAP": 103.0}) == ([], []), "tek yönetici uzlaşı değil"
+    d.execute([dict(a, mgr="selin")], NOW)
+    to_open, _ = d.consensus_plan(NOW, {"Q-USDT-SWAP": 103.0})
+    assert len(to_open) == 1 and to_open[0]["mgr"] == "ortak" and set(to_open[0]["consensus"]) == {"kaan", "selin"}
+    o, _, _ = d.execute(to_open, NOW)
+    assert o and o[0]["mgr"] == "ortak"
+    # Kaan çıkınca uzlaşı dağılır → Ortak Masa çıkar; yöneticilerin kendi işlemleri etkilenmez
+    L["open"] = [t for t in L["open"] if t["mgr"] != "kaan"]
+    _, to_close = d.consensus_plan(NOW, {"Q-USDT-SWAP": 103.0})
+    assert to_close and to_close[0][0]["mgr"] == "ortak" and any(t["mgr"] == "selin" for t in L["open"])
+
+
+def test_segment_learning_promotes_and_demotes():
+    from radar import learn
+    d, st, L = _desk(CFG)
+    for i in range(30):
+        L["closed"].append({"mgr": "kaan", "side": "short", "shadow": True, "r": 0.4 if i % 3 else -0.3,
+                            "exit_ts": NOW + i, "inst": f"K{i}"})
+        L["closed"].append({"mgr": "murat", "side": "long", "shadow": False, "r": -0.3 if i % 4 else 0.2,
+                            "exit_ts": NOW + i, "inst": f"M{i}"})
+    msgs = learn.segment_tick(d, L, NOW - 1, NOW + 100)
+    assert d.segment("kaan", "short") == "gercek" and d.segment("murat", "long") == "golge"
+    assert len(msgs) == 2
+    # öğrenilen durum desk kararına yansır: Kaan short artık gerçek, Murat long gölge
+    s_idea = dict(_kaan_idea(), side="short", shadow_only=True, inst="Z-USDT-SWAP", sym="Z", sl=106.0, tp=85.0, tp1=None)
+    k, det, _ = d.evaluate(s_idea, NOW)
+    assert k == "market" and not det["shadow"]
+    k, det, _ = d.evaluate(dict(_kaan_idea(), mgr="murat", inst="Y-USDT-SWAP", sym="Y"), NOW)
+    assert det["shadow"]
+
+
+def test_lessons_and_learned_params():
+    from radar import learn
+    t = {"outcome": "stop", "r": -1.0, "mfe_r": 1.4, "mae_r": 1.0, "fee_usd": 2.0, "gross_usd": -10.0}
+    assert "geri döndü" in learn.lesson(t)
+    assert "hemen ters" in learn.lesson(dict(t, mfe_r=0.1))
+    assert "iz süren stop" in learn.lesson({"outcome": "iz stop", "r": 1.8, "mfe_r": 2.5, "mae_r": 0.2})
+    cfg = copy.deepcopy(CFG)
+    cfg["_learned"] = {"managers": {"kaan": {"stop_k": 1.25, "trail_k": 0.8}}}
+    base = _kaan_idea()
+    tuned = team.apply_learned(_kaan_idea(), cfg)
+    d0, d1 = abs(base["entry"] - base["sl"]), abs(tuned["entry"] - tuned["sl"])
+    assert abs(d1 / d0 - 1.25) < 1e-9 and abs(tuned["pp"]["trail_atr"] - base["pp"]["trail_atr"] * 0.8) < 1e-9
+    assert abs((tuned["tp"] - tuned["entry"]) / d1 - (base["tp"] - base["entry"]) / d0) < 1e-9, "hedef R olarak korunur"
+    cfg["_learned"]["managers"]["kaan"]["stop_k"] = 9.0
+    assert team.learned_for(cfg, "kaan")["stop_k"] == 1.5, "öğrenme sınırların dışına çıkamaz"
 
 
 # ── Haber Masası ve olay takvimi ──

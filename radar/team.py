@@ -54,7 +54,7 @@ class Manager:
     def public(self) -> dict:
         return {"id": self.id, "name": self.name, "title": self.title, "emoji": self.emoji, "style": self.style,
                 "tfs": self.tfs, "base_risk": self.base_risk, "max_risk": self.max_risk, "dd_bench": self.dd_bench,
-                "aggressive": self.aggressive, "kind": self.kind}
+                "aggressive": self.aggressive, "kind": self.kind, "lev_cap": (self.extra or {}).get("lev_cap", 10)}
 
 
 # ── ek göstergeler (yöneticilerin ortak veri masası) ──────────────────
@@ -453,25 +453,29 @@ def nfp(p: float) -> str:
 ROSTER = [
     Manager("kemal", "Kemal", "Trend Yöneticisi (çekirdek)", "🧭",
             "Günlük trend takibi: 50 günlük ortalama + 20/100 trend filtresi. Trend bitene kadar tutar, stop 3 ATR geriden izler.",
-            ["1D"], 1.5, 2.5, 20, analyze=a_kemal),
+            ["1D"], 1.5, 2.5, 20, analyze=a_kemal, extra={"lev_cap": 10}),
     Manager("deniz", "Deniz", "Likidite Sağlayıcı", "⚡",
             "BTC/ETH'de yoğun saatlerde trend içi geri çekilmeye limit emirle (maker) girer; dar stop, en fazla 8 saat.",
-            ["15m"], 1.0, 1.5, 15, analyze=a_deniz),
+            ["15m"], 1.0, 1.5, 15, analyze=a_deniz, extra={"lev_cap": 20}),
     Manager("ayse", "Ayşe", "Aşırılık Avcısı", "🔄",
             "Sadece gerçek aşırılıklarda: uzun vadeli trend içinde kapitülasyon mumu; canlıda funding/OI teyidi arar.",
-            ["1D"], 1.0, 1.5, 15, analyze=a_ayse),
+            ["1D"], 1.0, 1.5, 15, analyze=a_ayse, extra={"lev_cap": 10}),
     Manager("murat", "Murat", "Baş Analist", "📐",
             "Her fikre coin karnesi verir (likidite, kalabalık, trend uyumu, haber). Kendisi hacim profili desteğinde trend içi geri çekilmeyi oynar.",
-            ["1D"], 1.5, 2.5, 20, analyze=a_murat),
+            ["1D"], 1.5, 2.5, 20, analyze=a_murat, extra={"lev_cap": 10}),
     Manager("elif", "Elif", "Piyasa-Nötr", "⚖️",
             "Yön tahmini yapmaz: likit coinlerde spot alıp vadelide short açar, funding masrafı aşacak kadar yüksekken toplar.",
-            [], 0.0, 0.0, 10, analyze=None, kind="carry"),
+            [], 0.0, 0.0, 10, analyze=None, kind="carry", extra={"lev_cap": 1}),
     Manager("kaan", "Kaan", "Kırılım Avcısı (agresif)", "🚀",
             "Günlük 20 günlük zirve kırılımı + hacim (Turtle tarzı); 10 günlük dip kırılınca çıkar. Kanıt çoksa büyük oynar.",
-            ["1D"], 3.0, 5.0, 30, aggressive=True, analyze=a_kaan),
+            ["1D"], 3.0, 5.0, 30, aggressive=True, analyze=a_kaan, extra={"lev_cap": 20}),
     Manager("selin", "Selin", "Sıkışma Avcısı (agresif)", "🌪",
             "Günlük volatilite 120 günün en dar seviyesinden patlarken trend yönünde girer; patlama başarısızsa hemen çıkar.",
-            ["1D"], 3.0, 5.0, 30, aggressive=True, analyze=a_selin),
+            ["1D"], 3.0, 5.0, 30, aggressive=True, analyze=a_selin, extra={"lev_cap": 20}),
+    Manager("ortak", "Ortak Masa", "Konsensüs Masası", "🤝",
+            "En az iki yönetici aynı coinde aynı yönde hemfikir olunca kendi bütçesiyle ortak işlem açar; "
+            "yöneticilerin kendi işlemlerine dokunmaz. Hemfikir sayısı arttıkça büyür, uzlaşı dağılınca çıkar.",
+            ["1D"], 2.0, 4.0, 25, analyze=None, kind="consensus", extra={"lev_cap": 10}),
 ]
 BY_ID = {m.id: m for m in ROSTER}
 
@@ -494,13 +498,52 @@ def roster(cfg: dict) -> list[Manager]:
     return out
 
 
+LEARN_BOUNDS = {"stop_k": (0.7, 1.5), "trail_k": (0.7, 1.5)}
+
+
+def learned_for(cfg: dict | None, mid: str) -> dict:
+    L = (((cfg or {}).get("_learned") or {}).get("managers") or {}).get(mid) or {}
+    out = {}
+    for k, (lo, hi) in LEARN_BOUNDS.items():
+        try:
+            out[k] = float(min(max(float(L.get(k, 1.0)), lo), hi))
+        except (TypeError, ValueError):
+            out[k] = 1.0
+    return out
+
+
+def apply_learned(idea: dict | None, cfg: dict | None) -> dict | None:
+    """Öğrenme koşusunun bulduğu (sınırlı) ayarları fikre uygular: stop mesafesi ve iz süren stop katsayısı.
+    Hedefler R cinsinden korunur. Canlı ve test aynı fonksiyonu kullanır."""
+    if not idea:
+        return idea
+    L = learned_for(cfg, idea["mgr"])
+    ks, kt = L["stop_k"], L["trail_k"]
+    if ks == 1.0 and kt == 1.0:
+        return idea
+    sgn = 1 if idea["side"] == "long" else -1
+    ref = idea["entry"]
+    if ks != 1.0:
+        d = abs(ref - idea["sl"]) * ks
+        idea["sl"] = ref - sgn * d
+        tp = ref + (idea["tp"] - ref) * ks
+        idea["tp"] = tp if sgn > 0 else max(tp, ref * 0.05)
+        if idea.get("tp1") is not None:
+            idea["tp1"] = ref + (idea["tp1"] - ref) * ks
+    if kt != 1.0 and idea.get("pp"):
+        idea["pp"] = {**idea["pp"], "trail_atr": round(idea["pp"].get("trail_atr", 0) * kt, 3)}
+    idea["learned"] = {"stop_k": ks, "trail_k": kt}
+    idea["reasons"] = idea.get("reasons", []) + [f"öğrenilmiş ayar: stop ×{ks:g}, iz stop ×{kt:g}"]
+    return idea
+
+
 def ideas_for(ctx: dict, managers: list[Manager], cfg: dict) -> list[dict]:
     out = []
     for m in managers:
         if m.analyze is None or ctx["tf"] not in m.tfs:
             continue
         try:
-            idea = m.analyze(ctx, m, cfg)
+            idea = apply_learned(m.analyze(ctx, m, cfg), cfg)
         except Exception as e:  # noqa: BLE001 — bir yöneticinin hatası diğerlerini durdurmasın
             print(f"[ekip] {m.id} {ctx.get('sym')} {ctx.get('tf')}: {e}")
             idea = None

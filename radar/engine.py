@@ -32,6 +32,7 @@ from . import commands as cm
 from . import desk as dk
 from . import harvest as hv
 from . import lease
+from . import learn
 from . import macro
 from . import news as nw
 from . import quant
@@ -165,12 +166,13 @@ class Engine:
         self.calendar = macro.Calendar()
         self.news = nw.NewsDesk()
         self.news.from_state(self.state.get("news") or {})
+        self.cfg["_learned"] = learn.load_learned()
         self.loop_done = False
         self.my_hb = 0
         self.lease_thread: threading.Thread | None = None
         self.lease_ok = None
         self.t.update({"health": 0.0, "mgr": 0.0, "orders": 0.0, "lease": 0.0, "rebal": 0.0, "news": 0.0, "cal": 0.0,
-                       "live1d": 0.0})
+                       "live1d": 0.0, "cons": 0.0, "learn": 0.0})
         self.stats_counter.update({"ideas": 0, "rejected": 0, "orders": 0, "fills": 0, "carry": 0})
 
     def _setup_cfg(self):
@@ -284,7 +286,8 @@ class Engine:
             for r in uni:
                 self.prices.setdefault(r["inst"], r["price"])
                 if r.get("ct_val"):
-                    self.meta[r["inst"]] = {"ct_val": r["ct_val"], "lot_sz": r["lot_sz"], "min_sz": r["min_sz"]}
+                    self.meta[r["inst"]] = {"ct_val": r["ct_val"], "lot_sz": r["lot_sz"], "min_sz": r["min_sz"],
+                                            "max_lev": r.get("max_lev") or 0.0}
             self._feed_symbols()
         self.t["universe"] = time.time()
 
@@ -821,6 +824,11 @@ class Engine:
     def _finish_close(self, closed: list[dict], via: str):
         if not closed:
             return
+        for t in closed:
+            try:
+                t["lesson"] = learn.lesson(t)
+            except Exception:  # noqa: BLE001
+                pass
         self.stats_counter["closed"] += len(closed)
         self.stats_counter[f"{via}_closes"] = self.stats_counter.get(f"{via}_closes", 0) + len(closed)
         self.dirty = True
@@ -996,7 +1004,11 @@ class Engine:
             rs["halt_lim"] = None
             self._notify(f"🟢 <b>Limit düzeltmesi</b>: günlük durdurma eski (daha sıkı) tekli sistem limitiyle konmuştu; "
                          f"ekibin firma limiti %{rc['gunluk_kayip_yuzde']:g}. Bugün {_usd(day_pnl)}, limitin içinde → işlemler yeniden açık.")
-        if not rs.get("halt"):
+        stops_on = bool((self.desk.fc if self.desk else {}).get("durdurma_aktif", True))
+        if not stops_on and rs.get("halt"):
+            rs["halt"], rs["halt_lim"] = None, None
+            self._notify("🟢 Demo modu: işlemi durduran limitler (günlük kayıp, zirveden düşüş) gerçek API'ye kadar kapalı.")
+        if stops_on and not rs.get("halt"):
             if dd <= -rc["max_dusus_yuzde"]:
                 rs["halt"] = "dusus"
                 rs["halt_lim"] = rc["max_dusus_yuzde"]
@@ -1221,6 +1233,10 @@ class Engine:
                         "n": len((self.ledger.get("archive") or {}).get("closed", []))},
             "health": self.health,
             "weather": self.weather or None,
+            "learning": {"segments": (self.desk.st.get("segments") if self.desk else None) or {},
+                         "learned": {k: v for k, v in (self.cfg.get("_learned") or {}).items() if k in ("managers", "generated", "split")},
+                         "stops_on": bool((self.desk.fc if self.desk else {}).get("durdurma_aktif", True)),
+                         "limits_on": bool((self.desk.fc if self.desk else {}).get("sinirlar_aktif", True))},
             "backtest_v8": self._bt8(),
             "news": self.news.public(),
             "calendar": {"status": self.calendar.status, "upcoming": self.calendar.upcoming(),
@@ -1394,7 +1410,8 @@ class Engine:
                      f"{what.get(t['outcome'], t['outcome'])} kapandı → <b>{_usd(t['pnl_usd'])}</b> "
                      f"({_p(t['r'], 2, True)}R) · {_fmt_dur(t['hours'])}"
                      f"\n   {nt.fmt_price(t['entry'])} → {nt.fmt_price(t['exit'])}{extra}"
-                     + (f"\n   <i>{nt.esc(t['exit_note'])}</i>" if t.get("exit_note") else ""))
+                     + (f"\n   <i>{nt.esc(t['exit_note'])}</i>" if t.get("exit_note") else "")
+                     + (f"\n   📘 {nt.esc(t['lesson'])}" if t.get("lesson") else ""))
         b = lg.balance(self.ledger, self.cfg)
         ret = (b["equity"] / b["start"] - 1) * 100 if b["start"] else 0
         L.append(f"Demo bakiye {_usd(b['equity'], False)} (%{_p(ret, 2, True)})")
@@ -1504,11 +1521,17 @@ class Engine:
             subprocess.run(["git", "fetch", "-q", "origin", "main"], cwd=ROOT, timeout=60, check=True)
             txt = subprocess.run(["git", "show", "origin/main:config.yaml"], cwd=ROOT, timeout=30,
                                  check=True, capture_output=True, text=True).stdout
+            lj = subprocess.run(["git", "show", "origin/main:data/learned.json"], cwd=ROOT, timeout=30,
+                                capture_output=True, text=True).stdout
+            if lj.strip():
+                (ROOT / "data").mkdir(exist_ok=True)
+                (ROOT / "data" / "learned.json").write_text(lj, encoding="utf-8")
             if txt and txt != (ROOT / "config.yaml").read_text(encoding="utf-8"):
                 (ROOT / "config.yaml").write_text(txt, encoding="utf-8")
                 self.cfg = load_config(self.cfg_path)
                 self._setup_cfg()
                 print("✓ config.yaml güncellendi")
+            self.cfg["_learned"] = learn.load_learned()
         except Exception as e:  # noqa: BLE001
             print(f"[uyarı] ayar yenilenemedi: {e}")
 
@@ -1561,11 +1584,82 @@ class Engine:
         else:
             self._notify(msg)
 
+    def apply_budget_if_needed(self):
+        """Ajan başı bütçe (config ekip.butce). Sürüm değişince bir kez: kapanmış işlemler arşive, sermaye yeniden kurulur;
+        açık pozisyonlar yönetilmeye devam eder."""
+        b = (self.cfg.get("ekip") or {}).get("butce") or {}
+        if not (self.desk and b.get("surum")) or self.desk.st.get("budget_v") == b["surum"]:
+            return
+        now_ms = int(time.time() * 1000)
+        per = float(b["yonetici_usd"])
+        old = self.ledger["closed"]
+        real = [t for t in old if not t.get("shadow")]
+        arch = self.ledger.setdefault("archive", {"closed": [], "periods": []})
+        arch["closed"] = ((arch.get("closed") or []) + real)[-500:]
+        arch["periods"].append({"until": now_ms, "n": len(real), "label": b.get("onceki_etiket", "önceki dönem"),
+                                "pnl_usd": round(sum(t.get("pnl_usd", 0) for t in real), 2)})
+        self.ledger["closed"] = []
+        st = self.desk.st
+        st.update({"start": per * len(self.desk.mgrs), "alloc": {m.id: per for m in self.desk.mgrs}, "adj": {},
+                   "peak": {}, "bench": {}, "budget_v": b["surum"], "started": now_ms})
+        st.pop("policy", None)
+        self.desk.budget = per
+        self.state["risk"], self.state["eq_hist"] = {}, []
+        self.state["team_started"] = now_ms
+        self.halt = None
+        self.dirty = True
+        roster = "\n".join(f"{m.emoji} <b>{m.name}</b> · {m.title} · kaldıraç tavanı {(m.extra or {}).get('lev_cap', 10)}x"
+                           for m in self.desk.mgrs)
+        self._notify(
+            f"🏦 <b>Yeni dönem: her yöneticiye {_usd(per, False)} bütçe</b> (toplam {_usd(per * len(self.desk.mgrs), False)})\n"
+            f"Önceki dönemin {len(real)} işlemi arşive alındı ({_usd(arch['periods'][-1]['pnl_usd'])}); açık pozisyonlar devam ediyor.\n"
+            "• İşlemi durduran limitler gerçek API'ye kadar kapalı; her işlemin stop'u ve riske göre boyutu duruyor.\n"
+            "• Her yönetici kaldıracını kendi seçiyor (güven + stop mesafesi + OKX sınırı; likidasyon hep stop'un ötesinde).\n"
+            "• 🤝 Ortak Masa: en az 2 yönetici hemfikir olunca kendi bütçesiyle ortak işlem açar.\n"
+            "• Öğrenme: her işlemden ders, işlem türlerini canlı kanıta göre açma/kapama, haftalık ayar öğrenmesi.\n\n" + roster)
+
+    def consensus_tick(self):
+        """Ortak Masa: hemfikir yöneticileri bulur, ayrı işlem önerir; uzlaşı dağılınca çıkış ister."""
+        if not self.desk:
+            return
+        self.t["cons"] = time.time()
+        to_open, to_close = self.desk.consensus_plan(int(time.time() * 1000), self.prices)
+        with self.lock:
+            for t, why in to_close:
+                self.signal_exits.append((t["id"], why))
+        now = time.time()
+        rows = {r["inst"]: r for r in self.universe}
+        ideas = []
+        for i in to_open:
+            key = ("ortak", i["inst"], i["side"])
+            if now - self.live_seen.get(key, 0) < 1800:
+                continue
+            self.live_seen[key] = now
+            r = rows.get(i["inst"]) or {}
+            c = {"tf": "1D", "vol24_usd": r.get("vol24_usd"), **self._live_fields(r, i["inst"])} if r else {"tf": "1D"}
+            i["card"] = team.analyst_card(c, i["side"], self.news.flag(i["sym"]))
+            ideas.append(i)
+        if ideas:
+            with self.lock:
+                self.pending_ideas.extend(ideas)
+
+    def learn_tick(self):
+        """İşlem türü öğrenmesi (saatlik)."""
+        if not self.desk:
+            return
+        self.t["learn"] = time.time()
+        since = int(self.desk.st.get("started") or 0)
+        for msg in learn.segment_tick(self.desk, self.ledger, since, int(time.time() * 1000)):
+            self._notify(msg)
+            self.desk.journal("-", "-", "-", "-", "öğrenme", msg.replace("<b>", "").replace("</b>", "")[:200])
+            self.dirty = True
+
     def ensure_team(self):
         """İlk kez ekip moduna geçerken eski sistemin işlemlerini arşivler ve ekibi 1.000$ ile başlatır."""
         if not self.team_on or self.state.get("team_started"):
             if self.team_on and self.desk is None:
                 self.desk = dk.Desk(self.cfg, self.state, self.ledger)
+            self.apply_budget_if_needed()
             self.apply_policy_if_needed()
             return
         now_ms = int(time.time() * 1000)
@@ -1586,6 +1680,9 @@ class Engine:
         self.state["team_started"] = now_ms
         self.halt = None
         self.desk = dk.Desk(self.cfg, self.state, self.ledger)
+        b = (self.cfg.get("ekip") or {}).get("butce") or {}
+        if b.get("surum"):
+            self.desk.st["budget_v"] = b["surum"]      # sıfırdan kurulan ekip zaten yeni bütçeyle başlar
         self.apply_policy_if_needed()
         self.rebuild_watch()
         self.dirty = True
@@ -2050,6 +2147,10 @@ class Engine:
                         for tf in due:
                             self.scan_at[tf] = now
                         self.enqueue(f"scan:{','.join(due)}:{bnd or ''}")
+                    if self.team_on and self.desk and now - self.t["cons"] >= 60:
+                        self.consensus_tick()
+                    if self.team_on and self.desk and now - self.t["learn"] >= 3600:
+                        self.learn_tick()
                     if self.team_on and self.desk and now - self.t["live1d"] >= float(self.live.get("gunici_sn", 60)):
                         self.t["live1d"] = now
                         self.enqueue("live1d")
