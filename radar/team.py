@@ -1,4 +1,17 @@
-"""Yönetici kadrosu: her biri farklı uzmanlık, zaman ufku ve işlem tarzı.
+"""Yönetici kadrosu (v8): her yöntem araştırma bulgularına dayanır, parametreler ÖNCEDEN sabitlenmiştir
+(geçmiş veride en iyi ayar aranmaz → aşırı uydurma yok). Canlı ve 5 yıllık test aynı fonksiyonları çağırır.
+Kanıt özeti ve kaynaklar: PLAN.md.
+
+  Kemal  günlük trend takibi (50 günlük ortalama + 20/100 trend filtresi, 3 ATR iz süren stop)
+  Kaan   günlük 20 günlük zirve kırılımı + hacim (Turtle tarzı, 10 günlük dip çıkışı) — agresif
+  Selin  günlük volatilite sıkışmasından patlama — agresif
+  Murat  baş analist: herkese coin karnesi + hacim profili desteğinde trend içi geri çekilme
+  Ayşe   sadece gerçek aşırılık: uzun vadeli trend içinde kapitülasyon mumu (+ canlıda funding/OI teyidi)
+  Deniz  BTC/ETH 15dk, yoğun saatlerde limit emirle (maker) trend içi geri çekilme
+  Elif   piyasa-nötr funding (spot + vadeli short), sadece likit coinler
+  Short işlemler yalnızca BTC 50 günlük ortalamanın altındayken (araştırma: short sinyalleri tarihsel olarak zayıf).
+
+Eski (v7) açıklama:
 
 Her yönetici bir "fikir" (Idea) üretir:
   - zorunlu çekirdek koşul (tarzının özü: kırılım, Fibonacci bölgesi, squeeze...)
@@ -111,7 +124,8 @@ def extra_features(df: pd.DataFrame, f: pd.DataFrame) -> dict:
 def _idea(ctx: dict, mgr: Manager, side: str, sl: float, tp: float, checks: list, core: str, plan: str,
           *, tp1_r: float | None = 1.0, pp: dict | None = None, max_saat: float, min_checks: int,
           entry_type: str = "piyasa", limit_px: float | None = None, limit_bars: int = 0,
-          setup: str | None = None, kind: str = "trend", min_rr: float = 1.2, conv_bonus: float = 0.0) -> dict | None:
+          setup: str | None = None, kind: str = "trend", min_rr: float = 1.2, conv_bonus: float = 0.0,
+          exit_rule: dict | None = None) -> dict | None:
     px, atr = ctx["price"], ctx["atr"]
     if not (px and atr and atr > 0) or px != px:
         return None
@@ -139,6 +153,7 @@ def _idea(ctx: dict, mgr: Manager, side: str, sl: float, tp: float, checks: list
         "setup": setup or mgr.id, "kind": kind, "funding_rate": ctx.get("funding_rate", 0.0),
         "interval_h": ctx.get("interval_h", 8), "regime": ctx.get("regime", 0),
         "rr": round(sgn * (tp - ref) / dist, 2), "tags": [n for n, ok in checks if ok],
+        "exit": exit_rule, "signal_close": ctx.get("close"),
     }
 
 
@@ -153,181 +168,263 @@ def _aligned(x, side):
     return (x == 1) if side == "long" else (x == -1)
 
 
+def _ok(x) -> bool:
+    return x == x and x is not None
+
+
+def _live(ctx, key, cond) -> bool:
+    """Sadece canlıda bilinen veri (funding, OI, alıcı/satıcı baskısı). Yoksa doğrulama 'tutmadı' sayılır."""
+    v = ctx.get(key)
+    if v is None or v != v:
+        return False
+    try:
+        return bool(cond(v))
+    except Exception:  # noqa: BLE001
+        return False
+
+
+def _shorts_allowed(ctx) -> bool:
+    return bool(ctx.get("btc_bear"))
+
+
+DAY_H = 24
+
+
 def a_kemal(ctx, mgr, cfg):
-    """Swing trader: 4S trend setup'ı + günlük trend; sabırlı, geri çekilmede girer."""
-    sigs = [s for s in ctx.get("signals", []) if s["setup"] in ("trend_long", "trend_short") and s["score"] >= 65]
-    if not sigs:
+    """Günlük trend takibi. Kanıt: BTC 50 günlük ortalama Sharpe 1,9 (Grayscale 2012–2023); trend
+    kuralları 2022–2024 canlı testinde de çalıştı (Quantpedia). Trend bitince (kapanış 50 günlüğün altı) çıkar."""
+    c, atr = ctx["close"], ctx["atr"]
+    if not (_ok(ctx["sma100"]) and _ok(atr) and atr > 0):
         return None
-    s = max(sigs, key=lambda x: x["score"])
-    side, sgn = s["side"], (1 if s["side"] == "long" else -1)
-    px, atr, e20 = ctx["price"], ctx["atr"], ctx["ema20"]
-    checks = [("ADX ≥ 25 (güçlü trend)", ctx["adx"] >= 25),
-              ("7/14/28 günlük momentum tam uyumlu", abs(ctx.get("tsmom", 0)) >= 0.99 and np.sign(ctx["tsmom"]) == sgn),
-              ("yeni para trend yönünde (OI artışı)", (ctx.get("oi_chg24") or 0) > 3 and sgn * (ctx.get("ret24") or 0) > 0),
-              ("funding kalabalık değil", (-10 <= (ctx.get("funding_ann") or 0) <= 40) if side == "long" else ((ctx.get("funding_ann") or 0) >= -20)),
-              ("BTC rejimi aynı yönde", _aligned(ctx.get("regime", 0), side)),
-              ("hacim ortalama üstü", (ctx.get("vol_ratio") or 0) > 1.0)]
-    extended = sgn * (px - e20) > 1.2 * atr
-    entry_type, limit_px = ("limit", e20 + sgn * 0.3 * atr) if extended else ("piyasa", None)
-    ref = limit_px or px
-    sl = ref - sgn * 2.0 * atr
-    tp = ref + sgn * 4.0 * atr
-    plan = (f"Trend {'yukarı' if sgn > 0 else 'aşağı'}; fiyat EMA20'den uzak, geri çekilmede limit emirle gireceğim. " if extended
-            else "Trend sağlam ve fiyat aşırı uzamamış, piyasadan giriyorum. ") + \
-        "Stop 2 ATR, hedef 4 ATR; +1R'de yarısını alıp kalanı 2,5 ATR iz süren stopla taşıyacağım."
-    return _idea(ctx, mgr, side, sl, tp, checks, f"4S {s['label']} {s['score']}/100", plan, tp1_r=1.0,
-                 pp={"partial_frac": 0.5, "trail_atr": 2.5, "basabas": True}, max_saat=240, min_checks=2,
-                 entry_type=entry_type, limit_px=limit_px, limit_bars=3, setup=s["setup"], conv_bonus=0.15)
-
-
-def a_deniz(ctx, mgr, cfg):
-    """Gün içi trader: 15dk trend içinde RSI geri çekilmesinden dönüşü yakalar; dar stop, hızlı çıkış."""
-    px, atr = ctx["price"], ctx["atr"]
-    long_core = ctx["ema20"] > ctx["ema50"] and px > ctx["ema50"] and ctx["rsi_min3"] < 45 and ctx["rsi"] > ctx["rsi_prev"] and ctx["close"] > ctx["prev_high"]
-    short_core = ctx["ema20"] < ctx["ema50"] and px < ctx["ema50"] and ctx["rsi_max3"] > 55 and ctx["rsi"] < ctx["rsi_prev"] and ctx["close"] < ctx["prev_low"]
-    if not (long_core or short_core):
+    up = c > ctx["sma50"] and ctx["sma20"] > ctx["sma100"]
+    dn = c < ctx["sma50"] and ctx["sma20"] < ctx["sma100"]
+    long_t = up and (not ctx.get("above50_prev") or c > ctx["hc20"])
+    short_t = dn and _shorts_allowed(ctx) and (not ctx.get("below50_prev") or c < ctx["lc20"])
+    if not (long_t or short_t):
         return None
-    side = "long" if long_core else "short"
+    side = "long" if long_t else "short"
     sgn = 1 if side == "long" else -1
-    checks = [("günlük trend ters değil", ctx.get("d_trend", 0) != -sgn),
-              ("ADX > 18", ctx["adx"] > 18),
-              ("dönüş mumunda hacim", (ctx.get("vol_ratio") or 0) > 1.1),
-              ("agresif alıcı/satıcı aynı yönde", sgn * (ctx.get("taker_imb") or 0) > 0),
-              ("funding kalabalık değil", ((ctx.get("funding_ann") or 0) < 30) if side == "long" else ((ctx.get("funding_ann") or 0) > -10)),
-              ("BTC rejimi aynı yönde", _aligned(ctx.get("regime", 0), side))]
-    raw = ctx["low5"] - 0.3 * atr if side == "long" else ctx["high5"] + 0.3 * atr
-    sl = _clamp_stop(px, raw, atr, side, 0.8, 2.0)
-    tp = px + sgn * 1.6 * abs(px - sl)
-    plan = ("Trend içinde RSI geri çekilmesi bitti, önceki mumun "
-            f"{'tepesi' if side == 'long' else 'dibi'} kırıldı. Stop son 5 mumun "
-            f"{'dibinin' if side == 'long' else 'tepesinin'} ötesinde; hedef 1,6R, +1R'de stop başabaşa. En fazla 8 saat.")
-    return _idea(ctx, mgr, side, sl, tp, checks, "15dk trend içi geri çekilme dönüşü", plan, tp1_r=1.0,
-                 pp={"partial_frac": 0.0, "trail_atr": 0.0, "basabas": True}, max_saat=8, min_checks=2, kind="scalp")
-
-
-def a_ayse(ctx, mgr, cfg):
-    """Kontrarian: funding uçta + fiyat aşırı uzamış → kalabalığın tersine, ortalamaya dönüş."""
-    fa, px, atr = ctx.get("funding_ann") or 0, ctx["price"], ctx["atr"]
-    short_core = fa > 40 and (ctx["bb_pct"] > 1.0 or ctx["rsi"] > 72)
-    long_core = fa < -15 and (ctx["bb_pct"] < 0 or ctx["rsi"] < 28)
-    if not (short_core or long_core):
-        return None
-    side = "short" if short_core else "long"
-    sgn = 1 if side == "long" else -1
-    checks = [("açık pozisyon şişti (OI > %5)", (ctx.get("oi_chg24") or 0) > 5),
-              ("RSI uyumsuzluğu", ctx["div"] == sgn),
-              ("agresif akış tükeniyor", sgn * (ctx.get("taker_imb") or 0) > 0),
-              ("funding çok uçta", (fa > 80) if side == "short" else (fa < -40)),
-              ("günlük trend karşı değil", ctx.get("d_trend", 0) != -sgn),
-              ("tepe/dip hacmi (≥1,5x)", (ctx.get("vol_ratio") or 0) > 1.5)]
-    raw = ctx["high5"] + 0.5 * atr if side == "short" else ctx["low5"] - 0.5 * atr
-    sl = _clamp_stop(px, raw, atr, side, 1.0, 3.0)
-    d = abs(px - sl)
-    tp = ctx["bb_mid"]
-    if sgn * (tp - px) < 1.25 * d:
-        tp = px + sgn * 1.25 * d
-    plan = (f"Funding yıllık %{fa:.0f}: {'longlar' if side == 'short' else 'shortlar'} çok kalabalık ve fiyat aşırı uzamış. "
-            "Ortalamaya (Bollinger orta bandı) dönüş bekliyorum. Stop son tepenin/dibin ötesinde; +1R'de yarısını alırım. En fazla 36 saat.")
-    return _idea(ctx, mgr, side, sl, tp, checks, f"kalabalık {'long' if side == 'short' else 'short'} + aşırı uzama", plan,
-                 tp1_r=1.0, pp={"partial_frac": 0.5, "trail_atr": 1.5, "basabas": True}, max_saat=36, min_checks=2,
-                 kind="donus", min_rr=1.2)
-
-
-def a_murat(ctx, mgr, cfg):
-    """Teknik usta: son dalganın %50–%70,5 Fibonacci geri çekilmesinde dönüş onayıyla girer."""
-    px, atr = ctx["price"], ctx["atr"]
-    for side, sw in (("long", ctx.get("swing_up")), ("short", ctx.get("swing_dn"))):
-        if not sw or sw["since"] > 30:
-            continue
-        H, L = sw["H"], sw["L"]
-        rng = H - L
-        sgn = 1 if side == "long" else -1
-        retr = (H - px) / rng if side == "long" else (px - L) / rng
-        trend_ok = (ctx["ema20"] > ctx["ema50"] or ctx.get("d_trend", 0) == 1) if side == "long" else \
-                   (ctx["ema20"] < ctx["ema50"] or ctx.get("d_trend", 0) == -1)
-        confirm = (ctx["close"] > ctx["open"] and ctx["rsi"] > ctx["rsi_prev"]) if side == "long" else \
-                  (ctx["close"] < ctx["open"] and ctx["rsi"] < ctx["rsi_prev"])
-        if not (0.5 <= retr <= 0.705 and trend_ok and confirm):
-            continue
-        lvl786 = H - 0.786 * rng if side == "long" else L + 0.786 * rng
-        sl = _clamp_stop(px, lvl786 - sgn * 0.2 * atr, atr, side, 0.6, 3.5)
-        tp = H + 0.272 * rng if side == "long" else L - 0.272 * rng
-        target1 = H if side == "long" else L
-        d = abs(px - sl)
-        tp1_r = max(0.8, abs(target1 - px) / d) if d else 1.0
-        checks = [("geri çekilmede hacim azaldı", (ctx.get("vol_ratio") or 9) < 1.0),
-                  ("RSI aşırı bölgede değil (38–62)", 38 <= ctx["rsi"] <= 62),
-                  ("BTC rejimi aynı yönde", _aligned(ctx.get("regime", 0), side)),
-                  ("agresif akış aynı yönde", sgn * (ctx.get("taker_imb") or 0) > 0),
-                  ("günlük trend aynı yönde", ctx.get("d_trend", 0) == sgn),
-                  ("dalga güçlü (≥5 ATR)", sw["size_atr"] >= 5)]
-        plan = (f"Son dalga {nfp(L)} → {nfp(H)}; fiyat %{retr * 100:.0f} geri çekildi (altın oran bölgesi) ve dönüş mumu geldi. "
-                f"Stop %78,6 seviyesinin ötesinde; ilk hedef dalga {'tepesi' if side == 'long' else 'dibi'} (yarısını alırım), "
-                f"ikinci hedef 1,272 uzantısı.")
-        return _idea(ctx, mgr, side, sl, tp, checks, f"Fibonacci %{retr * 100:.0f} geri çekilme", plan, tp1_r=tp1_r,
-                     pp={"partial_frac": 0.5, "trail_atr": 2.0, "basabas": True},
-                     max_saat=96 if ctx["tf"] == "4H" else 48, min_checks=2, min_rr=1.5)
-    return None
+    px = ctx["price"]
+    sl = px - sgn * 3.0 * atr
+    tp = px + sgn * 20.0 * atr
+    fa = ctx.get("funding_ann")
+    checks = [("200 günlük ortalamanın doğru tarafında", _ok(ctx["sma200"]) and sgn * (c - ctx["sma200"]) > 0),
+              ("50 günlük ortalamanın eğimi trend yönünde", sgn * (ctx["sma50"] - ctx["sma50_prev5"]) > 0),
+              ("BTC havası aynı yönde", bool(ctx.get("btc_bull")) if side == "long" else bool(ctx.get("btc_bear"))),
+              ("hacim ortalamanın üstünde", (ctx.get("vol_ratio") or 0) > 1.0),
+              ("funding kalabalık değil", _live(ctx, "funding_ann", lambda x: x < 40 if side == "long" else x > -20)),
+              ("yeni para trend yönünde (OI)", _live(ctx, "oi_chg24", lambda x: x > 0))]
+    trig = "trend yeni başladı" if not (ctx.get("above50_prev") if side == "long" else ctx.get("below50_prev")) \
+        else "trend içinde 20 günlük yeni kapanış zirvesi" if side == "long" else "trend içinde 20 günlük yeni kapanış dibi"
+    plan = (f"Günlük trend {'yukarı' if sgn > 0 else 'aşağı'} ({trig}). Stop 3 ATR; stop fiyatla birlikte en iyi "
+            f"seviyenin 3 ATR gerisinden taşınır. Hedef yok: trend bitene kadar (günlük kapanış 50 günlük ortalamanın "
+            f"{'altına' if sgn > 0 else 'üstüne'} geçene kadar) tutarım. En fazla 120 gün.")
+    return _idea(ctx, mgr, side, sl, tp, checks, "günlük trend (50g ortalama + 20/100 filtresi)", plan, tp1_r=None,
+                 pp={"partial_frac": 0.0, "trail_atr": 3.0, "basabas": False, "trail_now": True},
+                 max_saat=120 * DAY_H, min_checks=0, setup="kemal", kind="trend", min_rr=1.2,
+                 exit_rule={"type": "ma", "n": 50})
 
 
 def a_kaan(ctx, mgr, cfg):
-    """Kırılım (agresif): 20 mumluk aralığın hacimle kırılması; kanıt çoksa büyük oynar."""
-    px, atr = ctx["price"], ctx["atr"]
-    long_core = ctx["close"] > ctx["don_hi"] and (ctx.get("vol_ratio") or 0) > 1.8 and ctx["close"] > ctx["ema50"]
-    short_core = ctx["close"] < ctx["don_lo"] and (ctx.get("vol_ratio") or 0) > 1.8 and ctx["close"] < ctx["ema50"]
+    """Günlük 20 günlük zirve kırılımı + hacim (Turtle tarzı). Kanıt: kanal kırılımı en iyi teknik kural ailesi
+    (Springer 2019), 10–50 günlük zirve kuralı 2022–2024'te çalıştı. 10 günlük dip kırılınca çıkar."""
+    c, atr, px = ctx["close"], ctx["atr"], ctx["price"]
+    vr = ctx.get("vol_ratio") or 0
+    if not (_ok(ctx["hh20"]) and _ok(ctx["sma50"]) and _ok(atr) and atr > 0):
+        return None
+    long_core = c > ctx["hh20"] and vr >= 1.5 and c > ctx["sma50"]
+    short_core = c < ctx["ll20"] and vr >= 1.5 and c < ctx["sma50"] and _shorts_allowed(ctx)
     if not (long_core or short_core):
         return None
     side = "long" if long_core else "short"
     sgn = 1 if side == "long" else -1
-    level = ctx["don_hi"] if side == "long" else ctx["don_lo"]
-    fa = ctx.get("funding_ann") or 0
-    checks = [("ADX yükseliyor (> 20)", ctx["adx"] > 20 and ctx["adx"] > ctx["adx_prev"]),
-              ("yeni para giriyor (OI > %3)", (ctx.get("oi_chg24") or 0) > 3),
-              ("funding kalabalık değil", (-5 < fa < 40) if side == "long" else (-30 < fa < 5)),
-              ("BTC rejimi aynı yönde", _aligned(ctx.get("regime", 0), side)),
-              ("agresif alıcı/satıcı baskın", sgn * (ctx.get("taker_imb") or 0) > 0.05),
-              ("günlük trend aynı yönde", ctx.get("d_trend", 0) == sgn),
-              ("sıkışmadan çıkış", (ctx.get("bbw_rank") or 1) < 0.6 or ctx.get("squeeze_prev"))]
-    ext = sgn * (px - level) / atr
-    entry_type, limit_px = ("limit", level + sgn * 0.25 * atr) if ext > 1.0 else ("piyasa", None)
-    ref = limit_px or px
-    sl = _clamp_stop(ref, level - sgn * 0.8 * atr, atr, side, 1.0, 3.0)
-    tp = ref + sgn * 3.0 * abs(ref - sl)
-    plan = (f"20 mumluk aralık {nfp(level)} {'yukarı' if sgn > 0 else 'aşağı'} {ctx.get('vol_ratio', 0):.1f}x hacimle kırıldı. "
-            + ("Fiyat kırılımdan uzaklaştı, seviyeye geri testte limit emirle gireceğim. " if entry_type == "limit" else "Momentum taze, piyasadan giriyorum. ")
-            + "Fiyat aralığa geri dönerse kırılım bozulmuş demektir, stop orada. Hedef 3R; 1,5R'de %30 alıp kalanı 2 ATR iz süren stopla taşırım.")
-    return _idea(ctx, mgr, side, sl, tp, checks, f"{ctx['tf']} aralık kırılımı", plan, tp1_r=1.5,
-                 pp={"partial_frac": 0.3, "trail_atr": 2.0, "basabas": True}, max_saat=120, min_checks=3,
-                 entry_type=entry_type, limit_px=limit_px, limit_bars=4, min_rr=2.0)
+    raw = max(ctx["ll10"], px - 2.5 * atr) if side == "long" else min(ctx["hh10"], px + 2.5 * atr)
+    sl = _clamp_stop(px, raw, atr, side, 1.0, 2.5)
+    tp = px + sgn * 6.0 * abs(px - sl)
+    checks = [("100 günlük trend aynı yönde", _ok(ctx["sma100"]) and sgn * (c - ctx["sma100"]) > 0),
+              ("güçlü kapanış", ctx["close_pos"] >= 0.7 if side == "long" else ctx["close_pos"] <= 0.3),
+              ("BTC havası aynı yönde", bool(ctx.get("btc_bull")) if side == "long" else bool(ctx.get("btc_bear"))),
+              ("hacim 2 katın üstünde", vr >= 2.0),
+              ("yeni para giriyor (OI)", _live(ctx, "oi_chg24", lambda x: x > 3)),
+              ("funding kalabalık değil", _live(ctx, "funding_ann", lambda x: x < 40 if side == "long" else x > -30))]
+    plan = (f"20 günlük {'tepe' if sgn > 0 else 'dip'} {nfp(ctx['hh20'] if sgn > 0 else ctx['ll20'])} {vr:.1f}x hacimle kırıldı. "
+            f"Stop 10 günlük {'dibin' if sgn > 0 else 'tepenin'} ötesinde (1–2,5 ATR). 2R'de %30 alırım, kalanı 2,5 ATR iz "
+            f"süren stopla ve 10 günlük {'dip' if sgn > 0 else 'tepe'} kırılınca çıkarak taşırım. En fazla 30 gün.")
+    return _idea(ctx, mgr, side, sl, tp, checks, "günlük 20 günlük kanal kırılımı + hacim", plan, tp1_r=2.0,
+                 pp={"partial_frac": 0.3, "trail_atr": 2.5, "basabas": True}, max_saat=30 * DAY_H, min_checks=0,
+                 setup="kaan", kind="trend", min_rr=2.0, exit_rule={"type": "chan", "n": 10})
 
 
 def a_selin(ctx, mgr, cfg):
-    """Squeeze (agresif): volatilite en dar seviyeden patlarken, yanlış taraftaki kalabalığın sıkışmasını oynar."""
-    px, atr = ctx["price"], ctx["atr"]
-    if not ctx.get("squeeze_prev") or (ctx.get("vol_ratio") or 0) <= 1.5:
+    """Günlük volatilite sıkışmasından patlama: bantlar 120 günün en dar %20'sinden çıkarken trend yönünde kırılım."""
+    c, atr, px = ctx["close"], ctx["atr"], ctx["price"]
+    vr = ctx.get("vol_ratio") or 0
+    if not (ctx.get("squeeze3") and _ok(ctx["bb_up"]) and _ok(ctx["sma50"]) and _ok(atr) and atr > 0):
         return None
-    if ctx["bb_pct"] > 1:
-        side = "long"
-    elif ctx["bb_pct"] < 0:
-        side = "short"
-    else:
+    long_core = c > ctx["bb_up"] and c > ctx["sma50"] and vr >= 1.3
+    short_core = c < ctx["bb_lo"] and c < ctx["sma50"] and vr >= 1.3 and _shorts_allowed(ctx)
+    if not (long_core or short_core):
         return None
+    side = "long" if long_core else "short"
     sgn = 1 if side == "long" else -1
-    fa, oi = ctx.get("funding_ann") or 0, ctx.get("oi_chg24") or 0
-    checks = [("yanlış tarafta kalabalık var (sıkışma yakıtı)", (fa < 5 and oi > 0) if side == "long" else (fa > 30 and oi > 0)),
-              ("agresif akış aynı yönde", sgn * (ctx.get("taker_imb") or 0) > 0),
-              ("günlük trend ters değil", ctx.get("d_trend", 0) != -sgn),
-              ("BTC rejimi aynı yönde", _aligned(ctx.get("regime", 0), side)),
-              ("ADX yükseliyor", ctx["adx"] > ctx["adx_prev"]),
-              ("güçlü kapanış", ctx["close_pos"] > 0.7 if side == "long" else ctx["close_pos"] < 0.3)]
-    sl = _clamp_stop(px, ctx["bb_mid"] - sgn * 0.2 * atr, atr, side, 0.8, 2.5)
-    tp = px + sgn * 2.5 * abs(px - sl)
-    plan = ("Bollinger bantları son 120 mumun en dar %15'indeydi ve şimdi "
-            f"{ctx.get('vol_ratio', 0):.1f}x hacimle {'yukarı' if sgn > 0 else 'aşağı'} patladı. "
-            "Stop orta bandın ötesinde; hedef 2,5R, +1R'de yarısını alıp kalanı 1,5 ATR iz süren stopla taşırım.")
-    return _idea(ctx, mgr, side, sl, tp, checks, "volatilite sıkışmasından patlama", plan, tp1_r=1.0,
-                 pp={"partial_frac": 0.5, "trail_atr": 1.5, "basabas": True},
-                 max_saat=24 if ctx["tf"] == "15m" else 48, min_checks=2, min_rr=2.0, kind="squeeze")
+    sl = _clamp_stop(px, ctx["bb_mid"] - sgn * 0.5 * atr, atr, side, 1.0, 2.5)
+    tp = px + sgn * 4.0 * abs(px - sl)
+    checks = [("20 günlük kanal da kırıldı", sgn * (c - (ctx["hh20"] if sgn > 0 else ctx["ll20"])) > 0),
+              ("güçlü kapanış", ctx["close_pos"] >= 0.7 if side == "long" else ctx["close_pos"] <= 0.3),
+              ("BTC havası aynı yönde", bool(ctx.get("btc_bull")) if side == "long" else bool(ctx.get("btc_bear"))),
+              ("hacim 2 katın üstünde", vr >= 2.0),
+              ("yanlış tarafta kalabalık (sıkışma yakıtı)", _live(ctx, "funding_ann", lambda x: x < 5 if side == "long" else x > 30)),
+              ("yeni para giriyor (OI)", _live(ctx, "oi_chg24", lambda x: x > 0))]
+    plan = ("Bollinger bantları 120 günün en dar %20'sindeydi; fiyat şimdi "
+            f"{vr:.1f}x hacimle bandın {'üstünde' if sgn > 0 else 'altında'} kapandı. Stop orta bandın ötesinde; "
+            "1,5R'de yarısını alıp kalanı 2 ATR iz süren stopla taşırım. Fiyat orta banda dönerse patlama başarısız sayılır, "
+            "çıkarım. En fazla 20 gün.")
+    return _idea(ctx, mgr, side, sl, tp, checks, "günlük volatilite sıkışmasından patlama", plan, tp1_r=1.5,
+                 pp={"partial_frac": 0.5, "trail_atr": 2.0, "basabas": True}, max_saat=20 * DAY_H, min_checks=0,
+                 setup="selin", kind="squeeze", min_rr=2.0, exit_rule={"type": "mid"})
+
+
+def a_murat(ctx, mgr, cfg):
+    """Baş analistin kendi işlemi: güçlü günlük trend içinde, hacim profilinin gerçek destek bölgesine (ya da
+    EMA20'ye) geri çekilmede dönüş mumuyla girer. Fibonacci tek başına kanıtsız; hacim bölgesi gerçek destektir."""
+    c, atr, px = ctx["close"], ctx["atr"], ctx["price"]
+    if not (_ok(ctx["sma200"]) and _ok(atr) and atr > 0):
+        return None
+    levels = [x for x in (ctx.get("hvn") or []) if _ok(x)] + [ctx["ema20"]]
+    for side in ("long", "short"):
+        sgn = 1 if side == "long" else -1
+        if side == "long":
+            trend = c > ctx["sma50"] and ctx["sma50"] > ctx["sma50_prev5"] and c > ctx["sma200"]
+        else:
+            trend = (c < ctx["sma50"] and ctx["sma50"] < ctx["sma50_prev5"] and c < ctx["sma200"]
+                     and _shorts_allowed(ctx))
+        if not trend:
+            continue
+        near = [x for x in levels if 0 <= sgn * (c - x) <= 3 * atr]
+        if not near:
+            continue
+        lvl = max(near) if side == "long" else min(near)
+        touched = (ctx["low"] <= lvl + 0.5 * atr) if side == "long" else (ctx["high"] >= lvl - 0.5 * atr)
+        reversal = ((c > ctx["open"] and ctx["close_pos"] >= 0.6) if side == "long"
+                    else (c < ctx["open"] and ctx["close_pos"] <= 0.4))
+        rsi_ok = 40 <= ctx["rsi"] <= 65 if side == "long" else 35 <= ctx["rsi"] <= 60
+        if not (touched and reversal and rsi_ok):
+            continue
+        raw = (min(ctx["ll3"], lvl) - 0.5 * atr) if side == "long" else (max(ctx["hh3"], lvl) + 0.5 * atr)
+        sl = _clamp_stop(px, raw, atr, side, 1.0, 3.0)
+        d = abs(px - sl)
+        swing = ctx["hh20"] if side == "long" else ctx["ll20"]
+        tp = swing if (_ok(swing) and sgn * (swing - px) >= 1.5 * d) else px + sgn * 2.0 * d
+        checks = [("destek gerçek hacim bölgesi (EMA20 değil)", lvl != ctx["ema20"]),
+                  ("geri çekilmede hacim azaldı", (ctx.get("vol_ratio") or 9) < 1.0),
+                  ("BTC havası aynı yönde", bool(ctx.get("btc_bull")) if side == "long" else bool(ctx.get("btc_bear"))),
+                  ("100 günlük trend aynı yönde", _ok(ctx["sma100"]) and sgn * (c - ctx["sma100"]) > 0),
+                  ("funding kalabalık değil", _live(ctx, "funding_ann", lambda x: x < 40 if side == "long" else x > -20)),
+                  ("alıcı/satıcı baskısı aynı yönde", _live(ctx, "taker_imb", lambda x: sgn * x > 0))]
+        plan = (f"Güçlü günlük trend; fiyat {nfp(lvl)} {'destek' if sgn > 0 else 'direnç'} bölgesine geri çekildi ve dönüş mumu "
+                f"geldi. Stop bölgenin ve son 3 günün ötesinde; ilk hedef 1R'de yarısı, sonra 20 günlük "
+                f"{'tepe' if sgn > 0 else 'dip'} ya da 2R, kalan 2 ATR iz süren stopla. En fazla 20 gün.")
+        return _idea(ctx, mgr, side, sl, tp, checks, "trend içi geri çekilme (hacim profili desteği)", plan, tp1_r=1.0,
+                     pp={"partial_frac": 0.5, "trail_atr": 2.0, "basabas": True}, max_saat=20 * DAY_H, min_checks=0,
+                     setup="murat", kind="trend", min_rr=1.5)
+    return None
+
+
+def a_ayse(ctx, mgr, cfg):
+    """Sadece gerçek aşırılık: uzun vadeli yükseliş trendinde kapitülasyon mumu (RSI2 < 5, alt bant dışı, 2x hacim,
+    büyük mum). Araştırma 'dipte al' kuralının 2022–24'te çöktüğünü gösterdi; bu yüzden filtre çok sıkı, boyut küçük.
+    Canlıda funding/OI/likidasyon teyidi güveni artırır."""
+    c, atr, px = ctx["close"], ctx["atr"], ctx["price"]
+    vr = ctx.get("vol_ratio") or 0
+    if not (_ok(ctx["sma200"]) and _ok(atr) and atr > 0):
+        return None
+    big = (ctx.get("range_atr") or 0) >= 1.5 and vr >= 2.0
+    long_core = big and c > ctx["sma200"] and ctx["rsi2"] < 5 and c < ctx["bb_lo"]
+    short_core = big and c < ctx["sma200"] and ctx["rsi2"] > 95 and c > ctx["bb_up"] and _shorts_allowed(ctx)
+    if not (long_core or short_core):
+        return None
+    side = "long" if long_core else "short"
+    sgn = 1 if side == "long" else -1
+    raw = ctx["low"] - 0.5 * atr if side == "long" else ctx["high"] + 0.5 * atr
+    sl = _clamp_stop(px, raw, atr, side, 1.5, 2.5)
+    d = abs(px - sl)
+    tp = ctx["sma20"] if sgn * (ctx["sma20"] - px) >= 1.2 * d else px + sgn * 1.5 * d
+    checks = [("mumda geri dönüş izi (fitil)", ctx["close_pos"] >= 0.3 if side == "long" else ctx["close_pos"] <= 0.7),
+              ("BTC havası aynı yönde", bool(ctx.get("btc_bull")) if side == "long" else bool(ctx.get("btc_bear"))),
+              ("hacim 3 katın üstünde (zincirleme likidasyon izi)", vr >= 3.0),
+              ("kalabalık ters tarafta (funding)", _live(ctx, "funding_ann", lambda x: x < -10 if side == "long" else x > 40)),
+              ("açık pozisyon eridi (likidasyon)", _live(ctx, "oi_chg24", lambda x: x < -5)),
+              ("satış/alış baskısı tükeniyor", _live(ctx, "taker_imb", lambda x: sgn * x > 0))]
+    plan = (f"Uzun vadeli trend {'yukarı' if sgn > 0 else 'aşağı'} ama bugün {vr:.1f}x hacimle aşırı bir "
+            f"{'çöküş' if sgn > 0 else 'şişme'} mumu oldu (RSI2 {ctx['rsi2']:.0f}). Kısa vadeli ortalamaya dönüş bekliyorum; "
+            "1R'de yarısını alırım, 20 günlük ortalamaya varınca çıkarım. Stop mumun ötesinde. En fazla 7 gün.")
+    return _idea(ctx, mgr, side, sl, tp, checks, "kapitülasyon mumu (uzun vadeli trend içinde)", plan, tp1_r=1.0,
+                 pp={"partial_frac": 0.5, "trail_atr": 0.0, "basabas": True}, max_saat=7 * DAY_H, min_checks=0,
+                 setup="ayse", kind="donus", min_rr=1.2, exit_rule={"type": "mean", "n": 20})
+
+
+DENIZ_COINS = ("BTC", "ETH")
+
+
+def a_deniz(ctx, mgr, cfg):
+    """BTC/ETH 15dk, sadece yoğun saatlerde (12–20 UTC, hafta içi): trend içi geri çekilmede limit emirle (maker)
+    girer, hedef de limit emir. Gün içi hareketin kaynağı likidite sağlamak (Shen ve ark. 2022)."""
+    if ctx.get("sym") not in DENIZ_COINS:
+        return None
+    hour, dow = ctx.get("hour"), ctx.get("dow")
+    if hour is None or not (12 <= hour < 20) or (dow is not None and dow >= 5):
+        return None
+    c, atr = ctx["close"], ctx["atr"]
+    if not (_ok(ctx["sma200"]) and _ok(atr) and atr > 0):
+        return None
+    up = c > ctx["sma200"] and ctx["sma50"] > ctx["sma200"] and ctx["rsi"] < 40
+    dn = c < ctx["sma200"] and ctx["sma50"] < ctx["sma200"] and ctx["rsi"] > 60
+    if not (up or dn):
+        return None
+    side = "long" if up else "short"
+    sgn = 1 if side == "long" else -1
+    lim = c - sgn * 0.5 * atr
+    sl = lim - sgn * 1.5 * atr
+    tp = lim + sgn * 1.5 * atr
+    checks = [("günlük trend aynı yönde", bool(ctx.get("d_up")) if side == "long" else bool(ctx.get("d_dn"))),
+              ("BTC havası aynı yönde", bool(ctx.get("btc_bull")) if side == "long" else bool(ctx.get("btc_bear"))),
+              ("alıcı/satıcı baskısı tükeniyor", _live(ctx, "taker_imb", lambda x: sgn * x > -0.05)),
+              ("funding kalabalık değil", _live(ctx, "funding_ann", lambda x: x < 30 if side == "long" else x > -10))]
+    plan = (f"Yoğun saatte trend içi geri çekilme (RSI {ctx['rsi']:.0f}). {nfp(lim)} seviyesine limit emir koydum "
+            "(maker ücret, kayma yok). Hedef de limit emir: +1,5 ATR; stop 1,5 ATR. 1 saatte dolmazsa iptal, en fazla 8 saat.")
+    return _idea(ctx, mgr, side, sl, tp, checks, "15dk trend içi geri çekilme (maker)", plan, tp1_r=None,
+                 pp={"partial_frac": 0.0, "trail_atr": 0.0, "basabas": False}, max_saat=8, min_checks=0,
+                 entry_type="limit", limit_px=lim, limit_bars=4, setup="deniz", kind="scalp", min_rr=0.9)
+
+
+# ── Baş analist (Murat): coin karnesi ─────────────────────────────────
+
+def analyst_card(ctx: dict, side: str, news: dict | None = None) -> dict:
+    """Her fikre baş analistin görüşü: boyut çarpanı + gerekçeler. Çarpan 0 → işlem açılmaz.
+    Ölçüler az ve her biri ayrı ayrı mantıklı: likidite, kalabalık, trend uyumu, haber."""
+    mult, notes = 1.0, []
+    sgn = 1 if side == "long" else -1
+    vol = ctx.get("vol24_usd") or 0
+    if vol and vol < 20_000_000:
+        mult *= 0.5
+        notes.append("likidite zayıf (24s hacim < 20M$)")
+    fa = ctx.get("funding_ann")
+    if fa is not None and fa == fa and ((side == "long" and fa > 60) or (side == "short" and fa < -40)):
+        mult *= 0.7
+        notes.append(f"kalabalık aynı tarafta (funding yıllık %{fa:.0f})")
+    if ctx.get("tf") != "1D":
+        d_up, d_dn = ctx.get("d_up"), ctx.get("d_dn")
+        if (side == "long" and d_dn) or (side == "short" and d_up):
+            mult *= 0.6
+            notes.append("günlük trend ters")
+    if news:
+        if news.get("level") == "kirmizi":
+            mult = 0.0
+            notes.append(f"Haber Masası kırmızı alarm: {news.get('title', '')[:80]}")
+        elif news.get("level") == "sari" and side == "long":
+            mult = 0.0
+            notes.append("yeni listeleme şişkinliği (araştırma: 1–2 haftada geri veriliyor)")
+    return {"mult": round(mult, 3), "notes": notes}
 
 
 def nfp(p: float) -> str:
@@ -341,20 +438,27 @@ def nfp(p: float) -> str:
 
 
 ROSTER = [
-    Manager("kemal", "Kemal", "Swing Trader", "🧭", "4 saatlik ve günlük trendleri takip eder, günlerce tutar, geri çekilmede girer.",
-            ["4H"], 1.5, 2.5, 20, analyze=a_kemal),
-    Manager("deniz", "Deniz", "Gün İçi Trader", "⚡", "15 dakikalıkta trend içi geri çekilmeleri yakalar; dar stop, hızlı çıkış, en fazla 8 saat.",
-            ["15m"], 1.5, 2.5, 20, analyze=a_deniz),
-    Manager("ayse", "Ayşe", "Kontrarian", "🔄", "Funding uçtayken ve fiyat aşırı uzamışken kalabalığın tersine oynar.",
-            ["1H"], 1.5, 2.5, 20, analyze=a_ayse),
-    Manager("murat", "Murat", "Teknik Analist", "📐", "Son dalganın Fibonacci altın oran bölgesindeki geri çekilmesinde dönüş onayıyla girer.",
-            ["1H", "4H"], 1.5, 2.5, 20, analyze=a_murat),
-    Manager("elif", "Elif", "Piyasa-Nötr", "⚖️", "Yön tahmini yapmaz: spot alıp vadelide short açar, istikrarlı funding'i toplar.",
+    Manager("kemal", "Kemal", "Trend Yöneticisi (çekirdek)", "🧭",
+            "Günlük trend takibi: 50 günlük ortalama + 20/100 trend filtresi. Trend bitene kadar tutar, stop 3 ATR geriden izler.",
+            ["1D"], 1.5, 2.5, 20, analyze=a_kemal),
+    Manager("deniz", "Deniz", "Likidite Sağlayıcı", "⚡",
+            "BTC/ETH'de yoğun saatlerde trend içi geri çekilmeye limit emirle (maker) girer; dar stop, en fazla 8 saat.",
+            ["15m"], 1.0, 1.5, 15, analyze=a_deniz),
+    Manager("ayse", "Ayşe", "Aşırılık Avcısı", "🔄",
+            "Sadece gerçek aşırılıklarda: uzun vadeli trend içinde kapitülasyon mumu; canlıda funding/OI teyidi arar.",
+            ["1D"], 1.0, 1.5, 15, analyze=a_ayse),
+    Manager("murat", "Murat", "Baş Analist", "📐",
+            "Her fikre coin karnesi verir (likidite, kalabalık, trend uyumu, haber). Kendisi hacim profili desteğinde trend içi geri çekilmeyi oynar.",
+            ["1D"], 1.5, 2.5, 20, analyze=a_murat),
+    Manager("elif", "Elif", "Piyasa-Nötr", "⚖️",
+            "Yön tahmini yapmaz: likit coinlerde spot alıp vadelide short açar, funding masrafı aşacak kadar yüksekken toplar.",
             [], 0.0, 0.0, 10, analyze=None, kind="carry"),
-    Manager("kaan", "Kaan", "Kırılım Avcısı (agresif)", "🚀", "Aralık kırılımlarını hacim ve yeni para girişiyle teyit eder; kanıt çoksa büyük oynar.",
-            ["1H", "4H"], 3.0, 5.0, 30, aggressive=True, analyze=a_kaan),
-    Manager("selin", "Selin", "Squeeze Avcısı (agresif)", "🌪", "Volatilite aylardır en dar seviyeden patlarken yanlış taraftaki kalabalığın sıkışmasını oynar.",
-            ["15m", "1H"], 3.0, 5.0, 30, aggressive=True, analyze=a_selin),
+    Manager("kaan", "Kaan", "Kırılım Avcısı (agresif)", "🚀",
+            "Günlük 20 günlük zirve kırılımı + hacim (Turtle tarzı); 10 günlük dip kırılınca çıkar. Kanıt çoksa büyük oynar.",
+            ["1D"], 3.0, 5.0, 30, aggressive=True, analyze=a_kaan),
+    Manager("selin", "Selin", "Sıkışma Avcısı (agresif)", "🌪",
+            "Günlük volatilite 120 günün en dar seviyesinden patlarken trend yönünde girer; patlama başarısızsa hemen çıkar.",
+            ["1D"], 3.0, 5.0, 30, aggressive=True, analyze=a_selin),
 ]
 BY_ID = {m.id: m for m in ROSTER}
 

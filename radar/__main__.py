@@ -32,6 +32,13 @@ def main(argv=None) -> int:
     p.add_argument("--site", default="site")
     p.add_argument("--config", default=None)
 
+    p = sub.add_parser("test8", help="v8: yöneticilerin 5 yıllık testi (canlı fonksiyonlarla, sert maliyet)")
+    p.add_argument("--coins", type=int, default=30)
+    p.add_argument("--years", type=float, default=5.0)
+    p.add_argument("--deniz-days", type=int, default=365)
+    p.add_argument("--demo", action="store_true")
+    p.add_argument("--config", default=None)
+
     p = sub.add_parser("backtest", help="walk-forward backtest")
     p.add_argument("--coins", type=int, default=30)
     p.add_argument("--days", type=int, default=365)
@@ -92,6 +99,15 @@ def main(argv=None) -> int:
     if a.cmd == "commands":
         from . import commands
         commands.run(Path(a.site), a.config)
+        return 0
+
+    if a.cmd == "test8":
+        from . import bt2
+        client = None
+        if a.demo:
+            from .demo import DemoClient
+            client = DemoClient(hours=24 * 900)
+        bt2.run(client=client, cfg_path=a.config, n_coins=a.coins, years=a.years, deniz_days=a.deniz_days)
         return 0
 
     if a.cmd == "backtest":

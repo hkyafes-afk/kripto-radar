@@ -168,10 +168,10 @@ class OKXClient:
                 last = e
         raise last
 
-    def history_candles(self, inst_id: str, bar: str, start_ms: int) -> pd.DataFrame:
+    def history_candles(self, inst_id: str, bar: str, start_ms: int, max_pages: int = 60) -> pd.DataFrame:
         """start_ms'den bugüne kadar sayfalayarak geçmiş mumlar (backtest için)."""
         frames, after = [], None
-        for _ in range(60):
+        for _ in range(max_pages):
             params = {"instId": inst_id, "limit": "100"}
             if after:
                 params["after"] = str(after)

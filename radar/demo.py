@@ -101,7 +101,7 @@ class DemoClient:
         df = self._resample(self._series(self._sym(inst)), bar)
         return df.iloc[-limit:].copy()
 
-    def history_candles(self, inst, bar, start_ms):
+    def history_candles(self, inst, bar, start_ms, max_pages=60):
         self.calls += 1
         df = self._resample(self._series(self._sym(inst)), bar)
         return df[df.index >= pd.to_datetime(start_ms, unit="ms", utc=True)].copy()
