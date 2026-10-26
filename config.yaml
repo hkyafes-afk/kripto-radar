@@ -1,0 +1,81 @@
+# ─────────────────────────────────────────────────────────────
+#  KRİPTO RADAR — AYARLAR
+#  Bu dosyayı GitHub'da telefondan düzenleyebilirsin (kalem ikonu).
+#  Kaydettiğin an bir sonraki taramada geçerli olur.
+# ─────────────────────────────────────────────────────────────
+
+borsa:
+  # OKX: GitHub sunucularından (ABD) erişilebilen, likit vadeli piyasa.
+  # Binance ABD IP'lerine 451 hatası veriyor, o yüzden ana veri kaynağı OKX.
+  ana: okx
+  # Diğer borsaların funding oranlarını karşılaştırma için çek (erişilemeyen atlanır)
+  funding_karsilastir: [binance, bybit, bitget, gate]
+
+tarama:
+  coin_sayisi: 100          # 24s hacme göre en likit N perpetual
+  min_hacim_usd: 5000000    # 24s hacmi bunun altındaki coinler taranmaz
+  periyot: 4H               # sinyal mumu (1H, 4H). 4H = daha az gürültü
+  haric: [USDC, DAI, TUSD, FDUSD, USDE, PYUSD, USDG]  # stabil coinler
+
+gostergeler:
+  supertrend_atr: 10
+  supertrend_carpan: 3.0
+  rsi: 14
+  adx: 14
+  adx_trend_min: 20         # ADX bunun üstündeyse "trend var" sayılır
+  bollinger: 20
+  bollinger_std: 2.0
+  ema_hizli: 20
+  ema_yavas: 50
+  gunluk_ema: 50            # günlük trend filtresi
+  divergence_pivot: 3       # pivot genişliği (sağ/sol mum)
+  divergence_bakis: 30      # kaç mum geriye bakılsın
+
+funding:
+  long_esik_yillik: -10     # %  bunun altı = shortlar kalabalık (long lehine)
+  short_esik_yillik: 50     # %  bunun üstü = longlar kalabalık (short lehine)
+  trend_asiri_yillik: 60    # %  trend long'da bu üstü kalabalık sayılır (puan düşer)
+
+rejim:
+  # BTC günlük EMA200 altındaysa (ayı) longlar, üstündeyse (boğa) shortlar sönümlenir.
+  # Araştırma: kriptoda zaman-serisi momentumu boğa piyasasında yoğunlaşıyor,
+  # short tarafı tarihsel olarak zayıf. O yüzden shortlara ek ceza var.
+  ayi_long_carpan: 0.5
+  boga_short_carpan: 0.6
+  short_temel_carpan: 0.85
+  ayi_donus_long_carpan: 0.6
+
+sinyal:
+  guclu_esik: 65            # bu puan ve üstü = güçlü sinyal (bildirim + deftere yaz)
+  izle_esik: 50             # bu puan ve üstü = izleme listesi
+  # Risk seviyeleri ATR katı olarak. Defter bu kurallarla otomatik kapatır.
+  trend:   {stop_atr: 1.5, hedef_atr: 3.0, max_saat: 168}
+  donus:   {stop_atr: 1.2, hedef_atr: 2.0, max_saat: 72}
+
+defter:
+  # Kağıt üstü işlem defteri: gerçek para yok, sadece sinyallerin karnesi.
+  komisyon_gidis_donus: 0.10   # %  (OKX taker 0.05 x2)
+  kayma: 0.05                  # %  tahmini slippage
+  tekrar_bekleme_saat: 24      # aynı coin+setup kapandıktan sonra yeniden açılmadan önce
+  min_ornek: 30                # karar için gereken kapanmış işlem sayısı
+
+harvest:
+  min_perp_hacim_usd: 10000000
+  min_spot_hacim_usd: 2000000
+  min_yillik: 8              # % 30g ortalama bunun altıysa listeleme
+  min_pozitif_oran: 0.75     # funding'lerin en az %75'i pozitif olmalı
+  gun: 30
+  liste: 15
+  # 4 bacak maliyet: spot al/sat + perp aç/kapa (taker). Başabaş gün hesabı için.
+  maliyet_yuzde: 0.30
+
+bildirim:
+  telegram: true
+  whatsapp: true             # CALLMEBOT secret'ları girilmişse çalışır
+  gunluk_ozet_saat: 9        # İstanbul saatiyle günlük özet
+  saat_dilimi: Europe/Istanbul
+  max_sinyal_mesaj: 8        # tek mesajda en fazla kaç sinyal
+
+dashboard:
+  # Boş bırakırsan otomatik: https://KULLANICI.github.io/REPO/
+  url: ""

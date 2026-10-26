@@ -1,0 +1,97 @@
+"""Ayarları config.yaml'dan okur, eksik/bozuk alanlarda güvenli varsayılanları kullanır."""
+from __future__ import annotations
+
+import copy
+import os
+from pathlib import Path
+
+import yaml
+
+ROOT = Path(__file__).resolve().parent.parent
+
+DEFAULTS: dict = {
+    "borsa": {"ana": "okx", "funding_karsilastir": ["binance", "bybit", "bitget", "gate"]},
+    "tarama": {
+        "coin_sayisi": 100,
+        "min_hacim_usd": 5_000_000,
+        "periyot": "4H",
+        "haric": ["USDC", "DAI", "TUSD", "FDUSD", "USDE", "PYUSD", "USDG"],
+    },
+    "gostergeler": {
+        "supertrend_atr": 10,
+        "supertrend_carpan": 3.0,
+        "rsi": 14,
+        "adx": 14,
+        "adx_trend_min": 20,
+        "bollinger": 20,
+        "bollinger_std": 2.0,
+        "ema_hizli": 20,
+        "ema_yavas": 50,
+        "gunluk_ema": 50,
+        "divergence_pivot": 3,
+        "divergence_bakis": 30,
+    },
+    "funding": {"long_esik_yillik": -10, "short_esik_yillik": 50, "trend_asiri_yillik": 60},
+    "rejim": {
+        "ayi_long_carpan": 0.5,
+        "boga_short_carpan": 0.6,
+        "short_temel_carpan": 0.85,
+        "ayi_donus_long_carpan": 0.6,
+    },
+    "sinyal": {
+        "guclu_esik": 65,
+        "izle_esik": 50,
+        "trend": {"stop_atr": 1.5, "hedef_atr": 3.0, "max_saat": 168},
+        "donus": {"stop_atr": 1.2, "hedef_atr": 2.0, "max_saat": 72},
+    },
+    "defter": {
+        "komisyon_gidis_donus": 0.10,
+        "kayma": 0.05,
+        "tekrar_bekleme_saat": 24,
+        "min_ornek": 30,
+    },
+    "harvest": {
+        "min_perp_hacim_usd": 10_000_000,
+        "min_spot_hacim_usd": 2_000_000,
+        "min_yillik": 8,
+        "min_pozitif_oran": 0.75,
+        "gun": 30,
+        "liste": 15,
+        "maliyet_yuzde": 0.30,
+    },
+    "bildirim": {
+        "telegram": True,
+        "whatsapp": True,
+        "gunluk_ozet_saat": 9,
+        "saat_dilimi": "Europe/Istanbul",
+        "max_sinyal_mesaj": 8,
+    },
+    "dashboard": {"url": ""},
+}
+
+
+def _merge(base: dict, override: dict) -> dict:
+    out = copy.deepcopy(base)
+    for k, v in (override or {}).items():
+        if isinstance(v, dict) and isinstance(out.get(k), dict):
+            out[k] = _merge(out[k], v)
+        elif v is not None:
+            out[k] = v
+    return out
+
+
+def load_config(path: str | os.PathLike | None = None) -> dict:
+    p = Path(path) if path else ROOT / "config.yaml"
+    user: dict = {}
+    if p.exists():
+        try:
+            user = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+        except yaml.YAMLError as e:  # kullanıcı dosyayı bozarsa bot yine çalışsın
+            print(f"[uyarı] config.yaml okunamadı, varsayılanlar kullanılıyor: {e}")
+    cfg = _merge(DEFAULTS, user)
+    if not cfg["dashboard"].get("url"):
+        repo = os.environ.get("GITHUB_REPOSITORY", "")
+        if "/" in repo:
+            owner, name = repo.split("/", 1)
+            cfg["dashboard"]["url"] = f"https://{owner.lower()}.github.io/{name}/"
+    return cfg

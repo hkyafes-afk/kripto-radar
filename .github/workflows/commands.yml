@@ -1,0 +1,51 @@
+name: Telegram komutları
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"   # 10 dakikada bir Telegram mesajlarını kontrol et
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write             # /tara komutu tarama iş akışını tetikleyebilsin
+
+concurrency:
+  group: radar
+  cancel-in-progress: false
+
+jobs:
+  commands:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Telegram ayarlı mı?
+        id: chk
+        env:
+          T: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        run: if [ -n "$T" ]; then echo "ok=1" >> "$GITHUB_OUTPUT"; else echo "TELEGRAM_BOT_TOKEN yok, atlanıyor."; fi
+
+      - uses: actions/checkout@v5
+        if: steps.chk.outputs.ok == '1'
+
+      - uses: actions/setup-python@v6
+        if: steps.chk.outputs.ok == '1'
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Kur ve çalıştır
+        if: steps.chk.outputs.ok == '1'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pip install -q -r requirements.txt
+          bash scripts/site.sh pull
+          before=$(sha256sum site/state.json 2>/dev/null || echo yok)
+          python -m radar commands --site site
+          after=$(sha256sum site/state.json 2>/dev/null || echo yok)
+          if [ "$before" != "$after" ]; then
+            echo "durum değişti, kaydediliyor"
+            bash scripts/site.sh push "komut"
+          fi
