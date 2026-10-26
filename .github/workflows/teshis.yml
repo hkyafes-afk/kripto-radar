@@ -1,0 +1,20 @@
+name: Teşhis
+on: workflow_dispatch
+jobs:
+  t:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          python3 - <<'PY'
+          import json, urllib.request
+          d = json.load(urllib.request.urlopen("https://www.okx.com/api/v5/public/instruments?instType=SWAP"))["data"]
+          by = {x["instId"]: x for x in d}
+          for i in ["BTC-USDT-SWAP","CL-USDT-SWAP","SOXS-USDT-SWAP","EWZ-USDT-SWAP","GRASS-USDT-SWAP","LIGHT-USDT-SWAP"]:
+              x = by.get(i, {})
+              keep = {k: v for k, v in x.items() if v not in ("", None)}
+              print("::notice title=" + i + "::" + json.dumps(keep)[:1500])
+          from collections import Counter
+          for k in ("instCategory","instFamily","ctValCcy","ruleType","groupId"):
+              c = Counter(str(x.get(k)) for x in d)
+              print("::notice title=say " + k + "::" + json.dumps(c.most_common(8)))
+          PY
