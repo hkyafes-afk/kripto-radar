@@ -87,6 +87,73 @@ def test_handoff_between_processes():
                 os.environ.pop(k, None)
 
 
+def test_self_healing_watchdog_and_crash_restart():
+    """GitHub zamanlayıcısına bağlı kalmadan: takılan döngü ve hatayla biten döngü halefini kendisi çağırır;
+    elle durdurma (KeyboardInterrupt) kendini yeniden başlatmaz."""
+    import threading
+    from radar import config, lease
+    from radar.demo import DemoClient
+    from radar.engine import Engine
+    calls = []
+    orig = lease.dispatch_successor
+    lease.dispatch_successor = lambda: calls.append(1) or True
+    marker = config.ROOT / ".halef_gonderildi"
+    with tempfile.TemporaryDirectory() as tmp:
+        remote = os.path.join(tmp, "origin.git")
+        subprocess.run(["git", "init", "-q", "--bare", remote], check=True)
+        os.environ.update(LEASE_REMOTE=remote, GITHUB_RUN_ID="S", DEVIR="0")
+        try:
+            # 1) iç bekçi: ana döngü 5 dk+ ilerlemezse yedeği bir kez çağırır
+            e = Engine(Path(tmp) / "w", client=DemoClient(), notify=False, demo=True)
+            e.publish_on, e.WATCH_EVERY = True, 0.05
+            e.loop_beat = time.time() - 400
+            th = threading.Thread(target=e._inner_watchdog, daemon=True)
+            th.start()
+            t0 = time.time()
+            while not calls and time.time() - t0 < 3:
+                time.sleep(0.05)
+            time.sleep(0.3)
+            e.loop_done = True
+            assert calls == [1] and e.successor_sent, calls
+            assert marker.exists()
+            marker.unlink()
+
+            # 2) döngü hatayla biterse: nöbeti bırakır ve halefini çağırır
+            calls.clear()
+            e = Engine(Path(tmp) / "c", client=DemoClient(), notify=False, demo=True)
+            e.publish_on, e.MIN_RUN_FOR_RESTART_S, e.fail_streak = True, 0, 29
+            e.publish = lambda force=False: True
+            e.process_hits = lambda: (_ for _ in ()).throw(RuntimeError("test çökmesi"))
+            try:
+                e.run_loop(minutes=30)
+                raise AssertionError("hata yükselmeliydi")
+            except RuntimeError:
+                pass
+            assert calls == [1], calls
+            L, _ = lease.read()
+            assert L["holder"] == "S" and L["released"], L
+            marker.unlink(missing_ok=True)
+
+            # 3) elle durdurma: halef çağrılmaz
+            calls.clear()
+            e = Engine(Path(tmp) / "k", client=DemoClient(), notify=False, demo=True)
+            e.publish_on, e.MIN_RUN_FOR_RESTART_S = True, 0
+            e.publish = lambda force=False: True
+            e.process_hits = lambda: (_ for _ in ()).throw(KeyboardInterrupt())
+            try:
+                e.run_loop(minutes=30)
+            except KeyboardInterrupt:
+                pass
+            assert calls == [], calls
+        finally:
+            lease.dispatch_successor = orig
+            marker.unlink(missing_ok=True)
+            for k in ("LEASE_REMOTE", "GITHUB_RUN_ID", "DEVIR"):
+                os.environ.pop(k, None)
+
+
 if __name__ == "__main__":
     test_handoff_between_processes()
     print("✓ test_handoff_between_processes")
+    test_self_healing_watchdog_and_crash_restart()
+    print("✓ test_self_healing_watchdog_and_crash_restart")

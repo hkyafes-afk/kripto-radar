@@ -153,6 +153,8 @@ class Engine:
         self.alerted: dict = {}
         self.successor_sent = False
         self.lost_lease = False
+        self.loop_beat = time.time()       # ana döngünün son turu (iç bekçi takılmayı bununla anlar)
+        self.loop_done = False
         self.my_hb = 0
         self.lease_thread: threading.Thread | None = None
         self.lease_ok = None
@@ -1562,6 +1564,39 @@ class Engine:
         if self.tg:
             self.tg.stop()
 
+    # ── kendi kendini onarma ─────────────────────────────────────────
+    # GitHub'ın zamanlanmış işleri (bekçi) "en iyi çaba"dır, saatlerce gecikebilir. Zincir ona bağlı kalmasın:
+    #   - planlı halef çağrısı başarısızsa 30 sn arayla yeniden denenir,
+    #   - döngü beklenmedik hatayla erken biterse halefini kendisi çağırır,
+    #   - ana döngü takılırsa iç bekçi bunu görür ve yedek döngüyü çağırır (nabız durduğu için yedek 3 dk içinde devralır).
+    HANG_S = 300
+    WATCH_EVERY = 15
+    MIN_RUN_FOR_RESTART_S = 600          # açılışta çöken döngü kendini sonsuz yeniden başlatmasın
+
+    def call_successor(self, why: str) -> bool:
+        if not self.publish_on or self.successor_sent or self.lost_lease:
+            return False
+        ok = lease.dispatch_successor()
+        if ok:
+            self.successor_sent = True
+            try:
+                # site/ değil depo kökü: site/ gh-pages'e yayınlanır ve sonraki döngüye geri gelirdi
+                (Path(ROOT) / ".halef_gonderildi").write_text(why, encoding="utf-8")
+            except OSError:
+                pass
+        print(f"[nöbet] halef çağrısı ({why}): {'gönderildi' if ok else 'BAŞARISIZ'}")
+        return ok
+
+    def _inner_watchdog(self):
+        while not self.loop_done:
+            time.sleep(self.WATCH_EVERY)
+            if self.loop_done or self.lost_lease or self.successor_sent:
+                continue
+            stuck = time.time() - self.loop_beat
+            if stuck > self.HANG_S and self.call_successor(f"ana döngü {stuck:.0f} sn ilerlemedi"):
+                self._notify(f"🩺 <b>Sistem</b>: ana döngü {stuck / 60:.0f} dk takıldı; yedek döngü çağrıldı, "
+                             f"en geç birkaç dakika içinde devralacak.")
+
     def run_loop(self, minutes: float | None = None):
         minutes = minutes or self.live["dongu_dakika"]
         end = self.started + minutes * 60
@@ -1598,9 +1633,14 @@ class Engine:
             self.open_positions(strong)
         self.publish(force=True)
         self.lease_heartbeat(force=True)
+        self.loop_beat = time.time()
+        if self.publish_on:
+            threading.Thread(target=self._inner_watchdog, daemon=True, name="ic-bekci").start()
+        crashed = False
         try:
             while time.time() < end and not self.lost_lease:
                 now = time.time()
+                self.loop_beat = now
                 try:
                     self.process_hits()
                     self.process_orders()
@@ -1654,9 +1694,10 @@ class Engine:
                     elif now - self.t["pub"] >= 15 * 60:
                         self.publish()
                     self.lease_heartbeat()
-                    if self.publish_on and not self.successor_sent and end - now <= 360:
-                        self.successor_sent = True
-                        lease.dispatch_successor()
+                    if (self.publish_on and not self.successor_sent and end - now <= 360
+                            and now - self.t.get("succ_try", 0) >= 30):
+                        self.t["succ_try"] = now      # başarısızsa 30 sn sonra yeniden dener
+                        self.call_successor("planlı devir")
                     self.cycles += 1
                     self.fail_streak = 0
                     if self.state.get("loop_alarm"):
@@ -1674,12 +1715,21 @@ class Engine:
                     time.sleep(min(30, 2 * self.fail_streak))
                     continue
                 time.sleep(0.25)
+        except Exception:
+            crashed = True                   # (iptal/KeyboardInterrupt sayılmaz: elle durdurma kendini yeniden başlatmaz)
+            raise
         finally:
+            self.loop_done = True
             if self.lost_lease:
                 (Path(self.site) / ".nobet_yok").write_text("1", encoding="utf-8")
             else:
                 self.publish(force=True)
                 self.lease_heartbeat(force=True, released=True)
+                ran = time.time() - self.started
+                if crashed and ran >= self.MIN_RUN_FOR_RESTART_S:
+                    self.call_successor("döngü hatayla bitti")
+                elif not crashed and time.time() >= end - 360 and not self.successor_sent:
+                    self.call_successor("planlı devir (son deneme)")
             self.stop_live()
         o = self.stats_counter
         dm = (self.payload or {}).get("ledger", {}).get("stats", {}).get("demo", {})

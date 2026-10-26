@@ -36,6 +36,7 @@ jobs:
             live=0
           fi
           echo "Nöbette sağlıklı döngü: $live, devir: $DEVIR"
+          echo "START_TS=$(date +%s)" >> "$GITHUB_ENV"
           if [ "$live" = "1" ] && [ "$DEVIR" != "1" ]; then echo "calis=0" >> "$GITHUB_OUTPUT"; else echo "calis=1" >> "$GITHUB_OUTPUT"; fi
 
       - uses: actions/setup-python@v6
@@ -70,6 +71,19 @@ jobs:
         run: |
           if [ -f site/.nobet_yok ]; then echo "Nöbet alınmadı, yayın atlandı."; exit 0; fi
           bash scripts/site.sh push "döngü sonu"
+
+      # Süreç sert çökerse (bellek, sinyal vb.) Python'un kendi kurtarması çalışamaz; zinciri burası sürdürür.
+      # Halef nabız 3 dk eskiyince en son yedekle devralır. Açılışta çökme döngüsüne girmemek için ≥10 dk çalışmış olmalı.
+      - name: Çökme kurtarma
+        if: failure() && steps.nobet.outputs.calis == '1'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -f .halef_gonderildi ] || [ -f site/.nobet_yok ]; then echo "Halef zaten çağrıldı / nöbet bizde değil."; exit 0; fi
+          ran=$(( $(date +%s) - ${START_TS:-$(date +%s)} ))
+          if [ "$ran" -lt 600 ]; then echo "::warning::Döngü ${ran} sn içinde çöktü; döngüsel çökmeye karşı yeniden başlatma bekçiye bırakıldı."; exit 0; fi
+          gh workflow run canli.yml -R "$GITHUB_REPOSITORY" --ref "$GITHUB_REF_NAME" -f devir=1
+          echo "::notice::Döngü çöktü (${ran} sn sonra); yeni döngü başlatıldı."
 
       - name: Haftalık karneyi kaydet
         if: always() && steps.nobet.outputs.calis == '1'
