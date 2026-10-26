@@ -1,134 +1,268 @@
 {
  "managers": {
+  "bas": {
+   "name": "Baş Trader",
+   "title": "Tam yetkili ana trader",
+   "risk_pct": 0.5,
+   "all": {
+    "n": 626,
+    "win_pct": 39.3,
+    "avg_r": 0.152,
+    "med_r": -0.318,
+    "sum_r": 95.3,
+    "pf": 1.35,
+    "best_r": 6.17,
+    "worst_r": -1.2,
+    "avg_hours": 691.6,
+    "t_stat": 3.05
+   },
+   "is": {
+    "n": 312,
+    "win_pct": 35.3,
+    "avg_r": 0.11,
+    "med_r": -0.393,
+    "sum_r": 34.2,
+    "pf": 1.24,
+    "best_r": 4.4,
+    "worst_r": -1.13,
+    "avg_hours": 687.3,
+    "t_stat": 1.55
+   },
+   "oos": {
+    "n": 314,
+    "win_pct": 43.3,
+    "avg_r": 0.194,
+    "med_r": -0.242,
+    "sum_r": 61.1,
+    "pf": 1.46,
+    "best_r": 6.17,
+    "worst_r": -1.2,
+    "avg_hours": 695.8,
+    "t_stat": 2.75
+   },
+   "long": {
+    "n": 311,
+    "win_pct": 37.9,
+    "avg_r": 0.198,
+    "med_r": -0.497,
+    "sum_r": 61.7,
+    "pf": 1.4,
+    "best_r": 6.17,
+    "worst_r": -1.2,
+    "avg_hours": 582.4,
+    "t_stat": 2.49
+   },
+   "short": {
+    "n": 315,
+    "win_pct": 40.6,
+    "avg_r": 0.107,
+    "med_r": -0.215,
+    "sum_r": 33.6,
+    "pf": 1.28,
+    "best_r": 3.25,
+    "worst_r": -1.08,
+    "avg_hours": 799.3,
+    "t_stat": 1.77
+   },
+   "by_year": {
+    "2021": {
+     "n": 10,
+     "avg_r": -0.351,
+     "sum_r": -3.5
+    },
+    "2022": {
+     "n": 79,
+     "avg_r": 0.141,
+     "sum_r": 11.2
+    },
+    "2023": {
+     "n": 109,
+     "avg_r": 0.303,
+     "sum_r": 33.1
+    },
+    "2024": {
+     "n": 136,
+     "avg_r": 0.11,
+     "sum_r": 15.0
+    },
+    "2025": {
+     "n": 130,
+     "avg_r": -0.292,
+     "sum_r": -38.0
+    },
+    "2026": {
+     "n": 162,
+     "avg_r": 0.479,
+     "sum_r": 77.6
+    }
+   },
+   "equity": {
+    "final": 1485.92,
+    "cagr_pct": 8.24,
+    "max_dd_pct": -24.16,
+    "sharpe": 0.59,
+    "sortino": 0.82,
+    "sr_daily": 0.03099882,
+    "T": 1825,
+    "skew": 0.25049377,
+    "kurt": 7.85010344,
+    "days": 1826,
+    "dsr": 0.0,
+    "sr0_annual": 5.28
+   },
+   "equity_weather": {
+    "final": 1464.25,
+    "cagr_pct": 7.92,
+    "max_dd_pct": -21.99,
+    "sharpe": 0.59,
+    "sortino": 0.82,
+    "sr_daily": 0.03097372,
+    "T": 1825,
+    "skew": 0.31309341,
+    "kurt": 8.11659475,
+    "days": 1826,
+    "dsr": 0.0,
+    "sr0_annual": 5.28
+   },
+   "exits": {
+    "kural": 295,
+    "stop": 154,
+    "iz/başabaş stop": 152,
+    "süre": 13,
+    "açık (veri sonu)": 11,
+    "hedef": 1
+   },
+   "period_days": 1825
+  },
   "kemal": {
    "name": "Kemal",
    "title": "Trend Yöneticisi (çekirdek)",
    "risk_pct": 1.5,
    "all": {
-    "n": 917,
-    "win_pct": 33.2,
-    "avg_r": 0.046,
-    "med_r": -0.178,
-    "sum_r": 42.2,
-    "pf": 1.17,
-    "best_r": 4.9,
-    "worst_r": -1.02,
-    "avg_hours": 379.4,
-    "t_stat": 1.63
+    "n": 958,
+    "win_pct": 32.7,
+    "avg_r": 0.036,
+    "med_r": -0.194,
+    "sum_r": 34.3,
+    "pf": 1.13,
+    "best_r": 4.87,
+    "worst_r": -1.04,
+    "avg_hours": 379.7,
+    "t_stat": 1.29
    },
    "is": {
-    "n": 434,
-    "win_pct": 31.3,
-    "avg_r": 0.003,
-    "med_r": -0.233,
-    "sum_r": 1.4,
-    "pf": 1.01,
-    "best_r": 4.9,
-    "worst_r": -1.02,
-    "avg_hours": 371.1,
-    "t_stat": 0.08
+    "n": 472,
+    "win_pct": 31.1,
+    "avg_r": -0.017,
+    "med_r": -0.24,
+    "sum_r": -8.3,
+    "pf": 0.94,
+    "best_r": 4.87,
+    "worst_r": -1.04,
+    "avg_hours": 368.1,
+    "t_stat": -0.44
    },
    "oos": {
-    "n": 483,
-    "win_pct": 34.8,
-    "avg_r": 0.084,
-    "med_r": -0.148,
-    "sum_r": 40.8,
+    "n": 486,
+    "win_pct": 34.2,
+    "avg_r": 0.087,
+    "med_r": -0.155,
+    "sum_r": 42.5,
     "pf": 1.35,
-    "best_r": 4.3,
-    "worst_r": -1.01,
-    "avg_hours": 386.8,
-    "t_stat": 2.23
+    "best_r": 4.26,
+    "worst_r": -1.03,
+    "avg_hours": 390.9,
+    "t_stat": 2.24
    },
    "long": {
-    "n": 549,
-    "win_pct": 28.6,
-    "avg_r": 0.02,
-    "med_r": -0.203,
-    "sum_r": 11.1,
-    "pf": 1.07,
-    "best_r": 4.9,
-    "worst_r": -1.02,
-    "avg_hours": 229.3,
-    "t_stat": 0.52
+    "n": 571,
+    "win_pct": 27.7,
+    "avg_r": 0.006,
+    "med_r": -0.221,
+    "sum_r": 3.6,
+    "pf": 1.02,
+    "best_r": 4.87,
+    "worst_r": -1.04,
+    "avg_hours": 226.1,
+    "t_stat": 0.17
    },
    "short": {
-    "n": 368,
-    "win_pct": 39.9,
-    "avg_r": 0.085,
-    "med_r": -0.138,
-    "sum_r": 31.1,
-    "pf": 1.35,
+    "n": 387,
+    "win_pct": 40.1,
+    "avg_r": 0.079,
+    "med_r": -0.143,
+    "sum_r": 30.6,
+    "pf": 1.32,
     "best_r": 2.93,
-    "worst_r": -1.01,
-    "avg_hours": 603.3,
-    "t_stat": 2.14
+    "worst_r": -1.03,
+    "avg_hours": 606.3,
+    "t_stat": 2.05
    },
    "by_year": {
     "2021": {
-     "n": 22,
-     "avg_r": -0.185,
-     "sum_r": -4.1
+     "n": 24,
+     "avg_r": -0.174,
+     "sum_r": -4.2
     },
     "2022": {
-     "n": 106,
-     "avg_r": -0.002,
-     "sum_r": -0.2
+     "n": 118,
+     "avg_r": -0.021,
+     "sum_r": -2.5
     },
     "2023": {
-     "n": 134,
-     "avg_r": 0.094,
-     "sum_r": 12.6
+     "n": 150,
+     "avg_r": 0.064,
+     "sum_r": 9.6
     },
     "2024": {
-     "n": 210,
-     "avg_r": 0.09,
-     "sum_r": 18.8
+     "n": 222,
+     "avg_r": 0.072,
+     "sum_r": 16.0
     },
     "2025": {
-     "n": 194,
-     "avg_r": -0.086,
-     "sum_r": -16.6
+     "n": 204,
+     "avg_r": -0.084,
+     "sum_r": -17.1
     },
     "2026": {
-     "n": 251,
-     "avg_r": 0.126,
-     "sum_r": 31.7
+     "n": 240,
+     "avg_r": 0.135,
+     "sum_r": 32.4
     }
    },
    "equity": {
-    "final": 1398.94,
-    "cagr_pct": 6.94,
-    "max_dd_pct": -33.77,
-    "sharpe": 0.42,
-    "sortino": 0.61,
-    "sr_daily": 0.02217415,
+    "final": 1435.97,
+    "cagr_pct": 7.5,
+    "max_dd_pct": -35.79,
+    "sharpe": 0.44,
+    "sortino": 0.65,
+    "sr_daily": 0.02302898,
     "T": 1825,
-    "skew": 0.6470017,
-    "kurt": 9.46007641,
+    "skew": 0.69310883,
+    "kurt": 9.55117573,
     "days": 1826,
     "dsr": 0.0,
-    "sr0_annual": 2.25
+    "sr0_annual": 5.28
    },
    "equity_weather": {
-    "final": 1409.09,
-    "cagr_pct": 7.1,
-    "max_dd_pct": -32.82,
-    "sharpe": 0.43,
-    "sortino": 0.62,
-    "sr_daily": 0.02262969,
+    "final": 1509.3,
+    "cagr_pct": 8.58,
+    "max_dd_pct": -34.29,
+    "sharpe": 0.49,
+    "sortino": 0.7,
+    "sr_daily": 0.02556307,
     "T": 1825,
-    "skew": 0.59632227,
-    "kurt": 9.49868003,
+    "skew": 0.57238885,
+    "kurt": 9.41613379,
     "days": 1826,
     "dsr": 0.0,
-    "sr0_annual": 2.25
+    "sr0_annual": 5.28
    },
    "exits": {
-    "iz/başabaş stop": 491,
-    "kural": 421,
-    "açık (veri sonu)": 3,
-    "süre": 2
+    "iz/başabaş stop": 518,
+    "kural": 435,
+    "süre": 3,
+    "açık (veri sonu)": 2
    },
    "period_days": 1825
   },
@@ -137,100 +271,100 @@
    "title": "Likidite Sağlayıcı",
    "risk_pct": 1.0,
    "all": {
-    "n": 233,
-    "win_pct": 46.4,
-    "avg_r": -0.278,
-    "med_r": -0.424,
-    "sum_r": -64.9,
-    "pf": 0.58,
+    "n": 597,
+    "win_pct": 48.4,
+    "avg_r": -0.613,
+    "med_r": -0.316,
+    "sum_r": -366.2,
+    "pf": 0.39,
     "best_r": 0.96,
-    "worst_r": -2.14,
-    "avg_hours": 1.6,
-    "t_stat": -3.95
+    "worst_r": -4.16,
+    "avg_hours": 1.7,
+    "t_stat": -10.5
    },
    "is": {
     "n": 0
    },
    "oos": {
-    "n": 233,
-    "win_pct": 46.4,
-    "avg_r": -0.278,
-    "med_r": -0.424,
-    "sum_r": -64.9,
-    "pf": 0.58,
+    "n": 597,
+    "win_pct": 48.4,
+    "avg_r": -0.613,
+    "med_r": -0.316,
+    "sum_r": -366.2,
+    "pf": 0.39,
     "best_r": 0.96,
-    "worst_r": -2.14,
-    "avg_hours": 1.6,
-    "t_stat": -3.95
+    "worst_r": -4.16,
+    "avg_hours": 1.7,
+    "t_stat": -10.5
    },
    "long": {
-    "n": 114,
-    "win_pct": 43.9,
-    "avg_r": -0.354,
-    "med_r": -1.185,
-    "sum_r": -40.4,
-    "pf": 0.51,
+    "n": 308,
+    "win_pct": 46.1,
+    "avg_r": -0.674,
+    "med_r": -1.674,
+    "sum_r": -207.7,
+    "pf": 0.36,
     "best_r": 0.93,
-    "worst_r": -1.81,
-    "avg_hours": 1.6,
-    "t_stat": -3.46
+    "worst_r": -4.16,
+    "avg_hours": 1.7,
+    "t_stat": -8.36
    },
    "short": {
-    "n": 119,
-    "win_pct": 48.7,
-    "avg_r": -0.206,
-    "med_r": -0.078,
-    "sum_r": -24.5,
-    "pf": 0.66,
+    "n": 289,
+    "win_pct": 50.9,
+    "avg_r": -0.548,
+    "med_r": 0.394,
+    "sum_r": -158.5,
+    "pf": 0.43,
     "best_r": 0.96,
-    "worst_r": -2.14,
+    "worst_r": -3.91,
     "avg_hours": 1.7,
-    "t_stat": -2.12
+    "t_stat": -6.48
    },
    "by_year": {
     "2025": {
-     "n": 51,
-     "avg_r": -0.233,
-     "sum_r": -11.9
+     "n": 111,
+     "avg_r": -0.521,
+     "sum_r": -57.8
     },
     "2026": {
-     "n": 182,
-     "avg_r": -0.291,
-     "sum_r": -53.0
+     "n": 486,
+     "avg_r": -0.635,
+     "sum_r": -308.4
     }
    },
    "equity": {
-    "final": 557.07,
-    "cagr_pct": -45.3,
-    "max_dd_pct": -45.28,
-    "sharpe": -3.31,
-    "sortino": -3.03,
-    "sr_daily": -0.17304479,
-    "T": 353,
-    "skew": -1.51395622,
-    "kurt": 9.41605866,
-    "days": 354,
+    "final": 65.86,
+    "cagr_pct": -93.61,
+    "max_dd_pct": -93.65,
+    "sharpe": -8.34,
+    "sortino": -10.29,
+    "sr_daily": -0.4367796,
+    "T": 360,
+    "skew": -0.78499316,
+    "kurt": 3.66418823,
+    "days": 361,
     "dsr": 0.0,
-    "sr0_annual": 2.25
+    "sr0_annual": 5.28
    },
    "equity_weather": {
-    "final": 665.05,
-    "cagr_pct": -34.33,
-    "max_dd_pct": -34.67,
-    "sharpe": -2.91,
-    "sortino": -2.42,
-    "sr_daily": -0.15213609,
-    "T": 353,
-    "skew": -1.76701683,
-    "kurt": 11.38984946,
-    "days": 354,
+    "final": 107.41,
+    "cagr_pct": -89.52,
+    "max_dd_pct": -89.65,
+    "sharpe": -8.2,
+    "sortino": -9.46,
+    "sr_daily": -0.42918899,
+    "T": 360,
+    "skew": -1.0636896,
+    "kurt": 4.809754,
+    "days": 361,
     "dsr": 0.0,
-    "sr0_annual": 2.25
+    "sr0_annual": 5.28
    },
    "exits": {
-    "iz/başabaş stop": 113,
-    "hedef": 106,
-    "süre": 14
+    "iz/başabaş stop": 291,
+    "hedef": 285,
+    "süre": 21
    },
    "period_days": 365
   },
@@ -239,64 +373,64 @@
    "title": "Aşırılık Avcısı",
    "risk_pct": 1.0,
    "all": {
-    "n": 39,
-    "win_pct": 51.3,
-    "avg_r": -0.037,
-    "med_r": 0.002,
-    "sum_r": -1.5,
-    "pf": 0.9,
+    "n": 40,
+    "win_pct": 50.0,
+    "avg_r": -0.074,
+    "med_r": -0.005,
+    "sum_r": -2.9,
+    "pf": 0.81,
     "best_r": 1.54,
-    "worst_r": -1.05,
-    "avg_hours": 126.2,
-    "t_stat": -0.28
+    "worst_r": -1.08,
+    "avg_hours": 123.6,
+    "t_stat": -0.55
    },
    "is": {
-    "n": 23,
-    "win_pct": 52.2,
-    "avg_r": -0.116,
+    "n": 25,
+    "win_pct": 52.0,
+    "avg_r": -0.113,
     "med_r": 0.002,
-    "sum_r": -2.7,
-    "pf": 0.72,
+    "sum_r": -2.8,
+    "pf": 0.74,
     "best_r": 1.54,
-    "worst_r": -1.04,
-    "avg_hours": 124.2,
-    "t_stat": -0.65
+    "worst_r": -1.07,
+    "avg_hours": 119.0,
+    "t_stat": -0.64
    },
    "oos": {
-    "n": 16,
-    "win_pct": 50.0,
-    "avg_r": 0.076,
-    "med_r": 0.113,
-    "sum_r": 1.2,
-    "pf": 1.25,
+    "n": 15,
+    "win_pct": 46.7,
+    "avg_r": -0.008,
+    "med_r": -0.013,
+    "sum_r": -0.1,
+    "pf": 0.98,
     "best_r": 1.36,
-    "worst_r": -1.05,
-    "avg_hours": 129.0,
-    "t_stat": 0.37
+    "worst_r": -1.08,
+    "avg_hours": 131.2,
+    "t_stat": -0.04
    },
    "long": {
-    "n": 26,
-    "win_pct": 38.5,
-    "avg_r": -0.218,
-    "med_r": -0.224,
-    "sum_r": -5.7,
-    "pf": 0.5,
+    "n": 27,
+    "win_pct": 37.0,
+    "avg_r": -0.258,
+    "med_r": -0.258,
+    "sum_r": -7.0,
+    "pf": 0.45,
     "best_r": 1.54,
-    "worst_r": -1.05,
-    "avg_hours": 133.8,
-    "t_stat": -1.46
+    "worst_r": -1.08,
+    "avg_hours": 129.8,
+    "t_stat": -1.73
    },
    "short": {
     "n": 13,
     "win_pct": 76.9,
-    "avg_r": 0.325,
-    "med_r": 0.492,
-    "sum_r": 4.2,
-    "pf": 2.37,
+    "avg_r": 0.31,
+    "med_r": 0.466,
+    "sum_r": 4.0,
+    "pf": 2.26,
     "best_r": 1.39,
-    "worst_r": -1.03,
+    "worst_r": -1.08,
     "avg_hours": 110.8,
-    "t_stat": 1.34
+    "t_stat": 1.26
    },
    "by_year": {
     "2021": {
@@ -305,9 +439,9 @@
      "sum_r": 0.0
     },
     "2022": {
-     "n": 3,
-     "avg_r": 0.461,
-     "sum_r": 1.4
+     "n": 4,
+     "avg_r": 0.629,
+     "sum_r": 2.5
     },
     "2023": {
      "n": 3,
@@ -315,54 +449,54 @@
      "sum_r": 1.9
     },
     "2024": {
-     "n": 16,
-     "avg_r": -0.375,
-     "sum_r": -6.0
+     "n": 17,
+     "avg_r": -0.428,
+     "sum_r": -7.3
     },
     "2025": {
      "n": 9,
-     "avg_r": -0.072,
-     "sum_r": -0.6
+     "avg_r": -0.078,
+     "sum_r": -0.7
     },
     "2026": {
-     "n": 7,
-     "avg_r": 0.266,
-     "sum_r": 1.9
+     "n": 6,
+     "avg_r": 0.097,
+     "sum_r": 0.6
     }
    },
    "equity": {
-    "final": 982.58,
-    "cagr_pct": -0.35,
-    "max_dd_pct": -8.78,
-    "sharpe": -0.08,
-    "sortino": -0.02,
-    "sr_daily": -0.00401957,
+    "final": 967.13,
+    "cagr_pct": -0.67,
+    "max_dd_pct": -10.06,
+    "sharpe": -0.14,
+    "sortino": -0.03,
+    "sr_daily": -0.00729864,
     "T": 1825,
-    "skew": -21.53960694,
-    "kurt": 743.02382067,
+    "skew": -24.71217151,
+    "kurt": 888.67684206,
     "days": 1826,
     "dsr": 0.0,
-    "sr0_annual": 2.25
+    "sr0_annual": 5.28
    },
    "equity_weather": {
-    "final": 993.35,
-    "cagr_pct": -0.13,
-    "max_dd_pct": -7.47,
-    "sharpe": -0.03,
-    "sortino": -0.01,
-    "sr_daily": -0.00147944,
+    "final": 983.99,
+    "cagr_pct": -0.32,
+    "max_dd_pct": -8.46,
+    "sharpe": -0.08,
+    "sortino": -0.02,
+    "sr_daily": -0.0040523,
     "T": 1825,
-    "skew": -15.8576146,
-    "kurt": 502.10430961,
+    "skew": -18.87648727,
+    "kurt": 628.35123193,
     "days": 1826,
     "dsr": 0.0,
-    "sr0_annual": 2.25
+    "sr0_annual": 5.28
    },
    "exits": {
     "süre": 17,
-    "stop": 12,
-    "kural": 5,
-    "hedef": 3,
+    "stop": 13,
+    "kural": 4,
+    "hedef": 4,
     "iz/başabaş stop": 2
    },
    "period_days": 1825
@@ -372,131 +506,130 @@
    "title": "Baş Analist",
    "risk_pct": 1.5,
    "all": {
-    "n": 849,
-    "win_pct": 51.2,
-    "avg_r": -0.024,
-    "med_r": 0.115,
-    "sum_r": -20.2,
-    "pf": 0.95,
-    "best_r": 2.06,
-    "worst_r": -1.15,
-    "avg_hours": 258.7,
-    "t_stat": -0.71
+    "n": 880,
+    "win_pct": 40.3,
+    "avg_r": -0.031,
+    "med_r": -0.081,
+    "sum_r": -27.0,
+    "pf": 0.94,
+    "best_r": 8.67,
+    "worst_r": -1.2,
+    "avg_hours": 272.6,
+    "t_stat": -0.72
    },
    "is": {
-    "n": 400,
-    "win_pct": 49.2,
-    "avg_r": -0.057,
-    "med_r": -0.06,
-    "sum_r": -22.9,
-    "pf": 0.88,
-    "best_r": 1.62,
-    "worst_r": -1.15,
-    "avg_hours": 249.4,
-    "t_stat": -1.19
+    "n": 433,
+    "win_pct": 37.0,
+    "avg_r": -0.079,
+    "med_r": -0.136,
+    "sum_r": -34.0,
+    "pf": 0.84,
+    "best_r": 8.67,
+    "worst_r": -1.2,
+    "avg_hours": 263.7,
+    "t_stat": -1.3
    },
    "oos": {
-    "n": 449,
-    "win_pct": 53.0,
-    "avg_r": 0.006,
-    "med_r": 0.261,
-    "sum_r": 2.7,
-    "pf": 1.01,
-    "best_r": 2.06,
-    "worst_r": -1.11,
-    "avg_hours": 267.0,
-    "t_stat": 0.13
+    "n": 447,
+    "win_pct": 43.6,
+    "avg_r": 0.016,
+    "med_r": -0.057,
+    "sum_r": 7.0,
+    "pf": 1.03,
+    "best_r": 6.81,
+    "worst_r": -1.14,
+    "avg_hours": 281.3,
+    "t_stat": 0.26
    },
    "long": {
-    "n": 389,
-    "win_pct": 45.2,
-    "avg_r": -0.104,
-    "med_r": -0.532,
-    "sum_r": -40.6,
-    "pf": 0.8,
-    "best_r": 2.01,
-    "worst_r": -1.15,
-    "avg_hours": 225.1,
-    "t_stat": -2.05
+    "n": 404,
+    "win_pct": 36.6,
+    "avg_r": -0.066,
+    "med_r": -0.534,
+    "sum_r": -26.6,
+    "pf": 0.88,
+    "best_r": 8.67,
+    "worst_r": -1.2,
+    "avg_hours": 239.3,
+    "t_stat": -0.94
    },
    "short": {
-    "n": 460,
-    "win_pct": 56.3,
-    "avg_r": 0.044,
-    "med_r": 0.386,
-    "sum_r": 20.4,
-    "pf": 1.11,
-    "best_r": 2.06,
-    "worst_r": -1.09,
-    "avg_hours": 287.1,
-    "t_stat": 1.0
+    "n": 476,
+    "win_pct": 43.5,
+    "avg_r": -0.001,
+    "med_r": -0.045,
+    "sum_r": -0.4,
+    "pf": 1.0,
+    "best_r": 6.81,
+    "worst_r": -1.17,
+    "avg_hours": 301.0,
+    "t_stat": -0.02
    },
    "by_year": {
     "2021": {
-     "n": 22,
-     "avg_r": 0.116,
-     "sum_r": 2.5
+     "n": 25,
+     "avg_r": -0.166,
+     "sum_r": -4.2
     },
     "2022": {
-     "n": 121,
-     "avg_r": -0.014,
-     "sum_r": -1.7
+     "n": 129,
+     "avg_r": -0.062,
+     "sum_r": -8.0
     },
     "2023": {
-     "n": 114,
-     "avg_r": 0.029,
-     "sum_r": 3.3
+     "n": 130,
+     "avg_r": 0.052,
+     "sum_r": 6.7
     },
     "2024": {
-     "n": 175,
-     "avg_r": -0.134,
-     "sum_r": -23.4
+     "n": 183,
+     "avg_r": -0.146,
+     "sum_r": -26.7
     },
     "2025": {
-     "n": 213,
-     "avg_r": 0.015,
-     "sum_r": 3.1
+     "n": 217,
+     "avg_r": -0.007,
+     "sum_r": -1.6
     },
     "2026": {
-     "n": 204,
-     "avg_r": -0.02,
-     "sum_r": -4.0
+     "n": 196,
+     "avg_r": 0.034,
+     "sum_r": 6.7
     }
    },
    "equity": {
-    "final": 818.53,
-    "cagr_pct": -3.92,
-    "max_dd_pct": -48.49,
-    "sharpe": -0.04,
-    "sortino": -0.05,
-    "sr_daily": -0.00200882,
+    "final": 809.64,
+    "cagr_pct": -4.13,
+    "max_dd_pct": -47.59,
+    "sharpe": 0.03,
+    "sortino": 0.04,
+    "sr_daily": 0.00138097,
     "T": 1825,
-    "skew": -0.25838334,
-    "kurt": 6.88243404,
+    "skew": 0.79891945,
+    "kurt": 13.55657866,
     "days": 1826,
     "dsr": 0.0,
-    "sr0_annual": 2.25
+    "sr0_annual": 5.28
    },
    "equity_weather": {
-    "final": 795.94,
-    "cagr_pct": -4.46,
-    "max_dd_pct": -49.69,
-    "sharpe": -0.06,
-    "sortino": -0.08,
-    "sr_daily": -0.00337513,
+    "final": 791.94,
+    "cagr_pct": -4.56,
+    "max_dd_pct": -48.01,
+    "sharpe": 0.01,
+    "sortino": 0.01,
+    "sr_daily": 0.00037633,
     "T": 1825,
-    "skew": -0.28273423,
-    "kurt": 6.92128171,
+    "skew": 0.60446811,
+    "kurt": 12.34505913,
     "days": 1826,
     "dsr": 0.0,
-    "sr0_annual": 2.25
+    "sr0_annual": 5.28
    },
    "exits": {
-    "stop": 358,
-    "iz/başabaş stop": 192,
-    "süre": 176,
-    "hedef": 118,
-    "açık (veri sonu)": 5
+    "stop": 372,
+    "iz/başabaş stop": 302,
+    "süre": 202,
+    "açık (veri sonu)": 4
    },
    "period_days": 1825
   },
@@ -505,132 +638,132 @@
    "title": "Kırılım Avcısı (agresif)",
    "risk_pct": 3.0,
    "all": {
-    "n": 574,
-    "win_pct": 42.9,
-    "avg_r": 0.167,
-    "med_r": -0.342,
-    "sum_r": 95.7,
-    "pf": 1.38,
+    "n": 608,
+    "win_pct": 41.9,
+    "avg_r": 0.137,
+    "med_r": -0.346,
+    "sum_r": 83.3,
+    "pf": 1.3,
     "best_r": 4.78,
-    "worst_r": -1.09,
-    "avg_hours": 390.7,
-    "t_stat": 3.1
-   },
-   "is": {
-    "n": 268,
-    "win_pct": 39.9,
-    "avg_r": 0.135,
-    "med_r": -0.365,
-    "sum_r": 36.3,
-    "pf": 1.29,
-    "best_r": 4.78,
-    "worst_r": -1.09,
-    "avg_hours": 394.0,
-    "t_stat": 1.69
-   },
-   "oos": {
-    "n": 306,
-    "win_pct": 45.4,
-    "avg_r": 0.194,
-    "med_r": -0.253,
-    "sum_r": 59.5,
-    "pf": 1.46,
-    "best_r": 4.78,
-    "worst_r": -1.09,
-    "avg_hours": 387.8,
+    "worst_r": -1.11,
+    "avg_hours": 386.8,
     "t_stat": 2.68
    },
-   "long": {
-    "n": 325,
-    "win_pct": 41.2,
-    "avg_r": 0.284,
-    "med_r": -0.468,
-    "sum_r": 92.3,
-    "pf": 1.57,
+   "is": {
+    "n": 291,
+    "win_pct": 39.2,
+    "avg_r": 0.108,
+    "med_r": -0.347,
+    "sum_r": 31.4,
+    "pf": 1.23,
     "best_r": 4.78,
-    "worst_r": -1.09,
-    "avg_hours": 333.9,
-    "t_stat": 3.39
+    "worst_r": -1.11,
+    "avg_hours": 393.1,
+    "t_stat": 1.43
+   },
+   "oos": {
+    "n": 317,
+    "win_pct": 44.5,
+    "avg_r": 0.164,
+    "med_r": -0.294,
+    "sum_r": 51.9,
+    "pf": 1.37,
+    "best_r": 4.78,
+    "worst_r": -1.11,
+    "avg_hours": 381.1,
+    "t_stat": 2.35
+   },
+   "long": {
+    "n": 350,
+    "win_pct": 40.3,
+    "avg_r": 0.218,
+    "med_r": -0.481,
+    "sum_r": 76.4,
+    "pf": 1.43,
+    "best_r": 4.78,
+    "worst_r": -1.11,
+    "avg_hours": 330.9,
+    "t_stat": 2.79
    },
    "short": {
-    "n": 249,
-    "win_pct": 45.0,
-    "avg_r": 0.014,
+    "n": 258,
+    "win_pct": 44.2,
+    "avg_r": 0.027,
     "med_r": -0.189,
-    "sum_r": 3.5,
-    "pf": 1.04,
-    "best_r": 2.34,
-    "worst_r": -1.05,
-    "avg_hours": 465.0,
-    "t_stat": 0.25
+    "sum_r": 6.9,
+    "pf": 1.07,
+    "best_r": 2.43,
+    "worst_r": -1.08,
+    "avg_hours": 462.8,
+    "t_stat": 0.47
    },
    "by_year": {
     "2021": {
-     "n": 12,
-     "avg_r": -0.077,
-     "sum_r": -0.9
+     "n": 13,
+     "avg_r": -0.058,
+     "sum_r": -0.8
     },
     "2022": {
-     "n": 69,
-     "avg_r": 0.132,
-     "sum_r": 9.1
+     "n": 77,
+     "avg_r": 0.089,
+     "sum_r": 6.8
     },
     "2023": {
-     "n": 90,
-     "avg_r": 0.23,
-     "sum_r": 20.7
+     "n": 99,
+     "avg_r": 0.207,
+     "sum_r": 20.5
     },
     "2024": {
-     "n": 119,
-     "avg_r": 0.343,
-     "sum_r": 40.8
+     "n": 128,
+     "avg_r": 0.266,
+     "sum_r": 34.1
     },
     "2025": {
-     "n": 129,
-     "avg_r": -0.111,
-     "sum_r": -14.3
+     "n": 139,
+     "avg_r": -0.108,
+     "sum_r": -15.0
     },
     "2026": {
-     "n": 155,
-     "avg_r": 0.261,
-     "sum_r": 40.4
+     "n": 152,
+     "avg_r": 0.247,
+     "sum_r": 37.5
     }
    },
    "equity": {
-    "final": 2494.23,
-    "cagr_pct": 20.04,
-    "max_dd_pct": -25.58,
-    "sharpe": 0.75,
-    "sortino": 1.11,
-    "sr_daily": 0.0394997,
+    "final": 3058.22,
+    "cagr_pct": 25.04,
+    "max_dd_pct": -28.01,
+    "sharpe": 0.87,
+    "sortino": 1.28,
+    "sr_daily": 0.045727,
     "T": 1825,
-    "skew": 0.78246787,
-    "kurt": 9.8222591,
+    "skew": 0.78112346,
+    "kurt": 10.17261559,
     "days": 1826,
     "dsr": 0.0,
-    "sr0_annual": 2.25
+    "sr0_annual": 5.28
    },
    "equity_weather": {
-    "final": 1983.68,
-    "cagr_pct": 14.67,
-    "max_dd_pct": -26.32,
-    "sharpe": 0.61,
-    "sortino": 0.88,
-    "sr_daily": 0.03198851,
+    "final": 2213.58,
+    "cagr_pct": 17.21,
+    "max_dd_pct": -28.48,
+    "sharpe": 0.68,
+    "sortino": 0.97,
+    "sr_daily": 0.03548745,
     "T": 1825,
-    "skew": 0.76190556,
-    "kurt": 10.54069952,
+    "skew": 0.7364767,
+    "kurt": 11.03893025,
     "days": 1826,
     "dsr": 0.0,
-    "sr0_annual": 2.25
+    "sr0_annual": 5.28
    },
    "exits": {
-    "kural": 190,
-    "stop": 159,
-    "iz/başabaş stop": 135,
+    "kural": 207,
+    "stop": 171,
+    "iz/başabaş stop": 142,
     "süre": 82,
-    "hedef": 6,
-    "açık (veri sonu)": 2
+    "hedef": 5,
+    "açık (veri sonu)": 1
    },
    "period_days": 1825
   },
@@ -639,131 +772,132 @@
    "title": "Sıkışma Avcısı (agresif)",
    "risk_pct": 3.0,
    "all": {
-    "n": 396,
-    "win_pct": 43.2,
-    "avg_r": 0.132,
-    "med_r": -0.283,
-    "sum_r": 52.5,
+    "n": 377,
+    "win_pct": 43.8,
+    "avg_r": 0.128,
+    "med_r": -0.254,
+    "sum_r": 48.4,
     "pf": 1.34,
     "best_r": 2.73,
-    "worst_r": -1.13,
-    "avg_hours": 256.3,
-    "t_stat": 2.5
+    "worst_r": -1.16,
+    "avg_hours": 263.9,
+    "t_stat": 2.41
    },
    "is": {
-    "n": 180,
-    "win_pct": 40.6,
-    "avg_r": 0.136,
-    "med_r": -0.294,
-    "sum_r": 24.5,
-    "pf": 1.35,
+    "n": 186,
+    "win_pct": 42.5,
+    "avg_r": 0.147,
+    "med_r": -0.261,
+    "sum_r": 27.3,
+    "pf": 1.38,
     "best_r": 2.73,
-    "worst_r": -1.13,
-    "avg_hours": 260.9,
-    "t_stat": 1.71
+    "worst_r": -1.16,
+    "avg_hours": 261.9,
+    "t_stat": 1.87
    },
    "oos": {
-    "n": 216,
-    "win_pct": 45.4,
-    "avg_r": 0.13,
-    "med_r": -0.274,
-    "sum_r": 28.0,
-    "pf": 1.34,
+    "n": 191,
+    "win_pct": 45.0,
+    "avg_r": 0.111,
+    "med_r": -0.254,
+    "sum_r": 21.1,
+    "pf": 1.3,
     "best_r": 2.73,
-    "worst_r": -1.11,
-    "avg_hours": 252.4,
-    "t_stat": 1.83
+    "worst_r": -1.14,
+    "avg_hours": 265.8,
+    "t_stat": 1.53
    },
    "long": {
-    "n": 225,
-    "win_pct": 45.8,
-    "avg_r": 0.203,
-    "med_r": -0.309,
-    "sum_r": 45.6,
-    "pf": 1.5,
+    "n": 208,
+    "win_pct": 45.7,
+    "avg_r": 0.188,
+    "med_r": -0.306,
+    "sum_r": 39.1,
+    "pf": 1.46,
     "best_r": 2.73,
-    "worst_r": -1.13,
-    "avg_hours": 220.8,
-    "t_stat": 2.65
+    "worst_r": -1.16,
+    "avg_hours": 225.8,
+    "t_stat": 2.35
    },
    "short": {
-    "n": 171,
-    "win_pct": 39.8,
-    "avg_r": 0.04,
-    "med_r": -0.266,
-    "sum_r": 6.9,
-    "pf": 1.11,
+    "n": 169,
+    "win_pct": 41.4,
+    "avg_r": 0.055,
+    "med_r": -0.236,
+    "sum_r": 9.4,
+    "pf": 1.17,
     "best_r": 2.73,
-    "worst_r": -1.03,
-    "avg_hours": 303.0,
-    "t_stat": 0.58
+    "worst_r": -1.06,
+    "avg_hours": 310.7,
+    "t_stat": 0.83
    },
    "by_year": {
     "2021": {
-     "n": 8,
-     "avg_r": -0.521,
-     "sum_r": -4.2
+     "n": 10,
+     "avg_r": -0.443,
+     "sum_r": -4.4
     },
     "2022": {
-     "n": 60,
-     "avg_r": 0.231,
-     "sum_r": 13.9
+     "n": 55,
+     "avg_r": 0.051,
+     "sum_r": 2.8
     },
     "2023": {
-     "n": 63,
-     "avg_r": 0.158,
-     "sum_r": 10.0
+     "n": 71,
+     "avg_r": 0.284,
+     "sum_r": 20.2
     },
     "2024": {
-     "n": 62,
-     "avg_r": 0.245,
-     "sum_r": 15.2
+     "n": 59,
+     "avg_r": 0.219,
+     "sum_r": 12.9
     },
     "2025": {
-     "n": 109,
-     "avg_r": 0.022,
-     "sum_r": 2.4
+     "n": 98,
+     "avg_r": 0.02,
+     "sum_r": 1.9
     },
     "2026": {
-     "n": 94,
-     "avg_r": 0.161,
-     "sum_r": 15.2
+     "n": 84,
+     "avg_r": 0.179,
+     "sum_r": 15.0
     }
    },
    "equity": {
-    "final": 2057.84,
-    "cagr_pct": 15.52,
-    "max_dd_pct": -23.42,
-    "sharpe": 0.7,
-    "sortino": 0.87,
-    "sr_daily": 0.03662069,
+    "final": 2740.66,
+    "cagr_pct": 22.33,
+    "max_dd_pct": -20.62,
+    "sharpe": 0.9,
+    "sortino": 1.14,
+    "sr_daily": 0.04734685,
     "T": 1825,
-    "skew": 1.0072727,
-    "kurt": 13.14893421,
+    "skew": 0.92096463,
+    "kurt": 12.60242954,
     "days": 1826,
     "dsr": 0.0,
-    "sr0_annual": 2.25
+    "sr0_annual": 5.28
    },
    "equity_weather": {
-    "final": 2123.67,
-    "cagr_pct": 16.25,
-    "max_dd_pct": -21.28,
-    "sharpe": 0.74,
-    "sortino": 0.93,
-    "sr_daily": 0.03862543,
+    "final": 2683.33,
+    "cagr_pct": 21.81,
+    "max_dd_pct": -20.75,
+    "sharpe": 0.91,
+    "sortino": 1.13,
+    "sr_daily": 0.04752066,
     "T": 1825,
-    "skew": 1.13941733,
-    "kurt": 13.89105127,
+    "skew": 0.89150133,
+    "kurt": 13.52111924,
     "days": 1826,
     "dsr": 0.0,
-    "sr0_annual": 2.25
+    "sr0_annual": 5.28
    },
    "exits": {
-    "kural": 184,
-    "iz/başabaş stop": 102,
-    "stop": 58,
-    "süre": 39,
-    "hedef": 13
+    "kural": 172,
+    "iz/başabaş stop": 88,
+    "stop": 54,
+    "süre": 48,
+    "hedef": 14,
+    "açık (veri sonu)": 1
    },
    "period_days": 1825
   }
@@ -771,34 +905,35 @@
  "firm": {
   "hepsi_esit · limitler": {
    "equity": {
-    "final": 1385.84,
-    "cagr_pct": 6.74,
-    "max_dd_pct": -18.21,
-    "sharpe": 0.48,
-    "sortino": 0.69,
-    "sr_daily": 0.02530538,
+    "final": 950.47,
+    "cagr_pct": -1.01,
+    "max_dd_pct": -32.02,
+    "sharpe": 0.03,
+    "sortino": 0.04,
+    "sr_daily": 0.00138775,
     "T": 1825,
-    "skew": 0.09581432,
-    "kurt": 7.65822728,
+    "skew": 0.19410141,
+    "kurt": 7.75644811,
     "days": 1826,
     "dsr": 0.0,
-    "sr0_annual": 2.25
+    "sr0_annual": 5.28
    },
-   "taken": 2274,
-   "skipped": 734,
+   "taken": 3196,
+   "skipped": 890,
    "stats": {
-    "n": 2274,
-    "win_pct": 42.4,
-    "avg_r": 0.026,
-    "med_r": -0.178,
-    "sum_r": 59.3,
-    "pf": 1.07,
-    "best_r": 4.9,
-    "worst_r": -2.14,
-    "avg_hours": 293.1,
-    "t_stat": 1.23
+    "n": 3196,
+    "win_pct": 40.1,
+    "avg_r": -0.031,
+    "med_r": -0.213,
+    "sum_r": -100.5,
+    "pf": 0.94,
+    "best_r": 8.67,
+    "worst_r": -4.16,
+    "avg_hours": 341.6,
+    "t_stat": -1.45
    },
    "managers": [
+    "bas",
     "kemal",
     "deniz",
     "ayse",
@@ -808,67 +943,68 @@
    ],
    "by_year": {
     "2021": {
-     "n": 62,
-     "avg_r": -0.076,
-     "sum_r": -4.7
+     "n": 77,
+     "avg_r": -0.182,
+     "sum_r": -14.0
     },
     "2022": {
-     "n": 311,
-     "avg_r": 0.036,
-     "sum_r": 11.2
+     "n": 408,
+     "avg_r": 0.023,
+     "sum_r": 9.6
     },
     "2023": {
-     "n": 341,
-     "avg_r": 0.162,
-     "sum_r": 55.2
+     "n": 483,
+     "avg_r": 0.208,
+     "sum_r": 100.2
     },
     "2024": {
-     "n": 459,
-     "avg_r": 0.032,
-     "sum_r": 14.6
+     "n": 607,
+     "avg_r": 0.031,
+     "sum_r": 18.6
     },
     "2025": {
-     "n": 475,
-     "avg_r": -0.053,
-     "sum_r": -25.2
+     "n": 636,
+     "avg_r": -0.135,
+     "sum_r": -86.1
     },
     "2026": {
-     "n": 626,
-     "avg_r": 0.013,
-     "sum_r": 8.1
+     "n": 985,
+     "avg_r": -0.131,
+     "sum_r": -128.8
     }
    }
   },
   "hepsi_esit · limitler+hava+yigilma": {
    "equity": {
-    "final": 1442.54,
-    "cagr_pct": 7.6,
-    "max_dd_pct": -17.46,
-    "sharpe": 0.55,
-    "sortino": 0.79,
-    "sr_daily": 0.02888116,
+    "final": 1082.87,
+    "cagr_pct": 1.6,
+    "max_dd_pct": -25.41,
+    "sharpe": 0.18,
+    "sortino": 0.25,
+    "sr_daily": 0.00937055,
     "T": 1825,
-    "skew": 0.19886387,
-    "kurt": 8.24476025,
+    "skew": 0.20630773,
+    "kurt": 8.6747127,
     "days": 1826,
     "dsr": 0.0,
-    "sr0_annual": 2.25
+    "sr0_annual": 5.28
    },
-   "taken": 2248,
-   "skipped": 760,
+   "taken": 3159,
+   "skipped": 927,
    "stats": {
-    "n": 2248,
-    "win_pct": 42.3,
-    "avg_r": 0.025,
-    "med_r": -0.178,
-    "sum_r": 57.0,
-    "pf": 1.06,
-    "best_r": 4.9,
-    "worst_r": -2.14,
-    "avg_hours": 292.5,
-    "t_stat": 1.18
+    "n": 3159,
+    "win_pct": 40.0,
+    "avg_r": -0.032,
+    "med_r": -0.211,
+    "sum_r": -100.4,
+    "pf": 0.94,
+    "best_r": 8.67,
+    "worst_r": -4.16,
+    "avg_hours": 341.2,
+    "t_stat": -1.46
    },
    "managers": [
+    "bas",
     "kemal",
     "deniz",
     "ayse",
@@ -878,179 +1014,182 @@
    ],
    "by_year": {
     "2021": {
-     "n": 61,
-     "avg_r": -0.062,
-     "sum_r": -3.8
+     "n": 76,
+     "avg_r": -0.171,
+     "sum_r": -13.0
     },
     "2022": {
-     "n": 293,
-     "avg_r": 0.058,
-     "sum_r": 16.9
+     "n": 388,
+     "avg_r": 0.029,
+     "sum_r": 11.1
     },
     "2023": {
-     "n": 342,
-     "avg_r": 0.165,
-     "sum_r": 56.5
+     "n": 471,
+     "avg_r": 0.233,
+     "sum_r": 109.8
     },
     "2024": {
-     "n": 471,
-     "avg_r": 0.029,
-     "sum_r": 13.5
+     "n": 617,
+     "avg_r": 0.024,
+     "sum_r": 15.1
     },
     "2025": {
-     "n": 467,
-     "avg_r": -0.075,
-     "sum_r": -35.1
+     "n": 622,
+     "avg_r": -0.141,
+     "sum_r": -88.0
     },
     "2026": {
-     "n": 614,
-     "avg_r": 0.015,
-     "sum_r": 9.0
+     "n": 985,
+     "avg_r": -0.137,
+     "sum_r": -135.4
     }
    }
   },
   "politika · limitler": {
    "equity": {
-    "final": 1795.74,
-    "cagr_pct": 12.41,
-    "max_dd_pct": -12.71,
-    "sharpe": 0.78,
-    "sortino": 1.14,
-    "sr_daily": 0.04086612,
+    "final": 1903.86,
+    "cagr_pct": 13.74,
+    "max_dd_pct": -12.84,
+    "sharpe": 0.86,
+    "sortino": 1.25,
+    "sr_daily": 0.04502979,
     "T": 1825,
-    "skew": 0.48951872,
-    "kurt": 9.88047904,
+    "skew": 0.19085351,
+    "kurt": 8.24292391,
     "days": 1826,
     "dsr": 0.0,
-    "sr0_annual": 2.25
+    "sr0_annual": 5.28
    },
-   "taken": 960,
-   "skipped": 927,
+   "taken": 1576,
+   "skipped": 993,
    "stats": {
-    "n": 960,
-    "win_pct": 35.0,
-    "avg_r": 0.092,
-    "med_r": -0.192,
-    "sum_r": 88.7,
-    "pf": 1.31,
-    "best_r": 4.9,
-    "worst_r": -1.13,
-    "avg_hours": 358.4,
-    "t_stat": 2.97
+    "n": 1576,
+    "win_pct": 37.4,
+    "avg_r": 0.124,
+    "med_r": -0.215,
+    "sum_r": 196.2,
+    "pf": 1.36,
+    "best_r": 6.17,
+    "worst_r": -1.2,
+    "avg_hours": 471.4,
+    "t_stat": 4.58
    },
    "managers": [
+    "bas",
     "kemal",
     "kaan",
     "selin"
    ],
    "by_year": {
     "2021": {
-     "n": 31,
-     "avg_r": -0.213,
-     "sum_r": -6.6
+     "n": 45,
+     "avg_r": -0.193,
+     "sum_r": -8.7
     },
     "2022": {
-     "n": 130,
-     "avg_r": 0.093,
-     "sum_r": 12.0
+     "n": 223,
+     "avg_r": 0.092,
+     "sum_r": 20.5
     },
     "2023": {
-     "n": 176,
-     "avg_r": 0.214,
-     "sum_r": 37.7
+     "n": 300,
+     "avg_r": 0.267,
+     "sum_r": 80.2
     },
     "2024": {
-     "n": 208,
-     "avg_r": 0.118,
-     "sum_r": 24.6
+     "n": 341,
+     "avg_r": 0.105,
+     "sum_r": 35.7
     },
     "2025": {
-     "n": 187,
-     "avg_r": -0.027,
-     "sum_r": -5.0
+     "n": 316,
+     "avg_r": -0.092,
+     "sum_r": -29.1
     },
     "2026": {
-     "n": 228,
-     "avg_r": 0.114,
-     "sum_r": 26.0
+     "n": 351,
+     "avg_r": 0.278,
+     "sum_r": 97.6
     }
    }
   },
   "politika · limitler+hava+yigilma": {
    "equity": {
-    "final": 1681.08,
-    "cagr_pct": 10.94,
-    "max_dd_pct": -11.61,
-    "sharpe": 0.72,
-    "sortino": 1.04,
-    "sr_daily": 0.03789553,
+    "final": 1951.23,
+    "cagr_pct": 14.3,
+    "max_dd_pct": -11.52,
+    "sharpe": 0.92,
+    "sortino": 1.34,
+    "sr_daily": 0.04824592,
     "T": 1825,
-    "skew": 0.40535637,
-    "kurt": 10.71409669,
+    "skew": 0.32904548,
+    "kurt": 9.21699946,
     "days": 1826,
     "dsr": 0.0,
-    "sr0_annual": 2.25
+    "sr0_annual": 5.28
    },
-   "taken": 990,
-   "skipped": 897,
+   "taken": 1610,
+   "skipped": 959,
    "stats": {
-    "n": 990,
-    "win_pct": 34.8,
-    "avg_r": 0.077,
-    "med_r": -0.191,
-    "sum_r": 75.8,
-    "pf": 1.25,
-    "best_r": 4.9,
-    "worst_r": -1.13,
-    "avg_hours": 344.7,
-    "t_stat": 2.51
+    "n": 1610,
+    "win_pct": 37.8,
+    "avg_r": 0.134,
+    "med_r": -0.208,
+    "sum_r": 215.9,
+    "pf": 1.39,
+    "best_r": 6.17,
+    "worst_r": -1.2,
+    "avg_hours": 466.1,
+    "t_stat": 4.95
    },
    "managers": [
+    "bas",
     "kemal",
     "kaan",
     "selin"
    ],
    "by_year": {
     "2021": {
-     "n": 30,
-     "avg_r": -0.189,
-     "sum_r": -5.7
+     "n": 44,
+     "avg_r": -0.176,
+     "sum_r": -7.8
     },
     "2022": {
-     "n": 132,
-     "avg_r": 0.073,
-     "sum_r": 9.7
+     "n": 221,
+     "avg_r": 0.077,
+     "sum_r": 17.1
     },
     "2023": {
-     "n": 173,
-     "avg_r": 0.198,
-     "sum_r": 34.3
+     "n": 298,
+     "avg_r": 0.299,
+     "sum_r": 89.1
     },
     "2024": {
-     "n": 223,
-     "avg_r": 0.102,
-     "sum_r": 22.8
+     "n": 369,
+     "avg_r": 0.115,
+     "sum_r": 42.3
     },
     "2025": {
-     "n": 198,
-     "avg_r": -0.053,
-     "sum_r": -10.4
+     "n": 314,
+     "avg_r": -0.103,
+     "sum_r": -32.2
     },
     "2026": {
-     "n": 234,
-     "avg_r": 0.108,
-     "sum_r": 25.2
+     "n": 364,
+     "avg_r": 0.295,
+     "sum_r": 107.4
     }
    }
   }
  },
  "policy_active": [
+  "bas",
   "kemal",
   "kaan",
   "selin"
  ],
- "generated_at": 1793027333997,
- "generated": "2026-10-26 15:13 UTC",
+ "generated_at": 1793054941253,
+ "generated": "2026-10-26 22:54 UTC",
  "years": 5.0,
  "coins": [
   "ADA",
@@ -1065,16 +1204,15 @@
   "ETH",
   "FIL",
   "HYPE",
-  "INJ",
+  "LINK",
   "LIT",
   "NEAR",
   "ONDO",
-  "ORDER",
   "PEPE",
   "PUMP",
   "RLS",
   "SOL",
-  "SOON",
+  "STRK",
   "SUI",
   "TRUMP",
   "UNI",
@@ -1082,8 +1220,8 @@
   "XRP",
   "ZEC"
  ],
- "n_coins": 28,
- "trials": 16,
+ "n_coins": 27,
+ "trials": 18,
  "test_start": "2021-10-27",
  "split": "2024-10-26",
  "cost": {
@@ -1093,7 +1231,7 @@
   "slip_stop_bp": 5.0,
   "funding_long_day_pct": 0.03
  },
- "duration_s": 296.4,
+ "duration_s": 354.2,
  "notes": [
   "Parametre optimizasyonu yapılmadı; kurallar önceden sabit.",
   "Evren bugünün en likit coinleri (survivorship): sonuçlar iyimser tarafta olabilir.",
