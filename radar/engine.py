@@ -700,6 +700,20 @@ class Engine:
     manage_positions = reconcile   # geriye dönük ad
 
     # ── risk yöneticisi ──────────────────────────────────────────────
+    def risk_limits(self) -> dict:
+        """Devre kesici limitleri. Ekip modunda risk müdürünün firma limitleri geçerlidir (tekli sistemin değil)."""
+        rc = dict(lg.risk_cfg(self.cfg))
+        if self.desk:
+            fc = self.desk.fc
+            rc.update(gunluk_kayip_yuzde=fc["gunluk_kayip_yuzde"], max_dusus_yuzde=fc["max_dusus_yuzde"],
+                      max_isi_yuzde=fc["max_isi_yuzde"], kayip_serisi=fc["kayip_serisi"])
+            yon = [m for m in self.desk.mgrs if m.max_risk > 0]       # Elif (carry) stop riskiyle çalışmaz
+            lo = min((m.base_risk for m in yon), default=0)
+            hi = max((m.max_risk for m in yon), default=0)
+            rc["risk_yuzde"] = f"{lo:g}–{hi:g} (yöneticiye ve kanaate göre)".replace(".", ",")
+            rc["kaynak"] = "firma"
+        return rc
+
     def risk_tick(self):
         """Her saniye: piyasa değerine göre özsermaye, günlük kayıp ve zirveden düşüş kontrolü."""
         self.t["risk"] = time.time()
@@ -707,7 +721,7 @@ class Engine:
         b = lg.balance(self.ledger, self.cfg)
         eq = b["equity"]
         rs = self.state["risk"]
-        rc = lg.risk_cfg(self.cfg)
+        rc = self.risk_limits()
         day = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         if rs.get("day") != day:
             rs["day"], rs["day_start"] = day, eq
@@ -720,13 +734,23 @@ class Engine:
         rs["day_pnl"] = round(day_pnl, 2)
         dd = (eq / rs["peak"] - 1) * 100 if rs["peak"] else 0
         rs["dd_pct"] = round(dd, 2)
+        # Limit düzeltmesi: günlük durdurma daha düşük (yanlış) bir limitle konmuşsa ve kayıp güncel limitin
+        # altında kalıyorsa bir kez kaldırılır. Gerçek limit aşıldıktan sonra toparlanma durdurmayı KALDIRMAZ.
+        if (rs.get("halt") == "gunluk" and (rs.get("halt_lim") or 0) < rc["gunluk_kayip_yuzde"]
+                and rs.get("day_start") and day_pnl > -rs["day_start"] * rc["gunluk_kayip_yuzde"] / 100):
+            rs["halt"] = None
+            rs["halt_lim"] = None
+            self._notify(f"🟢 <b>Limit düzeltmesi</b>: günlük durdurma eski (daha sıkı) tekli sistem limitiyle konmuştu; "
+                         f"ekibin firma limiti %{rc['gunluk_kayip_yuzde']:g}. Bugün {_usd(day_pnl)}, limitin içinde → işlemler yeniden açık.")
         if not rs.get("halt"):
             if dd <= -rc["max_dusus_yuzde"]:
                 rs["halt"] = "dusus"
+                rs["halt_lim"] = rc["max_dusus_yuzde"]
                 self._notify(f"🛑 <b>Bot durduruldu</b>: zirveden %{abs(dd):.1f} düşüş (limit %{rc['max_dusus_yuzde']:g}). "
                              f"Açık işlemler yönetilmeye devam ediyor, yeni işlem açılmayacak. Devam için /devam yaz.")
             elif rs.get("day_start") and day_pnl <= -rs["day_start"] * rc["gunluk_kayip_yuzde"] / 100:
                 rs["halt"] = "gunluk"
+                rs["halt_lim"] = rc["gunluk_kayip_yuzde"]
                 self._notify(f"⏸ <b>Günlük kayıp limiti</b>: bugün {_usd(day_pnl)} (limit %{rc['gunluk_kayip_yuzde']:g}). "
                              f"Bugün yeni işlem açılmayacak; UTC gece yarısı otomatik açılır.")
         self.halt = rs.get("halt")
@@ -894,7 +918,7 @@ class Engine:
             "oi_source": self.oi_src,
             "taker_real": sum(1 for c in coins if c.get("taker_src") == "gerçek"),
             "fees": lg.fees_cfg(self.cfg),
-            "risk": {**self.state.get("risk", {}), "cfg": lg.risk_cfg(self.cfg), "halt": self.halt,
+            "risk": {**self.state.get("risk", {}), "cfg": self.risk_limits(), "halt": self.halt,
                      "risk_mult": self.risk_mult},
             "eq_hist": self.state.get("eq_hist", [])[-600:],
             "team": self.desk.summary(now_ms) if self.desk else None,
