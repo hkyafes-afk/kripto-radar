@@ -144,20 +144,37 @@ class OKXClient:
     def candles(self, inst_id: str, bar: str = "4H", limit: int = 300,
                 closed_only: bool = True) -> pd.DataFrame:
         """Son mumlar (en fazla 300). bar: 1H, 4H → UTC hizalı (4Hutc), 1D → 1Dutc."""
-        okx_bar = {"4H": "4Hutc", "1D": "1Dutc", "6H": "6Hutc", "12H": "12Hutc"}.get(bar, bar)
-        rows = self.get("/api/v5/market/candles",
-                        {"instId": inst_id, "bar": okx_bar, "limit": str(min(limit, 300))})
+        rows = self._candles_req("/api/v5/market/candles",
+                                 {"instId": inst_id, "limit": str(min(limit, 300))}, bar)
         return _candles_df(rows, closed_only)
+
+    # 4H: OKX'te Hong Kong (UTC+8) hizalı ama 8 saat 4'e bölündüğü için UTC ile aynı sınırlar.
+    # 1D: UTC hizası için "1Dutc" denenir; borsa kabul etmezse "1D"ye düşülür.
+    _BAR_TRY = {"1D": ["1Dutc", "1D"], "12H": ["12Hutc", "12H"], "6H": ["6Hutc", "6H"]}
+    _bar_ok: dict = {}
+
+    def _candles_req(self, path: str, params: dict, bar: str) -> list:
+        options = [self._bar_ok[bar]] if bar in self._bar_ok else self._BAR_TRY.get(bar, [bar])
+        last = None
+        for b in options:
+            try:
+                rows = self.get(path, {**params, "bar": b})
+                self._bar_ok[bar] = b
+                return rows
+            except OKXError as e:
+                if "51000" not in str(e):
+                    raise
+                last = e
+        raise last
 
     def history_candles(self, inst_id: str, bar: str, start_ms: int) -> pd.DataFrame:
         """start_ms'den bugüne kadar sayfalayarak geçmiş mumlar (backtest için)."""
-        okx_bar = {"4H": "4Hutc", "1D": "1Dutc"}.get(bar, bar)
         frames, after = [], None
         for _ in range(60):
-            params = {"instId": inst_id, "bar": okx_bar, "limit": "100"}
+            params = {"instId": inst_id, "limit": "100"}
             if after:
                 params["after"] = str(after)
-            rows = self.get("/api/v5/market/history-candles", params)
+            rows = self._candles_req("/api/v5/market/history-candles", params, bar)
             if not rows:
                 break
             df = _candles_df(rows, closed_only=True)
