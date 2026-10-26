@@ -157,6 +157,16 @@ def test_bitget_feed_parse():
     assert got[1][0] == "F" and got[1][3] == 0.0002
 
 
+def test_okx_funding_only_for_swaps():
+    """Carry'nin spot ayağı (PONS-USDT) funding kanalına abone edilmemeli; OKX bunu reddeder."""
+    msgs = ws.OKXFeed().sub_messages(["PONS-USDT", "PONS-USDT-SWAP", "BTC-USDT-SWAP"])
+    args = [a for m in msgs for a in json.loads(m)["args"]]
+    tick = sorted(a["instId"] for a in args if a["channel"] == "tickers")
+    fund = sorted(a["instId"] for a in args if a["channel"] == "funding-rate")
+    assert tick == ["BTC-USDT-SWAP", "PONS-USDT", "PONS-USDT-SWAP"]
+    assert fund == ["BTC-USDT-SWAP", "PONS-USDT-SWAP"]
+
+
 if __name__ == "__main__":
     for name, fn in list(globals().items()):
         if name.startswith("test_"):

@@ -280,7 +280,8 @@ class OKXFeed(Feed):
 
     def sub_messages(self, symbols, op="subscribe"):
         args = [{"channel": "tickers", "instId": s} for s in symbols]
-        args += [{"channel": "funding-rate", "instId": s} for s in symbols]
+        # funding yalnızca vadeli kontratlarda var; spot sembolde (carry'nin spot ayağı) OKX isteği reddeder
+        args += [{"channel": "funding-rate", "instId": s} for s in symbols if s.endswith("-SWAP")]
         return [json.dumps({"op": op, "args": args[i:i + 40]}) for i in range(0, len(args), 40)]
 
     def handle(self, obj):

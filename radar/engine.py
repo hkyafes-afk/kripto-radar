@@ -899,7 +899,8 @@ class Engine:
             "archive": {"periods": (self.ledger.get("archive") or {}).get("periods", []),
                         "n": len((self.ledger.get("archive") or {}).get("closed", []))},
             "health": self.health,
-            "lease": {"holder": lease.run_id(), "handoff_s": self.state.get("handoff_s"), "ok": self.lease_ok},
+            "lease": {"holder": lease.run_id(), "handoff_s": self.state.get("handoff_s"),
+                      "handoff_kind": self.state.get("handoff_kind"), "ok": self.lease_ok},
             "ledger": {
                 "stats": lstats,
                 "open": sorted(self.ledger["open"], key=lambda t: t["entry_ts"], reverse=True),
@@ -1409,9 +1410,12 @@ class Engine:
         devir = os.environ.get("DEVIR") == "1"
         t0 = time.time()
         waited = False
+        prev_hb = None
         while True:
             L, files = lease.read()
             if not lease.is_live(L, me):
+                if L and L.get("holder") != me and L.get("hb"):
+                    prev_hb = L["hb"] / 1000     # önceki döngünün son nabzı / bırakış anı
                 break
             if not devir:
                 print(f"[nöbet] {L.get('holder')} nöbette ve sağlıklı; bu çalışma kapanıyor.")
@@ -1445,7 +1449,13 @@ class Engine:
         if L2 and L2.get("holder") != me:
             print(f"[nöbet] nöbeti {L2.get('holder')} aldı; çekiliyorum.")
             return False
-        self.state["handoff_s"] = round(time.time() - t0, 1) if waited else None
+        # kesinti süresi: önceki döngünün son nabzından (planlı devirde bırakış anı) bu döngünün devralmasına kadar
+        if prev_hb:
+            self.state["handoff_s"] = round(max(0.0, time.time() - prev_hb), 1)
+            self.state["handoff_kind"] = "devir" if (L or {}).get("released") else "kurtarma"
+        self.state["handoff_wait_s"] = round(time.time() - t0, 1) if waited else 0
+        self.state["consecutive_failures"] = 0
+        self.state.pop("last_error", None)     # sağlıklı başlangıç: eski hata kaydı kafa karıştırmasın
         return True
 
     def lease_heartbeat(self, force: bool = False, released: bool = False):

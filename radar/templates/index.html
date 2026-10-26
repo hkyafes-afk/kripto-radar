@@ -646,7 +646,7 @@ function feedLines(){
   const hs = D.health || {};
   if (hs.status) L.push(`Sistem: <b>${esc(hs.status)}</b>${(hs.issues||[]).length ? " · "+hs.issues.map(esc).join(" · ") : ""}`);
   const ls = D.lease || {};
-  if (ls.holder) L.push(`Nöbetteki döngü: ${esc(String(ls.holder))}${ls.handoff_s!=null ? " · son devir "+String(ls.handoff_s).replace(".",",")+" sn" : ""}${ls.ok===false ? " · ⚠ nabız yazılamadı" : ""}`);
+  if (ls.holder) L.push(`Nöbetteki döngü: ${esc(String(ls.holder))}${ls.handoff_s!=null ? " · son "+(ls.handoff_kind==="kurtarma" ? "kurtarma" : "devir")+" kesintisi "+String(ls.handoff_s).replace(".",",")+" sn" : ""}${ls.ok===false ? " · ⚠ nabız yazılamadı" : ""}`);
   if ((hs.suspect||[]).length) L.push(`Şüpheli veri (işlem açılmıyor): ${hs.suspect.map(x=>esc(x.sym)+" ("+esc(x.reason)+")").join(", ")}`);
   for (const [k,v] of Object.entries(f)){
     if (k === "telegram") L.push(`Telegram: ${v.listening?"🟢 dinliyor":"🟡 bekliyor"} · ${v.sent} mesaj gönderildi${v.median_send_ms!=null?" · ort. "+v.median_send_ms+" ms":""}${v.failed?" · "+v.failed+" hata":""}`);

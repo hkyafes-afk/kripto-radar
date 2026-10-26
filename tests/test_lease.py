@@ -23,7 +23,9 @@ e.publish_on = True
 t0 = time.time()
 ok = e.acquire_lease()
 print(json.dumps({"ok": ok, "waited": round(time.time() - t0, 1), "open": len(e.ledger["open"]),
-                  "team": bool(e.state.get("team_started")), "marker": e.state.get("marker")}))
+                  "team": bool(e.state.get("team_started")), "marker": e.state.get("marker"),
+                  "handoff_s": e.state.get("handoff_s"), "kind": e.state.get("handoff_kind"),
+                  "last_error": e.state.get("last_error")}))
 """
 
 
@@ -47,6 +49,7 @@ def test_handoff_between_processes():
             assert a.acquire_lease(), "boş depoda nöbet alınabilmeli"
             a.run_once()
             a.state["marker"] = "A-durumu"
+            a.state["last_error"] = "eski hata"
             a.lease_heartbeat(force=True)
             n_open = len(a.ledger["open"])
             assert n_open > 0
@@ -68,7 +71,9 @@ def test_handoff_between_processes():
             out = json.loads(so.strip().splitlines()[-1])
             assert out["ok"] and out["open"] == n_open and out["team"] and out["marker"] == "A-durumu", (so, se[-500:])
             took = time.time() - t_rel
-            print(f"  devir süresi ≈ {took:.1f} sn")
+            print(f"  devir süresi ≈ {took:.1f} sn (halefin ölçtüğü kesinti {out['handoff_s']} sn)")
+            assert out["kind"] == "devir" and out["handoff_s"] is not None and out["handoff_s"] < 30, out
+            assert out["last_error"] is None, "eski hata kaydı temizlenmeli"
             L, _ = lease.read()
             assert L["holder"] == "B" and not L["released"]
             # çift döngü koruması: A hâlâ çalışıyor sansa bile nabızda nöbeti kaybettiğini anlar, yazmaz
