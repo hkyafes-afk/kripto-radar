@@ -885,12 +885,13 @@ class Engine:
         rs["equity"] = round(eq, 2)
         day_pnl = eq - (rs.get("day_start") or eq)
         rs["day_pnl"] = round(day_pnl, 2)
+        day_lim = self.day_limit_usd(rc)
         dd = (eq / rs["peak"] - 1) * 100 if rs["peak"] else 0
         rs["dd_pct"] = round(dd, 2)
         # Limit düzeltmesi: günlük durdurma daha düşük (yanlış) bir limitle konmuşsa ve kayıp güncel limitin
         # altında kalıyorsa bir kez kaldırılır. Gerçek limit aşıldıktan sonra toparlanma durdurmayı KALDIRMAZ.
         if (rs.get("halt") == "gunluk" and (rs.get("halt_lim") or 0) < rc["gunluk_kayip_yuzde"]
-                and rs.get("day_start") and day_pnl > -rs["day_start"] * rc["gunluk_kayip_yuzde"] / 100):
+                and rs.get("day_start") and day_pnl > -day_lim):
             rs["halt"] = None
             rs["halt_lim"] = None
             self._notify(f"🟢 <b>Limit düzeltmesi</b>: günlük durdurma eski (daha sıkı) tekli sistem limitiyle konmuştu; "
@@ -901,7 +902,7 @@ class Engine:
                 rs["halt_lim"] = rc["max_dusus_yuzde"]
                 self._notify(f"🛑 <b>Bot durduruldu</b>: zirveden %{abs(dd):.1f} düşüş (limit %{rc['max_dusus_yuzde']:g}). "
                              f"Açık işlemler yönetilmeye devam ediyor, yeni işlem açılmayacak. Devam için /devam yaz.")
-            elif rs.get("day_start") and day_pnl <= -rs["day_start"] * rc["gunluk_kayip_yuzde"] / 100:
+            elif rs.get("day_start") and day_pnl <= -day_lim:
                 rs["halt"] = "gunluk"
                 rs["halt_lim"] = rc["gunluk_kayip_yuzde"]
                 self._notify(f"⏸ <b>Günlük kayıp limiti</b>: bugün {_usd(day_pnl)} (limit %{rc['gunluk_kayip_yuzde']:g}). "
@@ -944,9 +945,44 @@ class Engine:
                 self.state["eq_hist"] = old[::6] + new        # eski kısmı seyrekleştir
         return eq
 
-    def resume(self) -> str:
+    def day_limit_usd(self, rc: dict | None = None) -> float:
+        """Bugünkü kayıp limiti ($): firma limiti + kullanıcının o gün verdiği ek hak."""
+        rc = rc or self.risk_limits()
+        rs = self.state["risk"]
+        base = (rs.get("day_start") or 0) * rc["gunluk_kayip_yuzde"] / 100
+        ex = rs.get("extra") or {}
+        return base + (ex.get("usd", 0.0) if ex.get("day") == rs.get("day") else 0.0)
+
+    def resume(self, arg: str = "") -> str:
+        """/devam. Zirveden düşüşte: zirveyi sıfırlar. Günlük limitte: kullanıcı onayıyla günde 1 kez ek kayıp hakkı."""
         rs = self.state["risk"]
         was = rs.get("halt")
+        if was == "gunluk":
+            fc = self.desk.fc if self.desk else {}
+            ek = float(fc.get("gunluk_ek_hak_yuzde", 1.5))
+            hak = int(fc.get("gunluk_ek_hak_sayisi", 1))
+            ex = rs.get("extra") or {}
+            used = ex.get("n", 0) if ex.get("day") == rs.get("day") else 0
+            if used >= hak:
+                return (f"⛔ Bugünkü ek kayıp hakkı kullanıldı ({used}/{hak}). Limit TR 03:00'te (UTC gece yarısı) sıfırlanır. "
+                        "Kötü günde durmak sistemin en önemli frenidir.")
+            add = (rs.get("day_start") or 0) * ek / 100
+            if arg.strip().lower() not in ("evet", "onay", "tamam"):
+                return (f"⏸ Günlük kayıp limiti dolu: bugün {_usd(rs.get('day_pnl', 0))}.\n"
+                        f"Onaylarsan bugün için <b>%{ek:g} ({_usd(add, False)})</b> ek kayıp hakkı açılır: ekip işlem açmaya devam "
+                        f"eder, bu pay da biterse gün sonuna kadar durur. Günde {hak} kez kullanılabilir.\n"
+                        "Onay için: <b>/devam evet</b>")
+            lim_now = self.day_limit_usd()
+            loss = max(0.0, -(rs.get("day_pnl") or 0.0))
+            extra_total = (ex.get("usd", 0.0) if ex.get("day") == rs.get("day") else 0.0) + max(loss - lim_now, 0.0) + add
+            rs["extra"] = {"day": rs.get("day"), "usd": round(extra_total, 4), "n": used + 1, "ts": int(time.time() * 1000)}
+            rs["halt"], rs["halt_lim"] = None, None
+            self.halt = None
+            self.dirty = True
+            if self.desk:
+                self.desk.journal("-", "-", "-", "-", "ek limit", f"kullanıcı onayıyla bugün %{ek:g} ({add:.2f}$) ek kayıp hakkı")
+            return (f"🟢 <b>Ek kayıp hakkı açıldı</b> (kullanıcı onayı): bugün {_usd(add, False)} daha. Yeni limit: "
+                    f"günün zararı {_usd(-(loss + add))} olursa ekip gün sonuna kadar durur.")
         rs["halt"] = None
         rs["peak"] = rs.get("equity")
         self.halt = None

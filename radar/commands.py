@@ -34,7 +34,7 @@ HELP = (
     "/borsalar — borsalar arası funding ve fiyat farkı\n"
     "/saglik — canlı veri ve bağlantı durumu\n"
     "/risk — risk durumu ve limitler\n"
-    "/devam — devre kesiciyi kaldır\n"
+    "/devam — devre kesiciyi kaldır (günlük limitte: onayla günde 1 kez %1,5 ek hak → /devam evet)\n"
     "/karne — setup ve periyot karnesi\n"
     "/tara — hemen yeni tarama başlat\n"
     "/sessiz 8 — 8 saat bildirimleri kapat\n"
@@ -414,7 +414,7 @@ def handle(updates: list, state: dict, data: dict | None, on_scan=None, on_close
         elif cmd in ("/emirler", "/emir"):
             reply = cmd_emirler(data)
         elif cmd == "/devam":
-            reply = on_resume() if on_resume else "Bu komut canlı döngü açıkken çalışır."
+            reply = on_resume(arg) if on_resume else "Bu komut canlı döngü açıkken çalışır."
         elif cmd == "/risk":
             reply = cmd_risk(data)
         elif cmd in ("/borsalar", "/arbitraj"):

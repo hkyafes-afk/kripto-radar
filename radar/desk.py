@@ -30,7 +30,8 @@ def firm_cfg(cfg: dict) -> dict:
          "yeniden_dagitim_gun": 7, "dagitim_min_islem": 15, "yedekten_donus_islem": 10, "yedekten_donus_r": 0.1,
          "kayip_serisi": 4, "seri_carpan": 0.5,
          "carry_max_cift": 3, "carry_min_yillik": 15, "carry_min_pozitif": 80, "carry_min_istikrar": 45,
-         "carry_cikis_yillik": 5, "carry_max_gun": 45, "kume_risk_yuzde": 4.0, "kume_korelasyon": 0.7}
+         "carry_cikis_yillik": 5, "carry_max_gun": 45, "kume_risk_yuzde": 4.0, "kume_korelasyon": 0.7,
+         "gunluk_ek_hak_yuzde": 1.5, "gunluk_ek_hak_sayisi": 1}
     f.update(((cfg.get("ekip") or {}).get("firma")) or {})
     return f
 

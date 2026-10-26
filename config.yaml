@@ -121,6 +121,8 @@ ekip:
     kaynak: "5 yıllık test (data/BACKTEST.md, 26.10.2026)"
   firma:                       # risk müdürünün firma geneli limitleri (işlem SAYISI sınırı yok, sınırlar risk cinsinden)
     gunluk_kayip_yuzde: 3.0    # % firma bugün bu kadar kaybederse o gün yeni işlem yok
+    gunluk_ek_hak_yuzde: 1.5   # % /devam evet ile kullanıcı onayıyla bugün için ek kayıp hakkı
+    gunluk_ek_hak_sayisi: 1    # günde en fazla kaç kez
     max_dusus_yuzde: 15.0      # % firma zirveden bu kadar düşerse durur (/devam)
     max_isi_yuzde: 10.0        # % tüm açık işlemlerin toplam riski
     coin_risk_yuzde: 2.5       # % aynı coinde (tüm yöneticiler toplamı) en fazla risk

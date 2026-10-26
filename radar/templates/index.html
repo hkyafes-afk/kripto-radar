@@ -485,7 +485,7 @@ function riskCard(){
   const heat = DM.heat_pct||0, hmax = C.max_isi_yuzde||3, w = Math.min(100, heat/hmax*100);
   const halt = R.halt==="dusus" ? `<span class="badge b-red">🛑 durduruldu: zirveden düşüş</span>` : R.halt==="gunluk" ? `<span class="badge b-amber">⏸ günlük kayıp limiti</span>` : `<span class="badge b-green">işlem açık</span>`;
   const ddW = Math.min(100, Math.abs(R.dd_pct||0)/(C.max_dusus_yuzde||10)*100);
-  const dayLim = (R.day_start||DM.equity||1000) * (C.gunluk_kayip_yuzde||2)/100, dayW = Math.min(100, Math.max(0,-(R.day_pnl||0))/dayLim*100);
+  const dayLim = (R.day_start||DM.equity||1000) * (C.gunluk_kayip_yuzde||2)/100 + ((R.extra && R.extra.day===R.day) ? R.extra.usd : 0), dayW = Math.min(100, Math.max(0,-(R.day_pnl||0))/dayLim*100);
   return `<h2>Risk yönetimi</h2><div class="card">
     <div class="hd"><div><div class="sym" style="font-size:15px">Risk durumu</div><div class="lbl">işlem başı risk %${String(C.risk_yuzde).replace(".",",")}${(R.risk_mult||1)<1?" × "+R.risk_mult+" (kayıp serisi "+R.loss_streak+")":""}</div></div><div class="score">${halt}</div></div>
     <div style="margin-top:10px"><div class="row" style="justify-content:space-between;font-size:12.5px"><span>Portföy riski</span><span class="num">${money(DM.heat_usd,false)} · %${heat.toFixed(1).replace(".",",")} / %${hmax}</span></div>

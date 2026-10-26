@@ -201,6 +201,38 @@ def test_team_breaker_uses_firm_limits():
         assert e.risk_limits()["risk_yuzde"].startswith("1–5")
 
 
+def test_user_extra_daily_allowance():
+    """/devam günlük limitte: onay ister, 'evet' ile günde 1 kez %1,5 ek hak; ek pay bitince yine durur."""
+    from datetime import datetime, timezone
+    with tempfile.TemporaryDirectory() as d:
+        e = _engine(d)
+        if not e.desk:
+            e.ensure_team()
+        e.risk_tick()
+        rs = e.state["risk"]
+        eq = rs["equity"]
+        today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+        def at(loss):
+            rs.update(day=today, day_start=eq + loss, peak=eq)
+            e.risk_tick()
+
+        at(eq * 0.035)                                  # %3,5 kayıp → durur
+        assert e.halt == "gunluk"
+        msg = e.resume()
+        assert "/devam evet" in msg and e.halt == "gunluk", "onaysız açılmamalı"
+        msg = e.resume("evet")
+        assert "Ek kayıp hakkı" in msg and e.halt is None
+        e.risk_tick()
+        assert e.halt is None, "ek hak verilince hemen tekrar durmamalı"
+        start = rs["day_start"]
+        at(eq * 0.035 + start * 0.01)                   # %1 daha kayıp: ek payın içinde
+        assert e.halt is None
+        at(eq * 0.035 + rs["day_start"] * 0.02)         # ek pay (%1,5) da bitti → durur
+        assert e.halt == "gunluk"
+        assert "kullanıldı" in e.resume("evet") and e.halt == "gunluk", "günde 1 kez"
+
+
 def test_data_issue_scales_with_volatility():
     """Kapanmış 4H mumdan bu yana sert ama gerçek hareket 'bozuk veri' sayılmamalı; kaba hatalar yakalanmalı."""
     import pandas as pd
