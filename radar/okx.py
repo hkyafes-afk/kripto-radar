@@ -21,6 +21,7 @@ LIMITS = {
     "/api/v5/market/candles": (36, 2),
     "/api/v5/market/history-candles": (18, 2),
     "/api/v5/market/tickers": (15, 2),
+    "/api/v5/market/books": (30, 2),
     "/api/v5/public/instruments": (15, 2),
     "/api/v5/public/funding-rate": (9, 2),
     "/api/v5/public/funding-rate-history": (9, 2),
@@ -188,6 +189,16 @@ class OKXClient:
         out = pd.concat(frames).sort_index()
         out = out[~out.index.duplicated(keep="last")]
         return out[out.index >= pd.to_datetime(start_ms, unit="ms", utc=True)]
+
+    def books(self, inst_id: str, sz: int = 50) -> dict:
+        """Emir defteri. Döner: {"asks": [(fiyat, kontrat)], "bids": [...], "ts": ms} (en iyiden kötüye)."""
+        rows = self.get("/api/v5/market/books", {"instId": inst_id, "sz": str(sz)})
+        if not rows:
+            return {"asks": [], "bids": [], "ts": 0}
+        b = rows[0]
+        return {"asks": [(_f(x[0]), _f(x[1])) for x in b.get("asks", [])],
+                "bids": [(_f(x[0]), _f(x[1])) for x in b.get("bids", [])],
+                "ts": int(_f(b.get("ts")) or 0)}
 
     def funding_rate(self, inst_id: str) -> dict:
         rows = self.get("/api/v5/public/funding-rate", {"instId": inst_id})

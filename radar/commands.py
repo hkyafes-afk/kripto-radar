@@ -27,6 +27,8 @@ HELP = (
     "/kapat SOL — demo işlemi elle kapat\n"
     "/borsalar — borsalar arası funding ve fiyat farkı\n"
     "/saglik — canlı veri ve bağlantı durumu\n"
+    "/risk — risk durumu ve limitler\n"
+    "/devam — devre kesiciyi kaldır\n"
     "/karne — setup ve periyot karnesi\n"
     "/tara — hemen yeni tarama başlat\n"
     "/sessiz 8 — 8 saat bildirimleri kapat\n"
@@ -177,6 +179,28 @@ def cmd_borsalar(d: dict) -> str:
     return "\n".join(L)
 
 
+def cmd_risk(d: dict) -> str:
+    r = d.get("risk") or {}
+    c = r.get("cfg") or {}
+    dm = (d.get("ledger") or {}).get("stats", {}).get("demo", {})
+    pf = (d.get("ledger") or {}).get("stats", {}).get("perf", {})
+    halt = {"dusus": "🛑 zirveden düşüş limiti (yeniden başlatmak için /devam)", "gunluk": "⏸ günlük kayıp limiti"}.get(r.get("halt"))
+    L = ["🛡 <b>Risk durumu</b>",
+         f"Durum: {halt or '🟢 işlem açık'}",
+         f"Bakiye {_tr(dm.get('equity', 0))}$ · bugün {_usd(r.get('day_pnl', 0))} · zirveden %{_tr(r.get('dd_pct', 0), 1)}",
+         f"Açık risk {_tr(dm.get('heat_usd', 0))}$ (%{_tr(dm.get('heat_pct', 0), 1)} / limit %{c.get('max_isi_yuzde')}) · "
+         f"long {dm.get('long_n', 0)} · short {dm.get('short_n', 0)}",
+         f"İşlem başı risk %{c.get('risk_yuzde')} × {r.get('risk_mult', 1):g}" + (f" (kayıp serisi {r.get('loss_streak')})" if r.get("loss_streak") else ""),
+         f"Limitler: günlük kayıp %{c.get('gunluk_kayip_yuzde')} · zirveden düşüş %{c.get('max_dusus_yuzde')}"]
+    if pf:
+        L.append(f"Performans: maks. düşüş %{_tr(pf.get('max_dd_pct', 0), 1)}"
+                 + (f" · Sharpe {pf['sharpe']}" if pf.get("sharpe") is not None else "")
+                 + (f" · Sortino {pf['sortino']}" if pf.get("sortino") is not None else ""))
+    if r.get("blocked"):
+        L.append("Kapalı setup'lar: " + ", ".join(r["blocked"]))
+    return "\n".join(L)
+
+
 def cmd_saglik(d: dict) -> str:
     f = d.get("feeds") or {}
     L = ["🩺 <b>Sistem sağlığı</b>"]
@@ -192,7 +216,7 @@ def cmd_saglik(d: dict) -> str:
     return "\n".join(L)
 
 
-def handle(updates: list, state: dict, data: dict | None, on_scan=None, on_close=None) -> bool:
+def handle(updates: list, state: dict, data: dict | None, on_scan=None, on_close=None, on_resume=None) -> bool:
     """Telegram güncellemelerini işler. Döner: state değişti mi.
 
     on_close(hedef) → cevap metni. hedef: işlem kimliği (butondan) ya da coin sembolü (/kapat SOL).
@@ -267,6 +291,10 @@ def handle(updates: list, state: dict, data: dict | None, on_scan=None, on_close
                 reply = on_close(arg.strip().upper())
             else:
                 reply = "Kapatma şu an sadece canlı döngü açıkken yapılabilir."
+        elif cmd == "/devam":
+            reply = on_resume() if on_resume else "Bu komut canlı döngü açıkken çalışır."
+        elif cmd == "/risk":
+            reply = cmd_risk(data)
         elif cmd in ("/borsalar", "/arbitraj"):
             reply = cmd_borsalar(data)
         elif cmd == "/saglik":

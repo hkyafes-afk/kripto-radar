@@ -58,7 +58,11 @@ Bitti. Bundan sonra kendi kendine sürekli çalışır.
 | **Sinyal hızı** | 15dk, 1S ve 4S mumlar kapanır kapanmaz tarama (mum kesinleşene kadar 1-2 sn aralıkla tekrar); tarama ayrı thread'de, stop takibini bekletmez |
 | **Telegram** | Long polling ile komutlara anında cevap, gönderim kuyruğu, hız sınırında bekleyip tekrar deneme, işlem mesajında ❌ Kapat butonu, bot kapalı kaldıysa haber |
 | **Tarama** | 24s hacme göre en likit 100 OKX USDT perpetual (sadece kripto; hisse ve emtia kontratları hariç) |
-| **Demo hesap** | 1.000$ sanal bakiye, her güçlü sinyalde 20$'lık işlem, coin başına tek pozisyon. Gerçek kurallar: giriş kitaptaki ask/bid'den, OKX kontrat ve lot yuvarlaması, OKX ücretleri (piyasa %0,05 / limit %0,02), hedef limit emir (fiyat içinden geçmeli), stop piyasa emri (kötü dolum dahil), funding gerçek kesim saatinde gerçek oranla, kaldıraçta likidasyon |
+| **Risk yönetimi** | İşlem başı bakiyenin %0,5'i risk (stop mesafesine göre büyüklük), toplam açık risk ≤ %3, aynı yönde ≤ 5 işlem ve ≤ %2 risk, günlük %2 kayıpta o gün dur, zirveden %10 düşüşte botu durdur (/devam), 4 kayıp serisinde riski yarıya indir, 30 işlemden sonra negatif beklentili setup'ı kapat |
+| **İşlem yönetimi** | +1R'de yarısını limit emirle kapat, stop'u başabaş + ücretlere çek, kalanı 2 ATR iz süren stop ile takip et |
+| **Canlı K/Z** | Dashboard telefondan doğrudan OKX'e bağlanır, net K/Z'yi (ücret ve funding dahil) saniyede 3 kez günceller; Telegram'da sabit canlı panel 15 sn'de bir yenilenir |
+| **Metrikler** | Beklenti (R), kâr faktörü, kazanç/kayıp oranı, isabet, maksimum düşüş, Sharpe, Sortino, seriler |
+| **Demo hesap** | 1.000$ sanal bakiye, risk bazlı büyüklük (istenirse sabit 20$), coin başına tek pozisyon. Gerçek kurallar: giriş kitaptaki ask/bid'den, OKX kontrat ve lot yuvarlaması, OKX ücretleri (piyasa %0,05 / limit %0,02), hedef limit emir (fiyat içinden geçmeli), stop piyasa emri (kötü dolum dahil), funding gerçek kesim saatinde gerçek oranla, kaldıraçta likidasyon |
 | **Çin borsaları** | Bitget canlı akış; Bitget, Gate, MEXC, HTX funding oranları; borsalar arası funding arbitraj listesi ve OKX↔Bitget fiyat farkı |
 | **Sinyaller** | 4 setup, her biri 0–100 puan: Trend Long/Short, Dönüş Long/Short |
 | **Rejim filtresi** | BTC günlük EMA200 altında long'lar %50, boğada short'lar kırpılır (ham puan ayrıca saklanır) |
@@ -68,7 +72,7 @@ Bitti. Bundan sonra kendi kendine sürekli çalışır.
 | **Backtest** | Her pazar walk-forward test (parametre ilk %70'te seçilir, son %30'da ölçülür) |
 
 ### Telegram komutları
-`/durum` · `/sinyaller` · `/demo` · `/pozisyonlar` · `/kapat SOL` · `/borsalar` · `/saglik` · `/coin SOL` · `/funding` · `/karne` · `/tara` · `/sessiz 8` · `/ac`
+`/durum` · `/sinyaller` · `/demo` · `/pozisyonlar` · `/kapat SOL` · `/risk` · `/devam` · `/borsalar` · `/saglik` · `/coin SOL` · `/funding` · `/karne` · `/tara` · `/sessiz 8` · `/ac`
 (Döngü açıkken cevaplar birkaç saniyede gelir.)
 
 ---

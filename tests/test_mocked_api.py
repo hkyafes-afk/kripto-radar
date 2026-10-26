@@ -124,7 +124,7 @@ def test_telegram_commands():
         os.environ["TELEGRAM_CHAT_ID"] = "111"
         sent.clear()
         scan.run(Path(d2), client=DemoClient(), notify=True, demo=True)
-        assert any("demo işlem açıldı" in t and "20$" in t for _, t in sent), sent[:1]
+        assert any("demo işlem açıldı" in t and "risk" in t and "Plan:" in t for _, t in sent), sent[:1]
         os.environ.pop("TELEGRAM_CHAT_ID", None)
         os.environ.pop("TELEGRAM_BOT_TOKEN", None)
 

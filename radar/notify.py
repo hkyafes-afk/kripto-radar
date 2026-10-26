@@ -132,6 +132,12 @@ class TelegramWorker:
         self.last_poll = 0.0
         self.updates_seen = 0
         self.bot = ""
+        self.panel: tuple | None = None        # (chat_id, metin) → sabitlenmiş canlı panel
+        self.panel_id: int | None = None
+        self.panel_text_sent = ""
+        self.panel_last = 0.0
+        self.panel_edits = 0
+        self.panel_min_s = 3.0
         self.t_send = threading.Thread(target=self._sender, daemon=True, name="tg-send")
         self.t_poll = threading.Thread(target=self._poller, daemon=True, name="tg-poll")
 
@@ -163,11 +169,43 @@ class TelegramWorker:
             except queue.Full:
                 self.failed += 1
 
+    def set_panel(self, chat_id, text):
+        self.panel = (chat_id, text)
+
+    def _panel_tick(self):
+        if not self.panel or time.time() - self.panel_last < self.panel_min_s:
+            return
+        chat, text = self.panel
+        if text == self.panel_text_sent and self.panel_id:
+            return
+        self.panel_last = time.time()
+        if self.panel_id:
+            res = tg_call("editMessageText", {"chat_id": chat, "message_id": self.panel_id, "text": text,
+                                              "parse_mode": "HTML", "disable_web_page_preview": True})
+            if res.get("ok") or "not modified" in str(res.get("description", "")):
+                self.panel_text_sent = text
+                self.panel_edits += 1
+                return
+            if res.get("error_code") == 429:
+                self.panel_last = time.time() + float((res.get("parameters") or {}).get("retry_after", 5))
+                return
+            self.panel_id = None            # mesaj silinmiş ya da düzenlenemiyor → yenisini oluştur
+        res = tg_call("sendMessage", {"chat_id": chat, "text": text, "parse_mode": "HTML",
+                                      "disable_web_page_preview": True, "disable_notification": True})
+        if res.get("ok"):
+            self.panel_id = (res.get("result") or {}).get("message_id")
+            self.panel_text_sent = text
+            tg_call("pinChatMessage", {"chat_id": chat, "message_id": self.panel_id, "disable_notification": True})
+
     def _sender(self):
         while not self.stop_ev.is_set():
             try:
                 kind, text, extra, t_in = self.q.get(timeout=0.5)
             except queue.Empty:
+                try:
+                    self._panel_tick()      # kuyruk boşken canlı paneli güncelle (bildirimler önceliklidir)
+                except Exception as e:  # noqa: BLE001
+                    print(f"[telegram] panel hatası: {e}")
                 continue
             try:
                 ok = _send_now(extra[0], text, extra[1]) if kind == "tg" else _wa_now(text)
@@ -210,7 +248,8 @@ class TelegramWorker:
         return {"bot": self.bot, "sent": self.sent, "failed": self.failed, "queue": self.q.qsize(),
                 "median_send_ms": round(lat[len(lat) // 2]) if lat else None,
                 "listening": self.t_poll.is_alive() and time.time() - self.last_poll < 60,
-                "polls": self.polls, "poll_errors": self.poll_errors, "updates": self.updates_seen}
+                "polls": self.polls, "poll_errors": self.poll_errors, "updates": self.updates_seen,
+                "panel_edits": self.panel_edits, "panel": bool(self.panel_id)}
 
 
 WORKER: TelegramWorker | None = None

@@ -111,6 +111,13 @@ class DemoClient:
         base = rng.choice([0.0001, 0.00005, 0.0003, -0.0002, 0.0006], p=[.4, .25, .15, .1, .1])
         return float(base + rng.normal(0, 0.00004))
 
+    def books(self, inst, sz=50):
+        self.calls += 1
+        last = float(self._series(self._sym(inst))["close"].iloc[-1])
+        step = last * 0.0001
+        return {"asks": [(last + step * (i + 1), 50.0 * (i + 1)) for i in range(sz)],
+                "bids": [(last - step * (i + 1), 50.0 * (i + 1)) for i in range(sz)], "ts": 0}
+
     def funding_rates_all(self):
         self.calls += 1
         now = int(self.now.timestamp() * 1000)

@@ -66,10 +66,39 @@ periyot_ayar:
 # ── DEMO HESAP ── her güçlü sinyalde sanal işlem açılır, kâr/zarar dolar olarak kaydedilir
 demo:
   baslangic_bakiye: 1000     # $ sanal başlangıç bakiyesi
-  islem_tutari_usd: 20       # $ her işleme konan teminat
-  kaldirac: 1                # 1 = kaldıraçsız (20$ teminat = 20$ pozisyon). Artırmak kayıpları da büyütür.
-  max_acik_toplam: 20        # aynı anda en fazla açık işlem
-  max_acik_periyot: 8        # bir periyottan (ör. 15m) aynı anda en fazla açık işlem
+  # risk  = profesyonel yöntem: her işlemde bakiyenin risk_yuzde'si kadar risk (stop uzaksa pozisyon küçülür)
+  # sabit = her işleme islem_tutari_usd kadar teminat
+  boyut_modu: risk
+  islem_tutari_usd: 20       # sadece sabit modda
+  kaldirac: 1                # sadece sabit modda
+  max_acik_toplam: 12        # aynı anda en fazla açık işlem
+  max_acik_periyot: 6        # bir periyottan (ör. 15m) aynı anda en fazla açık işlem
+
+# ── RİSK YÖNETİMİ ── profesyonel trader kuralları
+risk:
+  risk_yuzde: 0.5            # % her işlemde riske atılan bakiye (stop'a gidilirse kayıp ≈ bu kadar)
+  max_pozisyon_oran: 0.35    # tek pozisyonun nominali en fazla bakiyenin bu katı
+  max_kaldirac: 5            # teminat hesabı için (pozisyon / 5 = bağlanan teminat)
+  max_isi_yuzde: 3.0         # % tüm açık işlemlerin toplam riski en fazla
+  max_ayni_yon: 5            # aynı yönde (long ya da short) en fazla işlem — coinler birlikte hareket eder
+  max_ayni_yon_risk_yuzde: 2.0
+  max_spread_bp: 15          # alış-satış farkı bundan genişse işleme girme (1 bp = %0,01)
+  max_kayma_bp: 20           # emir defteri derinliğine göre tahmini kayma bundan fazlaysa girme
+  kismi_kar_r: 1.0           # +1R'de ...
+  kismi_kar_oran: 0.5        # ... pozisyonun yarısını kapat
+  basabas: true              # kısmi kârdan sonra stop'u başabaşa (+ücretler) çek
+  iz_suren_atr: 2.0          # kalan pozisyon için iz süren stop: en iyi fiyattan 2 ATR geride (0 = kapalı)
+  gunluk_kayip_yuzde: 2.0    # % gün içinde bu kadar kayıpta o gün yeni işlem açma (UTC günü)
+  max_dusus_yuzde: 10.0      # % zirveden bu kadar düşüşte botu durdur (/devam ile açılır)
+  kayip_serisi: 4            # üst üste bu kadar kayıpta ...
+  seri_risk_carpan: 0.5      # ... riski bu çarpanla küçült (ilk kazançta normale döner)
+  otomatik_kapat: true       # en az setup_kapat_min_islem işlemden sonra beklentisi negatif setup'ı kapat
+  setup_kapat_min_islem: 30
+  setup_kapat_beklenti_r: -0.05
+
+panel:
+  telegram_panel: true       # Telegram'da sabitlenmiş, kendiliğinden güncellenen canlı panel mesajı
+  panel_sn: 15               # kaç saniyede bir güncellensin
 
 # Gerçek OKX ücretleri (VIP0). Giriş ve stop/süre çıkışı piyasa emri (taker), hedef limit emir (maker).
 ucret:

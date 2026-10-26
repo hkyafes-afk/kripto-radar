@@ -20,7 +20,7 @@ import threading
 import time
 import traceback
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -55,6 +55,11 @@ def _fmt_dur(hours: float) -> str:
 def _usd(v: float, sign: bool = True) -> str:
     s = f"{v:+,.2f}" if sign else f"{v:,.2f}"
     return s.replace(",", "X").replace(".", ",").replace("X", ".") + "$"
+
+
+def _p(v: float, d: int = 1, sign: bool = False) -> str:
+    """Türkçe yüzde biçimi: 4,5"""
+    return (f"{v:+.{d}f}" if sign else f"{v:.{d}f}").replace(".", ",")
 
 
 def _ms(ts) -> int:
@@ -101,7 +106,11 @@ class Engine:
         self.fund_cur: dict[str, tuple] = {}    # inst → (oran, kesim_ms, kaynak)
         self.fund_events: list[tuple] = []      # (inst, oran, kesim_ms) geçmiş kesimler
         self.bg_fund: dict[str, float] = {}
-        self.watch: dict[str, tuple] = {}       # inst → ((id, side, sl, tp), ...)
+        self.watch: dict[str, tuple] = {}       # inst → ((id, side, sl, tp, liq_first, tp1), ...)
+        self.hw: dict[str, list] = {}           # inst → [en yüksek, en düşük] (iz süren stop için)
+        self.blocked: set = set()               # negatif beklentiyle kapatılmış (setup, tf)
+        self.halt: str | None = None            # devre kesici nedeni
+        self.risk_mult = 1.0
         self.hits: dict[str, tuple] = {}        # id → (sonuç, dolum, ms, maker)
         self.manual: list[str] = []
         self.feeds: dict = {}
@@ -112,14 +121,17 @@ class Engine:
         self.pending_open: list[dict] = []
         self.worker: threading.Thread | None = None
         self.t = {"universe": 0.0, "funding": 0.0, "hourly": 0.0, "prices": 0.0, "reconcile": 0.0,
-                  "cmd": 0.0, "pub": 0.0, "cfg": time.time(), "mark": 0.0}
+                  "cmd": 0.0, "pub": 0.0, "cfg": time.time(), "mark": 0.0, "risk": 0.0, "eq": 0.0, "panel": 0.0}
         self.dirty = True
         self.payload: dict | None = None
         self.started = time.time()
         self.cycles = 0
         self.fail_streak = 0
         self.stats_counter = {"opened": 0, "closed": 0, "scans": 0, "ws_closes": 0, "rest_closes": 0,
-                              "funding_events": 0, "signal_latency_s": None}
+                              "funding_events": 0, "signal_latency_s": None, "partials": 0, "trail_moves": 0}
+        self.state.setdefault("risk", {})
+        self.state.setdefault("eq_hist", [])
+        self.halt = self.state["risk"].get("halt")
 
     def _setup_cfg(self):
         c = self.cfg
@@ -142,7 +154,18 @@ class Engine:
         self._check_watch(key, last, bid, ask, ts)
 
     def _check_watch(self, inst, last, bid, ask, ts):
-        for tid, side, sl, tp, liq_first in self.watch.get(inst, ()):
+        w = self.watch.get(inst)
+        if not w:
+            return
+        h = self.hw.get(inst)
+        if h is None:
+            self.hw[inst] = [last, last]
+        else:
+            if last > h[0]:
+                h[0] = last
+            if last < h[1]:
+                h[1] = last
+        for tid, side, sl, tp, liq_first, tp1 in w:
             if tid in self.hits:
                 continue
             if side == "long":
@@ -151,12 +174,16 @@ class Engine:
                     self.hits[tid] = ("likidasyon" if liq_first else "stop", fill, ts, False)
                 elif last > tp:                                          # limit emir: fiyat hedefin içinden geçmeli
                     self.hits[tid] = ("hedef", tp, ts, True)
+                elif tp1 and last > tp1 and tid + "|tp1" not in self.hits:
+                    self.hits[tid + "|tp1"] = ("tp1", tp1, ts, True)
             else:
                 if last >= sl:
                     fill = max(ask, last) if ask > 0 else last
                     self.hits[tid] = ("likidasyon" if liq_first else "stop", fill, ts, False)
                 elif last < tp:
                     self.hits[tid] = ("hedef", tp, ts, True)
+                elif tp1 and last < tp1 and tid + "|tp1" not in self.hits:
+                    self.hits[tid + "|tp1"] = ("tp1", tp1, ts, True)
 
     def _on_funding(self, venue, key, rate, ftime, nxt):
         if venue == "bitget":
@@ -176,7 +203,8 @@ class Engine:
     def rebuild_watch(self):
         w: dict[str, list] = {}
         for t in self.ledger["open"]:
-            w.setdefault(t["inst"], []).append((t["id"], t["side"], t["sl"], t["tp"], bool(t.get("liq_first"))))
+            tp1 = t.get("tp1") if (t.get("real") and not t.get("tp1_done")) else None
+            w.setdefault(t["inst"], []).append((t["id"], t["side"], t["sl"], t["tp"], bool(t.get("liq_first")), tp1))
         self.watch = {k: tuple(v) for k, v in w.items()}
 
     def _quote(self, inst):
@@ -354,7 +382,7 @@ class Engine:
             s.update({"inst": inst, "sym": row["sym"], "price": feat["price"], "chg24": row.get("chg24"),
                       "funding_ann": feat["funding_ann"], "funding_rate": rate, "interval_h": iv,
                       "oi_chg24": feat["oi_chg24"], "rsi": feat["rsi"], "adx": feat["adx"],
-                      "regime": regime, "vol24_usd": row["vol24_usd"], "bar_ms": bar_ms})
+                      "regime": regime, "vol24_usd": row["vol24_usd"], "bar_ms": bar_ms, "atr": feat["atr"]})
         best = max(sigs, key=lambda s: s["score"]) if sigs else None
         coin = {
             "sym": row["sym"], "inst": inst, "price": feat["price"], "chg24": row.get("chg24"),
@@ -460,11 +488,43 @@ class Engine:
     def process_hits(self):
         if not self.hits:
             return
-        items = []
-        for tid in list(self.hits):
-            kind, px, ts, maker = self.hits.pop(tid)
-            items.append((tid, px, ts, kind, maker))
+        items, partial_msgs = [], []
+        by_id = {t["id"]: t for t in self.ledger["open"]}
+        for key in list(self.hits):
+            kind, px, ts, maker = self.hits.pop(key)
+            if kind == "tp1":
+                t = by_id.get(key.split("|")[0])
+                if t and not t.get("tp1_done"):
+                    part = lg.take_partial(t, px, int(ts), self.cfg)
+                    self.stats_counter["partials"] += 1
+                    partial_msgs.append((t, part))
+                continue
+            t = by_id.get(key)
+            if t and kind == "stop" and t.get("trail") and t.get("tp1_done"):
+                kind = "iz stop"
+            items.append((key, px, ts, kind, maker))
+        if partial_msgs:
+            self.dirty = True
+            self.rebuild_watch()
+            self._notify(self.msg_partial(partial_msgs))
         self._close_ids(items, "ws")
+
+    def process_trailing(self):
+        """İz süren stop: canlı akıştaki en iyi fiyata göre stop'u kâr yönüne taşır."""
+        moved = False
+        for t in self.ledger["open"]:
+            if not t.get("trail"):
+                continue
+            h = self.hw.get(t["inst"])
+            if not h:
+                continue
+            best = h[0] if t["side"] == "long" else h[1]
+            if lg.trail(t, best, self.cfg):
+                moved = True
+                self.stats_counter["trail_moves"] += 1
+        if moved:
+            self.rebuild_watch()
+            self.dirty = True
 
     def process_time_exits(self):
         now_ms = int(time.time() * 1000)
@@ -529,12 +589,102 @@ class Engine:
 
     manage_positions = reconcile   # geriye dönük ad
 
+    # ── risk yöneticisi ──────────────────────────────────────────────
+    def risk_tick(self):
+        """Her saniye: piyasa değerine göre özsermaye, günlük kayıp ve zirveden düşüş kontrolü."""
+        self.t["risk"] = time.time()
+        lg.mark(self.ledger, self.prices, self.cfg)
+        b = lg.balance(self.ledger, self.cfg)
+        eq = b["equity"]
+        rs = self.state["risk"]
+        rc = lg.risk_cfg(self.cfg)
+        day = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        if rs.get("day") != day:
+            rs["day"], rs["day_start"] = day, eq
+            if rs.get("halt") == "gunluk":
+                rs["halt"] = None
+                self._notify("🟢 Yeni gün başladı: günlük kayıp limiti sıfırlandı, işlemler yeniden açık.")
+        rs["peak"] = max(rs.get("peak") or eq, eq)
+        rs["equity"] = round(eq, 2)
+        day_pnl = eq - (rs.get("day_start") or eq)
+        rs["day_pnl"] = round(day_pnl, 2)
+        dd = (eq / rs["peak"] - 1) * 100 if rs["peak"] else 0
+        rs["dd_pct"] = round(dd, 2)
+        if not rs.get("halt"):
+            if dd <= -rc["max_dusus_yuzde"]:
+                rs["halt"] = "dusus"
+                self._notify(f"🛑 <b>Bot durduruldu</b>: zirveden %{abs(dd):.1f} düşüş (limit %{rc['max_dusus_yuzde']:g}). "
+                             f"Açık işlemler yönetilmeye devam ediyor, yeni işlem açılmayacak. Devam için /devam yaz.")
+            elif rs.get("day_start") and day_pnl <= -rs["day_start"] * rc["gunluk_kayip_yuzde"] / 100:
+                rs["halt"] = "gunluk"
+                self._notify(f"⏸ <b>Günlük kayıp limiti</b>: bugün {_usd(day_pnl)} (limit %{rc['gunluk_kayip_yuzde']:g}). "
+                             f"Bugün yeni işlem açılmayacak; UTC gece yarısı otomatik açılır.")
+        self.halt = rs.get("halt")
+        # kayıp serisi → risk küçült
+        rs_list = [t["r"] for t in sorted(self.ledger["closed"], key=lambda x: x.get("exit_ts") or 0)[-20:]]
+        streak = 0
+        for r in reversed(rs_list):
+            if r <= 0:
+                streak += 1
+            else:
+                break
+        self.risk_mult = rc["seri_risk_carpan"] if streak >= rc["kayip_serisi"] else 1.0
+        rs["loss_streak"] = streak
+        rs["risk_mult"] = self.risk_mult
+        # setup kill switch
+        if rc["otomatik_kapat"]:
+            groups: dict = {}
+            for t in self.ledger["closed"]:
+                if t.get("real"):
+                    groups.setdefault((t["setup"], t.get("tf", "4H")), []).append(t["r"])
+            newly = []
+            for k, rs_ in groups.items():
+                if len(rs_) >= rc["setup_kapat_min_islem"] and sum(rs_) / len(rs_) < rc["setup_kapat_beklenti_r"]:
+                    if k not in self.blocked:
+                        newly.append((k, sum(rs_) / len(rs_), len(rs_)))
+                    self.blocked.add(k)
+            for (setup, tf), avg, n in newly:
+                self._notify(f"🚫 <b>{sg.SETUP_LABELS[setup]} ({sg.TF_LABEL.get(tf, tf)})</b> kapatıldı: "
+                             f"{n} işlemde ortalama {avg:+.2f}R. Para kaybettiren setup'a artık işlem açılmayacak.")
+            rs["blocked"] = [f"{a}|{b}" for a, b in sorted(self.blocked)]
+        # özsermaye geçmişi (5 dk'da bir)
+        if time.time() - self.t["eq"] >= 300:
+            self.t["eq"] = time.time()
+            h = self.state["eq_hist"]
+            h.append([int(time.time() * 1000), round(eq, 2)])
+            if len(h) > 4000:
+                old, new = h[:2000], h[2000:]
+                self.state["eq_hist"] = old[::6] + new        # eski kısmı seyrekleştir
+        return eq
+
+    def resume(self) -> str:
+        rs = self.state["risk"]
+        was = rs.get("halt")
+        rs["halt"] = None
+        rs["peak"] = rs.get("equity")
+        self.halt = None
+        self.dirty = True
+        return ("🟢 Devre kesici kaldırıldı, zirve bugünkü bakiyeye sıfırlandı. Yeni işlemler açılabilir."
+                if was else "Zaten aktif bir durdurma yok.")
+
+    def _book(self, inst):
+        try:
+            b = self.client.books(inst, 50)
+        except Exception:  # noqa: BLE001
+            return None
+        ct = (self.meta.get(inst) or {}).get("ct_val") or 1.0
+        return {"asks": [(p, q * ct) for p, q in b["asks"]], "bids": [(p, q * ct) for p, q in b["bids"]]}
+
     def open_positions(self, strong: list[dict]) -> list[dict]:
         if not strong:
             return []
         skipped: list[dict] = []
+        if self.ledger["open"] or strong:
+            self.risk_tick()
         opened = lg.open_new(self.ledger, strong, self.cfg, int(time.time() * 1000),
-                             quote=self._quote, meta=lambda i: self.meta.get(i), skipped=skipped)
+                             quote=self._quote, meta=lambda i: self.meta.get(i), skipped=skipped,
+                             book=self._book, risk_mult=self.risk_mult, blocked=self.blocked,
+                             halted={"dusus": "zirveden düşüş limiti", "gunluk": "günlük kayıp limiti"}.get(self.halt))
         if skipped:
             self.skipped = (skipped + self.skipped)[:20]
         if opened:
@@ -601,8 +751,8 @@ class Engine:
         btc_row = next((r for r in self.universe if r["sym"] == "BTC"), None)
         if btc_row:
             btc.update({"price": self.prices.get(btc_row["inst"], btc_row["price"]), "chg24": btc_row.get("chg24")})
-        lg.mark(self.ledger, self.prices)
-        lstats = lg.stats(self.ledger, self.cfg, self.tfs)
+        lg.mark(self.ledger, self.prices, self.cfg)
+        lstats = lg.stats(self.ledger, self.cfg, self.tfs, self.state.get("eq_hist"))
         arb, spreads, n_spread = self._arbitrage()
         feeds = {k: f.status() for k, f in self.feeds.items()}
         if self.tg:
@@ -634,6 +784,9 @@ class Engine:
             "oi_source": self.oi_src,
             "taker_real": sum(1 for c in coins if c.get("taker_src") == "gerçek"),
             "fees": lg.fees_cfg(self.cfg),
+            "risk": {**self.state.get("risk", {}), "cfg": lg.risk_cfg(self.cfg), "halt": self.halt,
+                     "risk_mult": self.risk_mult},
+            "eq_hist": self.state.get("eq_hist", [])[-600:],
             "ledger": {
                 "stats": lstats,
                 "open": sorted(self.ledger["open"], key=lambda t: t["entry_ts"], reverse=True),
@@ -706,43 +859,101 @@ class Engine:
             L.append("")
             L.append(f"{'🟢' if s['side'] == 'long' else '🔴'} <b>{nt.esc(s['sym'])} {side}</b> · "
                      f"{s.get('tf_label', s.get('tf'))} {s['label']} · <b>{s['score']}</b>/100")
-            src = "kitaptan" if s.get("entry_src") == "kitap" else "son fiyattan"
+            src = {"kitap": "kitaptan", "derinlik (VWAP)": "derinlik VWAP"}.get(s.get("entry_src"), "son fiyattan")
             ct = f" · {s['contracts']:g} kontrat" if s.get("contracts") else ""
-            L.append(f"💵 {_usd(s['notional_usd'], False)} pozisyon, giriş {fp(s['entry'])} ({src}){ct}")
-            L.append(f"Stop {fp(s['sl'])} ({sl_s}{s['sl_pct']:.1f}%) · Hedef {fp(s['tp'])} ({tp_s}{s['tp_pct']:.1f}%)"
+            L.append(f"💵 Pozisyon {_usd(s['notional_usd'], False)} · teminat {_usd(s['margin_usd'], False)} · "
+                     f"<b>risk {_usd(s.get('risk_usd', 0), False)} (%{_p(s.get('risk_pct', 0), 2)})</b>")
+            L.append(f"Giriş {fp(s['entry'])} ({src}{', kayma ' + format(s['slip_bp'], '.1f') + ' bp' if s.get('slip_bp') else ''}){ct}")
+            L.append(f"Stop {fp(s['sl'])} ({sl_s}%{_p(s['sl_pct'])}) · Hedef {fp(s['tp'])} ({tp_s}%{_p(s['tp_pct'])})"
                      f" · en geç {_fmt_dur(s['max_saat'])}")
+            if s.get("tp1"):
+                L.append(f"Plan: {fp(s['tp1'])}'de (+1R) yarısını kapat → stop başabaşa → kalanı iz süren stop")
             if s.get("liq_first"):
                 L.append(f"⚠️ Kaldıraç yüksek: likidasyon {fp(s['liq'])} stop'tan önce geliyor")
             L += [f"<i>{nt.esc(r)}</i>" for r in s.get("reasons", [])[:3]]
         if len(opened) > mx:
             L.append(f"\n…ve {len(opened) - mx} işlem daha (dashboard'da)")
         b = lg.balance(self.ledger, self.cfg)
+        heat = sum(lg.open_risk(t) for t in self.ledger["open"])
+        L.append(f"\nPortföy riski {_usd(heat, False)} (%{_p(heat / b['equity'] * 100 if b['equity'] else 0)})")
         lat = self.stats_counter.get("signal_latency_s")
-        L.append(f"\nDemo bakiye {_usd(b['equity'], False)} · açık {len(self.ledger['open'])} işlem"
+        L.append(f"Demo bakiye {_usd(b['equity'], False)} · açık {len(self.ledger['open'])} işlem"
                  + (f" · mum kapanışından {lat:g} sn sonra" if lat is not None else ""))
         L.append("<i>Sanal işlemdir, gerçek emir verilmez. Yatırım tavsiyesi değildir.</i>")
         return "\n".join(L)
 
     def msg_closed(self, closed: list[dict]) -> str:
-        icon = {"hedef": "✅", "stop": "❌", "süre": "⏱", "manuel": "✋", "likidasyon": "💥"}
+        icon = {"hedef": "✅", "stop": "❌", "süre": "⏱", "manuel": "✋", "likidasyon": "💥", "iz stop": "🔒"}
         what = {"hedef": "hedefte", "stop": "stopta", "süre": "süre dolunca", "manuel": "elle",
-                "likidasyon": "LİKİDASYONLA"}
+                "likidasyon": "LİKİDASYONLA", "iz stop": "iz süren stopta"}
         L = []
         for t in closed:
             extra = ""
             if t.get("real"):
                 extra = f" · ücret {_usd(t.get('fee_usd', 0), False)}"
+                if t.get("partials"):
+                    extra += f" · kısmi kâr dahil ({_usd(t.get('partial_pnl_usd', 0))})"
                 if abs(t.get("funding_usd", 0)) >= 0.005:
                     extra += f" · funding {_usd(-t['funding_usd'])}"
             L.append(f"{icon.get(t['outcome'], '•')} <b>{nt.esc(t['sym'])}</b> {t['side']} "
                      f"({sg.TF_LABEL.get(t.get('tf'), t.get('tf'))} {sg.SETUP_LABELS[t['setup']]}) "
                      f"{what.get(t['outcome'], t['outcome'])} kapandı → <b>{_usd(t['pnl_usd'])}</b> "
-                     f"({t['pnl_pct']:+.2f}%) · {_fmt_dur(t['hours'])}"
+                     f"({_p(t['r'], 2, True)}R) · {_fmt_dur(t['hours'])}"
                      f"\n   {nt.fmt_price(t['entry'])} → {nt.fmt_price(t['exit'])}{extra}")
         b = lg.balance(self.ledger, self.cfg)
         ret = (b["equity"] / b["start"] - 1) * 100 if b["start"] else 0
-        L.append(f"Demo bakiye {_usd(b['equity'], False)} (%{ret:+.2f})")
+        L.append(f"Demo bakiye {_usd(b['equity'], False)} (%{_p(ret, 2, True)})")
         return "\n".join(L)
+
+    def msg_partial(self, items) -> str:
+        L = []
+        for t, part in items:
+            if part:
+                L.append(f"🎯 <b>{nt.esc(t['sym'])}</b> {t['side']} +1R'ye ulaştı: pozisyonun yarısı {nt.fmt_price(part['px'])}'den "
+                         f"kapandı → <b>{_usd(part['pnl'])}</b>. Stop başabaşa ({nt.fmt_price(t['sl'])}) çekildi, "
+                         f"kalan kısım iz süren stop ile takipte. Bu işlem artık zararla kapanamaz.")
+            else:
+                L.append(f"🎯 <b>{nt.esc(t['sym'])}</b> +1R: pozisyon bölünemeyecek kadar küçük; stop başabaşa çekildi, iz süren stop açık.")
+        return "\n".join(L)
+
+    def panel_text(self) -> str:
+        """Telegram'da sabitlenen canlı panel (sessizce düzenlenir)."""
+        b = lg.balance(self.ledger, self.cfg)
+        rs = self.state.get("risk", {})
+        ret = (b["equity"] / b["start"] - 1) * 100 if b["start"] else 0
+        heat = sum(lg.open_risk(t) for t in self.ledger["open"])
+        now = datetime.now(self.tz).strftime("%H:%M:%S")
+        live = "🟢 canlı" if self.okx_live() else "🟡 REST"
+        L = [f"📊 <b>Kripto Radar · canlı panel</b> · {now} · {live}",
+             f"Bakiye <b>{_usd(b['equity'], False)}</b> (%{_p(ret, 2, True)}) · bugün {_usd(rs.get('day_pnl', 0))}",
+             f"Açık K/Z {_usd(b['unrealized'])} · risk {_usd(heat, False)} (%{_p(heat / b['equity'] * 100 if b['equity'] else 0)})"
+             + (f" · ⛔ {self.halt}" if self.halt else "")]
+        op = sorted(self.ledger["open"], key=lambda t: -abs(t.get("upnl_usd", 0)))
+        for t in op[:10]:
+            mark = "🔒" if t.get("tp1_done") else ("🟢" if t["side"] == "long" else "🔴")
+            L.append(f"{mark} {nt.esc(t['sym'])} {sg.TF_LABEL.get(t.get('tf'), t.get('tf'))} "
+                     f"{nt.fmt_price(t.get('last', t['entry']))} · <b>{_usd(t.get('upnl_usd', 0))}</b> ({_p(t.get('r_now', 0), 2, True)}R)")
+        if len(op) > 10:
+            L.append(f"…ve {len(op) - 10} işlem daha")
+        if not op:
+            L.append("Açık işlem yok, sinyal bekleniyor.")
+        lat = self.stats_counter.get("signal_latency_s")
+        L.append(f"<i>Son tarama {', '.join(sg.TF_LABEL.get(k, k) + ' ' + datetime.fromtimestamp(v, self.tz).strftime('%H:%M') for k, v in self.scan_at.items())}"
+                 + (f" · gecikme {lat:g} sn" if lat is not None else "") + "</i>")
+        return "\n".join(L)
+
+    def maybe_panel(self):
+        pc = self.cfg.get("panel") or {}
+        if not (self.tg and pc.get("telegram_panel", True)) or self._muted():
+            return
+        if time.time() - self.t["panel"] < float(pc.get("panel_sn", 15)):
+            return
+        self.t["panel"] = time.time()
+        chat = nt.tg_chat(self.state)
+        if chat:
+            self.tg.set_panel(chat, self.panel_text())
+            if self.tg.panel_id and self.state.get("panel_msg_id") != self.tg.panel_id:
+                self.state["panel_msg_id"] = self.tg.panel_id
 
     def maybe_daily(self):
         local = datetime.now(self.tz)
@@ -751,7 +962,7 @@ class Engine:
             p = self.payload or self.build_payload()
             dm = p["ledger"]["stats"]["demo"]
             txt = msg_daily(p, self.cfg) + (
-                f"\n💼 <b>Demo hesap</b>: {_usd(dm['equity'], False)} (%{dm['return_pct']:+.2f}) · "
+                f"\n💼 <b>Demo hesap</b>: {_usd(dm['equity'], False)} (%{_p(dm['return_pct'], 2, True)}) · "
                 f"açık {len(self.ledger['open'])} işlem")
             self._notify(txt, buttons=self._dash_button())
             self.state["last_daily"] = today
@@ -786,7 +997,8 @@ class Engine:
         def on_scan():
             self.scan_at.clear()
             return "⟳ Tarama başladı; güçlü sinyal çıkarsa demo işlem açılır ve buraya yazılır."
-        if cm.handle(updates, self.state, self.payload or self.build_payload(), on_scan, self.on_close_request):
+        if cm.handle(updates, self.state, self.payload or self.build_payload(), on_scan, self.on_close_request,
+                     on_resume=self.resume):
             self.dirty = True
 
     def poll_commands(self, first=False):
@@ -851,6 +1063,7 @@ class Engine:
                 f.start()
         if nt.tg_token() and self.notify_on:
             self.tg = nt.TelegramWorker(self._on_tg_updates).start()
+            self.tg.panel_id = self.state.get("panel_msg_id")
         self.worker = threading.Thread(target=self._worker_loop, daemon=True, name="isci")
         self.worker.start()
 
@@ -889,9 +1102,13 @@ class Engine:
                 now = time.time()
                 try:
                     self.process_hits()
+                    self.process_trailing()
                     self.process_manual()
                     self.process_time_exits()
                     self.process_funding()
+                    if now - self.t["risk"] >= 1:
+                        self.risk_tick()
+                    self.maybe_panel()
                     with self.lock:
                         pend, self.pending_open = self.pending_open, []
                     if pend:
@@ -941,7 +1158,7 @@ class Engine:
                         raise
                     time.sleep(min(30, 2 * self.fail_streak))
                     continue
-                time.sleep(0.5)
+                time.sleep(0.25)
         finally:
             self.publish(force=True)
             self.stop_live()

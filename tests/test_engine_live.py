@@ -34,6 +34,7 @@ def test_tick_triggers_stop_and_target():
         # hedefe tam dokunmak limit emri doldurmaz
         e._on_tick("okx", t["inst"], t["tp"], t["tp"], t["tp"], 1)
         assert t["id"] not in e.hits
+        e.hits.clear()          # (bu dokunuş +1R kısmi kârını tetikler; bu testte sadece tam kapanışa bakıyoruz)
         # stop seviyesini geçen fiyat → bid/ask'tan (daha kötü) dolum
         px = t["sl"] - sgn * t["entry"] * 0.002
         bid, ask = px - 0.0001 * px, px + 0.0001 * px
@@ -110,6 +111,47 @@ def test_feed_to_engine_end_to_end():
         assert latency < 3, latency
         p = e.build_payload()
         assert p["feeds"]["okx"]["ticks"] >= 1
+
+
+def test_tick_partial_trailing_and_circuit_breakers():
+    with tempfile.TemporaryDirectory() as d:
+        e = _engine(d)
+        t = next(x for x in e.ledger["open"] if x.get("tp1"))
+        sgn = 1 if t["side"] == "long" else -1
+        # +1R'yi geçen fiyat → kısmi kâr, stop başabaşa
+        px = t["tp1"] + sgn * t["entry"] * 0.0005
+        e._on_tick("okx", t["inst"], px, px, px, int(time.time() * 1000))
+        e.process_hits()
+        assert t["tp1_done"] and t["partials"] and t["qty_open"] < t["qty"]
+        assert sgn * (t["sl"] - t["entry"]) > 0, "stop başabaşın kâr tarafında olmalı"
+        # fiyat daha da iyi → iz süren stop ilerler
+        sl0 = t["sl"]
+        best = t["entry"] + sgn * 1.8 * abs(t["entry"] - t["sl_init"])   # hedefin (2R) hemen öncesi
+        e._on_tick("okx", t["inst"], best, best, best, int(time.time() * 1000))
+        e.process_trailing()
+        assert sgn * (t["sl"] - sl0) > 0
+        # geri dönüş → iz stop ile kârla kapanış
+        back = t["sl"] - sgn * t["entry"] * 0.001
+        e._on_tick("okx", t["inst"], back, back, back, int(time.time() * 1000))
+        e.process_hits()
+        c = next(x for x in e.ledger["closed"] if x["id"] == t["id"])
+        assert c["outcome"] == "iz stop" and c["pnl_usd"] > 0
+        # devre kesici: günlük kayıp
+        e.risk_tick()
+        rs = e.state["risk"]
+        rs["day_start"] = rs["equity"] + rs["equity"] * 0.03
+        rs["peak"] = rs["day_start"]
+        e.risk_tick()
+        assert e.halt == "gunluk"
+        assert not e.open_positions([dict(s) for s in e.signals_by_tf.get("1H", [])[:3]])
+        # zirveden düşüş → durdur, /devam ile aç
+        rs["halt"] = None
+        rs["peak"] = rs["equity"] * 1.2
+        e.risk_tick()
+        assert e.halt == "dusus"
+        assert "kaldırıldı" in e.resume() and e.halt is None
+        txt = e.panel_text()
+        assert "canlı panel" in txt and "Bakiye" in txt
 
 
 if __name__ == "__main__":
