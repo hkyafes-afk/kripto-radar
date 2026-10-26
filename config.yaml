@@ -173,6 +173,9 @@ canli:
   bitget_ws: true            # Bitget canlı fiyat akışı (borsalar arası fark)
   fiyat_kontrol_sn: 60       # ek güvenlik: 1 dk'lık mumlarla kaç saniyede bir kontrol edilsin
   komut_kontrol_sn: 15       # Telegram komutlarına bakma sıklığı
+  # v9 test: günlük yöneticiler giriş/çıkış kararını sadece günlük kapanışta verir (test edilen sistemle aynı).
+  # Stop/hedef/iz stop her an canlı. true yapılırsa gün içi anlık fiyatla da karar verilir (test EDİLMEDİ).
+  gunici_karar: false
   yayin_min_dakika: 6        # dashboard en sık kaç dakikada bir güncellensin (GitHub Pages sınırı)
 
 defter:

@@ -187,7 +187,8 @@ class Engine:
         self.tfs = [tf for tf in (c["tarama"].get("periyotlar") or [c["tarama"]["periyot"]]) if tf in TF_SEC]
         self.setups = sg.build_setups(c)
         self.live = {"dongu_dakika": 330, "fiyat_kontrol_sn": 60, "komut_kontrol_sn": 15,
-                     "yayin_min_dakika": 6, "websocket": True, "bitget_ws": True, **(c.get("canli") or {})}
+                     "yayin_min_dakika": 6, "websocket": True, "bitget_ws": True, "gunici_karar": False,
+                     **(c.get("canli") or {})}
         self.tz = ZoneInfo(c["bildirim"]["saat_dilimi"])
 
     # ── canlı akış geri çağrıları (WS thread'lerinden) ────────────────
@@ -587,6 +588,8 @@ class Engine:
         strong = [s for s in sigs if s["score"] >= self.cfg["sinyal"]["guclu_esik"]]
         if self.team_on and self.desk:
             ideas = []
+            if tf == "1D":     # Gözcü'nün göreli gücü kapanış mumundan (gün içi tarama kapalıyken de çalışsın)
+                self._rel_strength([x["ctx"] for x in results if x.get("ctx")])
             for x in results:
                 c = x.get("ctx")
                 if not c:
@@ -659,6 +662,11 @@ class Engine:
         """(işçi) Kesintisiz değerlendirme: günlük yöneticiler her dakika canlı mumla bakar; fırsat oluştuğu an fikir verir,
         kural çıkışları da anlık çalışır. Aynı fikir 30 dakikada bir defadan sık önerilmez."""
         if not (self.team_on and self.desk):
+            return
+        # v9 test (kullanıcı kararı, 27.10.2026): günlük yöneticiler kararı GÜNLÜK KAPANIŞTA verir (5 yıllık testteki gibi).
+        # Gün içi anlık fiyatla giriş/çıkış kapalı: fiyat ortalamanın etrafında gidip gelince girip çıkıyor, komisyon
+        # yakıyordu (26.10 20:10 Kemal DOOD/BCH/CHIP). Stop, hedef ve iz süren stop her an canlı çalışmaya devam eder.
+        if not self.live.get("gunici_karar"):
             return
         self.t["live1d"] = time.time()
         mgrs = [m for m in self.desk.mgrs if m.analyze and "1D" in m.tfs]

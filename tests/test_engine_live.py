@@ -243,6 +243,12 @@ def test_continuous_daily_evaluation():
         e = _engine(d)
         if not e.desk:
             e.ensure_team()
+        for x in e.universe:
+            e.prices.setdefault(x["inst"], x["price"])
+        e.pending_ideas.clear()
+        e.scan_live_daily()
+        assert not e.pending_ideas and not e.signal_exits, "varsayılan: gün içi karar yok (kapanışta karar)"
+        e.live["gunici_karar"] = True
         r = e.universe[0]
         e.prices[r["inst"]] = 12345.0
         c = e.live_daily_ctx(r)
