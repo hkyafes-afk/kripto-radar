@@ -1,0 +1,471 @@
+{
+ "generated": "2026-10-26 19:06 UTC",
+ "years": 5.0,
+ "n_coins": 27,
+ "coins": [
+  "ADA",
+  "APR",
+  "ARB",
+  "BCH",
+  "BNB",
+  "BTC",
+  "DOGE",
+  "DOOD",
+  "ENA",
+  "ETH",
+  "FIL",
+  "HYPE",
+  "INJ",
+  "LINK",
+  "LIT",
+  "NEAR",
+  "ONDO",
+  "PEPE",
+  "PUMP",
+  "RLS",
+  "SOL",
+  "SUI",
+  "TRUMP",
+  "UNI",
+  "WLD",
+  "XRP",
+  "ZEC"
+ ],
+ "test_start": "2021-10-27",
+ "split": "2025-04-27",
+ "n_trials": 17,
+ "managers": {
+  "kemal": {
+   "rows": [
+    {
+     "n": 887,
+     "avg_r": 0.09,
+     "pf": 1.25,
+     "win_pct": 32.5,
+     "avg_hours": 444.4,
+     "n_train": 533,
+     "train_r": 0.074,
+     "n_val": 354,
+     "val_r": 0.113,
+     "cagr_pct": 10.78,
+     "max_dd_pct": -39.95,
+     "sharpe": 0.5,
+     "mar": 0.27,
+     "long_r": 0.086,
+     "short_r": 0.095,
+     "variant": [],
+     "dsr": 0.403
+    },
+    {
+     "n": 515,
+     "avg_r": 0.06,
+     "pf": 1.15,
+     "win_pct": 40.4,
+     "avg_hours": 532.6,
+     "n_train": 312,
+     "train_r": 0.004,
+     "n_val": 203,
+     "val_r": 0.146,
+     "cagr_pct": 4.39,
+     "max_dd_pct": -41.08,
+     "sharpe": 0.3,
+     "mar": 0.11,
+     "long_r": -0.01,
+     "short_r": 0.15,
+     "variant": [
+      "adx25"
+     ],
+     "dsr": 0.243
+    }
+   ],
+   "chosen": [],
+   "why": "hiçbir varyant dört şartı birden geçmedi → mevcut kural korunur"
+  },
+  "kaan": {
+   "rows": [
+    {
+     "n": 344,
+     "avg_r": 0.242,
+     "pf": 1.48,
+     "win_pct": 40.7,
+     "avg_hours": 335.7,
+     "n_train": 193,
+     "train_r": 0.378,
+     "n_val": 151,
+     "val_r": 0.069,
+     "cagr_pct": 14.75,
+     "max_dd_pct": -27.59,
+     "sharpe": 0.68,
+     "mar": 0.53,
+     "long_r": 0.242,
+     "short_r": 0.002,
+     "variant": [],
+     "dsr": 0.561
+    },
+    {
+     "n": 390,
+     "avg_r": 0.076,
+     "pf": 1.21,
+     "win_pct": 37.7,
+     "avg_hours": 194.0,
+     "n_train": 227,
+     "train_r": 0.082,
+     "n_val": 163,
+     "val_r": 0.066,
+     "cagr_pct": 9.34,
+     "max_dd_pct": -32.31,
+     "sharpe": 0.5,
+     "mar": 0.29,
+     "long_r": 0.076,
+     "short_r": -0.002,
+     "variant": [
+      "cikis_iz"
+     ],
+     "dsr": 0.402
+    },
+    {
+     "n": 344,
+     "avg_r": 0.259,
+     "pf": 1.51,
+     "win_pct": 40.1,
+     "avg_hours": 335.9,
+     "n_train": 193,
+     "train_r": 0.412,
+     "n_val": 151,
+     "val_r": 0.063,
+     "cagr_pct": 15.92,
+     "max_dd_pct": -28.25,
+     "sharpe": 0.67,
+     "mar": 0.56,
+     "long_r": 0.259,
+     "short_r": -0.021,
+     "variant": [
+      "cikis_iz_tp1"
+     ],
+     "dsr": 0.56
+    },
+    {
+     "n": 354,
+     "avg_r": 0.226,
+     "pf": 1.45,
+     "win_pct": 41.2,
+     "avg_hours": 316.5,
+     "n_train": 198,
+     "train_r": 0.324,
+     "n_val": 156,
+     "val_r": 0.1,
+     "cagr_pct": 13.74,
+     "max_dd_pct": -24.8,
+     "sharpe": 0.63,
+     "mar": 0.55,
+     "long_r": 0.226,
+     "short_r": 0.054,
+     "variant": [
+      "cikis_hedef"
+     ],
+     "dsr": 0.522
+    },
+    {
+     "n": 316,
+     "avg_r": 0.165,
+     "pf": 1.31,
+     "win_pct": 38.9,
+     "avg_hours": 308.2,
+     "n_train": 180,
+     "train_r": 0.379,
+     "n_val": 136,
+     "val_r": -0.118,
+     "cagr_pct": 18.13,
+     "max_dd_pct": -35.89,
+     "sharpe": 0.73,
+     "mar": 0.51,
+     "long_r": 0.165,
+     "short_r": -0.031,
+     "variant": [
+      "retest"
+     ],
+     "dsr": 0.611
+    },
+    {
+     "n": 396,
+     "avg_r": 0.092,
+     "pf": 1.15,
+     "win_pct": 37.1,
+     "avg_hours": 224.7,
+     "n_train": 224,
+     "train_r": 0.178,
+     "n_val": 172,
+     "val_r": -0.021,
+     "cagr_pct": -1.54,
+     "max_dd_pct": -47.42,
+     "sharpe": 0.1,
+     "mar": -0.03,
+     "long_r": 0.092,
+     "short_r": -0.036,
+     "variant": [
+      "fitil_stop"
+     ],
+     "dsr": 0.129
+    }
+   ],
+   "chosen": [],
+   "why": "hiçbir varyant dört şartı birden geçmedi → mevcut kural korunur"
+  },
+  "selin": {
+   "rows": [
+    {
+     "n": 242,
+     "avg_r": 0.183,
+     "pf": 1.45,
+     "win_pct": 45.9,
+     "avg_hours": 224.4,
+     "n_train": 123,
+     "train_r": 0.105,
+     "n_val": 119,
+     "val_r": 0.265,
+     "cagr_pct": 1.09,
+     "max_dd_pct": -20.28,
+     "sharpe": 0.15,
+     "mar": 0.05,
+     "long_r": 0.183,
+     "short_r": 0.031,
+     "variant": [],
+     "dsr": 0.155
+    },
+    {
+     "n": 247,
+     "avg_r": 0.075,
+     "pf": 1.23,
+     "win_pct": 38.5,
+     "avg_hours": 142.7,
+     "n_train": 126,
+     "train_r": -0.013,
+     "n_val": 121,
+     "val_r": 0.166,
+     "cagr_pct": -0.96,
+     "max_dd_pct": -28.8,
+     "sharpe": 0.04,
+     "mar": -0.03,
+     "long_r": 0.075,
+     "short_r": -0.049,
+     "variant": [
+      "cikis_iz"
+     ],
+     "dsr": 0.1
+    },
+    {
+     "n": 242,
+     "avg_r": 0.207,
+     "pf": 1.51,
+     "win_pct": 45.5,
+     "avg_hours": 225.4,
+     "n_train": 123,
+     "train_r": 0.114,
+     "n_val": 119,
+     "val_r": 0.303,
+     "cagr_pct": 0.36,
+     "max_dd_pct": -26.11,
+     "sharpe": 0.12,
+     "mar": 0.01,
+     "long_r": 0.207,
+     "short_r": 0.012,
+     "variant": [
+      "cikis_iz_tp1"
+     ],
+     "dsr": 0.138
+    },
+    {
+     "n": 242,
+     "avg_r": 0.195,
+     "pf": 1.48,
+     "win_pct": 45.9,
+     "avg_hours": 205.2,
+     "n_train": 123,
+     "train_r": 0.13,
+     "n_val": 119,
+     "val_r": 0.263,
+     "cagr_pct": 8.02,
+     "max_dd_pct": -18.81,
+     "sharpe": 0.49,
+     "mar": 0.43,
+     "long_r": 0.195,
+     "short_r": 0.035,
+     "variant": [
+      "cikis_hedef"
+     ],
+     "dsr": 0.393
+    },
+    {
+     "n": 208,
+     "avg_r": 0.192,
+     "pf": 1.47,
+     "win_pct": 45.7,
+     "avg_hours": 227.4,
+     "n_train": 117,
+     "train_r": 0.128,
+     "n_val": 91,
+     "val_r": 0.274,
+     "cagr_pct": 8.59,
+     "max_dd_pct": -26.98,
+     "sharpe": 0.51,
+     "mar": 0.32,
+     "long_r": 0.192,
+     "short_r": 0.057,
+     "variant": [
+      "ttm"
+     ],
+     "dsr": 0.41
+    }
+   ],
+   "chosen": [],
+   "why": "hiçbir varyant dört şartı birden geçmedi → mevcut kural korunur"
+  },
+  "murat": {
+   "rows": [
+    {
+     "n": 901,
+     "avg_r": -0.049,
+     "pf": 0.9,
+     "win_pct": 50.8,
+     "avg_hours": 258.3,
+     "n_train": 549,
+     "train_r": -0.089,
+     "n_val": 352,
+     "val_r": 0.014,
+     "cagr_pct": -9.11,
+     "max_dd_pct": -60.27,
+     "sharpe": -0.24,
+     "mar": -0.15,
+     "long_r": -0.129,
+     "short_r": 0.019,
+     "variant": [],
+     "dsr": 0.028
+    },
+    {
+     "n": 935,
+     "avg_r": -0.037,
+     "pf": 0.92,
+     "win_pct": 36.6,
+     "avg_hours": 237.6,
+     "n_train": 573,
+     "train_r": -0.074,
+     "n_val": 362,
+     "val_r": 0.021,
+     "cagr_pct": -10.3,
+     "max_dd_pct": -53.63,
+     "sharpe": -0.18,
+     "mar": -0.19,
+     "long_r": -0.072,
+     "short_r": -0.007,
+     "variant": [
+      "cikis_iz"
+     ],
+     "dsr": 0.039
+    },
+    {
+     "n": 890,
+     "avg_r": -0.032,
+     "pf": 0.93,
+     "win_pct": 40.4,
+     "avg_hours": 273.2,
+     "n_train": 543,
+     "train_r": -0.081,
+     "n_val": 347,
+     "val_r": 0.044,
+     "cagr_pct": -5.18,
+     "max_dd_pct": -48.13,
+     "sharpe": -0.01,
+     "mar": -0.11,
+     "long_r": -0.076,
+     "short_r": 0.005,
+     "variant": [
+      "cikis_iz_tp1"
+     ],
+     "dsr": 0.083
+    },
+    {
+     "n": 955,
+     "avg_r": -0.034,
+     "pf": 0.93,
+     "win_pct": 50.8,
+     "avg_hours": 213.9,
+     "n_train": 574,
+     "train_r": -0.074,
+     "n_val": 381,
+     "val_r": 0.026,
+     "cagr_pct": -8.44,
+     "max_dd_pct": -61.07,
+     "sharpe": -0.21,
+     "mar": -0.14,
+     "long_r": -0.12,
+     "short_r": 0.037,
+     "variant": [
+      "cikis_hedef"
+     ],
+     "dsr": 0.033
+    }
+   ],
+   "chosen": [
+    "cikis_iz_tp1"
+   ],
+   "why": "cikis_iz_tp1: doğrulama +0.044R (taban +0.014R), yıllık %-5.18 (taban %-9.11), MAR -0.11 (taban -0.15)"
+  }
+ },
+ "firm": {
+  "taban (ayıda long yarım, sınıf kuralı yok)": {
+   "cagr_pct": 26.22,
+   "max_dd_pct": -33.08,
+   "sharpe": 0.85,
+   "mar": 0.79,
+   "taken": 656,
+   "train_r": 0.12,
+   "val_r": 0.133
+  },
+  "ayıda long YASAK": {
+   "cagr_pct": 26.8,
+   "max_dd_pct": -33.76,
+   "sharpe": 0.85,
+   "mar": 0.79,
+   "taken": 599,
+   "train_r": 0.116,
+   "val_r": 0.227
+  },
+  "Genel Müdür kanıt sınıfı açık (B yarım, C gölge)": {
+   "cagr_pct": 18.57,
+   "max_dd_pct": -35.76,
+   "sharpe": 0.68,
+   "mar": 0.52,
+   "taken": 824,
+   "train_r": 0.078,
+   "val_r": 0.166
+  },
+  "ayıda long yasak + kanıt sınıfı": {
+   "cagr_pct": 22.19,
+   "max_dd_pct": -34.95,
+   "sharpe": 0.76,
+   "mar": 0.63,
+   "taken": 774,
+   "train_r": 0.112,
+   "val_r": 0.154
+  }
+ },
+ "class_counts": {
+  "A": 1504,
+  "B": 674,
+  "C": 196
+ },
+ "class_avg_r": {
+  "A": 0.053,
+  "B": 0.125,
+  "C": 0.003
+ },
+ "cost": {
+  "taker": 0.1,
+  "maker": 0.04,
+  "slip_entry_bp": 2.0,
+  "slip_stop_bp": 5.0,
+  "funding_long_day_pct": 0.03,
+  "stop_kayma": "taban 5 bp + günlük ATR'nin %5'i (genç coinde ×1,5)"
+ },
+ "duration_s": 193.5
+}
