@@ -350,8 +350,10 @@ def run(site: Path, cfg_path=None, client=None, notify: bool = True, demo: bool 
     state["consecutive_failures"] = 0
     muted = (state.get("mute_until") or 0) > now_ms
     if notify and not muted:
-        if opened_now:
-            nt.broadcast(msg_new_signals(opened_now, payload, cfg), state, cfg,
+        opened_keys = {(t["inst"], t["setup"]) for t in opened_now}
+        opened_sigs = [s for s in strong if (s["inst"], s["setup"]) in opened_keys]
+        if opened_sigs:
+            nt.broadcast(msg_new_signals(opened_sigs, payload, cfg), state, cfg,
                          buttons=_dash_button(payload))
         if closed_now:
             nt.broadcast(msg_closed(closed_now), state, cfg)

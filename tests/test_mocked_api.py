@@ -116,6 +116,14 @@ def test_telegram_commands():
         sent.clear()
         scan.run(Path(d), client=DemoClient(), notify=True, demo=True)
         assert not sent
+    # bildirim açıkken yeni sinyal mesajı ve günlük özet gönderilmeli
+    with tempfile.TemporaryDirectory() as d2:
+        os.environ["TELEGRAM_BOT_TOKEN"] = "TEST"
+        os.environ["TELEGRAM_CHAT_ID"] = "111"
+        sent.clear()
+        scan.run(Path(d2), client=DemoClient(), notify=True, demo=True)
+        assert any("Yeni güçlü sinyal" in t for _, t in sent), sent[:1]
+        os.environ.pop("TELEGRAM_CHAT_ID", None)
         os.environ.pop("TELEGRAM_BOT_TOKEN", None)
 
 
