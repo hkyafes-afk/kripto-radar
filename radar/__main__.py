@@ -46,6 +46,12 @@ def main(argv=None) -> int:
     p.add_argument("--demo", action="store_true")
     p.add_argument("--config", default=None)
 
+    p = sub.add_parser("yaris", help="v9 Faz 1: 5 yıllık varyant yarışı (çıkış, giriş, stop, firma kuralları)")
+    p.add_argument("--coins", type=int, default=30)
+    p.add_argument("--years", type=float, default=5.0)
+    p.add_argument("--demo", action="store_true")
+    p.add_argument("--config", default=None)
+
     p = sub.add_parser("veri", help="v9 veri toplayıcı: OI, long/short, taker, likidasyon (saatlik, ayrı iş)")
     p.add_argument("--out", default="veri/okx")
     p.add_argument("--coins", type=int, default=40)
@@ -57,6 +63,16 @@ def main(argv=None) -> int:
     p.add_argument("--config", default=None)
 
     a = ap.parse_args(argv)
+
+    if a.cmd == "yaris":
+        from . import race
+        client = None
+        if a.demo:
+            from .demo import DemoClient
+            client = DemoClient()
+        race.run(client=client, cfg_path=a.config, n_coins=a.coins, years=a.years,
+                 out_dir=(Path("site") / "yaris_demo") if a.demo else None)
+        return 0
 
     if a.cmd == "veri":
         from . import collect

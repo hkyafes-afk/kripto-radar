@@ -22,6 +22,7 @@ from statistics import NormalDist
 import numpy as np
 import pandas as pd
 
+from . import ledger as lg
 from . import quant, store, team
 from .config import ROOT, load_config
 
@@ -116,6 +117,9 @@ def simulate_trade(idea, F, i, bar_h, ctx_fn):
     risk = abs(entry - sl_init)
     if risk <= 0:
         return None
+    # v9: canlıyla aynı oynaklığa bağlı stop kayması (taban + günlük ATR'nin %5'i; genç coinde ×1,5)
+    slip_stop = lg.stop_slip_bp({"atr": atr, "entry": entry, "tf": "1D" if bar_h >= 24 else "15m",
+                                 "coin_class": idea.get("coin_class")}, {"stop_kayma_bp": COST["slip_stop_bp"]})
     fee_in = entry * (COST["maker"] if maker_in else COST["taker"]) / 100
     qty_open, pnl, tp1_done = 1.0, -fee_in, tp1 is None
     hw = entry
@@ -138,7 +142,7 @@ def simulate_trade(idea, F, i, bar_h, ctx_fn):
         stop_hit = (l[k] <= sl) if sgn > 0 else (h[k] >= sl)
         if stop_hit and not (k == j0 and maker_in and False):
             px = (min(o[k], sl) if sgn > 0 else max(o[k], sl)) if k > j0 else sl
-            px *= (1 - sgn * COST["slip_stop_bp"] / 1e4)
+            px *= (1 - sgn * slip_stop / 1e4)
             exit_px, exit_k, why = close_all(px, k, "stop" if not tp1_done and not trail_on else "iz/başabaş stop")
             break
         if k > j0 or not maker_in:
@@ -188,10 +192,24 @@ def simulate_trade(idea, F, i, bar_h, ctx_fn):
 
 # ── bir yöneticinin tüm geçmişi ───────────────────────────────────────
 
-def run_manager(mgr, F, sym, inst, bar_h, warm, ctx_extra_fn, cfg, cooldown_bars=3):
+def coin_first_ts(client, sym: str, inst: str | None = None):
+    """Coin'in OKX'teki ilk ayı (spot, yoksa vadeli aylık mum). Kanıt sınıfı için gerçek yaş; bulunamazsa None."""
+    for i in (f"{sym}-USDT", inst or f"{sym}-USDT-SWAP"):
+        try:
+            df = client.candles(i, "1M", limit=100, closed_only=False)
+            if len(df):
+                return df.index[0]
+        except Exception:  # noqa: BLE001
+            continue
+    return None
+
+
+def run_manager(mgr, F, sym, inst, bar_h, warm, ctx_extra_fn, cfg, cooldown_bars=3, first_ts=None):
     trades = []
     n = len(F)
     hv_cache = {}
+    if first_ts is None or first_ts > F.index[0]:
+        first_ts = F.index[0]      # coin yaşı (kanıt sınıfı): bilinen en eski OKX mumu
 
     def ctx_fn(k):
         x = quant.ctx_at(F, k)
@@ -207,7 +225,11 @@ def run_manager(mgr, F, sym, inst, bar_h, warm, ctx_extra_fn, cfg, cooldown_bars
             ctx["hvn"] = hv_cache[i]
         ctx.update({"price": ctx["close"], "sym": sym, "inst": inst, "tf": "1D" if bar_h == 24 else "15m",
                     "bar_ms": int(bar_h * 3.6e6)})
-        idea = team.apply_learned(mgr.analyze(ctx, mgr, cfg), cfg)
+        age_d = (F.index[i] - first_ts).total_seconds() / 86400
+        cls = "A" if age_d >= 1095 else "B" if age_d >= 365 else "C"
+        idea = team.apply_learned(team.apply_variant(mgr.analyze(ctx, mgr, cfg), ctx, cfg), cfg)
+        if idea:
+            idea["coin_class"] = cls
         if not idea:
             i += 1
             continue
@@ -217,6 +239,8 @@ def run_manager(mgr, F, sym, inst, bar_h, warm, ctx_extra_fn, cfg, cooldown_bars
             continue
         t["weather_trend"] = ctx.get("w_trend")
         t["high_vol"] = ctx.get("high_vol")
+        t["btc_bear"] = bool(ctx.get("btc_bear"))
+        t["coin_class"] = cls
         trades.append(t)
         i = t["exit_i"] + cooldown_bars
     return trades

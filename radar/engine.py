@@ -288,8 +288,10 @@ class Engine:
             for r in uni:
                 self.prices.setdefault(r["inst"], r["price"])
                 if r.get("ct_val"):
+                    age = (self.state.get("coin_age") or {}).get(r["sym"])
+                    lt = min(x for x in (r.get("list_ts") or 0.0, age or 0.0, 9e15) if x > 0)
                     self.meta[r["inst"]] = {"ct_val": r["ct_val"], "lot_sz": r["lot_sz"], "min_sz": r["min_sz"],
-                                            "max_lev": r.get("max_lev") or 0.0, "list_ts": r.get("list_ts") or 0.0}
+                                            "max_lev": r.get("max_lev") or 0.0, "list_ts": 0.0 if lt >= 9e15 else lt}
             self._feed_symbols()
         self.t["universe"] = time.time()
 
@@ -342,8 +344,34 @@ class Engine:
                     self._set_fund(inst, _f(fr.get("fundingRate"), 0.0), int(_f(fr.get("fundingTime"), 0)), "rest")
         self.t["funding"] = time.time()
 
+    def refresh_coin_ages(self, per_call: int = 25):
+        """Coin yaşı (Genel Müdür kanıt sınıfı): OKX vadeli listeleme tarihi sözleşme yenilenince sıfırlanabilir; bu yüzden
+        spot (yoksa vadeli) aylık mumların ilk ayı da bakılır, en eskisi alınır. Bir kez öğrenilir, durumda saklanır."""
+        ages = self.state.setdefault("coin_age", {})
+        todo = [r for r in self.universe if r["sym"] not in ages][:per_call]
+        for r in todo:
+            first = 0.0
+            for inst in (f"{r['sym']}-USDT", r["inst"]):
+                try:
+                    df = self.client.candles(inst, "1M", limit=100, closed_only=False)
+                    if len(df):
+                        first = float(df.index[0].value // 1_000_000)
+                        break
+                except Exception:  # noqa: BLE001
+                    continue
+            ages[r["sym"]] = first or (r.get("list_ts") or 0.0)
+        if todo:
+            for r in self.universe:
+                if r["inst"] in self.meta:
+                    lt = min(x for x in (r.get("list_ts") or 0.0, ages.get(r["sym"]) or 0.0, 9e15) if x > 0)
+                    self.meta[r["inst"]]["list_ts"] = 0.0 if lt >= 9e15 else lt
+
     def refresh_hourly(self):
         now_ms = int(time.time() * 1000)
+        try:
+            self.refresh_coin_ages()
+        except Exception as e:  # noqa: BLE001
+            print(f"[coin yaşı] {e}")
         self.btc = btc_info(self.client, self.cfg)
         self.oi_chg, self.oi_src = oi_changes(self.client, self.universe, self.state, now_ms)
         if not self.demo and self.cfg["borsa"].get("funding_karsilastir"):
@@ -2009,6 +2037,11 @@ class Engine:
         if not self.universe:
             raise RuntimeError("Taranacak coin bulunamadı (borsa verisi boş).")
         self.refresh_funding()
+        if not self.demo:
+            try:
+                self.refresh_coin_ages(per_call=150)      # ilk açılışta hepsi (sonra durumda saklı)
+            except Exception as e:  # noqa: BLE001
+                print(f"[coin yaşı] {e}")
         self.refresh_hourly()
 
     def run_once(self) -> dict:

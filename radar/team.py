@@ -269,7 +269,8 @@ def a_selin(ctx, mgr, cfg):
     """Günlük volatilite sıkışmasından patlama: bantlar 120 günün en dar %20'sinden çıkarken trend yönünde kırılım."""
     c, atr, px = ctx["close"], ctx["atr"], ctx["price"]
     vr = ctx.get("vol_ratio") or 0
-    if not (ctx.get("squeeze3") and _ok(ctx["bb_up"]) and _ok(ctx["sma50"]) and _ok(atr) and atr > 0):
+    sq = (ctx.get("ttm_prev") or 0) >= 1 if "ttm" in variants(cfg, "selin") else ctx.get("squeeze3")
+    if not (sq and _ok(ctx["bb_up"]) and _ok(ctx["sma50"]) and _ok(atr) and atr > 0):
         return None
     long_core = c > ctx["bb_up"] and c > ctx["sma50"] and vr >= 1.3
     short_core = c < ctx["bb_lo"] and c < ctx["sma50"] and vr >= 1.3 and _shorts_allowed(ctx)
@@ -513,6 +514,84 @@ def learned_for(cfg: dict | None, mid: str) -> dict:
     return out
 
 
+# ── v9 varyantları (Faz 1 yarışı): canlı ve test AYNI fonksiyonu kullanır ─────────────────────────────
+# Hangi varyantın açık olduğu config.yaml → ekip.varyant.<yönetici> listesinde (yalnızca 5 yıllık yarışı kazananlar).
+EXIT_VARIANTS = ("cikis_iz", "cikis_iz_tp1", "cikis_hedef")
+VARIANT_TEXT = {
+    "cikis_iz": "kısmi kâr yok; stop baştan iz sürer, trend bitince çıkar (kârı koştur)",
+    "cikis_iz_tp1": "kısmi kâr yok; ilk hedefe varınca stop başabaşa çekilir ve iz sürmeye başlar",
+    "cikis_hedef": "tek hedef: ilk hedefte pozisyonun tamamı kapanır",
+    "adx25": "trend gücü filtresi: ADX 25'in altındaysa girmez",
+    "retest": "kırılımdan sonra kırılan seviyeye geri çekilmeyi bekler (5 gün), limit emirle girer",
+    "fitil_stop": "stop kırılım mumunun fitilinin hemen ötesinde (dar stop)",
+    "ttm": "sıkışma tanımı TTM: Bollinger bantları Keltner kanalının içinde",
+}
+
+
+def variants(cfg: dict | None, mid: str) -> set:
+    v = (cfg or {}).get("_variant")
+    if v is not None:                     # yarış: tek seferlik deneme
+        return set(v.get(mid) or [])
+    return set((((cfg or {}).get("ekip") or {}).get("varyant") or {}).get(mid) or [])
+
+
+def apply_variant(idea: dict | None, ctx: dict, cfg: dict | None) -> dict | None:
+    if not idea:
+        return idea
+    V = variants(cfg, idea["mgr"])
+    if not V:
+        return idea
+    sgn = 1 if idea["side"] == "long" else -1
+    atr, px = idea["atr"], idea["entry"]
+    notes = []
+    if "adx25" in V and not ((ctx.get("adx") or 0) >= 25):
+        return None
+    if "fitil_stop" in V:
+        raw = (ctx["low"] - 0.1 * atr) if sgn > 0 else (ctx["high"] + 0.1 * atr)
+        idea["sl"] = _clamp_stop(px, raw, atr, idea["side"], 0.5, 2.5)
+        d = abs(px - idea["sl"])
+        idea["tp"] = px + sgn * 6.0 * d
+        if idea.get("tp1") is not None:
+            idea["tp1"] = px + sgn * 2.0 * d
+        notes.append(VARIANT_TEXT["fitil_stop"])
+    if "retest" in V:
+        lvl = ctx.get("hh20") if sgn > 0 else ctx.get("ll20")
+        if lvl and lvl == lvl and sgn * (px - lvl) > 0:
+            lim = lvl + sgn * 0.1 * atr
+            d_old = abs(px - idea["sl"])
+            sl = idea["sl"]
+            if sgn * (lim - sl) < 0.5 * atr:
+                sl = lim - sgn * 0.5 * atr
+            d = abs(lim - sl)
+            shift_tp, shift_tp1 = (idea["tp"] - px) / d_old, ((idea["tp1"] - px) / d_old if idea.get("tp1") is not None else None)
+            idea.update({"entry_type": "limit", "limit_px": lim, "entry": lim, "sl": sl,
+                         "tp": lim + shift_tp * d, "limit_valid_ms": 5 * 86_400_000, "maker_first": False})
+            if shift_tp1 is not None:
+                idea["tp1"] = lim + shift_tp1 * d
+            notes.append(VARIANT_TEXT["retest"])
+    pp = dict(idea.get("pp") or {})
+    if "cikis_iz" in V:
+        pp.update({"partial_frac": 0.0, "basabas": False, "trail_now": True, "trail_atr": pp.get("trail_atr") or 2.5})
+        idea["tp1"] = None
+        ref = idea["entry"]
+        idea["tp"] = ref + 20.0 * atr if sgn > 0 else max(ref - 20.0 * atr, ref * 0.15)
+        notes.append(VARIANT_TEXT["cikis_iz"])
+    elif "cikis_iz_tp1" in V and idea.get("tp1") is not None:
+        pp.update({"partial_frac": 0.0, "basabas": True, "trail_atr": pp.get("trail_atr") or 2.5})
+        ref = idea["entry"]
+        idea["tp"] = ref + 20.0 * atr if sgn > 0 else max(ref - 20.0 * atr, ref * 0.15)
+        notes.append(VARIANT_TEXT["cikis_iz_tp1"])
+    elif "cikis_hedef" in V and idea.get("tp1") is not None:
+        pp.update({"partial_frac": 0.0, "basabas": False, "trail_atr": 0.0, "trail_now": False})
+        idea["tp"], idea["tp1"] = idea["tp1"], None
+        notes.append(VARIANT_TEXT["cikis_hedef"])
+    idea["pp"] = pp
+    if notes:
+        idea["variants"] = sorted(V)
+        idea["plan"] = idea.get("plan", "") + " (Yarışı kazanan ayar: " + "; ".join(notes) + ".)"
+    return idea
+
+
 def apply_learned(idea: dict | None, cfg: dict | None) -> dict | None:
     """Öğrenme koşusunun bulduğu (sınırlı) ayarları fikre uygular: stop mesafesi ve iz süren stop katsayısı.
     Hedefler R cinsinden korunur. Canlı ve test aynı fonksiyonu kullanır."""
@@ -544,7 +623,7 @@ def ideas_for(ctx: dict, managers: list[Manager], cfg: dict) -> list[dict]:
         if m.analyze is None or ctx["tf"] not in m.tfs:
             continue
         try:
-            idea = apply_learned(m.analyze(ctx, m, cfg), cfg)
+            idea = apply_learned(apply_variant(m.analyze(ctx, m, cfg), ctx, cfg), cfg)
         except Exception as e:  # noqa: BLE001 — bir yöneticinin hatası diğerlerini durdurmasın
             print(f"[ekip] {m.id} {ctx.get('sym')} {ctx.get('tf')}: {e}")
             idea = None

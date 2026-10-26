@@ -173,6 +173,32 @@ def test_rejected_ideas_are_tracked_in_shadow():
     assert a["filters"] and a["filters"][0]["kind"] == "olay takvimi" and a["filters"][0]["n"] == 1
 
 
+def test_variants_shared_by_live_and_backtest():
+    import copy
+    base = _kaan()
+    cfg = copy.deepcopy(CFG)
+    def var(v, ctx=None):
+        c = dict(cfg, _variant={"kaan": v})
+        return team.apply_variant(copy.deepcopy(base), ctx or qctx(close=103.0, price=103.0, hh20=101.0, low=100.5,
+                                                                    high=103.5, adx=30.0), c)
+    a = var(["cikis_iz"])
+    assert a["tp1"] is None and a["pp"]["partial_frac"] == 0 and a["pp"]["trail_now"] and "Yarışı kazanan" in a["plan"]
+    b = var(["cikis_hedef"])
+    assert abs(b["tp"] - base["tp1"]) < 1e-9 and b["tp1"] is None and b["pp"]["trail_atr"] == 0
+    c = var(["cikis_iz_tp1"])
+    assert c["tp1"] == base["tp1"] and c["pp"]["partial_frac"] == 0 and c["pp"]["basabas"]
+    r = var(["retest"])
+    assert r["entry_type"] == "limit" and abs(r["limit_px"] - (101.0 + 0.1 * base["atr"])) < 1e-9 and r["entry"] == r["limit_px"]
+    assert r["sl"] < r["limit_px"] and r["limit_valid_ms"] == 5 * 86_400_000
+    f = var(["fitil_stop"])
+    assert f["sl"] > base["sl"] and abs(f["tp"] - (f["entry"] + 6 * (f["entry"] - f["sl"]))) < 1e-9
+    k = dict(cfg, _variant={"kemal": ["adx25"]})
+    idea = team.a_kemal(qctx(above50_prev=False), M["kemal"], cfg)
+    assert idea and team.apply_variant(copy.deepcopy(idea), qctx(adx=18.0), k) is None
+    assert team.apply_variant(copy.deepcopy(idea), qctx(adx=31.0), k) is not None
+    assert team.apply_variant(copy.deepcopy(base), qctx(), cfg) == base, "varyant yoksa fikir aynen kalır"
+
+
 if __name__ == "__main__":
     for name, fn in list(globals().items()):
         if name.startswith("test_"):

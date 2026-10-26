@@ -42,6 +42,10 @@ def features(df: pd.DataFrame) -> pd.DataFrame:
     F["bbw"] = (up - lo) / mid.replace(0, np.nan)
     F["bbw_rank"] = F["bbw"].rolling(120, min_periods=60).rank(pct=True)
     F["squeeze3"] = (F["bbw_rank"].shift(1).rolling(3, min_periods=1).min() <= 0.20)
+    # v9 varyantları: ADX (trend gücü) ve TTM sıkışması (Bollinger bantları Keltner kanalının içinde: EMA20 ± 1,5 ATR)
+    F["adx"] = ind.adx(h, l, c, 14)[0]
+    ttm_in = ((up < F["ema20"] + 1.5 * F["atr"]) & (lo > F["ema20"] - 1.5 * F["atr"])).astype(float)
+    F["ttm_prev"] = ttm_in.shift(1).rolling(3, min_periods=1).max()      # son 3 günde sıkışma vardı
     rng = (h - l).replace(0, np.nan)
     F["close_pos"] = (c - l) / rng
     F["range_atr"] = (h - l) / F["atr"]
@@ -116,12 +120,13 @@ def btc_weather(B: pd.DataFrame, i: int = -1) -> dict:
 
 
 # Piyasa havasına göre risk çarpanı (testte açık/kapalı karşılaştırılır)
-def weather_mult(w: dict | None, mgr: str, side: str) -> float:
+def weather_mult(w: dict | None, mgr: str, side: str, bear_long: float = 0.5) -> float:
+    """bear_long: ayı havasında long çarpanı (v8: 0,5; v9 yarışında 0 = tamamen yasak varyantı sınandı)."""
     if not w:
         return 1.0
     m = 1.0
     if w["trend"] == "ayi" and side == "long" and mgr != "ayse":
-        m *= 0.5
+        m *= bear_long
     if w["trend"] == "boga" and side == "short":
         m *= 0.5
     # (v8 testi: "yatay piyasada kırılımcıları yarıya indir" kuralı Kaan'ın getirisini %20 → %11,5 düşürdü ve
