@@ -7,7 +7,8 @@ jobs:
       - run: |
           python3 - <<'PY'
           import json, urllib.request
-          d = json.load(urllib.request.urlopen("https://www.okx.com/api/v5/public/instruments?instType=SWAP"))["data"]
+          req = urllib.request.Request("https://www.okx.com/api/v5/public/instruments?instType=SWAP", headers={"User-Agent": "Mozilla/5.0 kripto-radar/1.0"})
+          d = json.load(urllib.request.urlopen(req))["data"]
           by = {x["instId"]: x for x in d}
           for i in ["BTC-USDT-SWAP","CL-USDT-SWAP","SOXS-USDT-SWAP","EWZ-USDT-SWAP","GRASS-USDT-SWAP","LIGHT-USDT-SWAP"]:
               x = by.get(i, {})
