@@ -111,6 +111,9 @@ Kullanıcı kuralı: "başla" denmeden hiçbiri uygulanmaz.
    - f. Zarar otopsisi: her zarara sebep etiketi (sahte kırılım, BTC çekti, haber, dar stop).
    - Hepsi önce 5 yıl + walk-forward testten geçer; geçmeyen canlıya girmez.
 6. **Gerçek API (sonra):** Kullanıcı ~100$ ile başlamayı düşünüyor. OKX asgari işlem miktarları yüzünden 8 ajan ayrı ayrı çalışamaz; kanıtlanmış 1–2 ajan + Ortak Masa ile başlanır. Ciddiye binince ayrıca konuşulacak.
+7. **Öğrenme asla yavaşlamaz (kullanıcı ilkesi):** "Öğrenme" ile "para koyma" ayrılır.
+   Her sinyal, filtreden elense bile gölgede tam takip edilir ve ders/segment istatistiğine eklenir. Filtreler ve güven kuralları sadece gerçek bütçeyi etkiler.
+   Gölgeye alınan ajanlar (ör. Murat) işlem açmaya devam eder; sadece parası risk altında değildir.
 
 ## 3. Araştırma özeti (kaynaklar aşağıda)
 
