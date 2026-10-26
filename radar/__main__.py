@@ -52,6 +52,13 @@ def main(argv=None) -> int:
     p.add_argument("--demo", action="store_true")
     p.add_argument("--config", default=None)
 
+    p = sub.add_parser("hakem", help="v9 Analist-Hakem modeli eğitimi (5 yıllık test + canlı/gölge işlemler)")
+    p.add_argument("--coins", type=int, default=30)
+    p.add_argument("--years", type=float, default=5.0)
+    p.add_argument("--ledger", default=None, help="kalp dalındaki ledger.json (canlı işlemler)")
+    p.add_argument("--demo", action="store_true")
+    p.add_argument("--config", default=None)
+
     p = sub.add_parser("veri", help="v9 veri toplayıcı: OI, long/short, taker, likidasyon (saatlik, ayrı iş)")
     p.add_argument("--out", default="veri/okx")
     p.add_argument("--coins", type=int, default=40)
@@ -72,6 +79,17 @@ def main(argv=None) -> int:
             client = DemoClient()
         race.run(client=client, cfg_path=a.config, n_coins=a.coins, years=a.years,
                  out_dir=(Path("site") / "yaris_demo") if a.demo else None)
+        return 0
+
+    if a.cmd == "hakem":
+        from . import hakem
+        client = None
+        if a.demo:
+            from .demo import DemoClient
+            client = DemoClient()
+        hakem.run(client=client, cfg_path=a.config, n_coins=a.coins, years=a.years,
+                  ledger_path=Path(a.ledger) if a.ledger else None,
+                  out=(Path("site") / "hakem_demo.json") if a.demo else None)
         return 0
 
     if a.cmd == "veri":

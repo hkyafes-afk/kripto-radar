@@ -424,7 +424,7 @@ function renderTeam(){
       <span class="badge b-dim">açık risk ${money(DM.heat_usd,false)} (%${(DM.heat_pct||0).toFixed(1).replace(".",",")})</span>
       <span class="badge b-dim">bugün ${money(R.day_pnl||0)}</span><span class="badge b-dim">${(D.orders||[]).length} bekleyen emir</span></div>
     ${(hs.issues||[]).length ? `<p class="note">${hs.issues.map(esc).join("<br>")}</p>` : ""}</div>`;
-  h += marketCard() + gmCard() + learnCard() + testCard();
+  h += marketCard() + gmCard() + expertCard() + learnCard() + testCard();
   h += `<h2>Yöneticiler</h2><div class="grid">` + ms.map(m => {
     const s = m.stats || {}, w = Math.max(4, Math.min(100, m.equity / (tot||1) * 100 * ms.length / 2));
     const st = m.benched ? `<span class="badge b-amber" title="${esc(m.bench_why||"")}">👤 gölgede${m.bench_why?" · "+esc(m.bench_why):""}</span>` : `<span class="badge b-green">sermayeli</span>`;
@@ -499,6 +499,24 @@ function gmCard(){
     ${filt?`<h4 style="margin:10px 0 4px">Filtre karnesi (elenen fikirler gölgede nasıl sonuçlandı)</h4><div class="chipline">${filt}</div>`:""}
     ${cst?`<p class="note">Sınıf öğrenmesi: ${cst}</p>`:""}
     ${(G.off_style||[]).length?`<p class="note">Denetçi: ${G.off_style.map(o=>esc(o.mgr+" "+o.sym+": "+o.why)).join(" · ")}</p>`:""}</div>`;
+}
+
+function expertCard(){
+  const E = D.experts || {}, H = D.hakem, T = D.team || {};
+  const f2 = (x,d=2) => x==null ? "–" : (+x).toFixed(d).replace(".",",");
+  const RN = {gozcu:"🔭 Gözcü", balina:"🐋 Balina", hakem:"⚖️ Hakem", risk:"🛡 Risk", trader:"🎯 Trader"};
+  const rows = Object.entries(E).map(([mid, roles]) => { const m = T[mid] || {};
+    const cells = ["gozcu","balina","hakem"].map(r => { const x = roles[r]; if (!x) return `<span class="badge b-dim">${RN[r]} · henüz işlem yok</span>`;
+      return `<span class="badge ${x.w>=1?"b-green":x.w<=0.2?"b-red":"b-dim"}">${RN[r]} · ${x.n} işlem · söz ${f2(x.w)}${x.mean!=null?" · katkı "+(x.mean>0?"+":"")+f2(x.mean,3)+"R":""}</span>`; }).join("");
+    const tr = roles.trader, rk = roles.risk;
+    return `<div class="li"><div style="min-width:0"><div>${m.emoji||""} <b>${esc(m.name||mid)}</b></div><div class="chipline">${cells}
+      ${tr?`<span class="badge b-dim">${RN.trader} · kayma ${f2(tr.slip_bp,1)} bp · maker %${f2(tr.maker_pct,0)}</span>`:""}
+      ${rk?`<span class="badge b-dim">${RN.risk} · 1R'yi aşan kayıp %${f2(rk.over_1r_pct,0)}</span>`:""}</div></div></div>`; }).join("");
+  const hg = H && H.groups ? Object.entries(H.groups).map(([k,g]) => `<span class="badge ${g.validated?"b-green":"b-dim"}">${esc(k==="_hepsi"?"hepsi":((T[k]||{}).name||k))}: ${g.n} işlem · ilişki ${f2(g.val_corr)} · ${g.validated?"söz hakkı var":"söz hakkı yok"}</span>`).join("") : "";
+  return `<h2>🧑‍💼 Uzman ajanlar</h2><div class="card">
+    <p class="note">Her yöneticinin 5 uzmanı var: Gözcü (fırsat + BTC'ye göre göreli güç), Balina Gözü (açık pozisyon, fonlama, long/short, likidasyon, akış), Analist-Hakem ("bu sinyal tutar mı?" modeli), Risk Sorumlusu (boyut, kaldıraç, tavan) ve Trader (emir, kayma). İlk üçü boyuta gerekçeli görüş verir; her görüş işlem kapanınca karneye işlenir. Kanıtlanmamış uzmanın sözü yarım sayılır; haklı çıktıkça 1,5'e kadar büyür, yanıldıkça sıfıra iner. Gölge işlemler de sayılır.</p>
+    ${rows?`<div class="list">${rows}</div>`:`<p class="note">Uzman karneleri ilk kapanan işlemlerle dolacak.</p>`}
+    ${hg?`<h4 style="margin:10px 0 4px">Analist-Hakem modeli${H.generated?" ("+esc(H.generated)+")":""}</h4><div class="chipline">${hg}</div>`:`<p class="note">Analist-Hakem modeli her gece eğitilir; ilk eğitimden sonra burada görünür.</p>`}</div>`;
 }
 
 function learnCard(){
@@ -639,6 +657,11 @@ function explainTrade(t, closed){
   if (learned) h += `<p>${esc(learned)}</p>`;
   if (t.coin_class) h += `<p class="m">Coin kanıt sınıfı: <b>${esc(t.coin_class)}</b> ${({A:"(3 yıl+ geçmiş, tam boyut)",B:"(1–3 yıl, yarım boyut)",C:"(1 yıldan yeni; kanıtlanana kadar gölge)"})[t.coin_class]||""}</p>`;
   if (t.gm && t.gm.length) h += `<p>🏛 Genel Müdür: ${t.gm.map(esc).join("; ")}</p>`;
+  if (t.experts && t.experts.length) {
+    const RN = {gozcu:"🔭 Gözcü", balina:"🐋 Balina Gözü", hakem:"⚖️ Analist-Hakem", risk:"🛡 Risk", trader:"🎯 Trader"};
+    h += `<h4>Uzmanların görüşü${t.exp_mult&&t.exp_mult!==1?` · boyut ×${(+t.exp_mult).toFixed(2).replace(".",",")}`:""}</h4>`
+       + t.experts.map(o => `<p class="m"><b>${RN[o.role]||esc(o.role)}</b> <span class="badge ${o.action==="büyüt"?"b-green":o.action==="küçült"?"b-amber":"b-dim"}">${esc(o.action)}${o.action!=="aynen"?" ×"+(+o.mult).toFixed(2).replace(".",","):""}</span>${o.w!=null?` <span class="m">söz ağırlığı ${(+o.w).toFixed(2).replace(".",",")}</span>`:""} — ${(o.reasons||[]).map(esc).join("; ")}</p>`).join("");
+  }
   if (t.contrib) { const T2 = D.team||{}; h += `<p>🤝 Yatırım komitesi: ${Object.entries(t.contrib).map(([k,v])=>esc((T2[k]||{}).name||k)+" "+money(v,false)+(t.votes&&t.votes[k]!=null?" (oy "+(+t.votes[k]).toFixed(2).replace(".",",")+")":"")).join(" · ")} koydu.${t.distributed?" Kâr/zarar dağıtıldı: "+Object.entries(t.distributed).map(([k,v])=>esc((T2[k]||{}).name||k)+" "+money(v)).join(" · "):" Kapanınca kâr/zarar bu paylara göre onlara döner."}</p>`; }
   if (t.filtered) h += `<p>🧪 Bu fikir elendi ama gölgede izleniyor (filtre de sınanıyor): <b>${esc(t.filtered)}</b></p>`;
   h += `<h4>Para dökümü${closed?"":" (canlı)"}</h4><div class="k2">`

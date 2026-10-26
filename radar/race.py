@@ -181,6 +181,7 @@ def run(client=None, cfg_path=None, n_coins=30, years=5.0, out_dir: Path | None 
                      ("Genel Müdür kanıt sınıfı açık (B yarım, C gölge)", wmult_fn(0.5, CLASS_MULT)),
                      ("ayıda long yasak + kanıt sınıfı", wmult_fn(0.0, CLASS_MULT)),
                      ("sadece C gölge (B tam boyut)", wmult_fn(0.5, C_ONLY)),
+                     ("B tam, C yarım", wmult_fn(0.5, {"A": 1.0, "B": 1.0, "C": 0.5})),
                      ("ayıda long yasak + sadece C gölge", wmult_fn(0.0, C_ONLY))):
         ec = bt2.equity_curve(pool, risk, days=days, mult_fn=fn)
         p = bt2.perf(ec["curve"]) if ec else {}

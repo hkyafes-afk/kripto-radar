@@ -173,6 +173,12 @@ class Desk:
             gm.append(f"kanıt sınıfı {director.CLASS_TEXT[cls]}: bu coinde kanıtımız yok, kanıtlanana kadar gölgede")
         elif not shadow and cm < 1:
             gm.append(f"kanıt sınıfı {director.CLASS_TEXT[cls]}: yarım boyut")
+        bl = float(self.fc.get("ayi_long_carpan", 0.5))
+        wx = (self.env or {}).get("weather") or {}
+        if (not shadow and bl <= 0 and side == "long" and m.id != "ayse"
+                and (wx.get("btc_bear") or wx.get("trend") == "ayi")):
+            shadow = True
+            gm.append("BTC kuralı (5 yıllık yarış): BTC 50 günlük ortalamanın altında → long açılmaz, gölgede izleniyor")
         if not shadow and self.fc.get("carpisma_yasak", True):
             opp = director.opposite_holder(self, idea)
             if opp:
@@ -185,7 +191,8 @@ class Desk:
         if eq_m <= 0:
             return "red", None, "yönetici sermayesi tükendi"
         mult = self.fc["seri_carpan"] if self.loss_streak(m.id) >= self.fc["kayip_serisi"] else 1.0
-        wm = quant.weather_mult(env.get("weather"), m.id, side) if env.get("weather") else 1.0
+        wm = (quant.weather_mult(env.get("weather"), m.id, side, bear_long=bl if bl > 0 else 0.5)
+              if env.get("weather") else 1.0)
         fm = env["fng_mult"](side) if env.get("fng_mult") else 1.0
         km = float(card.get("mult", 1.0))
         hm = macro.weekend_mult(now_ms, tf)
