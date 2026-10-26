@@ -114,6 +114,12 @@ Kullanıcı kuralı: "başla" denmeden hiçbiri uygulanmaz.
 7. **Öğrenme asla yavaşlamaz (kullanıcı ilkesi):** "Öğrenme" ile "para koyma" ayrılır.
    Her sinyal, filtreden elense bile gölgede tam takip edilir ve ders/segment istatistiğine eklenir. Filtreler ve güven kuralları sadece gerçek bütçeyi etkiler.
    Gölgeye alınan ajanlar (ör. Murat) işlem açmaya devam eder; sadece parası risk altında değildir.
+8. **Dış işlem verisi (öğrenme kaynağı):**
+   - Önce kendi 5 yıllık test işlemlerimiz → "bu sinyal tutar mı" (meta-labeling) eğitimi.
+   - Sonra Hyperliquid herkese açık trader verisi (işlem, kâr/zarar, kaldıraç, likidasyon) → hata dersleri + "akıllı para / kalabalık nerede" sinyali.
+   - OKX kopya trade liderleri (public API olup olmadığı doğrulanacak).
+   - Uyarılar: lider tablolarında hayatta kalan yanılgısı var; kopyalamak değil, ders ve sinyal çıkarmak amaç.
+   - **Hız kuralı (kullanıcı):** Hiçbiri canlı ajanların hızını etkilemez. Veri çekme ve eğitim ayrı workflow'da yapılır; canlı döngü sadece hazır özet dosyayı okur. Kaynak çökerse ajanlar beklemez, son veriyle devam eder.
 
 ## 3. Araştırma özeti (kaynaklar aşağıda)
 
