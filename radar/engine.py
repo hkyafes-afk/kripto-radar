@@ -648,6 +648,30 @@ class Engine:
             self.state["news"] = self.news.to_state()
         self.dirty = True
 
+    def _bt8(self) -> dict | None:
+        """5 yıllık test özeti (data/backtest_v8.json, test iş akışı yazar). Saatte bir okunur."""
+        if time.time() - getattr(self, "_bt8_t", 0) < 3600 and hasattr(self, "_bt8_v"):
+            return self._bt8_v
+        self._bt8_t = time.time()
+        try:
+            r = json.loads((ROOT / "data" / "backtest_v8.json").read_text(encoding="utf-8"))
+            keep = ("n", "avg_r", "win_pct", "pf", "t_stat")
+            ek = ("cagr_pct", "max_dd_pct", "sharpe", "dsr")
+            self._bt8_v = {
+                "generated": r.get("generated"), "test_start": r.get("test_start"), "n_coins": r.get("n_coins"),
+                "years": r.get("years"), "trials": r.get("trials"), "policy_active": r.get("policy_active"),
+                "cost": r.get("cost"),
+                "managers": {k: {"name": b["name"], "all": {x: b["all"].get(x) for x in keep},
+                                 "oos": {x: b["oos"].get(x) for x in keep}, "long": {x: b["long"].get(x) for x in keep},
+                                 "short": {x: b["short"].get(x) for x in keep},
+                                 "equity": {x: (b.get("equity") or {}).get(x) for x in ek}, "by_year": b.get("by_year")}
+                             for k, b in (r.get("managers") or {}).items()},
+                "firm": {k: {"taken": f.get("taken"), "equity": {x: (f.get("equity") or {}).get(x) for x in ek}}
+                         for k, f in (r.get("firm") or {}).items()}}
+        except Exception:  # noqa: BLE001
+            self._bt8_v = None
+        return self._bt8_v
+
     def desk_env(self):
         """Risk müdürünün kullandığı ortam bilgisi (her turda güncellenir)."""
         if self.desk:
@@ -1061,6 +1085,7 @@ class Engine:
                         "n": len((self.ledger.get("archive") or {}).get("closed", []))},
             "health": self.health,
             "weather": self.weather or None,
+            "backtest_v8": self._bt8(),
             "news": self.news.public(),
             "calendar": {"status": self.calendar.status, "upcoming": self.calendar.upcoming(),
                          "block": self.calendar.block()},
@@ -1265,10 +1290,20 @@ class Engine:
             L.append("")
             for m in self.desk.mgrs:
                 eq = self.desk.equity(m.id)
-                base = self.desk.st["alloc"].get(m.id) or 1
                 n_open = sum(1 for t in self.ledger["open"] if t.get("mgr") == m.id and not t.get("shadow"))
-                L.append(f"{m.emoji} {m.name} {_usd(eq, False)} ({_p((eq / base - 1) * 100, 1, True)}%)"
-                         + (f" · {n_open} açık" if n_open else "") + (" · 🪑 yedekte" if self.desk.benched(m.id) else ""))
+                n_sh = sum(1 for t in self.ledger["open"] if t.get("mgr") == m.id and t.get("shadow"))
+                if self.desk.benched(m.id):
+                    L.append(f"{m.emoji} {m.name} · 👤 gölgede" + (f" ({n_sh} gölge işlem)" if n_sh else "")
+                             + (f" · {n_open} eski açık" if n_open else ""))
+                else:
+                    L.append(f"{m.emoji} {m.name} {_usd(eq, False)}" + (f" · {n_open} açık" if n_open else ""))
+            w = self.weather or {}
+            wt = {"boga": "🟢 boğa", "ayi": "🔴 ayı", "yatay": "🟡 yatay"}.get(w.get("trend"), "?")
+            red = sum(1 for f in self.news.flags.values() if f["level"] == "kirmizi" and f["until"] > time.time() * 1000)
+            fng = (self.news.fng or {}).get("value")
+            blk = self.calendar.block()
+            L.append(f"Hava {wt}" + (" · oynak" if w.get("high_vol") else "") + (f" · K/A {fng}" if fng is not None else "")
+                     + (f" · 🔴 {red} haber uyarısı" if red else "") + (f" · ⛔ {blk}" if blk else ""))
             L.append("")
         op = sorted([t for t in self.ledger["open"] if not t.get("shadow")], key=lambda t: -abs(t.get("upnl_usd", 0)))
         for t in op[:10]:
@@ -1362,11 +1397,37 @@ class Engine:
 
     # ── akışlar ──────────────────────────────────────────────────────
     # ── ekip: kuruluş, fikirler, emirler, carry ───────────────────────
+    def apply_policy_if_needed(self):
+        """Kanıta dayalı sermaye politikası (config ekip.politika). Sürüm değişince bir kez uygulanır."""
+        pol = (self.cfg.get("ekip") or {}).get("politika") or {}
+        if not (self.desk and pol.get("aktif")):
+            return
+        cur = self.desk.st.get("policy") or {}
+        if cur.get("surum") == pol.get("surum") and cur.get("active") == list(pol["aktif"]):
+            return
+        now_ms = int(time.time() * 1000)
+        msg = self.desk.apply_policy(list(pol["aktif"]), dict(pol.get("sabit_pay") or {}), now_ms,
+                                     pol.get("kaynak", "politika"))
+        self.desk.st["policy"]["surum"] = pol.get("surum")
+        self.dirty = True
+        if pol.get("surum") == 8 and cur.get("surum") != 8:
+            self._notify(
+                "🧠 <b>Kripto Radar v8: kanıta dayalı ekip göreve başladı</b>\n"
+                "• Yöneticilerin yöntemleri araştırmaya göre yeniden yazıldı ve 5 yıllık OKX verisinde sert maliyetle "
+                "test edildi (komisyon 2 kat, stop kayması, funding).\n"
+                "• Testi geçenler sermaye aldı; geçemeyenler gölgede (sermayesiz) çalışıp kendini kanıtlayınca dönecek.\n"
+                "• Murat artık baş analist: her fikre coin karnesi veriyor.\n"
+                "• Yeni: Haber Masası (borsa duyuruları, haberler, Korku-Açgözlülük), olay takvimi (Fed, TÜFE), "
+                "piyasa havası, yığılma kontrolü, önce limit (maker) giriş.\n\n" + msg)
+        else:
+            self._notify(msg)
+
     def ensure_team(self):
         """İlk kez ekip moduna geçerken eski sistemin işlemlerini arşivler ve ekibi 1.000$ ile başlatır."""
         if not self.team_on or self.state.get("team_started"):
             if self.team_on and self.desk is None:
                 self.desk = dk.Desk(self.cfg, self.state, self.ledger)
+            self.apply_policy_if_needed()
             return
         now_ms = int(time.time() * 1000)
         closed_now = []
@@ -1386,6 +1447,7 @@ class Engine:
         self.state["team_started"] = now_ms
         self.halt = None
         self.desk = dk.Desk(self.cfg, self.state, self.ledger)
+        self.apply_policy_if_needed()
         self.rebuild_watch()
         self.dirty = True
         roster = "\n".join(f"{m.emoji} <b>{m.name}</b> · {m.title} · {m.style}" for m in self.desk.mgrs)

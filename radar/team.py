@@ -206,7 +206,7 @@ def a_kemal(ctx, mgr, cfg):
     sgn = 1 if side == "long" else -1
     px = ctx["price"]
     sl = px - sgn * 3.0 * atr
-    tp = px + sgn * 20.0 * atr
+    tp = px + 20.0 * atr if side == "long" else max(px - 20.0 * atr, px * 0.15)   # "hedefsiz": trend bitince çıkılır
     fa = ctx.get("funding_ann")
     checks = [("200 günlük ortalamanın doğru tarafında", _ok(ctx["sma200"]) and sgn * (c - ctx["sma200"]) > 0),
               ("50 günlük ortalamanın eğimi trend yönünde", sgn * (ctx["sma50"] - ctx["sma50_prev5"]) > 0),
@@ -300,7 +300,9 @@ def a_murat(ctx, mgr, cfg):
                      and _shorts_allowed(ctx))
         if not trend:
             continue
-        near = [x for x in levels if 0 <= sgn * (c - x) <= 3 * atr]
+        hv_near = [x for x in levels[:-1] if 0 <= sgn * (c - x) <= 3 * atr]      # önce gerçek hacim bölgeleri
+        e_near = [ctx["ema20"]] if 0 <= sgn * (c - ctx["ema20"]) <= 3 * atr else []
+        near = hv_near or e_near
         if not near:
             continue
         lvl = max(near) if side == "long" else min(near)

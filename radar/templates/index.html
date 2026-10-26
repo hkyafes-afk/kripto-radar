@@ -413,9 +413,10 @@ function renderTeam(){
       <span class="badge b-dim">açık risk ${money(DM.heat_usd,false)} (%${(DM.heat_pct||0).toFixed(1).replace(".",",")})</span>
       <span class="badge b-dim">bugün ${money(R.day_pnl||0)}</span><span class="badge b-dim">${(D.orders||[]).length} bekleyen emir</span></div>
     ${(hs.issues||[]).length ? `<p class="note">${hs.issues.map(esc).join("<br>")}</p>` : ""}</div>`;
+  h += marketCard() + testCard();
   h += `<h2>Yöneticiler</h2><div class="grid">` + ms.map(m => {
     const s = m.stats || {}, w = Math.max(4, Math.min(100, m.equity / (tot||1) * 100 * ms.length / 2));
-    const st = m.benched ? `<span class="badge b-amber">🪑 yedekte</span>` : `<span class="badge b-green">aktif</span>`;
+    const st = m.benched ? `<span class="badge b-amber" title="${esc(m.bench_why||"")}">👤 gölgede${m.bench_why?" · "+esc(m.bench_why):""}</span>` : `<span class="badge b-green">sermayeli</span>`;
     return `<div class="card" style="border-left:3px solid ${m.aggressive ? "var(--amber)" : m.kind==="carry" ? "var(--blue)" : "var(--green)"}">
       <div class="hd"><div style="min-width:0"><div class="sym">${m.emoji} ${esc(m.name)}</div><div class="lbl">${esc(m.title)} · ${m.kind==="carry" ? "yön riski yok" : "risk %"+String(m.base_risk).replace(".",",")+"–%"+String(m.max_risk).replace(".",",")}</div></div>
         <div class="score"><div class="v num ${cls(m.pnl)}" style="font-size:18px">${money(m.equity,false)}</div><div class="raw ${cls(m.return_pct)}">${pct(m.return_pct,2)}</div></div></div>
@@ -447,6 +448,35 @@ function renderTeam(){
   const A = D.archive || {};
   if (A.n) h += `<p class="note">Eski sistemin ${A.n} işlemi arşivde (${(A.periods||[]).map(p=>money(p.pnl_usd)).join(", ")}). Ekip ${D.team_started?ago(D.team_started).replace(" önce",""):""} önce temiz bir sayfayla başladı.</p>`;
   $("#teamBody").innerHTML = h;
+}
+
+function marketCard(){
+  const W = D.weather || {}, N = D.news || {}, C = D.calendar || {};
+  const wt = {boga:["🟢 Boğa","b-green"], ayi:["🔴 Ayı","b-red"], yatay:["🟡 Yatay","b-amber"]}[W.trend] || ["?","b-dim"];
+  const f = N.fng, fl = Object.entries(N.flags || {}).sort((a,b) => (a[1].level==="kirmizi"?0:1)-(b[1].level==="kirmizi"?0:1));
+  const up = (C.upcoming || []).slice(0, 4);
+  const dt = ms => new Date(ms).toLocaleString("tr-TR", {timeZone:"Europe/Istanbul", day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit"});
+  return `<h2>Piyasa havası ve Haber Masası</h2><div class="card">
+    <div class="chipline"><span class="badge ${wt[1]}">${wt[0]}</span>${W.high_vol?`<span class="badge b-amber">yüksek oynaklık · risk ×0,75</span>`:`<span class="badge b-dim">oynaklık normal</span>`}
+      ${f?`<span class="badge ${f.value>=80||f.value<=20?"b-amber":"b-dim"}">Korku-Açgözlülük ${f.value} · ${esc(f.label||"")}</span>`:""}
+      ${C.block?`<span class="badge b-red">⛔ ${esc(C.block)}</span>`:""}</div>
+    ${up.length?`<p class="note">Yaklaşan olaylar (±60 dk yeni işlem yok): ${up.map(e=>dt(e.ts)+" "+esc(e.title)).join(" · ")}</p>`:""}
+    ${fl.length?`<div class="list" style="margin-top:8px">`+fl.slice(0,8).map(([s,x])=>`<div class="li"><div style="min-width:0"><div>${x.level==="kirmizi"?"🔴":"🟡"} <b>${esc(s)}</b> <span class="m">${esc(x.src)} · ${ago(x.ts)}</span></div><div class="m">${esc(x.title)}</div></div></div>`).join("")+`</div>
+      <p class="note">Kırmızı: o coinde yeni işlem açılmaz. Sarı: yükselişin peşine düşülmez (long yok). Haber Masası al-sat sinyali vermez; sigortadır.</p>`
+      :`<p class="note">Aktif haber uyarısı yok.</p>`}</div>`;
+}
+
+function testCard(){
+  const B = D.backtest_v8; if (!B || !B.managers) return "";
+  const f2 = (x,d=2) => x==null ? "–" : (+x).toFixed(d).replace(".",",");
+  const pol = new Set(B.policy_active || []);
+  const rows = Object.entries(B.managers).map(([id,b]) => { const a=b.all||{}, e=b.equity||{}, o=b.oos||{};
+    return `<div class="li"><div style="min-width:0"><div><b>${esc(b.name)}</b> ${pol.has(id)?`<span class="badge b-green">sermaye</span>`:`<span class="badge b-amber">gölge</span>`}
+      <span class="m">${a.n||0} işlem · isabet %${f2(a.win_pct,0)} · ort. <b class="${cls(a.avg_r)}">${a.avg_r>0?"+":""}${f2(a.avg_r)}R</b> · örneklem dışı ${o.avg_r>0?"+":""}${f2(o.avg_r)}R</span></div>
+      <div class="m">yıllık %${f2(e.cagr_pct,1)} · maks. düşüş %${f2(e.max_dd_pct,1)} · Sharpe ${f2(e.sharpe)} · long ${f2((b.long||{}).avg_r)}R / short ${f2((b.short||{}).avg_r)}R</div></div></div>`; }).join("");
+  return `<h2>5 yıllık test <span class="n">${esc(B.test_start||"")} → bugün · ${B.n_coins||0} coin</span></h2><div class="card">
+    <div class="list">${rows}</div>
+    <p class="note">Sert maliyet: piyasa emri %${f2(B.cost&&B.cost.taker)}, limit %${f2(B.cost&&B.cost.maker)}, stop kayması ${f2(B.cost&&B.cost.slip_stop_bp,0)} bp, long funding yıllık ~%11. Parametre optimizasyonu yok (kurallar önceden sabit). Evren bugünün likit coinleri olduğu için sonuçlar iyimser tarafta olabilir.</p></div>`;
 }
 
 function riskCard(){

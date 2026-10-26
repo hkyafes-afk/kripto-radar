@@ -18,7 +18,7 @@ tarama:
   periyot: 4H               # tek seferlik taramada kullanılan periyot (eski ayar)
   # Canlı döngü bu periyotların HER BİRİNDE mum kapanır kapanmaz tarar.
   # 15m = çok sinyal / çok gürültü, 4H = az ama daha güvenilir. Demo hesap hangisinin işe yaradığını ölçer.
-  periyotlar: [15m, 1H, 4H]
+  periyotlar: [15m, 4H, 1D]   # v8: yöneticiler günlük (1D) ve Deniz 15dk; 4H panel sinyalleri için
   sadece_kripto: true       # OKX'teki hisse (SOXS, EWZ...) ve emtia (petrol, altın) kontratlarını atla
   haric: [USDC, DAI, TUSD, FDUSD, USDE, PYUSD, USDG]  # stabil coinler
 
@@ -105,13 +105,20 @@ panel:
 ekip:
   aktif: true
   yoneticiler:
-    kemal: {aktif: true, taban_risk: 1.5, tavan_risk: 2.5, yedek_dusus: 20}   # Swing (4S)
-    deniz: {aktif: true, taban_risk: 1.5, tavan_risk: 2.5, yedek_dusus: 20}   # Gün içi (15dk)
-    ayse:  {aktif: true, taban_risk: 1.5, tavan_risk: 2.5, yedek_dusus: 20}   # Kontrarian (1S)
-    murat: {aktif: true, taban_risk: 1.5, tavan_risk: 2.5, yedek_dusus: 20}   # Teknik / Fibonacci (1S, 4S)
+    kemal: {aktif: true, taban_risk: 1.5, tavan_risk: 2.5, yedek_dusus: 20}   # Günlük trend takibi (1G)
+    deniz: {aktif: true, taban_risk: 1.0, tavan_risk: 1.5, yedek_dusus: 15}   # BTC/ETH 15dk maker
+    ayse:  {aktif: true, taban_risk: 1.0, tavan_risk: 1.5, yedek_dusus: 15}   # Kapitülasyon (1G)
+    murat: {aktif: true, taban_risk: 1.5, tavan_risk: 2.5, yedek_dusus: 20}   # Baş analist + hacim profili (1G)
     elif:  {aktif: true}                                                       # Piyasa-nötr funding (spot + vadeli)
-    kaan:  {aktif: true, taban_risk: 3.0, tavan_risk: 5.0, yedek_dusus: 30}   # Kırılım, agresif (1S, 4S)
-    selin: {aktif: true, taban_risk: 3.0, tavan_risk: 5.0, yedek_dusus: 30}   # Squeeze, agresif (15dk, 1S)
+    kaan:  {aktif: true, taban_risk: 3.0, tavan_risk: 5.0, yedek_dusus: 30}   # Günlük kanal kırılımı, agresif (1G)
+    selin: {aktif: true, taban_risk: 3.0, tavan_risk: 5.0, yedek_dusus: 30}   # Günlük sıkışma patlaması, agresif (1G)
+  # Kanıta dayalı sermaye politikası (PLAN.md): 5 yıllık testte örneklem içi VE dışı ortalaması pozitif olanlar
+  # sermaye alır; diğerleri gölgede işlem yapar ve 10 gölge işlemde ort. +0,1R yaparsa geri döner.
+  politika:
+    surum: 8
+    aktif: [kemal, kaan, selin, elif]
+    sabit_pay: {elif: 0.15}
+    kaynak: "5 yıllık test (data/BACKTEST.md, 26.10.2026)"
   firma:                       # risk müdürünün firma geneli limitleri (işlem SAYISI sınırı yok, sınırlar risk cinsinden)
     gunluk_kayip_yuzde: 3.0    # % firma bugün bu kadar kaybederse o gün yeni işlem yok
     max_dusus_yuzde: 15.0      # % firma zirveden bu kadar düşerse durur (/devam)
@@ -124,12 +131,17 @@ ekip:
     dagitim_min_islem: 15
     carry_max_cift: 3          # Elif aynı anda en fazla kaç funding pozisyonu tutar
     carry_min_yillik: 15       # % 30 günlük funding ortalaması en az
+    kume_risk_yuzde: 4.0       # % birlikte hareket eden (60 günlük korelasyon ≥ 0,7) aynı yön pozisyonların toplam riski
+    kume_korelasyon: 0.7
 
 # Gerçek OKX ücretleri (VIP0). Giriş ve stop/süre çıkışı piyasa emri (taker), hedef limit emir (maker).
+# v8: SERT maliyet modeli (kullanıcı kararı): OKX liste ücretinin 2 katı + stop kayması. Demo sonuçları gerçeğinden
+# iyi görünmesin. Gerçek hesabın ücret seviyesi öğrenilince güncellenir.
 ucret:
-  taker_yuzde: 0.05
-  maker_yuzde: 0.02
-  spot_taker_yuzde: 0.10     # spot piyasa emri (Elif'in spot bacağı)
+  taker_yuzde: 0.10          # liste %0,05 × 2
+  maker_yuzde: 0.04          # liste %0,02 × 2
+  spot_taker_yuzde: 0.20     # spot piyasa emri (Elif'in spot bacağı), liste %0,10 × 2
+  stop_kayma_bp: 5           # stop emri stres anında ek kayma
   mmr_yuzde: 0.5             # bakım marjı (kaldıraçta likidasyon hesabı için)
 
 canli:
@@ -148,14 +160,14 @@ defter:
   min_ornek: 30                # karar için gereken kapanmış işlem sayısı
 
 harvest:
-  min_perp_hacim_usd: 10000000
-  min_spot_hacim_usd: 2000000
+  min_perp_hacim_usd: 100000000   # v8: sadece likit coinler (araştırma: sığ coinlerde iki bacak doldurmak zor)
+  min_spot_hacim_usd: 20000000
   min_yillik: 8              # % 30g ortalama bunun altıysa listeleme
   min_pozitif_oran: 0.75     # funding'lerin en az %75'i pozitif olmalı
   gun: 30
   liste: 15
   # 4 bacak maliyet: spot al/sat + perp aç/kapa (taker). Başabaş gün hesabı için.
-  maliyet_yuzde: 0.30
+  maliyet_yuzde: 0.60       # v8 sert maliyet: 2×%0,10 vadeli + 2×%0,20 spot
 
 bildirim:
   telegram: true

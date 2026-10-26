@@ -27,6 +27,9 @@ HELP = (
     "/ekip — 7 yöneticinin durumu\n"
     "/yonetici kaan — bir yöneticinin ayrıntısı ve son kararları\n"
     "/emirler — bekleyen limit emirler\n"
+    "/haber — Haber Masası: kırmızı/sarı uyarılar, Korku-Açgözlülük\n"
+    "/hava — piyasa havası ve olay takvimi (Fed, TÜFE)\n"
+    "/test — 5 yıllık test sonuçları ve sermaye politikası\n"
     "/kapat SOL — demo işlemi elle kapat\n"
     "/borsalar — borsalar arası funding ve fiyat farkı\n"
     "/saglik — canlı veri ve bağlantı durumu\n"
@@ -192,7 +195,7 @@ def cmd_ekip(d: dict) -> str:
         perf = (f" · {s['n']} işlem, %{_tr(s['win_rate'], 0)} isabet, {_tr(s['avg_r'], 2, True)}R" if s.get("n") else " · henüz kapanmış işlem yok")
         L.append(f"{m['emoji']} <b>{m['name']}</b> ({m['title']}) {_tr(m['equity'])}$ (%{_tr(m['return_pct'], 1, True)})"
                  + (f" · {m['open']} açık" if m["open"] else "") + (f" · {m['orders']} emir" if m["orders"] else "")
-                 + perf + (" · 🪑 yedekte" if m["benched"] else ""))
+                 + perf + (" · 👤 gölgede" if m["benched"] else ""))
     L.append("\nAyrıntı: /yonetici kaan")
     return "\n".join(L)
 
@@ -217,6 +220,65 @@ def cmd_yonetici(d: dict, mid: str) -> str:
         L.append("\n<b>Son kararlar</b>")
         for x in reversed(j):
             L.append(f"• {nt.esc(x['sym'])} {x['action']}: {nt.esc(x['reason'])}")
+    return "\n".join(L)
+
+
+def cmd_haber(d: dict) -> str:
+    n = d.get("news") or {}
+    L = ["📰 <b>Haber Masası</b>"]
+    f = n.get("fng")
+    if f:
+        L.append(f"Korku-Açgözlülük: <b>{f.get('value')}</b> ({nt.esc(str(f.get('label', '')))})")
+    flags = n.get("flags") or {}
+    if flags:
+        for sym, x in sorted(flags.items(), key=lambda kv: kv[1]["level"] != "kirmizi"):
+            tag = "🔴" if x["level"] == "kirmizi" else "🟡"
+            L.append(f"{tag} <b>{nt.esc(sym)}</b>: {nt.esc(x['title'][:120])} <i>({nt.esc(x['src'])}, {_age(x['ts'])})</i>")
+        L.append("<i>Kırmızı: o coinde yeni işlem yok. Sarı: yükselişin peşine düşülmez (long yok).</i>")
+    else:
+        L.append("Aktif uyarı yok.")
+    st = n.get("status") or {}
+    if st:
+        L.append("\nKaynaklar: " + " · ".join(f"{k}: {v}" for k, v in st.items()))
+    return "\n".join(L)
+
+
+def cmd_hava(d: dict) -> str:
+    w = d.get("weather") or {}
+    tr = {"boga": "🟢 boğa (BTC 50 günlük ortalamanın üstünde ve yükseliyor)",
+          "ayi": "🔴 ayı (BTC 50 günlük ortalamanın altında ve düşüyor)", "yatay": "🟡 yatay / kararsız"}
+    L = ["🌦 <b>Piyasa havası</b>", tr.get(w.get("trend"), "henüz hesaplanmadı")]
+    if w:
+        L.append(f"Oynaklık: {'yüksek (risk ×0,75)' if w.get('high_vol') else 'normal'} · yıllık sıralama %{_tr((w.get('rv_rank') or 0) * 100, 0)}")
+        L.append("Etkisi: ayı piyasasında long, boğada short yarım riskle; short işlemler sadece BTC 50 günlüğün altındayken.")
+    c = d.get("calendar") or {}
+    if c.get("block"):
+        L.append(f"\n⛔ Şu an yeni işlem yok: {nt.esc(c['block'])}")
+    up = c.get("upcoming") or []
+    if up:
+        L.append("\n<b>Yaklaşan önemli olaylar</b> (±60 dk yeni işlem yok)")
+        from datetime import datetime
+        from zoneinfo import ZoneInfo
+        for e in up:
+            L.append(f"• {datetime.fromtimestamp(e['ts'] / 1000, tz=ZoneInfo('Europe/Istanbul')).strftime('%d.%m %H:%M')} — {nt.esc(e['title'])}")
+    if c.get("status"):
+        L.append(f"<i>{nt.esc(c['status'])}</i>")
+    return "\n".join(L)
+
+
+def cmd_test(d: dict) -> str:
+    bt = d.get("backtest_v8") or {}
+    if not bt:
+        return "5 yıllık test sonucu henüz yok."
+    L = [f"🧪 <b>5 yıllık test</b> ({bt.get('test_start')} → bugün, {bt.get('n_coins')} coin, sert maliyet)"]
+    for mid, b in (bt.get("managers") or {}).items():
+        a, e = b.get("all") or {}, b.get("equity") or {}
+        L.append(f"• {nt.esc(b['name'])}: {a.get('n', 0)} işlem, ort. {_tr(a.get('avg_r') or 0, 2, True)}R, "
+                 f"yıllık %{_tr(e.get('cagr_pct') or 0, 1, True)}, maks. düşüş %{_tr(e.get('max_dd_pct') or 0, 1)}")
+    pol = bt.get("policy_active")
+    if pol:
+        L.append(f"\nSermaye alanlar: {', '.join(pol)} + Elif (funding). Diğerleri gölgede kendini kanıtlıyor.")
+    L.append("<i>Ayrıntı: dashboard → Ekip sekmesi / data/BACKTEST.md</i>")
     return "\n".join(L)
 
 
@@ -359,6 +421,12 @@ def handle(updates: list, state: dict, data: dict | None, on_scan=None, on_close
             reply = cmd_borsalar(data)
         elif cmd == "/saglik":
             reply = cmd_saglik(data)
+        elif cmd in ("/haber", "/haberler"):
+            reply = cmd_haber(data)
+        elif cmd in ("/hava", "/takvim"):
+            reply = cmd_hava(data)
+        elif cmd in ("/test", "/backtest"):
+            reply = cmd_test(data)
         else:
             reply = "Bilinmeyen komut. /yardim yaz."
         buttons = None

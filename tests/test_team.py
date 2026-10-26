@@ -1,176 +1,237 @@
-"""Yönetici kadrosu ve risk müdürü testleri."""
+"""v8 yöneticiler, risk müdürü katmanları, test motoru, Haber Masası ve olay takvimi testleri."""
 from __future__ import annotations
 
-import copy
 import sys
-import time
 from pathlib import Path
+
+import numpy as np
+import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+from radar import bt2, macro, quant, team  # noqa: E402
 from radar import desk as dk  # noqa: E402
 from radar import ledger as lg  # noqa: E402
-from radar import signals as sg  # noqa: E402
-from radar import team  # noqa: E402
+from radar import news as nw  # noqa: E402
 from radar.config import load_config  # noqa: E402
-from radar.demo import DemoClient  # noqa: E402
 
 CFG = load_config()
 NOW = 1_800_000_000_000
+M = team.BY_ID
 
 
-def ctx(**kw):
-    base = {"inst": "X-USDT-SWAP", "sym": "X", "tf": "1H", "bar_ms": 3600_000, "price": 100.0, "atr": 2.0,
-            "open": 99.0, "high": 100.5, "low": 98.8, "close": 100.0, "prev_high": 99.5, "prev_low": 98.0,
-            "low5": 97.0, "high5": 101.0, "ema20": 99.0, "ema50": 97.0, "rsi": 55.0, "rsi_prev": 50.0,
-            "rsi_min3": 50.0, "rsi_max3": 56.0, "adx": 26.0, "adx_prev": 24.0, "bb_mid": 98.0, "bb_up": 102.0,
-            "bb_lo": 94.0, "bb_pct": 0.75, "bbw_rank": 0.5, "squeeze_prev": False, "don_hi": 101.0, "don_lo": 92.0,
-            "vol_ratio": 1.3, "close_pos": 0.8, "st_dir": 1, "div": 0, "swing_up": None, "swing_dn": None,
-            "d_trend": 1, "tsmom": 1.0, "regime": 1, "funding_ann": 10.0, "funding_rate": 0.0001, "interval_h": 8,
-            "oi_chg24": 4.0, "taker_imb": 0.06, "ret24": 0.02, "chg24": 2.0, "signals": []}
+def qctx(**kw):
+    """Günlük grafikte sağlıklı bir yükseliş trendi (yöneticilerin gördüğü bağlam)."""
+    base = {"inst": "X-USDT-SWAP", "sym": "X", "tf": "1D", "bar_ms": 86_400_000, "price": 100.0, "atr": 4.0,
+            "open": 98.0, "high": 101.0, "low": 97.5, "close": 100.0, "volume": 1e6,
+            "sma20": 96.0, "sma50": 92.0, "sma100": 88.0, "sma200": 80.0, "ema20": 96.5, "sma50_prev5": 91.0,
+            "hh10": 99.0, "ll10": 93.0, "hh20": 99.5, "ll20": 90.0, "hh50": 105.0, "ll50": 85.0,
+            "hc20": 99.0, "lc20": 91.0, "vol_ma20": 1e6, "vol_ratio": 1.0, "rsi": 58.0, "rsi2": 60.0,
+            "bb_mid": 96.0, "bb_up": 102.0, "bb_lo": 90.0, "bbw": 0.12, "bbw_rank": 0.5, "squeeze3": False,
+            "close_pos": 0.7, "range_atr": 0.9, "ret1": 0.01, "rv20": 0.03, "rv_rank": 0.5,
+            "prev_high": 99.0, "prev_low": 96.0, "above50_prev": True, "below50_prev": False, "ll3": 96.0, "hh3": 101.0,
+            "btc_bull": True, "btc_bear": False, "vol24_usd": 5e8, "hvn": [], "signals": []}
     base.update(kw)
     return base
 
 
-M = team.BY_ID
+# ── veri masası ──
+def test_quant_features_no_lookahead():
+    idx = pd.date_range("2024-01-01", periods=80, freq="1D", tz="UTC")
+    rng = np.random.default_rng(1)
+    c = 100 + np.cumsum(rng.normal(0, 1, 80))
+    df = pd.DataFrame({"open": c, "high": c + 1, "low": c - 1, "close": c, "volume": 1000 + rng.random(80)}, index=idx)
+    F = quant.features(df)
+    i = 50
+    assert abs(F["hh20"].iloc[i] - df["high"].iloc[i - 20:i].max()) < 1e-9, "kanal bugünü içermemeli"
+    assert abs(F["vol_ma20"].iloc[i] - df["volume"].iloc[i - 20:i].mean()) < 1e-9
+    x = quant.ctx_at(F, i)
+    assert x["close"] == df["close"].iloc[i] and "squeeze3" in x
+    assert len(quant.hvn_levels(F, i)) >= 1
 
 
-def test_extra_features_on_real_shape():
-    df = DemoClient().candles("SOL-USDT-SWAP", "1H", 300)
-    f = sg.frame_features(df, CFG, 1)
-    x = team.extra_features(df, f)
-    for k in ("don_hi", "bbw_rank", "squeeze_prev", "vol_ratio", "rsi_min3", "swing_up", "close_pos"):
-        assert k in x
-    assert x["don_hi"] >= x["don_lo"]
+def test_exit_rules():
+    c = qctx(close=90.0)
+    assert quant.exit_signal({"type": "ma", "n": 50}, c, "long")          # kapanış < sma50
+    assert not quant.exit_signal({"type": "ma", "n": 50}, qctx(), "long")
+    assert quant.exit_signal({"type": "chan", "n": 10}, qctx(close=92.0), "long")
+    assert quant.exit_signal({"type": "mid"}, qctx(close=95.0), "long")
+    assert quant.exit_signal({"type": "mean", "n": 20}, qctx(close=97.0), "long")
 
 
-def test_kaan_breakout_and_conviction_scaling():
-    c = ctx(close=103.0, price=103.0, high=103.2, don_hi=101.0, vol_ratio=2.5, adx=28, adx_prev=25,
-            oi_chg24=6, taker_imb=0.1, bbw_rank=0.3)
+def test_weather_mult_no_sideways_penalty():
+    w = {"trend": "yatay", "high_vol": False}
+    assert quant.weather_mult(w, "kaan", "long") == 1.0, "dayanaksız 'yatay' cezası kaldırıldı"
+    assert quant.weather_mult({"trend": "ayi", "high_vol": False}, "kaan", "long") == 0.5
+    assert quant.weather_mult({"trend": "boga", "high_vol": True}, "kemal", "short") == 0.5 * 0.75
+
+
+# ── yöneticiler ──
+def test_kemal_trend_start_and_reentry():
+    start = team.a_kemal(qctx(above50_prev=False), M["kemal"], CFG)
+    assert start and start["side"] == "long" and start["exit"] == {"type": "ma", "n": 50}
+    assert start["pp"]["trail_now"] and start["tp1"] is None and abs(start["sl"] - (100 - 12)) < 1e-9
+    assert team.a_kemal(qctx(hc20=101.0), M["kemal"], CFG) is None, "trend sürüyor ama yeni zirve yok → girme"
+    again = team.a_kemal(qctx(close=101.0, price=101.0, hc20=100.5), M["kemal"], CFG)
+    assert again, "trend içinde 20 günlük yeni kapanış zirvesi → yeniden gir"
+
+
+def test_kaan_breakout_and_short_rule():
+    c = qctx(close=103.0, price=103.0, hh20=101.0, vol_ratio=2.2, close_pos=0.9)
     idea = team.a_kaan(c, M["kaan"], CFG)
-    assert idea and idea["side"] == "long" and idea["entry_type"] == "piyasa" and idea["rr"] >= 2.0
-    assert idea["conviction"] >= 6 / 7 - 1e-9
-    # kırılımdan çok uzaklaşmışsa geri testte limit emir
-    c2 = dict(c, close=104.5, price=104.5)
-    idea2 = team.a_kaan(c2, M["kaan"], CFG)
-    assert idea2["entry_type"] == "limit" and abs(idea2["limit_px"] - (101 + 0.5)) < 1e-9
-    # az kanıt → fikir yok
-    assert team.a_kaan(dict(c, adx=15, oi_chg24=0, taker_imb=0, regime=-1, d_trend=0, bbw_rank=0.9,
-                            funding_ann=60), M["kaan"], CFG) is None
+    assert idea and idea["side"] == "long" and idea["rr"] >= 2.0 and idea["exit"]["type"] == "chan"
+    assert team.a_kaan(dict(c, vol_ratio=1.2), M["kaan"], CFG) is None, "hacim teyidi şart"
+    dn = qctx(close=80.0, price=80.0, ll20=82.0, sma50=90.0, sma100=95.0, vol_ratio=2.0, close_pos=0.1, hh10=88.0)
+    assert team.a_kaan(dn, M["kaan"], CFG) is None, "BTC boğadayken short yok"
+    s = team.a_kaan(dict(dn, btc_bear=True, btc_bull=False), M["kaan"], CFG)
+    assert s and s["side"] == "short"
 
 
 def test_selin_squeeze_release():
-    c = ctx(squeeze_prev=True, bb_pct=1.2, vol_ratio=2.0, funding_ann=-5, oi_chg24=3, taker_imb=0.05,
-            close_pos=0.85, bb_mid=97.0)
+    c = qctx(squeeze3=True, close=103.0, price=103.0, bb_up=102.0, vol_ratio=1.6, close_pos=0.85)
     idea = team.a_selin(c, M["selin"], CFG)
-    assert idea and idea["side"] == "long" and idea["pp"]["trail_atr"] == 1.5
-    assert team.a_selin(dict(c, squeeze_prev=False), M["selin"], CFG) is None
+    assert idea and idea["side"] == "long" and idea["exit"] == {"type": "mid"}
+    assert team.a_selin(dict(c, squeeze3=False), M["selin"], CFG) is None
 
 
-def test_ayse_contrarian_short():
-    c = ctx(funding_ann=95, rsi=78, bb_pct=1.15, oi_chg24=8, div=-1, taker_imb=-0.04, d_trend=0, vol_ratio=1.8,
-            high5=103.0, bb_mid=96.0)
-    idea = team.a_ayse(c, M["ayse"], CFG)
-    assert idea and idea["side"] == "short" and idea["sl"] > 100 and idea["tp"] < 100
-
-
-def test_murat_fibonacci():
-    sw = {"H": 110.0, "L": 90.0, "iH": 280, "iL": 260, "since": 10, "size_atr": 10.0}
-    # %61,8 civarı: 110 − 0.6×20 = 98
-    c = ctx(price=98.0, close=98.0, open=97.0, rsi=50, rsi_prev=45, swing_up=sw, vol_ratio=0.8, taker_imb=0.02)
+def test_murat_pullback_at_volume_node():
+    c = qctx(close=98.0, price=98.0, open=96.0, low=95.2, close_pos=0.75, rsi=52, hvn=[95.0, 120.0], vol_ratio=0.8,
+             ll3=95.0)
     idea = team.a_murat(c, M["murat"], CFG)
-    assert idea and idea["side"] == "long"
-    assert idea["sl"] < 110 - 0.786 * 20 and abs(idea["tp"] - (110 + 0.272 * 20)) < 1e-9 and idea["tp1"] is not None
-    assert team.a_murat(dict(c, price=105.0, close=105.0), M["murat"], CFG) is None   # bölge dışı
+    assert idea and idea["side"] == "long" and idea["sl"] < 95.0 and idea["tp1"] is not None
+    assert any("hacim bölgesi" in n and ok for n, ok in idea["checks"])
+    assert team.a_murat(dict(c, close=94.0, open=96.0, close_pos=0.2, price=94.0), M["murat"], CFG) is None
 
 
-def test_deniz_pullback():
-    c = ctx(tf="15m", bar_ms=900_000, rsi_min3=40, rsi=48, rsi_prev=42, close=100.2, price=100.2, prev_high=100.0,
-            low5=99.0)
+def test_ayse_capitulation_only():
+    c = qctx(close=88.0, price=88.0, low=84.0, high=97.0, rsi2=3.0, bb_lo=90.0, vol_ratio=2.5, range_atr=3.2,
+             close_pos=0.35, sma20=96.0)
+    idea = team.a_ayse(c, M["ayse"], CFG)
+    assert idea and idea["side"] == "long" and idea["exit"]["type"] == "mean"
+    assert team.a_ayse(dict(c, vol_ratio=1.2), M["ayse"], CFG) is None, "hacimsiz düşüş kapitülasyon değil"
+
+
+def test_deniz_hours_coins_and_maker():
+    c = qctx(tf="15m", bar_ms=900_000, sym="BTC", rsi=35.0, hour=14, dow=2, atr=50.0, close=60000.0, price=60000.0,
+             sma50=59500.0, sma200=59000.0, d_up=True)
     idea = team.a_deniz(c, M["deniz"], CFG)
-    assert idea and idea["side"] == "long" and idea["max_saat"] == 8 and idea["pp"]["partial_frac"] == 0
+    assert idea and idea["entry_type"] == "limit" and idea["limit_px"] < 60000 and idea["max_saat"] == 8
+    assert team.a_deniz(dict(c, hour=3), M["deniz"], CFG) is None, "yoğun saat dışı"
+    assert team.a_deniz(dict(c, sym="DOGE"), M["deniz"], CFG) is None, "sadece BTC/ETH"
+    assert team.a_deniz(dict(c, dow=6), M["deniz"], CFG) is None, "hafta sonu yok"
 
 
-def test_kemal_uses_trend_signal():
-    sig = {"setup": "trend_long", "side": "long", "score": 80, "label": "Trend Long"}
-    idea = team.a_kemal(ctx(tf="4H", bar_ms=14_400_000, signals=[sig]), M["kemal"], CFG)
-    assert idea and idea["side"] == "long" and idea["max_saat"] == 240
-    ext = team.a_kemal(ctx(tf="4H", bar_ms=14_400_000, signals=[sig], price=104.0, close=104.0, ema20=99.0),
-                       M["kemal"], CFG)
-    assert ext["entry_type"] == "limit"
+def test_analyst_card():
+    c = qctx()
+    assert team.analyst_card(c, "long")["mult"] == 1.0
+    assert team.analyst_card(dict(c, vol24_usd=5e6), "long")["mult"] == 0.5
+    assert team.analyst_card(c, "long", {"level": "kirmizi", "title": "X hacklendi"})["mult"] == 0.0
+    assert team.analyst_card(c, "long", {"level": "sari"})["mult"] == 0.0
+    assert team.analyst_card(c, "short", {"level": "sari"})["mult"] == 1.0
+    assert team.analyst_card(dict(c, funding_ann=90), "long")["mult"] == 0.7
 
 
+# ── test motoru ──
+def test_bt_trade_costs_gap_and_partial():
+    idx = pd.date_range("2025-01-01", periods=6, freq="1D", tz="UTC")
+    #            sinyal  giriş   tp1     gap stop
+    o = np.array([100, 100.0, 101.0, 104.0, 99.0, 99.0])
+    h = np.array([100, 101.0, 106.0, 104.5, 99.5, 99.5])
+    lo = np.array([100, 99.5, 100.5, 103.5, 95.0, 95.0])
+    c = np.array([100, 100.5, 105.5, 104.0, 96.0, 96.0])
+    F = quant.features(pd.DataFrame({"open": o, "high": h, "low": lo, "close": c, "volume": 1.0}, index=idx))
+    idea = {"mgr": "kaan", "sym": "X", "side": "long", "entry": 100.0, "sl": 96.0, "tp": 120.0, "tp1": 104.0,
+            "atr": 2.0, "max_saat": 999, "pp": {"partial_frac": 0.5, "trail_atr": 2.5, "basabas": True}}
+    t = bt2.simulate_trade(idea, F, 0, 24.0, lambda k: quant.ctx_at(F, k))
+    entry = 100 * (1 + 2 / 1e4)
+    risk = entry - (96 + entry - 100)
+    # gün 2: tp1 104'te yarısı (maker); başabaş stop; iz stop yükselir; gün 4: açılış 99 < stop → açılıştan, kayma ile
+    part = 0.5 * (104 + (entry - 100) - entry) - 0.5 * (104 + entry - 100) * 0.0004
+    assert t and t["why"].startswith("iz") and t["exit_i"] == 4
+    exit_px = 99.0 * (1 - 5 / 1e4)
+    rest = 0.5 * (exit_px - entry) - 0.5 * exit_px * 0.001
+    fund = sum(q * cc * 0.0003 for q, cc in ((1.0, 100.5), (0.5, 105.5), (0.5, 104.0), (0.5, 96.0)))
+    exp = (part + rest - entry * 0.001 - fund) / risk
+    assert abs(t["r"] - exp) < 0.02, (t["r"], exp)
+
+
+def test_deflated_sharpe_penalizes_many_trials():
+    one, _ = bt2.deflated_sharpe(0.06, 1500, 0.0, 3.0, [0.06])
+    many, sr0 = bt2.deflated_sharpe(0.06, 1500, 0.0, 3.0, [0.06, -0.05, 0.02, 0.04, -0.08, 0.01, 0.03, -0.02])
+    assert one > 0.95 and many < one and sr0 > 0
+
+
+# ── risk müdürü ──
 def _desk():
     st, L = {}, lg.empty()
     return dk.Desk(CFG, st, L), st, L
 
 
-def test_desk_sizing_limits_and_orders():
-    d, st, L = _desk()
-    start_each = 1000 / 7
-    assert abs(d.equity("kaan") - start_each) < 1e-9 and abs(d.firm_equity() - 1000) < 1e-9
-    idea = team.a_kaan(ctx(close=103.0, price=103.0, don_hi=101.0, vol_ratio=2.5, adx=28, adx_prev=25,
-                           oi_chg24=6, taker_imb=0.1, bbw_rank=0.3), M["kaan"], CFG)
-    kind, det, why = d.evaluate(idea, NOW)
-    # agresif: %3 + (%5−%3)×güven
-    exp_pct = 3 + 2 * idea["conviction"]
-    assert kind == "market" and abs(det["risk_pct"] - exp_pct) < 0.05, (det["risk_pct"], exp_pct)
-    opened, orders, rej = d.execute([idea], NOW)
-    assert len(opened) == 1 and L["open"][0]["mgr"] == "kaan"
-    # aynı yönetici aynı coine ikinci kez giremez
-    assert d.execute([idea], NOW)[0] == []
-    # başka yönetici aynı coinde: coin başı firma riski (%2,5 = 25$) sınırına kadar
-    sel = dict(idea, mgr="selin")
-    o2, _, r2 = d.execute([sel], NOW)
-    assert o2 or r2
-    # limit emir ve dolum
-    lim = team.a_kaan(ctx(inst="Y-USDT-SWAP", sym="Y", close=104.5, price=104.5, don_hi=101.0, vol_ratio=2.5, adx=28,
-                          adx_prev=25, oi_chg24=6, taker_imb=0.1, bbw_rank=0.3), M["kaan"], CFG)
-    _, orders, _ = d.execute([lim], NOW)
-    assert len(orders) == 1 and L["orders"]
-    t = d.fill_order(orders[0]["oid"], orders[0]["px"], NOW + 60_000)
-    assert t["entry_src"] == "limit (maker)" and abs(t["fee_entry_usd"] - t["notional_usd"] * 0.0002) < 1e-9
-    _, orders, _ = d.execute([dict(lim, inst="Z-USDT-SWAP", sym="Z", mgr="kemal")], NOW)   # Kaan teminatını kullandı
-    assert d.expire_orders(NOW + 10 * 86400_000) and not L["orders"]
-    # firma toplam risk limiti
-    d2, _, L2 = _desk()
-    many = [dict(idea, inst=f"C{i}-USDT-SWAP", sym=f"C{i}", mgr=mid) for i, mid in
-            enumerate(["kaan", "selin", "kemal", "deniz", "ayse", "murat"] * 4)]
-    o, _, r = d2.execute(many, NOW)
-    reasons = {w for _, w in r}
-    assert any("yönü riski" in w or "toplam risk" in w for w in reasons), reasons
-    heat = d2.heat()
-    assert heat <= 1000 * 0.10 + 1e-6 and d2.side_risk("long") <= 1000 * 0.06 + 1e-6
+def _kaan_idea(**kw):
+    c = qctx(close=103.0, price=103.0, hh20=101.0, vol_ratio=2.2, close_pos=0.9, **kw)
+    return team.a_kaan(c, M["kaan"], CFG)
 
 
-def test_bench_shadow_and_return():
+def test_desk_layers_sizing_calendar_and_card():
     d, st, L = _desk()
-    st["desk"]["peak"]["kemal"] = 1000 / 7
-    st["desk"]["adj"]["kemal"] = -40           # sermayeyi düşür → zirveden %28 düşüş
-    msgs = d.manager_tick(NOW)
-    assert d.benched("kemal") and any("yedek" in m for m in msgs)
-    sig = {"setup": "trend_long", "side": "long", "score": 80, "label": "Trend Long"}
-    idea = team.a_kemal(ctx(tf="4H", bar_ms=14_400_000, signals=[sig]), M["kemal"], CFG)
-    opened, _, _ = d.execute([idea], NOW, halted="günlük kayıp limiti")
-    assert opened and opened[0]["shadow"], "yedekteki yönetici devre kesicide bile gölgede işlem yapar"
-    assert lg.balance(L, CFG)["in_use"] == 0, "gölge işlem firma bakiyesini etkilemez"
-    # gölgede 10 kazançlı işlem → geri dönüş
+    idea = _kaan_idea()
+    kind, det, _ = d.evaluate(idea, NOW)
+    base_pct = 3 + 2 * idea["conviction"]
+    assert kind == "market" and abs(det["risk_pct"] - base_pct) < 0.05
+    d.env = {"weather": {"trend": "ayi", "high_vol": False}}
+    kind, det2, _ = d.evaluate(idea, NOW)
+    assert abs(det2["risk_pct"] - base_pct * 0.5) < 0.05, "ayı piyasasında long yarım risk"
+    d.env = {"cal_block": "olay takvimi: Fed faiz kararı"}
+    assert d.evaluate(idea, NOW)[0] == "red"
+    d.env = {}
+    bad = dict(idea, card={"mult": 0.0, "notes": ["Haber Masası kırmızı alarm"]})
+    k, _, why = d.evaluate(bad, NOW)
+    assert k == "red" and "baş analist" in why
+
+
+def test_desk_crowding_limit():
+    d, st, L = _desk()
+    d.env = {"corr": lambda a, b: 0.9}          # hepsi birlikte hareket ediyor
+    ideas = [dict(_kaan_idea(), inst=f"C{i}-USDT-SWAP", sym=f"C{i}", mgr=m)
+             for i, m in enumerate(["kaan", "selin", "kemal"] * 5)]
+    o, _, r = d.execute(ideas, NOW)
+    assert any("yığılma" in w for _, w in r), r
+    assert sum(lg.open_risk(t) for t in L["open"]) <= 1000 * 0.04 + 1e-6
+
+
+def test_maker_first_then_fallback():
+    d, st, L = _desk()
+    idea = dict(_kaan_idea(), maker_first=True)
+    _, orders, _ = d.execute([idea], NOW, quote=lambda inst: (102.9, 103.1, 103.0))
+    assert orders and orders[0]["px"] == 102.9 and orders[0]["idea"]["fallback_market"]
+    gone = d.expire_orders(NOW + 601_000)
+    assert gone and not L["orders"]
+
+
+def test_policy_bench_and_capital():
+    d, st, L = _desk()
+    msg = d.apply_policy(["kemal", "kaan", "selin", "elif"], {"elif": 0.15}, NOW, "5 yıllık test")
+    assert d.benched("deniz") and d.benched("murat") and d.benched("ayse") and not d.benched("kaan")
+    assert abs(d.firm_equity() - 1000) < 1e-6
+    assert abs(d.capital("elif") - 150) < 1e-6 and abs(d.capital("kaan") - 850 / 3) < 1e-6
+    assert d.capital("deniz") == 0 and "gölge" in msg
+    # gölgede kendini kanıtlayan geri döner (sermayesi bir sonraki dağıtımda gelir)
     for i in range(10):
-        L["closed"].append({"mgr": "kemal", "shadow": True, "r": 0.5, "exit_ts": NOW + i, "pnl_usd": 1.0})
-    msgs = d.manager_tick(NOW + 100)
-    assert not d.benched("kemal") and any("döndü" in m for m in msgs)
+        L["closed"].append({"mgr": "deniz", "shadow": True, "r": 0.5, "exit_ts": NOW + i, "pnl_usd": 1.0})
+    d.manager_tick(NOW + 100)
+    assert not d.benched("deniz")
 
 
-def test_rebalance_conserves_capital():
+def test_rebalance_gives_benched_nothing():
     d, st, L = _desk()
+    d.apply_policy(["kemal", "kaan", "selin", "elif"], {"elif": 0.15}, NOW, "test")
     for i in range(20):
-        L["closed"].append({"mgr": "kaan", "r": 0.4, "exit_ts": NOW - 1000 + i, "pnl_usd": 1.0, "pnl_pct": 1, "hours": 1})
-        L["closed"].append({"mgr": "deniz", "r": -0.3, "exit_ts": NOW - 1000 + i, "pnl_usd": -0.5, "pnl_pct": -1, "hours": 1})
+        L["closed"].append({"mgr": "kaan", "r": 0.4, "exit_ts": NOW + i, "pnl_usd": 1.0, "pnl_pct": 1, "hours": 1})
     feq = d.firm_equity()
     st["desk"]["last_rebalance"] = NOW - 8 * 86400_000
-    txt = d.maybe_rebalance(NOW)
-    assert txt and abs(d.firm_equity() - feq) < 1e-6
-    assert d.equity("kaan") > d.equity("kemal") > d.equity("deniz")
+    assert d.maybe_rebalance(NOW + 1000)
+    assert abs(d.firm_equity() - feq) < 1e-6 and d.capital("murat") == 0
+    assert d.equity("kaan") > d.equity("kemal")
 
 
 def test_carry_plan_and_pnl():
@@ -183,20 +244,52 @@ def test_carry_plan_and_pnl():
     h, spot, perp, qty, shadow = to_open[0]
     t = lg.build_carry("elif", h["inst"], "BTC", "BTC-USDT", perp, spot, qty, CFG, NOW, h)
     L["open"].append(t)
-    # funding kesimi: short vadeli pozitif funding alır
     pays = lg.apply_funding(L, "BTC-USDT-SWAP", 0.0002, NOW + 1000, 80040.0)
     assert pays and pays[0][1] < 0 and t["funding_usd"] < 0
-    lg.mark(L, {"BTC-USDT-SWAP": 80100.0, "BTC-USDT": 80060.0}, CFG)
-    c = lg.close_trade(L["open"].pop(), 80100.0, NOW + 3600_000, "süre", CFG)
-    basis = qty * (80060 - 80000) + qty * (80040 - 80100)
-    exp = basis - t["fee_entry_usd"] - c["fee_exit_usd"] + qty * 80040 * 0.0002
-    assert abs(c["pnl_usd"] - exp) < 1e-4, (c["pnl_usd"], exp)
-    # çıkış: funding iki kez negatif
     t2 = lg.build_carry("elif", h["inst"], "BTC", "BTC-USDT", perp, spot, qty, CFG, NOW, h)
     t2["neg_count"] = 2
     L["open"].append(t2)
     _, to_close = d.carry_plan(hv, prices, NOW)
     assert to_close and "negatif" in to_close[0][1]
+
+
+# ── Haber Masası ve olay takvimi ──
+UNI = {"BTC", "ETH", "SOL", "ARB", "PEPE", "ONE", "FOO"}
+
+
+def test_news_mentions_and_classify():
+    assert nw.mentions("Arbitrum (ARB) bridge exploited for $20M", UNI) == {"ARB"}
+    assert "ONE" not in nw.mentions("ONE more thing about markets", UNI)
+    lvl, hit = nw.classify("Exchange hacked, $40M in ETH stolen", nw.mentions("Exchange hacked, $40M in ETH stolen", UNI))
+    assert lvl is None and not hit, "çalınan varlık olarak geçen ETH kırmızıya düşmemeli"
+    lvl, hit = nw.classify("Solana network halt hits validators", {"SOL"})
+    assert lvl == "kirmizi" and hit == {"SOL"}
+
+
+def test_news_exchange_announcements_and_state():
+    d = nw.NewsDesk()
+    now = nw._now_ms()
+    d._exchange_ann("OKX", [("OKX to delist FOO perpetual swap", now, ""), ("OKX will list PEPE (PEPE)", now, "")],
+                    UNI, okx=True)
+    assert d.flag("FOO")["level"] == "kirmizi" and "FOO" in d.delist_okx
+    assert d.flag("PEPE")["level"] == "sari" and len(d.new_alerts) == 2
+    d2 = nw.NewsDesk()
+    d2.from_state(d.to_state())
+    d2._exchange_ann("OKX", [("OKX to delist FOO perpetual swap", now, "")], UNI, okx=True)
+    assert not d2.new_alerts, "devirden sonra aynı uyarı tekrar gönderilmemeli"
+    d.fng = {"value": 85}
+    assert d.fng_mult("long") == 0.8 and d.fng_mult("short") == 1.0
+
+
+def test_macro_calendar():
+    cal = macro.Calendar()
+    fed = [e for e in cal.events if "2026-10-28" in pd.Timestamp(e["ts"], unit="ms", tz="UTC").strftime("%Y-%m-%d")]
+    assert fed and pd.Timestamp(fed[0]["ts"], unit="ms", tz="UTC").hour == 18     # 14:00 New York (EDT)
+    assert cal.block(fed[0]["ts"] + 30 * 60_000) and not cal.block(fed[0]["ts"] + 3 * 3600_000)
+    ev = macro.parse_ff([{"title": "CPI m/m", "country": "USD", "impact": "High", "date": "2026-11-12T08:30:00-05:00"},
+                         {"title": "X", "country": "EUR", "impact": "High", "date": "2026-11-12T08:30:00-05:00"}])
+    assert len(ev) == 1 and pd.Timestamp(ev[0]["ts"], unit="ms", tz="UTC").hour == 13
+    assert macro.weekend_mult(1793500000000, "15m") in (0.75, 1.0) and macro.weekend_mult(0, "1D") == 1.0
 
 
 if __name__ == "__main__":

@@ -13,6 +13,7 @@ Görevler:
 """
 from __future__ import annotations
 
+import math
 import time
 import uuid
 
@@ -173,7 +174,9 @@ class Desk:
         stop_dist = abs(entry - (idea["sl"] + (entry - idea["entry"])))
         if stop_dist <= 0:
             return "red", None, "stop mesafesi sıfır"
-        lev = float(self.fc["max_kaldirac"])
+        # kaldıraç: likidasyon stop'un en az 1,5 katı ötede kalacak kadar (geniş günlük stoplarda 5x likide eder)
+        mmr = lg.fees_cfg(self.cfg)["mmr_yuzde"] / 100
+        lev = float(min(self.fc["max_kaldirac"], max(1, math.floor(1 / (stop_dist / entry * 1.5 + mmr)))))
         notional_t = min(risk_usd / stop_dist * entry, eq_m * self.fc["max_nominal_kat"])
         contracts, qty, err = lg.round_contracts(notional_t, entry, meta(idea["inst"]) if meta else None)
         if err or qty <= 0:
@@ -244,7 +247,8 @@ class Desk:
             else:
                 o = {"oid": uuid.uuid4().hex[:10], "mgr": idea["mgr"], "idea": idea, "px": d["entry"], "qty": d["qty"],
                      "contracts": d["contracts"], "lev": d["lev"], "margin_usd": d["margin_usd"], "shadow": d["shadow"],
-                     "eq_m": d["eq_m"], "created": now_ms, "expire_ts": now_ms + max(idea.get("limit_valid_ms", 0), 900_000),
+                     "eq_m": d["eq_m"], "created": now_ms, "expire_ts": now_ms + (idea.get("limit_valid_ms", 600_000) if idea.get("fallback_market")
+                                                           else max(idea.get("limit_valid_ms", 0), 900_000)),
                      "risk_usd": d["risk_usd"]}
                 self.ledger["orders"].append(o)
                 orders.append(o)
@@ -298,10 +302,37 @@ class Desk:
                     if avg >= self.fc["yedekten_donus_r"]:
                         del self.st["bench"][m.id]
                         self.st["peak"][m.id] = eq
+                        self.st["last_rebalance"] = 0          # sermayesini hemen bir sonraki dağıtımda alsın
                         msgs.append(f"🔙 <b>{m.emoji} {m.name}</b> yedek kulübesinden döndü: gölgede {len(sh)} işlemde "
                                     f"ortalama {avg:+.2f}R yaptı. Tekrar gerçek sermayeyle işlem yapacak.")
                         self.journal(m.id, "-", "-", "-", "yedekten döndü", f"gölgede {len(sh)} işlem, {avg:+.2f}R")
         return msgs
+
+    def apply_policy(self, active: list[str], fixed: dict, now_ms: int, why: str) -> str:
+        """Kanıta dayalı sermaye (PLAN.md): testi geçenler sermaye alır, geçemeyenler gölgede (sermayesiz) işlem yapar
+        ve kendini kanıtlarsa geri döner. fixed: sabit paylı yöneticiler (ör. Elif %15)."""
+        feq = self.firm_equity()
+        fixed_sum = sum(w for mid, w in fixed.items() if mid in active)
+        rest = [m.id for m in self.mgrs if m.id in active and m.id not in fixed]
+        lines = []
+        for m in self.mgrs:
+            eq = self.equity(m.id)
+            if m.id in active:
+                target = feq * (fixed[m.id] if m.id in fixed else (1 - fixed_sum) / max(len(rest), 1))
+                self.st["bench"].pop(m.id, None)
+            else:
+                target = 0.0
+                self.st["bench"].setdefault(m.id, now_ms)
+                self.st.setdefault("bench_why", {})[m.id] = why
+            self.st["adj"][m.id] = self.st["adj"].get(m.id, 0.0) + (target - eq)
+            self.st["peak"][m.id] = max(target, 0.0)
+            lines.append(f"{m.emoji} {m.name}: " + (f"<b>{target:.2f}$</b>" if m.id in active else "gölgede (sermayesiz)"))
+            self.journal(m.id, "-", "-", "-", "politika", f"{eq:.2f}$ → {target:.2f}$ ({why})" if m.id in active
+                         else f"gölgeye alındı ({why})")
+        self.st["policy"] = {"active": list(active), "fixed": dict(fixed), "ts": now_ms, "why": why}
+        self.st["last_rebalance"] = now_ms
+        return (f"🏦 <b>Sermaye politikası</b> ({why})\n" + "\n".join(lines) +
+                "\n<i>Gölgedekiler sermayesiz işlem yapmaya devam eder; 10 işlemde ortalama +0,1R yaparsa geri döner.</i>")
 
     def maybe_rebalance(self, now_ms: int) -> str | None:
         days = self.fc["yeniden_dagitim_gun"]
@@ -309,26 +340,30 @@ class Desk:
             return None
         self.st["last_rebalance"] = now_ms
         cut = now_ms - 30 * 86400_000
+        fixed = (self.st.get("policy") or {}).get("fixed") or {}
         scores, lines = {}, []
         for m in self.mgrs:
             cl = [t for t in self.ledger["closed"] if t.get("mgr") == m.id and not t.get("shadow")
                   and (t.get("exit_ts") or 0) >= cut]
             if self.benched(m.id):
-                sc = 0.5
+                sc = 0.0                        # gölgedeki yöneticiye sermaye yok
             elif len(cl) >= self.fc["dagitim_min_islem"]:
                 avg = float(np.mean([t["r"] for t in cl]))
                 sc = float(np.clip(1 + 2 * avg, 0.5, 1.5))
             else:
                 sc = 1.0
             scores[m.id] = sc
-        tot = sum(scores.values()) or 1
+        fixed_live = {mid: w for mid, w in fixed.items() if mid in scores and scores[mid] > 0}
+        tot = sum(sc for mid, sc in scores.items() if mid not in fixed_live) or 1
         feq = self.firm_equity()
+        rest_share = 1 - sum(fixed_live.values())
         for m in self.mgrs:
             eq = self.equity(m.id)
-            target = feq * scores[m.id] / tot
+            target = feq * fixed_live[m.id] if m.id in fixed_live else feq * rest_share * scores[m.id] / tot
             self.st["adj"][m.id] = self.st["adj"].get(m.id, 0.0) + (target - eq)
             self.st["peak"][m.id] = max(target, 0)
-            lines.append(f"{m.emoji} {m.name}: {eq:.2f}$ → <b>{target:.2f}$</b> (puan {scores[m.id]:.2f})")
+            lines.append(f"{m.emoji} {m.name}: {eq:.2f}$ → <b>{target:.2f}$</b>"
+                         + (" (gölgede)" if self.benched(m.id) else f" (puan {scores[m.id]:.2f})"))
             self.journal(m.id, "-", "-", "-", "sermaye", f"{eq:.2f}$ → {target:.2f}$")
         return "🏦 <b>Haftalık sermaye dağıtımı</b> (son 30 gün performansına göre)\n" + "\n".join(lines)
 
@@ -394,6 +429,7 @@ class Desk:
                          "open": len(op), "orders": sum(1 for o in self.ledger["orders"] if o["mgr"] == m.id),
                          "heat": round(sum(lg.open_risk(t) for t in op), 2),
                          "benched": self.benched(m.id), "loss_streak": self.loss_streak(m.id),
+                         "bench_why": (self.st.get("bench_why") or {}).get(m.id) if self.benched(m.id) else None,
                          "stats": s, "shadow": {"open": len(sho), "closed": len(shc),
                                                 "avg_r": round(float(np.mean([t["r"] for t in shc])), 3) if shc else None}}
         return out

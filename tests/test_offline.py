@@ -23,6 +23,9 @@ CFG["demo"]["boyut_modu"] = "sabit"
 CFG["risk"]["kismi_kar_oran"] = 0
 CFG["risk"]["iz_suren_atr"] = 0
 PRO = load_config()
+# Eski (tekli) sistemin hesap mantığı testleri OKX liste ücretleriyle yazıldı; v8'in sert ücretleri ayrıca test edilir.
+for _c in (CFG, PRO):
+    _c["ucret"].update({"taker_yuzde": 0.05, "maker_yuzde": 0.02, "spot_taker_yuzde": 0.10, "stop_kayma_bp": 0})
 
 
 def test_no_lookahead():
@@ -109,11 +112,13 @@ def test_demo_dollars_and_limits():
     idx_bars = _bars(t0 - 60_000, [(100, 120, 80, 100), (100, 101, 99, 100), (100, 110.5, 100, 110)])
     closed = lg.update(L, lambda i: idx_bars, {}, CFG, now_ms=t0 + 5 * 60_000, bar_ms=60_000)
     assert len(closed) == 1 and closed[0]["outcome"] == "hedef"
-    # brüt 0.2 coin × 10$ = 2$ ; giriş taker %0.05 (0.01$) ; hedef limit → maker %0.02 (0.2×110×0.0002=0.0044$)
-    assert abs(closed[0]["pnl_usd"] - 1.9856) < 1e-6, closed[0]["pnl_usd"]
+    # brüt 0.2 coin × 10$ = 2$ ; giriş taker (config'teki sert oran) ; hedef limit → maker
+    fc = lg.fees_cfg(CFG)
+    exp = 2.0 - 0.2 * 100 * fc["taker_yuzde"] / 100 - 0.2 * 110 * fc["maker_yuzde"] / 100
+    assert abs(closed[0]["pnl_usd"] - exp) < 1e-6, (closed[0]["pnl_usd"], exp)
     assert closed[0]["exit_liq"] == "maker"
     st = lg.stats(L, CFG)
-    assert abs(st["demo"]["equity"] - 1001.99) < 0.006 and st["demo"]["return_pct"] > 0
+    assert abs(st["demo"]["equity"] - (1000 + exp)) < 0.006 and st["demo"]["return_pct"] > 0
     # limit: aynı periyotta en fazla max_acik_periyot
     L = lg.empty()
     sigs = []

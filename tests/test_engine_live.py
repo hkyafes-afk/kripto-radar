@@ -42,8 +42,11 @@ def test_tick_triggers_stop_and_target():
         assert e.hits[t["id"]][0] == "stop"
         e.process_hits()
         c = e.ledger["closed"][-1]
-        assert len(e.ledger["closed"]) == n0 + 1 and c["id"] == t["id"] and c["outcome"] == "stop"
-        assert c["exit"] == (bid if sgn > 0 else ask) and c["exit_liq"] == "taker"
+        assert len(e.ledger["closed"]) == n0 + 1 and c["id"] == t["id"]
+        assert c["outcome"] == ("iz stop" if t.get("trail") and t.get("tp1_done") else "stop")
+        slip = lg.fees_cfg(e.cfg).get("stop_kayma_bp", 0) / 1e4          # v8: stop emrine ek kayma
+        exp_exit = (bid if sgn > 0 else ask) * (1 - sgn * slip)
+        assert abs(c["exit"] - exp_exit) < 1e-9 * max(1, exp_exit) and c["exit_liq"] == "taker"
         assert c["pnl_usd"] < 0 and t["inst"] not in e.watch or all(w[0] != t["id"] for w in e.watch.get(t["inst"], ()))
         # ikinci işlem hedefin içinden geçince maker dolum
         t2 = e.ledger["open"][0]
@@ -107,7 +110,7 @@ def test_feed_to_engine_end_to_end():
         latency = time.time() - t0
         e.process_hits()
         f.stop()
-        assert e.ledger["closed"][-1]["id"] == t["id"] and e.ledger["closed"][-1]["outcome"] == "stop"
+        assert e.ledger["closed"][-1]["id"] == t["id"] and e.ledger["closed"][-1]["outcome"] in ("stop", "iz stop")
         assert latency < 3, latency
         p = e.build_payload()
         assert p["feeds"]["okx"]["ticks"] >= 1
@@ -116,7 +119,18 @@ def test_feed_to_engine_end_to_end():
 def test_tick_partial_trailing_and_circuit_breakers():
     with tempfile.TemporaryDirectory() as d:
         e = _engine(d)
-        t = next(x for x in e.ledger["open"] if x.get("tp1"))
+        t = next((x for x in e.ledger["open"] if x.get("tp1")), None)
+        if t is None:      # v8 demo taramasında sadece hedefsiz trend işlemleri açıldıysa: kısmi kârlı bir işlem kur
+            o0 = e.ledger["open"][0]
+            px0 = o0["last"] if o0.get("last") else o0["entry"]
+            atr = px0 * 0.02
+            idea = {"mgr": "kaan", "inst": o0["inst"], "sym": o0["sym"], "tf": "1D", "side": "long", "entry": px0,
+                    "sl": px0 - 2 * atr, "tp": px0 + 6 * atr, "tp1": px0 + 2 * atr, "atr": atr, "max_saat": 720,
+                    "pp": {"partial_frac": 0.3, "trail_atr": 2.5, "basabas": True}, "conviction": 0.5}
+            e.ledger["open"] = [x for x in e.ledger["open"] if x["inst"] != o0["inst"]]
+            t = lg.build_trade(idea, px0, 1.0, 0, 3.0, e.cfg, int(time.time() * 1000), 140.0)
+            e.ledger["open"].append(t)
+            e.rebuild_watch()
         sgn = 1 if t["side"] == "long" else -1
         # +1R'yi geçen fiyat → kısmi kâr, stop başabaşa
         px = t["tp1"] + sgn * t["entry"] * 0.0005
@@ -184,7 +198,7 @@ def test_team_breaker_uses_firm_limits():
         assert e.halt == "gunluk" and rs["halt_lim"] == 3.0
         at(25)                              # toparlanma durdurmayı kaldırmaz
         assert e.halt == "gunluk"
-        assert e.risk_limits()["risk_yuzde"].startswith("1,5")
+        assert e.risk_limits()["risk_yuzde"].startswith("1–5")
 
 
 def test_data_issue_scales_with_volatility():
