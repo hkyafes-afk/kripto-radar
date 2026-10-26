@@ -293,6 +293,20 @@ Not: Öğrenmenin hızını takvim değil veri belirler. Ayarları az veriyle he
   - Eski sürüm işlemleri eski hedeflerle duruyor (ör. INJ tp1 2.87R); riskleri 3–6$, yani 10 bin dolarlık bütçeden önce açılmışlar.
   - Kemal birkaç saatte 13 pozisyon açtı (birikmiş fırsatlar tek seferde açıldı).
 
+### 9.11 Genel Müdür (kullanıcı önerisi, 26 Ekim 21:02)
+Model: çok stratejili fon ("pod" yapısı). Yöneticiler ayrı departmanlar olarak kalır, çünkü farklı tarzlar birbirinden bağımsız kazanç akışı = çeşitlendirme. Hepsinin üstünde tek defter ve tek beyin olarak **Genel Müdür** bulunur. Yatırım Komitesi (9.2) Genel Müdür'ün masası olur.
+
+Genel Müdür'ün 5 uzmanı (anayasa 9.8 geçerli):
+1. **Portföy Uzmanı:** Firmanın toplam resmini tutar: coin başına net pozisyon, toplam long/short dengesi, toplam kaldıraç, BTC'ye bağımlılık.
+2. **Çatışma Hakemi:** Aynı coinde iki ajan ters düşerse kimin gireceğine karar verir: o coinde ve o rejimde karnesi daha iyi olan girer. Aynı yöne yığılmada coin risk tavanını yöneticiler arasında paylaştırır.
+3. **Sermaye Dağıtıcı:** Bütçeyi karneye göre yöneticiler arasında kaydırır (çeyrek Kelly, en az 30 işlem kanıtı); kanıtlanmayanı gölgede tutar.
+4. **Rejim/Makro Uzmanı:** BTC havası, oynaklık rejimi, olay takvimi, haber bayrakları. Firma genelinde risk iştahını ayarlar: hücum, normal ya da savunma.
+5. **Denetçi:** Disiplin kontrolü yapar: tarz dışı işlem (ör. Elif PONS), kural ihlali, eski sürüm işlemleri, döngü hızı. Haftalık müdür raporu yazar (panel + Telegram).
+
+Karar zinciri: Yönetici (kendi 5 uzmanıyla) öneri hazırlar → Genel Müdür onaylar, küçültür ya da reddeder. Reddedilen öneri gölgede izlenir (öğrenme yavaşlamaz). Müdürün kendi kararları da karneye girer: "reddettiklerim kazansaydı ne olurdu?"
+
+Gerçek API: kullanıcı kararı — uygulama tam hazır olunca; acele yok.
+
 ### 9.7 Dürüst uyarılar
 - 40 uzman demek çok ayar demek, bu da aşırı uyum riski getirir. Bu yüzden uzmanlar ortak araçları kullanır; her parça kendi testini ve Deflated Sharpe kontrolünü geçer.
 - Meta-labeling sihirli değnek değil; zayıf bir ana sinyali kurtarmaz, iyi sinyali seçici yapar.
