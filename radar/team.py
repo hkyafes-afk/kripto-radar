@@ -406,6 +406,48 @@ def a_ayse(ctx, mgr, cfg):
                  setup="ayse", kind="donus", min_rr=1.2, exit_rule={"type": "mean", "n": 20})
 
 
+def a_bas(ctx, mgr, cfg):
+    """👑 Baş Trader: tüm veriyi tek puanda birleştirir (radar/bas.py). Tam yetkili; Genel Müdür kısıtları uygulanmaz."""
+    from . import bas
+    if not (ctx.get("tf") == "1D" and _ok(ctx.get("atr")) and ctx["atr"] > 0):
+        return None
+    s, p = bas.score(ctx)
+    if abs(s) < bas.GIRIS_ESIK:
+        return None
+    side = "long" if s > 0 else "short"
+    sgn = 1 if side == "long" else -1
+    px, atr = ctx["price"], ctx["atr"]
+    # Stop'u veri belirler: (1) coinin kendi gürültüsü — oynaklığı geçmişine göre yüksekse (rv_rank) daha geniş,
+    # sakinse daha dar (1,2–3,0 ATR); (2) yapı — 10 günlük dip/tepenin hemen ötesi. İkisinden uzak olanı seçilir
+    # (gürültüyle ya da bilinen seviyede avlanmasın), en fazla 3,5 ATR. Stop fiyatın %25'inden uzaksa boyut anlamsız
+    # küçülür, likidasyon riski büyür → o coinde işlem yok.
+    rv = ctx.get("rv_rank")
+    rv = rv if _ok(rv) else 0.5
+    noise = (1.2 + 1.8 * rv) * atr
+    lvl = ctx.get("ll10") if side == "long" else ctx.get("hh10")
+    struct = sgn * (px - (lvl - sgn * 0.25 * atr)) if _ok(lvl) else 0.0
+    dist = min(max(noise, struct), 3.5 * atr)
+    if dist <= 0 or dist / px > 0.25:
+        return None
+    sl = px - sgn * dist
+    tp = px + sgn * min(8.0 * dist, 0.9 * px) if sgn < 0 else px + 8.0 * dist
+    trail = round(2.0 + 1.5 * rv, 2)                     # iz stop da oynaklığa göre: sakin coinde sıkı, oynakta geniş
+    conv = min(1.0, (abs(s) - bas.GIRIS_ESIK) / (1 - bas.GIRIS_ESIK))
+    checks = [(r[2:], r.startswith("✓")) for r in bas.reasons(p, side)]
+    plan = (f"Puan {s:+.2f} ({'long' if s > 0 else 'short'}). Stop {dist / atr:.1f} ATR ötede: "
+            f"{'10 günlük ' + ('dibin' if sgn > 0 else 'tepenin') + ' ötesi' if struct >= noise else 'coinin gürültü bandı (oynaklık sırası %' + format(rv * 100, '.0f') + ')'}. "
+            f"2R'de %30 kâr alıp stop'u başabaşa çekerim, kalanı {trail:g} ATR iz süren stopla taşırım; tablo tersine dönerse (puan {'≤ −' if sgn > 0 else '≥ +'}{bas.CIKIS_ESIK:.2f}) çıkarım. "
+            f"Risk güvene göre sermayenin %{mgr.base_risk:g}–%{mgr.max_risk:g}'i.")
+    idea = _idea(ctx, mgr, side, sl, tp, checks, f"Baş Trader puanı {s:+.2f}", plan, tp1_r=2.0,
+                 pp={"partial_frac": 0.3, "trail_atr": trail, "basabas": True}, max_saat=90 * DAY_H, min_checks=0,
+                 setup="bas", kind="trend", min_rr=2.0, exit_rule={"type": "skor"})
+    if idea:
+        idea["conviction"] = round(conv, 3)
+        idea["bas_score"] = round(s, 3)
+        idea["bas_parts"] = {k: round(v, 2) for k, v in p.items()}
+    return idea
+
+
 DENIZ_COINS = ("BTC", "ETH")
 
 
@@ -482,6 +524,11 @@ def nfp(p: float) -> str:
 
 
 ROSTER = [
+    Manager("bas", "Baş Trader", "Tam yetkili ana trader", "👑",
+            "Bütün veriyi (trend, momentum, göreli güç, hacim, para akışı, funding, BTC havası, diğer 7 yöneticinin "
+            "pozisyonları) tek puanda birleştirir; her an long/short karar verir, boyutu ve kaldıracı güvene ve "
+            "oynaklığa göre ayarlar, kârı iz süren stopla korur. Genel Müdür kısıtlarına tabi değildir.",
+            ["1D"], 0.5, 2.5, 30, aggressive=True, analyze=a_bas, extra={"lev_cap": 20, "tam_yetki": True}),
     Manager("kemal", "Kemal", "Trend Yöneticisi (çekirdek)", "🧭",
             "Günlük trend takibi: 50 günlük ortalama + 20/100 trend filtresi. Trend bitene kadar tutar, stop 3 ATR geriden izler.",
             ["1D"], 1.5, 2.5, 20, analyze=a_kemal, extra={"lev_cap": 10}),

@@ -31,6 +31,7 @@ import json
 from . import commands as cm
 from . import desk as dk
 from . import director as gmd
+from . import bas
 from . import experts as ex
 from . import hakem as hk
 from . import harvest as hv
@@ -591,6 +592,7 @@ class Engine:
                 c = x.get("ctx")
                 if not c:
                     continue
+                c["peers"] = self._peers(c["inst"])
                 self._queue_rule_exits(c)
                 if c.get("suspect"):
                     continue
@@ -669,6 +671,12 @@ class Engine:
                 if c:
                     ctxs.append(c)
         self._rel_strength(ctxs)
+        for c in ctxs:
+            c["peers"] = self._peers(c["inst"])
+        try:
+            self.bas_watch = {"ts": int(time.time() * 1000), "rows": bas.watch(ctxs)}
+        except Exception as e:  # noqa: BLE001
+            print("[baş trader] izleme:", e)
         now = time.time()
         ideas = []
         held = {(t.get("mgr"), t["inst"]) for t in list(self.ledger["open"])}
@@ -696,6 +704,40 @@ class Engine:
             print("[canlı 1G] " + ", ".join(f"{i['mgr']}:{i['sym']} {i['side']}" for i in ideas[:12]))
         self.stats_counter["live_evals"] = self.stats_counter.get("live_evals", 0) + 1
         self.stats_counter["live_coins"] = len(ctxs)
+
+    def _peers(self, inst: str) -> dict:
+        """Baş Trader bütün kulvarları izler: diğer yöneticilerin bu coindeki gerçek pozisyonları."""
+        out = {"long": 0, "short": 0, "who": []}
+        for t in list(self.ledger["open"]):
+            if t.get("inst") != inst or t.get("shadow") or t.get("carry") or t.get("mgr") in (None, "bas", "ortak"):
+                continue
+            out[t["side"]] = out.get(t["side"], 0) + 1
+            m = self.desk.by_id.get(t["mgr"]) if self.desk else None
+            out["who"].append(f"{m.name if m else t['mgr']} {t['side']}")
+        return out
+
+    def _bas_public(self) -> dict | None:
+        if not self.desk or "bas" not in self.desk.by_id:
+            return None
+        w = getattr(self, "bas_watch", None) or {}
+        op = [t for t in self.ledger["open"] if t.get("mgr") == "bas"]
+        cl = [t for t in self.ledger["closed"] if t.get("mgr") == "bas"]
+        lanes = []
+        for m in self.desk.mgrs:
+            if m.id == "bas":
+                continue
+            mo = [t for t in self.ledger["open"] if t.get("mgr") == m.id and not t.get("shadow")]
+            lanes.append({"id": m.id, "name": m.name, "emoji": m.emoji, "open": len(mo),
+                          "upnl": round(sum(t.get("upnl_usd", 0.0) for t in mo), 2),
+                          "coins": [f"{t['sym']} {'▲' if t['side'] == 'long' else '▼'}" for t in mo][:8]})
+        return {"watch": w.get("rows") or [], "watch_ts": w.get("ts"),
+                "giris_esik": bas.GIRIS_ESIK, "cikis_esik": bas.CIKIS_ESIK, "weights": bas.W, "labels": bas.LABEL,
+                "open": [{"sym": t["sym"], "side": t["side"], "entry": t.get("entry"), "sl": t.get("sl"),
+                          "upnl": round(t.get("upnl_usd", 0.0), 2), "r": round(t.get("r_now", t.get("r", 0.0)) or 0.0, 2),
+                          "lev": t.get("lev"), "score": t.get("bas_score"), "ts": t.get("entry_ts")} for t in op],
+                "closed_n": len(cl), "closed_pnl": round(sum(t.get("pnl_usd", 0.0) for t in cl), 2),
+                "lanes": lanes,
+                "decisions": [j for j in (self.desk.st.get("journal") or []) if j.get("mgr") == "bas"][-12:]}
 
     def _rel_strength(self, ctxs: list[dict]):
         """Gözcü: BTC'ye göre 30 günlük göreli güç ve kesitsel sıra (1 = en güçlü)."""
@@ -1356,6 +1398,7 @@ class Engine:
                          "limits_on": bool((self.desk.fc if self.desk else {}).get("sinirlar_aktif", True))},
             "backtest_v8": self._bt8(),
             "director": self._director(now_ms),
+            "bas": self._bas_public(),
             "experts": ex.report(self.desk.st) if self.desk else None,
             "hakem": self._hakem_public(),
             "news": self.news.public(),

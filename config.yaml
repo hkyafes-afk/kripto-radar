@@ -65,7 +65,7 @@ periyot_ayar:
 
 # ── DEMO HESAP ── her güçlü sinyalde sanal işlem açılır, kâr/zarar dolar olarak kaydedilir
 demo:
-  baslangic_bakiye: 80000    # $ sanal başlangıç bakiyesi (v8.2: 8 yönetici × 10.000$; ekip.butce ile aynı olmalı)
+  baslangic_bakiye: 90000    # $ sanal başlangıç bakiyesi (v9: 9 yönetici × 10.000$, Baş Trader eklendi; ekip.butce ile aynı olmalı)
   # risk  = profesyonel yöntem: her işlemde bakiyenin risk_yuzde'si kadar risk (stop uzaksa pozisyon küçülür)
   # sabit = her işleme islem_tutari_usd kadar teminat
   boyut_modu: risk
@@ -105,6 +105,7 @@ panel:
 ekip:
   aktif: true
   yoneticiler:
+    bas:   {aktif: true, taban_risk: 0.5, tavan_risk: 2.5, yedek_dusus: 30}   # 👑 Baş Trader: tüm veri, tam yetki (1G, her an)
     kemal: {aktif: true, taban_risk: 1.5, tavan_risk: 2.5, yedek_dusus: 20}   # Günlük trend takibi (1G)
     deniz: {aktif: true, taban_risk: 1.0, tavan_risk: 1.5, yedek_dusus: 15}   # BTC/ETH 15dk maker
     ayse:  {aktif: true, taban_risk: 1.0, tavan_risk: 1.5, yedek_dusus: 15}   # Kapitülasyon (1G)

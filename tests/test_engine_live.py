@@ -41,8 +41,9 @@ def test_tick_triggers_stop_and_target():
         e._on_tick("okx", t["inst"], px, bid, ask, int(time.time() * 1000))
         assert e.hits[t["id"]][0] == "stop"
         e.process_hits()
-        c = e.ledger["closed"][-1]
-        assert len(e.ledger["closed"]) == n0 + 1 and c["id"] == t["id"]
+        # (aynı coinde başka yöneticinin, ör. Baş Trader'ın, pozisyonu da aynı fiyatta stop olabilir)
+        c = next(x for x in e.ledger["closed"][n0:] if x["id"] == t["id"])
+        assert len(e.ledger["closed"]) >= n0 + 1
         assert c["outcome"] == ("iz stop" if t.get("trail") and t.get("tp1_done") else "stop")
         slip = lg.stop_slip_bp(t, lg.fees_cfg(e.cfg)) / 1e4            # v9: oynaklığa bağlı stop kayması
         exp_exit = (bid if sgn > 0 else ask) * (1 - sgn * slip)
@@ -54,7 +55,7 @@ def test_tick_triggers_stop_and_target():
         px2 = t2["tp"] + s2 * t2["entry"] * 0.001
         e._on_tick("okx", t2["inst"], px2, px2, px2, int(time.time() * 1000))
         e.process_hits()
-        c2 = e.ledger["closed"][-1]
+        c2 = next(x for x in reversed(e.ledger["closed"]) if x["id"] == t2["id"])
         assert c2["outcome"] == "hedef" and c2["exit"] == t2["tp"] and c2["exit_liq"] == "maker" and c2["pnl_usd"] > 0
 
 
@@ -77,7 +78,7 @@ def test_funding_settlement_and_manual_close():
         msg = e.on_close_request(t["sym"])
         assert "kapatılıyor" in msg
         e.process_manual()
-        c = e.ledger["closed"][-1]
+        c = next(x for x in reversed(e.ledger["closed"]) if x["id"] == t["id"])
         assert c["outcome"] == "manuel" and c["exit"] == (t["entry"] * 0.999 if sgn > 0 else t["entry"] * 1.001)
         assert "yok" in e.on_close_request("YOKCOIN")
 
@@ -110,7 +111,8 @@ def test_feed_to_engine_end_to_end():
         latency = time.time() - t0
         e.process_hits()
         f.stop()
-        assert e.ledger["closed"][-1]["id"] == t["id"] and e.ledger["closed"][-1]["outcome"] in ("stop", "iz stop")
+        cx = next((x for x in e.ledger["closed"] if x["id"] == t["id"]), None)
+        assert cx and cx["outcome"] in ("stop", "iz stop")
         assert latency < 3, latency
         p = e.build_payload()
         assert p["feeds"]["okx"]["ticks"] >= 1
@@ -201,7 +203,7 @@ def test_team_breaker_uses_firm_limits():
         assert e.halt == "gunluk" and rs["halt_lim"] == 3.0
         at(0.025)                           # toparlanma durdurmayı kaldırmaz
         assert e.halt == "gunluk"
-        assert e.risk_limits()["risk_yuzde"].startswith("1–5")
+        assert e.risk_limits()["risk_yuzde"].startswith("0,5–5")
 
 
 def test_user_extra_daily_allowance():

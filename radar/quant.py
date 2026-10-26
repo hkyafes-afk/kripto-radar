@@ -156,6 +156,9 @@ def exit_signal(rule: dict | None, ctx: dict, side: str) -> str | None:
         mid = ctx.get("bb_mid")
         if mid == mid and mid and sgn * (c - mid) < 0:
             return "fiyat orta banda geri döndü (patlama başarısız)"
+    elif t == "skor":                   # Baş Trader: bütün tablo pozisyonun tersine döndü
+        from . import bas
+        return bas.exit_reason(ctx, side)
     elif t == "mean":                   # ortalamaya dönüş tamamlandı
         ma = ctx.get(f"sma{rule.get('n', 20)}")
         if ma == ma and ma and sgn * (c - ma) >= 0:

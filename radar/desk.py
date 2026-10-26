@@ -144,7 +144,9 @@ class Desk:
             return "red", None, "yönetici pasif"
         sym, tf, side = idea["sym"], idea["tf"], idea["side"]
         seg = self.segment(m.id, side)
-        shadow = self.benched(m.id) or (seg == "golge") or (bool(idea.get("shadow_only")) and seg != "gercek")
+        full = bool((m.extra or {}).get("tam_yetki"))     # 👑 Baş Trader: Genel Müdür kısıtları yok, hep gerçek işlem
+        shadow = False if full else (self.benched(m.id) or (seg == "golge")
+                                     or (bool(idea.get("shadow_only")) and seg != "gercek"))
         if any(t["mgr"] == m.id and t["inst"] == idea["inst"] for t in self.ledger["open"] if t.get("mgr")):
             return "red", None, None                         # zaten pozisyonu var (sessiz)
         if any(o["mgr"] == m.id and o["idea"]["inst"] == idea["inst"] for o in self.ledger["orders"]):
@@ -153,21 +155,21 @@ class Desk:
                                                 "1D": 86_400_000}.get(tf, 3600_000)
         last_exit = max([t.get("exit_ts") or 0 for t in self.ledger["closed"]
                          if t.get("mgr") == m.id and t["inst"] == idea["inst"]] or [0])
-        if now_ms - last_exit < cool:
+        if not full and now_ms - last_exit < cool:
             return "red", None, None
-        if halted and not shadow:
+        if halted and not shadow and not full:
             return "red", None, f"devre kesici: {halted}"
         env = self.env or {}
         if env.get("cal_block"):
             return "red", None, env["cal_block"]
         card = idea.get("card") or {}
-        if card.get("mult", 1.0) <= 0:
+        if not full and card.get("mult", 1.0) <= 0:
             return "red", None, "baş analist: " + "; ".join(card.get("notes") or ["uygun değil"])
         # ── Genel Müdür (v9 Faz 0): kanıt sınıfı + çatışma hakemi ──
         gm: list[str] = []
         cls = director.coin_class(meta(idea["inst"]) if meta else None, now_ms, self.fc)
         cstate = director.class_state(self, m.id, cls)
-        cm = director.STEP_MULT[cstate]
+        cm = 1.0 if full else director.STEP_MULT[cstate]
         if not shadow and cm <= 0:
             shadow = True
             gm.append(f"kanıt sınıfı {director.CLASS_TEXT[cls]}: bu coinde kanıtımız yok, kanıtlanana kadar gölgede")
@@ -175,11 +177,11 @@ class Desk:
             gm.append(f"kanıt sınıfı {director.CLASS_TEXT[cls]}: yarım boyut")
         bl = float(self.fc.get("ayi_long_carpan", 0.5))
         wx = (self.env or {}).get("weather") or {}
-        if (not shadow and bl <= 0 and side == "long" and m.id != "ayse"
+        if (not shadow and not full and bl <= 0 and side == "long" and m.id != "ayse"
                 and (wx.get("btc_bear") or wx.get("trend") == "ayi")):
             shadow = True
             gm.append("BTC kuralı (5 yıllık yarış): BTC 50 günlük ortalamanın altında → long açılmaz, gölgede izleniyor")
-        if not shadow and self.fc.get("carpisma_yasak", True):
+        if not shadow and not full and self.fc.get("carpisma_yasak", True):
             opp = director.opposite_holder(self, idea)
             if opp:
                 shadow = True
@@ -198,15 +200,17 @@ class Desk:
         hm = macro.weekend_mult(now_ms, tf)
         xm = float(idea.get("exp_mult") or 1.0)                  # uzmanların karne ağırlıklı görüşü
         kel, kel_why = experts.kelly_mult(self, m.id)            # Genel Müdür · Sermaye Dağıtıcı (30+ işlemden sonra)
-        if kel != 1.0 and not shadow:
+        if kel != 1.0 and not shadow and not full:
             gm.append(kel_why)
         ext = wm * fm * km * hm * xm * (kel if not shadow else 1.0) * (cm if (cm > 0 and not shadow) else 1.0)
+        if full:          # Baş Trader kendi puanıyla boyutlanır; dış çarpanlar (hava, uzman, Kelly, seri) uygulanmaz
+            mult, ext = 1.0, 1.0
         risk_pct = (m.base_risk + (m.max_risk - m.base_risk) * idea["conviction"]) * mult * ext
         risk_usd = eq_m * risk_pct / 100
         if idea.get("notional_target"):     # Ortak Masa: anlaşan yöneticilerin %5 katkısı kadar pozisyon
             ref_px = idea.get("limit_px") or idea["entry"]
             risk_usd = idea["notional_target"] * abs(idea["entry"] - idea["sl"]) / ref_px
-        if not shadow:      # coin risk tavanı: tüm yöneticilerin bu coindeki toplam riski
+        if not shadow and not full:      # coin risk tavanı: tüm yöneticilerin bu coindeki toplam riski
             cap, used, room = director.coin_room(self, idea["inst"])
             if risk_usd > room:
                 if room >= risk_usd * self.fc["coin_tavan_min_oran"]:
@@ -239,7 +243,7 @@ class Desk:
             return "red", None, "stop mesafesi sıfır"
         lev, lev_why = self.choose_leverage(m, idea, stop_dist / entry, meta(idea["inst"]) if meta else None)
         notional_t = risk_usd / stop_dist * entry
-        if self.fc.get("sinirlar_aktif", True):
+        if self.fc.get("sinirlar_aktif", True) and not full:
             notional_t = min(notional_t, eq_m * self.fc["max_nominal_kat"])
         contracts, qty, err = lg.round_contracts(notional_t, entry, meta(idea["inst"]) if meta else None)
         if err or qty <= 0:
@@ -269,7 +273,7 @@ class Desk:
                 entry, src = vwap, "derinlik (VWAP)"
         risk_now = qty * stop_dist
         margin = qty * entry / lev
-        if not shadow and self.fc.get("sinirlar_aktif", True):
+        if not shadow and not full and self.fc.get("sinirlar_aktif", True):
             firm_eq = self.firm_equity()
             if self.heat() + risk_now > firm_eq * self.fc["max_isi_yuzde"] / 100:
                 return "red", None, f"firma toplam risk limiti (%{self.fc['max_isi_yuzde']:g})"
@@ -634,7 +638,7 @@ class Desk:
     @staticmethod
     def _tag(t: dict, idea: dict, mults: dict | None):
         """Fikirden işleme taşınan öğrenme bilgisi: giriş özellikleri (Hakem), uzman görüşleri (karne), varyantlar."""
-        for k in ("feat", "experts", "exp_mult", "variants"):
+        for k in ("feat", "experts", "exp_mult", "variants", "bas_score", "bas_parts"):
             if idea.get(k) is not None:
                 t[k] = idea[k]
         if mults:

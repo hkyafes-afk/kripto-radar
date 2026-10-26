@@ -282,7 +282,7 @@ def test_carry_plan_and_pnl():
 # ── v8.2: ajan başı bütçe, sınırsız demo, kaldıraç yetkisi, Ortak Masa, öğrenme ──
 def test_budget_mode_no_limits_and_leverage():
     d, st, L = _desk(CFG)                     # varsayılan config: 10.000$/yönetici, kısıtlar kapalı
-    assert abs(d.capital("kaan") - 10_000) < 1e-9 and abs(d.firm_equity() - 80_000) < 1e-6
+    assert abs(d.capital("kaan") - 10_000) < 1e-9 and abs(d.firm_equity() - 10_000 * len(d.mgrs)) < 1e-6
     ideas = [dict(_kaan_idea(), inst=f"C{i}-USDT-SWAP", sym=f"C{i}") for i in range(12)]
     o, _, r = d.execute(ideas, NOW)
     assert len(o) == 12, ("kısıtlar kapalıyken firma risk sınırına takılmamalı", r)
