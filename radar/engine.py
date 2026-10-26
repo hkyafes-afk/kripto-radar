@@ -32,6 +32,9 @@ from . import commands as cm
 from . import desk as dk
 from . import harvest as hv
 from . import lease
+from . import macro
+from . import news as nw
+from . import quant
 from . import team
 from . import ledger as lg
 from . import notify as nt
@@ -42,7 +45,7 @@ from .config import ROOT, load_config
 from .scan import (VERSION, _f, _interval_h, btc_info, build_universe, fetch_funding, karne_md,
                    msg_daily, oi_changes, summary_md)
 
-TF_SEC = {"15m": 900, "30m": 1800, "1H": 3600, "2H": 7200, "4H": 14400}
+TF_SEC = {"15m": 900, "30m": 1800, "1H": 3600, "2H": 7200, "4H": 14400, "1D": 86400}
 SCAN_DELAY = 2           # mum kapanışından sonra ilk deneme (kesinleşmemişse tekrar denenir)
 
 
@@ -154,11 +157,18 @@ class Engine:
         self.successor_sent = False
         self.lost_lease = False
         self.loop_beat = time.time()       # ana döngünün son turu (iç bekçi takılmayı bununla anlar)
+        # ── v8: piyasa havası, olay takvimi, Haber Masası, yığılma için günlük getiriler ──
+        self.weather: dict = {}
+        self.daily_cache: dict = {}
+        self.signal_exits: list = []
+        self.calendar = macro.Calendar()
+        self.news = nw.NewsDesk()
+        self.news.from_state(self.state.get("news") or {})
         self.loop_done = False
         self.my_hb = 0
         self.lease_thread: threading.Thread | None = None
         self.lease_ok = None
-        self.t.update({"health": 0.0, "mgr": 0.0, "orders": 0.0, "lease": 0.0, "rebal": 0.0})
+        self.t.update({"health": 0.0, "mgr": 0.0, "orders": 0.0, "lease": 0.0, "rebal": 0.0, "news": 0.0, "cal": 0.0})
         self.stats_counter.update({"ideas": 0, "rejected": 0, "orders": 0, "fills": 0, "carry": 0})
 
     def _setup_cfg(self):
@@ -331,9 +341,18 @@ class Engine:
         if not self.demo and self.cfg["borsa"].get("funding_karsilastir"):
             self.other, self.ex_status = ox.fetch_all(self.cfg["borsa"]["funding_karsilastir"])
         self._refresh_harvest()
+        self.refresh_weather()
         self.d1_cache.clear()
         self.taker_cache.clear()
         self.t["hourly"] = time.time()
+
+    def refresh_weather(self):
+        """Piyasa havası: BTC günlük trend + oynaklık rejimi (risk müdürü ve yöneticiler kullanır)."""
+        try:
+            B = quant.features(self.client.candles("BTC-USDT-SWAP", "1D", 300))
+            self.weather = quant.btc_weather(B)
+        except Exception as e:  # noqa: BLE001
+            print(f"[uyarı] piyasa havası hesaplanamadı: {e}")
 
     def _refresh_harvest(self):
         h = self.cfg["harvest"]
@@ -449,12 +468,23 @@ class Engine:
         }
         ctx = None
         if self.team_on:
-            ex = team.extra_features(df, ff)
-            ctx = {**ex, "inst": inst, "sym": row["sym"], "tf": tf, "bar_ms": TF_SEC[tf] * 1000,
-                   "price": feat["price"], "d_trend": feat["d_trend"], "tsmom": feat["tsmom"], "regime": regime,
-                   "funding_ann": feat["funding_ann"], "funding_rate": rate, "interval_h": iv,
-                   "oi_chg24": feat["oi_chg24"], "taker_imb": feat["taker_imb"], "ret24": feat["ret24"],
-                   "chg24": row.get("chg24"), "cvd_div": feat["cvd_div"], "signals": sigs, "vol24_usd": row["vol24_usd"]}
+            Q = quant.features(df)
+            qc = quant.ctx_at(Q)
+            if tf == "1D":
+                qc["hvn"] = quant.hvn_levels(Q)
+                with self.lock:
+                    self.daily_cache[inst] = {"ret": Q["ret1"].tail(90).to_numpy(), "ts": time.time()}
+            Dl = quant.features(d1).iloc[-1]
+            close_ts = df.index[-1] + pd.Timedelta(hours=bh)
+            w = self.weather or {}
+            ctx = {**qc, "inst": inst, "sym": row["sym"], "tf": tf, "bar_ms": TF_SEC[tf] * 1000,
+                   "price": feat["price"], "regime": regime, "funding_ann": feat["funding_ann"], "funding_rate": rate,
+                   "interval_h": iv, "oi_chg24": feat["oi_chg24"], "taker_imb": tk[0] if tk else None,
+                   "ret24": feat["ret24"], "chg24": row.get("chg24"), "signals": sigs, "vol24_usd": row["vol24_usd"],
+                   "btc_bear": w.get("btc_bear", regime < 0), "btc_bull": w.get("btc_bull", regime > 0),
+                   "w_trend": w.get("trend"), "high_vol": w.get("high_vol"),
+                   "d_up": bool(Dl["close"] > Dl["sma50"]), "d_dn": bool(Dl["close"] < Dl["sma50"]),
+                   "hour": int(close_ts.hour), "dow": int(close_ts.dayofweek)}
             issue = self._data_issue(df, tf, feat["price"], row["sym"], feat.get("atr"))
             if issue:
                 ctx["suspect"] = issue
@@ -518,8 +548,16 @@ class Engine:
             ideas = []
             for x in results:
                 c = x.get("ctx")
-                if c and not c.get("suspect"):
-                    ideas += team.ideas_for(c, self.desk.mgrs, self.cfg)
+                if not c:
+                    continue
+                self._queue_rule_exits(c)
+                if c.get("suspect"):
+                    continue
+                for idea in team.ideas_for(c, self.desk.mgrs, self.cfg):
+                    idea["card"] = team.analyst_card(c, idea["side"], self.news.flag(c["sym"]))
+                    if idea["tf"] == "1D" and idea["entry_type"] == "piyasa":
+                        idea["maker_first"] = True       # önce limit (maker), dolmazsa piyasa
+                    ideas.append(idea)
             self.stats_counter["ideas"] += len(ideas)
             self.ideas_seen += len(ideas)
             with self.lock:
@@ -529,6 +567,92 @@ class Engine:
         print(f"[{tf}] {len(results)}/{len(uni)} coin, {len(sigs)} sinyal, {len(strong)} güçlü, "
               f"{time.time() - t0:.1f} sn" + (f" (mum kapanışından {time.time() - boundary:.1f} sn sonra)" if boundary else ""))
         return strong
+
+    def _queue_rule_exits(self, c: dict):
+        """(işçi) Kural tabanlı çıkışlar mum kapanışında kontrol edilir; ana döngü kapatır."""
+        for t in list(self.ledger["open"]):
+            r = t.get("exit_rule")
+            if r and t["inst"] == c["inst"] and t.get("tf") == c["tf"] and not t.get("carry"):
+                why = quant.exit_signal(r, c, t["side"])
+                if why:
+                    with self.lock:
+                        self.signal_exits.append((t["id"], why))
+
+    def process_rule_exits(self):
+        with self.lock:
+            req, self.signal_exits = self.signal_exits, []
+        if not req:
+            return
+        now_ms = int(time.time() * 1000)
+        items, seen = [], set()
+        for tid, why in req:
+            t = next((x for x in self.ledger["open"] if x["id"] == tid), None)
+            if not t or tid in seen:
+                continue
+            seen.add(tid)
+            q = self._quote(t["inst"])
+            px = (q[0] if t["side"] == "long" else q[1]) if q else self.prices.get(t["inst"], t["entry"])
+            t["exit_note"] = why
+            items.append((tid, px, now_ms, "kural çıkışı", False))
+        if items:
+            self._close_ids(items, "ws")
+
+    def corr(self, inst_a: str, inst_b: str) -> float:
+        if inst_a == inst_b:
+            return 1.0
+        a, b = self.daily_cache.get(inst_a), self.daily_cache.get(inst_b)
+        if not (a and b):
+            return 0.0
+        return quant.corr(a["ret"][-60:], b["ret"][-60:])
+
+    def refresh_news(self):
+        """(işçi) Haber Masası: kaynakları tarar, yeni kırmızı/sarı uyarıları bildirir."""
+        import requests
+        self.t["news"] = time.time()
+        sess = requests.Session()
+        sess.headers.update({"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) kripto-radar/8", "Accept": "*/*"})
+
+        def gj(u):
+            r = sess.get(u, timeout=12)
+            r.raise_for_status()
+            return r.json()
+
+        def gt(u):
+            r = sess.get(u, timeout=12)
+            r.raise_for_status()
+            return r.text
+
+        uni = {r["sym"] for r in self.universe}
+        self.news.refresh(uni, gj, gt)
+        alerts, self.news.new_alerts = self.news.new_alerts, []
+        held = {t["sym"] for t in self.ledger["open"] if not t.get("shadow")}
+        now_ms = int(time.time() * 1000)
+        lines = []
+        for a in alerts:
+            if now_ms - a["ts"] > 24 * 3600_000:
+                continue
+            if a["level"] == "kirmizi" or a["sym"] in held:
+                tag = "🔴 KIRMIZI" if a["level"] == "kirmizi" else "🟡 SARI"
+                lines.append(f"{tag} <b>{nt.esc(a['sym'])}</b>{' (pozisyonumuz var)' if a['sym'] in held else ''}: "
+                             f"{nt.esc(a['title'][:140])} <i>({nt.esc(a['src'])})</i>")
+        if lines:
+            self._notify("📰 <b>Haber Masası</b>\n" + "\n".join(lines[:6]) +
+                         "\n<i>Kırmızı: o coinde yeni işlem yok. Sarı: yükselişin peşine düşülmez.</i>")
+        for s_ in list(self.news.delist_okx):
+            for t in list(self.ledger["open"]):
+                if t["sym"] == s_ and not t.get("carry"):
+                    with self.lock:
+                        self.signal_exits.append((t["id"], "OKX borsadan çıkarma duyurusu"))
+        self.news.delist_okx.clear()
+        with self.lock:
+            self.state["news"] = self.news.to_state()
+        self.dirty = True
+
+    def desk_env(self):
+        """Risk müdürünün kullandığı ortam bilgisi (her turda güncellenir)."""
+        if self.desk:
+            self.desk.env = {"weather": self.weather or None, "cal_block": self.calendar.block(),
+                             "fng_mult": self.news.fng_mult, "corr": self.corr}
 
     # ── arka plan işçisi ─────────────────────────────────────────────
     def enqueue(self, name: str):
@@ -554,6 +678,11 @@ class Engine:
                             self.pending_open.extend(strong)
                 elif name == "funding":
                     self.refresh_funding()
+                elif name == "news":
+                    self.refresh_news()
+                elif name == "cal":
+                    self.t["cal"] = time.time()
+                    self.calendar.refresh()
                 elif name == "hourly":
                     self.refresh_universe()
                     self.refresh_funding()
@@ -931,6 +1060,10 @@ class Engine:
             "archive": {"periods": (self.ledger.get("archive") or {}).get("periods", []),
                         "n": len((self.ledger.get("archive") or {}).get("closed", []))},
             "health": self.health,
+            "weather": self.weather or None,
+            "news": self.news.public(),
+            "calendar": {"status": self.calendar.status, "upcoming": self.calendar.upcoming(),
+                         "block": self.calendar.block()},
             "lease": {"holder": lease.run_id(), "handoff_s": self.state.get("handoff_s"),
                       "handoff_kind": self.state.get("handoff_kind"), "ok": self.lease_ok},
             "ledger": {
@@ -1077,9 +1210,9 @@ class Engine:
 
     def msg_closed(self, closed: list[dict]) -> str:
         icon = {"hedef": "✅", "stop": "❌", "süre": "⏱", "manuel": "✋", "likidasyon": "💥", "iz stop": "🔒",
-                "devir": "📦", "carry çıkış": "⚖️"}
+                "devir": "📦", "carry çıkış": "⚖️", "kural çıkışı": "🧭"}
         what = {"hedef": "hedefte", "stop": "stopta", "süre": "süre dolunca", "manuel": "elle",
-                "likidasyon": "LİKİDASYONLA", "iz stop": "iz süren stopta"}
+                "likidasyon": "LİKİDASYONLA", "iz stop": "iz süren stopta", "kural çıkışı": "kural gereği"}
         L = []
         for t in closed:
             extra = ""
@@ -1096,7 +1229,8 @@ class Engine:
                      f"({sg.TF_LABEL.get(t.get('tf'), t.get('tf'))} {setup_lbl}) "
                      f"{what.get(t['outcome'], t['outcome'])} kapandı → <b>{_usd(t['pnl_usd'])}</b> "
                      f"({_p(t['r'], 2, True)}R) · {_fmt_dur(t['hours'])}"
-                     f"\n   {nt.fmt_price(t['entry'])} → {nt.fmt_price(t['exit'])}{extra}")
+                     f"\n   {nt.fmt_price(t['entry'])} → {nt.fmt_price(t['exit'])}{extra}"
+                     + (f"\n   <i>{nt.esc(t['exit_note'])}</i>" if t.get("exit_note") else ""))
         b = lg.balance(self.ledger, self.cfg)
         ret = (b["equity"] / b["start"] - 1) * 100 if b["start"] else 0
         L.append(f"Demo bakiye {_usd(b['equity'], False)} (%{_p(ret, 2, True)})")
@@ -1310,7 +1444,18 @@ class Engine:
         now = time.time()
         if now - self.t["orders"] >= 20:
             self.t["orders"] = now
-            if self.desk.expire_orders(int(now * 1000)):
+            gone = self.desk.expire_orders(int(now * 1000))
+            if gone:
+                retry = []
+                for o in gone:
+                    i = o["idea"]
+                    px = self.prices.get(i["inst"])
+                    if i.get("fallback_market") and px and abs(px - i["entry"]) <= 0.5 * (i.get("atr") or 0):
+                        retry.append({**i, "entry_type": "piyasa", "limit_px": None, "fallback_market": False,
+                                      "maker_first": False})
+                if retry:
+                    with self.lock:
+                        self.pending_ideas.extend(retry)
                 self.rebuild_watch()
                 self.dirty = True
 
@@ -1670,6 +1815,7 @@ class Engine:
                     self.process_orders()
                     self.process_trailing()
                     self.process_manual()
+                    self.process_rule_exits()
                     self.process_time_exits()
                     self.process_funding()
                     if now - self.t["risk"] >= 1:
@@ -1679,6 +1825,7 @@ class Engine:
                         self.manager_tick()
                     self.maybe_panel()
                     if self.team_on and self.desk:
+                        self.desk_env()
                         self.process_ideas()
                         self.process_carry()
                     else:
@@ -1696,6 +1843,12 @@ class Engine:
                         for tf in due:
                             self.scan_at[tf] = now
                         self.enqueue(f"scan:{','.join(due)}:{bnd or ''}")
+                    if now - self.t["news"] >= 600:
+                        self.t["news"] = now
+                        self.enqueue("news")
+                    if now - self.t["cal"] >= 6 * 3600:
+                        self.t["cal"] = now
+                        self.enqueue("cal")
                     if now - self.t["hourly"] >= 3600:
                         self.t["hourly"] = now
                         self.enqueue("hourly")

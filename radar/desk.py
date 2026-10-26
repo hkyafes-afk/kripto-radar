@@ -19,6 +19,7 @@ import uuid
 import numpy as np
 
 from . import ledger as lg
+from . import macro, quant
 from . import team
 
 
@@ -28,7 +29,7 @@ def firm_cfg(cfg: dict) -> dict:
          "yeniden_dagitim_gun": 7, "dagitim_min_islem": 15, "yedekten_donus_islem": 10, "yedekten_donus_r": 0.1,
          "kayip_serisi": 4, "seri_carpan": 0.5,
          "carry_max_cift": 3, "carry_min_yillik": 15, "carry_min_pozitif": 80, "carry_min_istikrar": 45,
-         "carry_cikis_yillik": 5, "carry_max_gun": 45}
+         "carry_cikis_yillik": 5, "carry_max_gun": 45, "kume_risk_yuzde": 4.0, "kume_korelasyon": 0.7}
     f.update(((cfg.get("ekip") or {}).get("firma")) or {})
     return f
 
@@ -53,6 +54,7 @@ class Desk:
         st.setdefault("journal", [])
         ledger.setdefault("orders", [])
         self.st = st
+        self.env: dict = {}       # motorun verdiği ortam: hava, olay takvimi, korku-açgözlülük, korelasyon
 
     # ── muhasebe ─────────────────────────────────────────────────────
     def mgr_trades(self, mid: str, shadow: bool = False):
@@ -127,18 +129,30 @@ class Desk:
             return "red", None, None                         # zaten pozisyonu var (sessiz)
         if any(o["mgr"] == m.id and o["idea"]["inst"] == idea["inst"] for o in self.ledger["orders"]):
             return "red", None, None                         # zaten bekleyen emri var
-        cool = self.fc["tekrar_bekleme_mum"] * {"15m": 900_000, "1H": 3600_000, "4H": 14_400_000}.get(tf, 3600_000)
+        cool = self.fc["tekrar_bekleme_mum"] * {"15m": 900_000, "1H": 3600_000, "4H": 14_400_000,
+                                                "1D": 86_400_000}.get(tf, 3600_000)
         last_exit = max([t.get("exit_ts") or 0 for t in self.ledger["closed"]
                          if t.get("mgr") == m.id and t["inst"] == idea["inst"]] or [0])
         if now_ms - last_exit < cool:
             return "red", None, None
         if halted and not shadow:
             return "red", None, f"devre kesici: {halted}"
+        env = self.env or {}
+        if env.get("cal_block"):
+            return "red", None, env["cal_block"]
+        card = idea.get("card") or {}
+        if card.get("mult", 1.0) <= 0:
+            return "red", None, "baş analist: " + "; ".join(card.get("notes") or ["uygun değil"])
         eq_m = self.equity(m.id)
         if eq_m <= 0:
             return "red", None, "yönetici sermayesi tükendi"
         mult = self.fc["seri_carpan"] if self.loss_streak(m.id) >= self.fc["kayip_serisi"] else 1.0
-        risk_pct = (m.base_risk + (m.max_risk - m.base_risk) * idea["conviction"]) * mult
+        wm = quant.weather_mult(env.get("weather"), m.id, side) if env.get("weather") else 1.0
+        fm = env["fng_mult"](side) if env.get("fng_mult") else 1.0
+        km = float(card.get("mult", 1.0))
+        hm = macro.weekend_mult(now_ms, tf)
+        ext = wm * fm * km * hm
+        risk_pct = (m.base_risk + (m.max_risk - m.base_risk) * idea["conviction"]) * mult * ext
         risk_usd = eq_m * risk_pct / 100
         # giriş fiyatı
         limit = idea.get("entry_type") == "limit" and idea.get("limit_px")
@@ -185,17 +199,32 @@ class Desk:
                 return "red", None, f"{sym} için firma riski dolu (başka yöneticiler de bu coinde)"
             if self.side_risk(side) + risk_now > firm_eq * self.fc["yon_risk_yuzde"] / 100:
                 return "red", None, f"firma {side} yönü riski dolu (%{self.fc['yon_risk_yuzde']:g})"
+            cf = env.get("corr")
+            if cf:
+                rho = self.fc["kume_korelasyon"]
+                peers = [t for t in self._live_open() if t["side"] == side and not t.get("carry")
+                         and (t["inst"] == idea["inst"] or cf(t["inst"], idea["inst"]) >= rho)]
+                cl = sum(lg.open_risk(t) for t in peers)
+                if cl + risk_now > firm_eq * self.fc["kume_risk_yuzde"] / 100:
+                    return "red", None, (f"yığılma: {len(peers)} pozisyon {sym} ile birlikte hareket ediyor "
+                                         f"(ρ≥{rho:g}); bu bahsin riski dolu (%{self.fc['kume_risk_yuzde']:g})")
             if self.mgr_free(m.id) < margin:
                 return "red", None, "yöneticinin boşta teminatı yetersiz"
         detail = {"entry": entry, "qty": qty, "contracts": contracts, "lev": lev, "src": src, "slip_bp": slip_bp,
                   "risk_usd": risk_now, "risk_pct": risk_now / eq_m * 100, "margin_usd": margin, "shadow": shadow,
-                  "eq_m": eq_m, "mult": mult}
+                  "eq_m": eq_m, "mult": mult, "ext": round(ext, 3),
+                  "mults": {"hava": round(wm, 2), "korku": round(fm, 2), "analist": round(km, 2), "haftasonu": round(hm, 2)}}
         return ("limit" if limit else "market"), detail, None
 
     def execute(self, ideas: list[dict], now_ms: int, quote=None, meta=None, book=None, halted=None):
         """Fikirleri sırayla (güven yüksekten düşüğe) değerlendirir. Döner: (açılanlar, emirler, redler)."""
         opened, orders, rejected = [], [], []
         for idea in sorted(ideas, key=lambda x: -x["conviction"]):
+            if idea.get("maker_first") and idea.get("entry_type") == "piyasa" and quote:
+                q = quote(idea["inst"])
+                if q and q[0] > 0 and q[1] > 0:     # önce kitaptaki en iyi fiyata limit (maker), 10 dk; dolmazsa piyasa
+                    idea = {**idea, "entry_type": "limit", "limit_px": q[0] if idea["side"] == "long" else q[1],
+                            "limit_valid_ms": 600_000, "fallback_market": True, "maker_first": False}
             kind, d, why = self.evaluate(idea, now_ms, quote, meta, book, halted)
             if kind == "red":
                 if why:
@@ -209,7 +238,9 @@ class Desk:
                 opened.append({**idea, **t})
                 self.journal(idea["mgr"], idea["sym"], idea["tf"], idea["side"],
                              "gölgede açtı" if d["shadow"] else "açtı",
-                             f"güven %{idea['conviction'] * 100:.0f}, risk {d['risk_usd']:.2f}$ (%{d['risk_pct']:.2f})")
+                             f"güven %{idea['conviction'] * 100:.0f}, risk {d['risk_usd']:.2f}$ (%{d['risk_pct']:.2f})"
+                             + (f", çarpan ×{d['ext']:g}" if d.get("ext", 1) != 1 else "")
+                             + ("; analist: " + "; ".join((idea.get("card") or {}).get("notes") or []) if (idea.get("card") or {}).get("notes") else ""))
             else:
                 o = {"oid": uuid.uuid4().hex[:10], "mgr": idea["mgr"], "idea": idea, "px": d["entry"], "qty": d["qty"],
                      "contracts": d["contracts"], "lev": d["lev"], "margin_usd": d["margin_usd"], "shadow": d["shadow"],
@@ -218,7 +249,8 @@ class Desk:
                 self.ledger["orders"].append(o)
                 orders.append(o)
                 self.journal(idea["mgr"], idea["sym"], idea["tf"], idea["side"], "limit emir",
-                             f"{team.nfp(d['entry'])} seviyesinde geri çekilme bekliyor")
+                             f"{team.nfp(d['entry'])} kitaptaki en iyi fiyattan maker giriş, 10 dk; dolmazsa piyasa"
+                             if idea.get("fallback_market") else f"{team.nfp(d['entry'])} seviyesinde geri çekilme bekliyor")
         return opened, orders, rejected
 
     def fill_order(self, oid: str, px: float, ts: int) -> dict | None:
@@ -237,7 +269,8 @@ class Desk:
         for o in gone:
             self.ledger["orders"].remove(o)
             self.journal(o["mgr"], o["idea"]["sym"], o["idea"]["tf"], o["idea"]["side"], "emir iptal",
-                         "geri çekilme gelmedi, süre doldu")
+                         "maker emir dolmadı → fiyat kaçmadıysa piyasadan" if o["idea"].get("fallback_market")
+                         else "geri çekilme gelmedi, süre doldu")
         return gone
 
     # ── yedek kulübesi ve yeniden dağıtım ───────────────────────────

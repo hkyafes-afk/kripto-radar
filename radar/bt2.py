@@ -450,18 +450,30 @@ def run(client=None, cfg_path=None, n_coins=30, years=5.0, deniz_days=365, out_d
             "exits": {k: int(v) for k, v in pd.Series([t["why"].split(":")[0] for t in trs]).value_counts().items()} if trs else {},
             "period_days": 365 if mid == "deniz" else int(years * 365),
         }
-    # firma birleşik (Deniz dahil, Elif test edilemez)
-    all_trs = [t for trs in trades.values() for t in trs]
+    # firma birleşik: her yöneticinin riski KENDİ sermaye payına göre (canlıdaki gibi): risk = pay × yönetici riski.
+    # Politika (PLAN.md, önceden kararlaştırıldı): örneklem içi ve dışı ortalaması pozitif olan yöneticiler sermaye alır,
+    # diğerleri gölgede kalır; aktifler arasında eşit pay.
+    active = [mid for mid, b in report["managers"].items()
+              if (b["all"].get("avg_r") or 0) > 0 and (b["oos"].get("avg_r") or 0) > 0 and b["all"].get("n", 0) >= 30]
+    report["policy_active"] = active
     fl = {"coin": 2.5, "side": 6.0}
-    for name, kw in (("limitler", {"firm_limits": fl}),
-                     ("limitler+hava", {"firm_limits": fl, "mult_fn": wmult}),
-                     ("limitler+hava+yigilma", {"firm_limits": {**fl, "cluster": 4.0, "corr": corr_fn}, "mult_fn": wmult})):
-        ec = equity_curve(all_trs, risk, days=days, **kw)
-        p = perf(ec["curve"]) if ec else {}
-        if p.get("sr_daily") is not None:
-            trial_srs.append(p["sr_daily"])
-        report["firm"][name] = {"equity": p, "taken": len(ec["taken"]) if ec else 0, "skipped": ec["skipped"] if ec else 0,
-                                "stats": r_stats(ec["taken"]) if ec else {}}
+    full = {**fl, "cluster": 4.0, "corr": corr_fn}
+    groups = {"hepsi_esit": list(trades), "politika": active}
+    for gname, mids in groups.items():
+        if not mids:
+            continue
+        g_trs = [t for mid in mids for t in trades[mid]]
+        g_risk = {mid: risk[mid] / len(mids) for mid in mids}
+        for lname, kw in (("limitler", {"firm_limits": fl}),
+                          ("limitler+hava+yigilma", {"firm_limits": full, "mult_fn": wmult})):
+            name = f"{gname} · {lname}"
+            ec = equity_curve(g_trs, g_risk, days=days, **kw)
+            p = perf(ec["curve"]) if ec else {}
+            if p.get("sr_daily") is not None:
+                trial_srs.append(p["sr_daily"])
+            report["firm"][name] = {"equity": p, "taken": len(ec["taken"]) if ec else 0,
+                                    "skipped": ec["skipped"] if ec else 0, "stats": r_stats(ec["taken"]) if ec else {},
+                                    "managers": mids, "by_year": by_year(ec["taken"]) if ec else {}}
     # Deflated Sharpe (bu çalıştırmadaki tüm denemelerle)
     for blk in list(report["managers"].values()) + list(report["firm"].values()):
         for key in ("equity", "equity_weather"):
@@ -526,6 +538,8 @@ def markdown(rep) -> str:
         e = f["equity"]
         L.append(f"| {name} | {f['taken']} / {f['skipped']} | {_fmt(e.get('cagr_pct'), 1, True)} | {_fmt(e.get('max_dd_pct'), 1, True)} | "
                  f"{_fmt(e.get('sharpe'))} | {_fmt(e.get('dsr'), 3)} |")
+    if rep.get("policy_active"):
+        L += ["", f"Politika gereği sermaye alanlar: {', '.join(rep['policy_active'])} (diğerleri gölgede)."]
     L += ["", "## Yıllara göre ortalama R", ""]
     years = sorted({y for b in rep["managers"].values() for y in b["by_year"]})
     L.append("| Yönetici | " + " | ".join(years) + " |")

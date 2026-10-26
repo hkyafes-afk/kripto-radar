@@ -123,8 +123,8 @@ def weather_mult(w: dict | None, mgr: str, side: str) -> float:
         m *= 0.5
     if w["trend"] == "boga" and side == "short":
         m *= 0.5
-    if w["trend"] == "yatay" and mgr in ("kaan", "selin"):
-        m *= 0.5
+    # (v8 testi: "yatay piyasada kırılımcıları yarıya indir" kuralı Kaan'ın getirisini %20 → %11,5 düşürdü ve
+    #  araştırmada dayanağı yoktu → kaldırıldı. Kalanlar: ayı piyasasında long, boğada short yarım; yüksek oynaklık ×0,75)
     if w.get("high_vol"):
         m *= 0.75
     return m

@@ -303,7 +303,10 @@ def open_new(ledger: dict, signals: list[dict], cfg: dict, now_ms: int | None = 
             "inst": s["inst"], "sym": s["sym"], "setup": s["setup"], "side": s["side"],
             "kind": s["kind"], "tf": tf, "score": s["score"], "raw": s["raw"],
             "entry_ts": now_ms, "entry": entry, "entry_src": src, "signal_px": s["entry"], "slip_bp": round(slip_bp, 2),
-            "sl": sl_eff, "sl_init": sl, "tp": tp, "tp1": tp1, "tp1_done": False, "trail": False,
+            "sl": sl_eff, "sl_init": sl, "tp": tp, "tp1": tp1,
+        "tp1_done": bool(tp1 is None and (idea.get("pp") or {}).get("trail_now")),
+        "trail": bool((idea.get("pp") or {}).get("trail_now")), "exit_rule": idea.get("exit"),
+        "card": idea.get("card"),
             "atr": atr, "hw": entry, "liq": liq, "liq_first": liq_first,
             "sl_pct": abs(entry - sl_eff) / entry * 100, "tp_pct": abs(tp - entry) / entry * 100,
             "max_saat": s["max_saat"],
@@ -402,6 +405,8 @@ def close_trade(t: dict, exit_px: float, exit_ts: int, outcome: str, cfg: dict, 
     fc = fees_cfg(cfg)
     sgn = 1 if t["side"] == "long" else -1
     q = t.get("qty_open", t["qty"])
+    if not maker and outcome in ("stop", "iz stop") and fc.get("stop_kayma_bp"):
+        exit_px = exit_px * (1 - sgn * fc["stop_kayma_bp"] / 1e4)   # stop-market emri stres anında kötü dolar
     gross = sgn * q * (exit_px - t["entry"])
     fee_exit = q * exit_px * (fc["maker_yuzde"] if maker else fc["taker_yuzde"]) / 100
     partial = t.get("partial_pnl_usd", 0.0)
