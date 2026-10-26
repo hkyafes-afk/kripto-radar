@@ -631,11 +631,15 @@ class Engine:
                     ctxs.append(c)
         now = time.time()
         ideas = []
+        held = {(t.get("mgr"), t["inst"]) for t in list(self.ledger["open"])}
+        held |= {(o["mgr"], o["idea"]["inst"]) for o in list(self.ledger.get("orders") or [])}
         for c in ctxs:
             self._queue_rule_exits(c)
             if c.get("suspect"):
                 continue
             for idea in team.ideas_for(c, mgrs, self.cfg):
+                if (idea["mgr"], idea["inst"]) in held:       # zaten pozisyonu/emri var → değerlendirmeye gerek yok
+                    continue
                 key = (idea["mgr"], idea["inst"], idea["side"])
                 if now - self.live_seen.get(key, 0) < 1800:
                     continue
