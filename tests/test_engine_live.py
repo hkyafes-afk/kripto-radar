@@ -119,7 +119,7 @@ def test_feed_to_engine_end_to_end():
 def test_tick_partial_trailing_and_circuit_breakers():
     with tempfile.TemporaryDirectory() as d:
         e = _engine(d)
-        t = next((x for x in e.ledger["open"] if x.get("tp1")), None)
+        t = next((x for x in e.ledger["open"] if x.get("tp1") and (x.get("pp") or {}).get("partial_frac")), None)
         if t is None:      # v8 demo taramasında sadece hedefsiz trend işlemleri açıldıysa: kısmi kârlı bir işlem kur
             o0 = e.ledger["open"][0]
             px0 = o0["last"] if o0.get("last") else o0["entry"]

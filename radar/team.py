@@ -158,7 +158,7 @@ def _idea(ctx: dict, mgr: Manager, side: str, sl: float, tp: float, checks: list
     }
 
 
-FEAT_KEYS = ("vol_ratio", "close_pos", "rsi", "adx", "bbw_rank", "rv_rank", "dist50", "dist200", "rs",
+FEAT_KEYS = ("vol_ratio", "close_pos", "rsi", "adx", "bbw_rank", "rv_rank", "dist50", "dist200", "rs", "rs_rank",
              "btc_bull", "high_vol", "conviction", "side", "age_cls", "range_atr")
 
 
@@ -178,6 +178,7 @@ def features_for(ctx: dict, side: str, conviction: float) -> dict:
             "dist50": sgn * (c - s50) / atr if (c and s50 and atr) else None,
             "dist200": sgn * (c - s200) / atr if (c and s200 and atr) else None,
             "rs": sgn * rs if rs is not None else None,
+            "rs_rank": ((g("rs_rank") if sgn > 0 else 1 - g("rs_rank")) if g("rs_rank") is not None else None),
             "btc_bull": (1.0 if ctx.get("btc_bull") else 0.0) if sgn > 0 else (1.0 if ctx.get("btc_bear") else 0.0),
             "high_vol": 1.0 if ctx.get("high_vol") else 0.0, "conviction": float(conviction), "side": float(sgn),
             "age_cls": {"A": 0.0, "B": 1.0, "C": 2.0}.get(ctx.get("coin_class") or "", None),

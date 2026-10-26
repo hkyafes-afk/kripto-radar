@@ -173,6 +173,7 @@ class Engine:
         self.cfg["_learned"] = learn.load_learned()
         self.hakem = hk.load()
         self.crowd_cache: dict = {}
+        self.smart: dict = {}
         self.loop_done = False
         self.my_hb = 0
         self.lease_thread: threading.Thread | None = None
@@ -715,8 +716,9 @@ class Engine:
     def crowd(self, inst: str, fetch: bool = True) -> dict:
         """(işçi) Balina Gözü verisi: hesap ve büyük hesap long/short oranı + son 1 saatin likidasyonları. 10 dk önbellek."""
         hit = self.crowd_cache.get(inst)
+        sm = ((self.smart or {}).get("coins") or {}).get(inst.split("-")[0])
         if hit and time.time() - hit[0] < 600:
-            return hit[1]
+            return {**hit[1], "hl": sm} if sm else hit[1]
         if not fetch or self.demo:
             return (hit or (0, {}))[1]
         out = {}
@@ -748,7 +750,7 @@ class Engine:
         self.crowd_cache[inst] = (time.time(), out)
         if len(self.crowd_cache) > 400:
             self.crowd_cache.pop(next(iter(self.crowd_cache)))
-        return out
+        return {**out, "hl": sm} if sm else out
 
     def enrich_idea(self, idea: dict, c: dict, fetch: bool = True):
         """Yöneticinin uzmanları görüş verir (Gözcü, Balina Gözü, Analist-Hakem); karne ağırlıklı çarpan fikre eklenir."""
@@ -757,7 +759,7 @@ class Engine:
         try:
             c.setdefault("coin_class", gmd.coin_class(self.meta.get(idea["inst"]), int(time.time() * 1000), self.desk.fc))
             idea["feat"] = team.features_for(c, idea["side"], idea.get("conviction", 0.5))
-            ops = [ex.gozcu(c, idea), ex.balina(c, idea, self.crowd(idea["inst"], fetch=fetch)), ex.hakem(idea, self.hakem)]
+            ops = [ex.gozcu(c, idea, self.hakem), ex.balina(c, idea, self.crowd(idea["inst"], fetch=fetch)), ex.hakem(idea, self.hakem)]
             mult, ops = ex.combine(ops, self.desk.st, idea["mgr"])
             idea["experts"], idea["exp_mult"] = ops, round(mult, 3)
         except Exception as e:  # noqa: BLE001
@@ -1629,6 +1631,23 @@ class Engine:
             (ROOT / "data" / "KARNE.md").write_text(karne_md(self.payload), encoding="utf-8")
             self.state["last_karne"] = int(time.time() * 1000)
 
+    def load_smart_money(self):
+        """Veri toplayıcının son kaydından Hyperliquid kârlı cüzdan yönleri (Balina Gözü). Sadece okuma; yoksa boş."""
+        import gzip
+        try:
+            subprocess.run(["git", "fetch", "-q", "--depth", "1", "origin", "+veri:refs/remotes/origin/veri"], cwd=ROOT,
+                           timeout=60, check=True)
+            month = datetime.now(timezone.utc).strftime("%Y-%m")
+            raw = subprocess.run(["git", "show", f"origin/veri:okx/okx-{month}.jsonl.gz"], cwd=ROOT, timeout=30,
+                                 check=True, capture_output=True).stdout
+            last = gzip.decompress(raw).decode("utf-8").strip().splitlines()[-1]
+            rec = json.loads(last)
+            hl = rec.get("hl") or {}
+            if hl.get("coins"):
+                self.smart = {"ts": rec["ts"], "wallets": hl.get("wallets"), "coins": hl["coins"]}
+        except Exception as e:  # noqa: BLE001
+            print(f"[akıllı para] okunamadı: {e}")
+
     def maybe_reload_config(self):
         """Saatte bir GitHub'daki config.yaml'ı çek (telefondan yapılan ayar değişikliği döngüyü beklemesin)."""
         if not os.environ.get("GITHUB_ACTIONS") or time.time() - self.t["cfg"] < 3600:
@@ -1645,6 +1664,7 @@ class Engine:
                     (ROOT / "data").mkdir(exist_ok=True)
                     (ROOT / "data" / fn).write_text(lj, encoding="utf-8")
             self.hakem = hk.load()
+            self.load_smart_money()
             if txt and txt != (ROOT / "config.yaml").read_text(encoding="utf-8"):
                 (ROOT / "config.yaml").write_text(txt, encoding="utf-8")
                 self.cfg = load_config(self.cfg_path)
@@ -2135,6 +2155,8 @@ class Engine:
                 self.refresh_coin_ages(per_call=150)      # ilk açılışta hepsi (sonra durumda saklı)
             except Exception as e:  # noqa: BLE001
                 print(f"[coin yaşı] {e}")
+            if os.environ.get("GITHUB_ACTIONS"):
+                self.load_smart_money()
         self.refresh_hourly()
 
     def run_once(self) -> dict:

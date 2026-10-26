@@ -82,6 +82,67 @@ def snapshot(client, n_coins: int = 40) -> dict:
     return rec
 
 
+HL_INFO = "https://api.hyperliquid.xyz/info"
+HL_BOARD = "https://stats-data.hyperliquid.xyz/Mainnet/leaderboard"
+
+
+def _http_json(url: str, body: dict | None = None, timeout: float = 20.0):
+    import urllib.request
+    data = json.dumps(body).encode() if body is not None else None
+    req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json",
+                                                          "User-Agent": "kripto-radar/1.0"})
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        return json.loads(r.read().decode())
+
+
+def _perf(row: dict, window: str) -> dict:
+    for w in row.get("windowPerformances") or []:
+        if isinstance(w, list) and len(w) == 2 and w[0] == window:
+            return w[1] or {}
+    return {}
+
+
+def hyperliquid_smart_money(n_wallets: int = 40, min_account: float = 1_000_000, fetch=_http_json) -> dict:
+    """Hyperliquid (her şey zincir üstünde, herkese açık): tüm zamanlarda ve son ayda kârlı, en az 1M$ hesaplı cüzdanların
+    şu anki pozisyonları → coin başına 'akıllı para' net yönü. Kopyalamak için değil; kalabalığın kârlı kesimi nerede?"""
+    board = fetch(HL_BOARD)
+    rows = board.get("leaderboardRows") if isinstance(board, dict) else board
+    picks = []
+    for r in rows or []:
+        try:
+            acct = float(r.get("accountValue") or 0)
+            at, mo = _perf(r, "allTime"), _perf(r, "month")
+            if acct >= min_account and float(at.get("pnl") or 0) > 0 and float(mo.get("pnl") or 0) > 0:
+                picks.append((float(at.get("pnl") or 0), r.get("ethAddress"), acct))
+        except (TypeError, ValueError):
+            continue
+    picks.sort(reverse=True)
+    coins: dict = {}
+    done = 0
+    for _, addr, acct in picks[:n_wallets]:
+        if not addr:
+            continue
+        try:
+            st = fetch(HL_INFO, {"type": "clearinghouseState", "user": addr})
+        except Exception:  # noqa: BLE001
+            continue
+        done += 1
+        for ap in st.get("assetPositions") or []:
+            p = ap.get("position") or {}
+            szi, val = _f(p.get("szi"), 0.0), _f(p.get("positionValue"), 0.0)
+            if not szi or not val:
+                continue
+            c = coins.setdefault(p.get("coin"), {"long_usd": 0.0, "short_usd": 0.0, "n_long": 0, "n_short": 0})
+            side = "long" if szi > 0 else "short"
+            c[f"{side}_usd"] += val
+            c[f"n_{side}"] += 1
+    for c in coins.values():
+        c["long_usd"], c["short_usd"] = round(c["long_usd"]), round(c["short_usd"])
+        tot = c["long_usd"] + c["short_usd"]
+        c["net"] = round((c["long_usd"] - c["short_usd"]) / tot, 3) if tot else 0.0
+    return {"wallets": done, "candidates": len(picks), "coins": coins}
+
+
 _CT: dict = {}
 
 
@@ -118,9 +179,15 @@ def run(client=None, out_dir: Path | None = None, n_coins: int = 40) -> dict:
         client = OKXClient()
     t0 = time.time()
     rec = snapshot(client, n_coins)
+    try:
+        rec["hl"] = hyperliquid_smart_money()
+    except Exception as e:  # noqa: BLE001
+        rec["errors"].append(f"hyperliquid: {str(e)[:120]}")
     p = append(rec, out_dir or Path("veri"))
     full = sum(1 for c in rec["coins"].values() if "ls_acct" in c)
+    hl = rec.get("hl") or {}
     print(f"::notice title=Veri toplandı::{len(rec['coins'])} coin OI, {full} coin kalabalık+likidasyon, "
+          f"Hyperliquid {hl.get('wallets', 0)} kârlı cüzdan / {len(hl.get('coins') or {})} coin, "
           f"{len(rec['errors'])} hata, {time.time() - t0:.0f} sn → {p.name}")
     for e in rec["errors"][:10]:
         print("  hata:", e)

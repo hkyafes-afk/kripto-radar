@@ -135,7 +135,22 @@ def run(client=None, cfg_path=None, n_coins=30, years=5.0, ledger_path: Path | N
             g = fit(trs, feats_list)
             if g:
                 groups[mid] = g
-    res = {"generated": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"), "features": feats_list,
+    # Gözcü'nün göreli güç kuralı kanıtla: trend tarzında girişteki göreli güç sırasına (yön ayarlı) göre ort. R
+    tr_style = [t for t in trades if t["mgr"] in ("kemal", "kaan", "selin", "murat")
+                and (t.get("feat") or {}).get("rs_rank") is not None]
+    gz = {"n": len(tr_style), "mode": "nötr"}
+    if len(tr_style) >= 300:
+        rr = np.array([t["feat"]["rs_rank"] for t in tr_style])
+        R = np.clip(np.array([float(t["r"]) for t in tr_style]), -1.5, 3.0)
+        top, bot, mid = R[rr >= 0.8], R[rr < 0.4], R[(rr >= 0.4) & (rr < 0.8)]
+        gz.update({"top_r": round(float(top.mean()), 3) if len(top) else None, "n_top": int(len(top)),
+                   "mid_r": round(float(mid.mean()), 3) if len(mid) else None,
+                   "bot_r": round(float(bot.mean()), 3) if len(bot) else None, "n_bot": int(len(bot))})
+        if len(top) >= 60 and len(bot) >= 60:
+            d = float(top.mean() - bot.mean())
+            gz["mode"] = "momentum" if d >= 0.05 else "ters" if d <= -0.05 else "nötr"
+            gz["diff_r"] = round(d, 3)
+    res = {"generated": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"), "features": feats_list, "gozcu": gz,
            "groups": groups, "n_backtest": len(trades) - len(lv), "n_live": len(lv), "years": years,
            "n_coins": len(daily), "duration_s": round(time.time() - t0, 1)}
     p = out or (ROOT / "data" / "hakem.json")
@@ -148,7 +163,10 @@ def run(client=None, cfg_path=None, n_coins=30, years=5.0, ledger_path: Path | N
     for k, g in groups.items():
         md.append(f"| {k} | {g['n']} | {g['val_corr']} | {g['val_gain_r']:+.3f} | {'evet' if g['validated'] else 'hayır'} | "
                   + ", ".join(f"{f} {c:+.3f}" for f, c in g["top"][:4]) + " |")
-    md += ["", "Söz hakkı: doğrulamada ilişki ≥ 0,05 ve önerilen boyutla işlem başına ≥ +0,02R. Yoksa model yalnızca tahminini yazar."]
+    md += ["", "Söz hakkı: doğrulamada ilişki ≥ 0,05 ve önerilen boyutla işlem başına ≥ +0,02R. Yoksa model yalnızca tahminini yazar.",
+           "", f"**Gözcü kontrolü (göreli güç, trend tarzı, {gz['n']} işlem):** en güçlü %20 → {gz.get('top_r')}R ({gz.get('n_top')}), "
+           f"orta → {gz.get('mid_r')}R, en zayıf %40 → {gz.get('bot_r')}R ({gz.get('n_bot')}). Kural: **{gz['mode']}** "
+           "(momentum = güçlüde büyüt, ters = güçlüde küçült, nötr = göreli güç boyuta dokunmaz)."]
     (p.parent / "HAKEM.md").write_text("\n".join(md) + "\n", encoding="utf-8")
     print("\n".join(md))
     return res

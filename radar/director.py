@@ -5,8 +5,8 @@ Yöneticiler ayrı departmanlar olarak kalır (farklı tarz = çeşitlendirme); 
     (OKX tek hesapta long ve short'u birbirinden düşer; iki kat komisyon, sıfır net pozisyon). Yeni gelen gölgede izlenir.
   - Coin risk tavanı: bir coinde tüm yöneticilerin toplam riski firma sermayesinin %X'ini geçemez. Tavana yaklaşan
     fikir küçültülür; anlamlı boyut kalmıyorsa gölgede izlenir.
-  - Coin kanıt sınıfı (yetkinlik çemberi): A = 3 yıldan eski (tam boyut), B = 1–3 yıl (yarım boyut),
-    C = 1 yıldan yeni listeleme (gölge). Kanıt: 2025 Binance listelemeleri Mart 2026'da ortalama −%71 (Messari);
+  - Coin kanıt sınıfı (yetkinlik çemberi): A = 3 yıldan eski, B = 1–3 yıl (ikisi de tam boyut; v9 yarışında B en iyi
+    sınıf çıktı), C = 1 yıldan yeni listeleme (gölge). Kanıt: 2025 Binance listelemeleri Mart 2026'da ortalama −%71 (Messari);
     OKX vadeli listelemelerinin %71'i zirvesini ilk gün gördü (BitMEX 2025 Ç1).
     Sınıflar öğrenir: bir yöneticinin C işlemleri gölgede 30+ işlemde kendini kanıtlarsa C onun için yarım boyuta,
     B işlemleri kanıtlarsa B tam boyuta çıkar; kaybettirirse bir basamak iner.
@@ -21,7 +21,9 @@ from . import ledger as lg
 
 CLASS_STEPS = ["golge", "yarim", "tam"]
 STEP_MULT = {"golge": 0.0, "yarim": 0.5, "tam": 1.0}
-CLASS_DEFAULT = {"A": "tam", "B": "yarim", "C": "golge"}
+# v9 yarışı (3 coin evreni): B sınıfı en iyi ortalama R (+0,07…+0,13R) → tam boyut. C sınıfı ≈0 ya da eksi R ve hayatta kalan
+# yanılgısı en çok onu iyimser gösteriyor → gölgede başlar; yönetici bazında 30+ işlemle kanıtlarsa büyür.
+CLASS_DEFAULT = {"A": "tam", "B": "tam", "C": "golge"}
 CLASS_TEXT = {"A": "A (3 yıl+ geçmiş)", "B": "B (1–3 yıl)", "C": "C (1 yıldan yeni)"}
 DAY = 86_400_000
 

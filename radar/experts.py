@@ -39,23 +39,34 @@ def _num(x):
 
 
 # ── Gözcü ────────────────────────────────────────────────────────────
-def gozcu(ctx: dict, idea: dict) -> dict:
-    """Fırsatı yöneticinin kuralıyla bulan uzman; ek olarak BTC'ye göre göreli gücü (30 gün) ve coin sınıfını yorumlar.
-    Kanıt: kripto vadelilerinde kesitsel momentum masraf sonrası da sürüyor (Binance perps 2020–2026 replikasyonu)."""
+def gozcu(ctx: dict, idea: dict, model: dict | None = None) -> dict:
+    """Fırsatı yöneticinin kuralıyla bulan uzman; ek olarak BTC'ye göre 30 günlük göreli gücü yorumlar. Yorumun yönü
+    varsayım değil, kanıt: Analist-Hakem eğitimi her gece 5 yıllık işlemlerde göreli güç dilimlerine göre ort. R'yi ölçer
+    (hakem.json → gozcu.mode). 'momentum' = güçlüde büyüt, 'ters' = güçlüde küçült (aşırı uzamış), 'nötr' = dokunma."""
     sgn = 1 if idea["side"] == "long" else -1
     style = STYLE.get(idea["mgr"], "trend")
     rank = _num(ctx.get("rs_rank"))
+    gz = (model or {}).get("gozcu") or {}
+    mode = gz.get("mode", "nötr")
     m, why = 1.0, []
     if rank is not None and style == "trend":
         r = rank if sgn > 0 else 1 - rank
-        if r >= 0.8:
+        band = "en güçlü %20" if r >= 0.8 else "zayıf %40" if r < 0.4 else "orta"
+        ev = f" (5 yıllık kanıt: güçlü {gz.get('top_r')}R, zayıf {gz.get('bot_r')}R)" if gz.get("top_r") is not None else ""
+        if mode == "momentum" and r >= 0.8:
             m *= 1.15
-            why.append(f"BTC'ye göre en güçlü %{(1 - rank) * 100 if sgn > 0 else rank * 100:.0f} içinde (göreli güç)")
-        elif r < 0.4:
-            m *= 0.8
-            why.append("göreli güç zayıf: trend avcısı en güçlü coini sever")
+            why.append(f"göreli güçte {band}: güçlü coinler devam ediyor{ev}")
+        elif mode == "momentum" and r < 0.4:
+            m *= 0.85
+            why.append(f"göreli güçte {band}: zayıf coinde trend az tutuyor{ev}")
+        elif mode == "ters" and r >= 0.8:
+            m *= 0.85
+            why.append(f"göreli güçte {band}: aşırı uzamış, geçmişte daha kötü sonuç{ev}")
+        elif mode == "ters" and r < 0.4:
+            m *= 1.1
+            why.append(f"göreli güçte {band}: geçmişte daha iyi sonuç{ev}")
         else:
-            why.append("göreli güç orta")
+            why.append(f"göreli güç {band}; kanıt bu dilimde fark göstermiyor{ev}")
     elif rank is not None:
         why.append("göreli güç bu tarzda belirleyici değil")
     else:
@@ -122,6 +133,15 @@ def balina(ctx: dict, idea: dict, crowd: dict | None = None) -> dict:
     if imb is not None and sgn * imb > 0.1:
         m *= 1.05
         why.append("alıcı/satıcı akışı aynı yönde")
+    hl = cr.get("hl") or {}
+    if (hl.get("n_long", 0) + hl.get("n_short", 0)) >= 3 and hl.get("net") is not None:
+        net = sgn * float(hl["net"])
+        if net >= 0.4:
+            m *= 1.1
+            why.append(f"Hyperliquid'de kârlı cüzdanlar bu tarafta ({hl.get('n_long', 0)} long / {hl.get('n_short', 0)} short)")
+        elif net <= -0.4:
+            m *= 0.9
+            why.append(f"Hyperliquid'de kârlı cüzdanlar ters tarafta ({hl.get('n_long', 0)} long / {hl.get('n_short', 0)} short)")
     if not why:
         why.append("kalabalık nötr")
     return _op("balina", m, why, {"oi": oi, "fa": fa, "ls_acct": ls_a, "ls_top": ls_t, "liq_long": l_long,

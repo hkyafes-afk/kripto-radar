@@ -143,14 +143,18 @@ ekip:
     carpisma_yasak: true       # aynı coinde başka yönetici ters yönde GERÇEK pozisyondaysa yeni gelen gölgede izlenir
     coin_tavan_yuzde: 1.25     # % bir coinde bütün yöneticilerin toplam riski (firma sermayesinin); aşan fikir küçülür ya da gölge
     sinif_a_gun: 1095          # coin kanıt sınıfı: 3 yıl+ = A (tam boyut)
-    sinif_c_gun: 365           # 1 yıldan yeni = C (gölge); arası B (yarım boyut)
+    sinif_c_gun: 365           # 1 yıldan yeni = C (gölge); arası B (tam boyut — yarışta en iyi sınıf çıktı)
     ioc_bant_bp: 10            # piyasa emri yerine IOC limit: en iyi fiyatın en fazla %0,1 ötesi, dolmayan kısım iptal
     dongu_uyari_sn: 10         # döngü bir turda bundan uzun sürerse Telegram uyarısı
   ortak:                       # v9 Yatırım Komitesi (Ortak Masa)
     esik: 1.25                 # karne ağırlıklı oy eşiği; masanın karnesi eksiye düşerse kendiliğinden +0,5
     katki_yuzde: 5             # anlaşan her yönetici bütçesinin %5'i kadar pozisyon koyar; kâr/zarar katkı payına göre ona döner
     on_bilgi: {kaan: 1.0, selin: 0.75, kemal: 0.5, murat: 0, ayse: 0, deniz: 0}   # 5 yıllık test; 30+ canlı işlemden sonra karne
-  varyant: {}                  # v9 Faz 1 yarışını kazanan varyantlar (data/YARIS.md), ör. kaan: [cikis_iz]
+  # v9 Faz 1 yarışını kazanan varyantlar (data/YARIS_KARAR.md): 3 ayrı coin evreninde en az 2 kez bütün şartları geçen ve
+  # hiçbirinde doğrulama/büyüme tarafında geri düşmeyen değişiklikler. Diğerleri reddedildi (gerekçeler dosyada).
+  varyant:
+    selin: [ttm]               # sıkışma = Bollinger bantları Keltner içinde (3/3 daha yüksek büyüme, 2/3 tüm şartlar)
+    murat: [cikis_iz_tp1]      # kısmi kâr yok, ilk hedefte başabaş + iz stop (2/3); Murat yine gölgede
 
 # Gerçek OKX ücretleri (VIP0). Giriş ve stop/süre çıkışı piyasa emri (taker), hedef limit emir (maker).
 # v8: SERT maliyet modeli (kullanıcı kararı): OKX liste ücretinin 2 katı + stop kayması. Demo sonuçları gerçeğinden

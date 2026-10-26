@@ -16,13 +16,16 @@ from tests.test_director import OLD, _desk, _kaan  # noqa: E402
 from tests.test_team import NOW, qctx  # noqa: E402
 
 
-def test_gozcu_relative_strength():
+def test_gozcu_relative_strength_follows_evidence():
     i = _kaan()
-    assert ex.gozcu({"rs_rank": 0.9}, i)["mult"] > 1, "en güçlülerde büyüt"
-    assert ex.gozcu({"rs_rank": 0.2}, i)["mult"] < 1, "zayıf coinde küçült"
-    s = dict(i, side="short")
-    assert ex.gozcu({"rs_rank": 0.1}, s)["mult"] > 1, "short için en zayıf coin iyi"
-    assert ex.gozcu({}, i)["mult"] == 1.0
+    mom = {"gozcu": {"mode": "momentum", "top_r": 0.3, "bot_r": 0.1}}
+    rev = {"gozcu": {"mode": "ters", "top_r": 0.05, "bot_r": 0.2}}
+    assert ex.gozcu({"rs_rank": 0.9}, i, mom)["mult"] > 1, "kanıt momentum diyorsa güçlüde büyüt"
+    assert ex.gozcu({"rs_rank": 0.2}, i, mom)["mult"] < 1
+    assert ex.gozcu({"rs_rank": 0.1}, dict(i, side="short"), mom)["mult"] > 1, "short için en zayıf coin"
+    assert ex.gozcu({"rs_rank": 0.9}, i, rev)["mult"] < 1, "kanıt tersini diyorsa güçlüde küçült"
+    assert ex.gozcu({"rs_rank": 0.9}, i, None)["mult"] == 1.0, "kanıt yoksa dokunma"
+    assert ex.gozcu({}, i, mom)["mult"] == 1.0
 
 
 def test_balina_trend_and_capitulation():

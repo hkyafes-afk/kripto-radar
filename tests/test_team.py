@@ -19,6 +19,8 @@ CFG = load_config()
 NOW = 1_800_000_000_000
 # Limit/politika testleri: gerçek paraya geçişte açılacak kısıtlar açık ve eski tek bütçe (1.000$) ile
 import copy  # noqa: E402
+CFG_LIVE = copy.deepcopy(CFG)                 # canlı ayar (yarışı kazanan varyantlar dahil)
+CFG["ekip"]["varyant"] = {}                   # kural testleri tabanı ölçer (varyantlar ayrı testte)
 CFG_RISK = copy.deepcopy(CFG)
 CFG_RISK["ekip"]["firma"].update(sinirlar_aktif=True, durdurma_aktif=True, yedek_kulubesi=True, yeniden_dagitim_gun=7)
 CFG_RISK["demo"]["baslangic_bakiye"] = 1000
@@ -125,6 +127,19 @@ def test_deniz_liquidity_coins_and_maker():
         "v9: saat/gün kuralı yok; gece 3'te hafta sonu da piyasa canlıysa çalışır"
     assert team.a_deniz(dict(c, volume=800.0), M["deniz"], CFG) is None, "piyasa durgun (hacim 24s ortalamasının altında)"
     assert team.a_deniz(dict(c, sym="DOGE"), M["deniz"], CFG) is None, "sadece BTC/ETH"
+
+
+def test_live_config_applies_race_winners():
+    v = (CFG_LIVE["ekip"].get("varyant") or {})
+    assert "ttm" in v.get("selin", []), "Selin TTM sıkışması (yarış kararı)"
+    c = qctx(close=103.0, price=103.0, bb_up=102.0, bb_mid=97.0, vol_ratio=1.6, close_pos=0.9, squeeze3=False, ttm_prev=1.0)
+    idea = team.a_selin(c, M["selin"], CFG_LIVE)
+    assert idea and idea["side"] == "long", "TTM sıkışması varken squeeze3 olmadan da girer"
+    assert team.a_selin(dict(c, ttm_prev=0.0, squeeze3=True), M["selin"], CFG_LIVE) is None
+    mi = team.apply_variant(team.a_murat(qctx(low=96.6, close=97.5, open=96.8, close_pos=0.8, rsi=50.0), M["murat"], CFG_LIVE)
+                            or {"mgr": "murat", "side": "long", "entry": 100.0, "sl": 96.0, "tp": 108.0, "tp1": 104.0,
+                                "atr": 2.0, "pp": {"partial_frac": 0.5, "trail_atr": 2.0}, "plan": ""}, qctx(), CFG_LIVE)
+    assert mi["pp"]["partial_frac"] == 0 and mi["tp1"] is not None
 
 
 def test_analyst_card():

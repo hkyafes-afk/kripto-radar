@@ -85,6 +85,48 @@ Ayşe gölgede; 10 gölge işlemde ort. +0,1R yapan geri döner. Murat'ın baş 
 - **Düzeltilen hata:** Kısmi kâr alma kontratı tam sayıya yuvarlıyordu; 0,01/0,1 lotlu küçük pozisyonlarda kısmi kâr hiç
   alınmıyordu. Artık OKX lot büyüklüğüne göre yuvarlıyor.
 
+## 2e. v9 uygulandı (26 Ekim 2026 gecesi, kullanıcı onayı: "tüm planlarımızı yerine getir")
+
+**Faz 0 — Genel Müdür (radar/director.py):**
+- Çatışma hakemi: aynı coinde ters gerçek pozisyon açılmaz, yeni gelen gölgede izlenir.
+- Coin risk tavanı: firmanın %1,25'i; aşan fikir küçülür ya da gölgede izlenir.
+- Coin kanıt sınıfı: A ve B tam boyut, C gölge (yarış sonrası düzeltildi). Coin yaşı spot/vadeli ilk aylık mumdan alınır; sınıflar yönetici bazında öğrenir.
+- Murat, Ayşe ve Deniz gölgede (DEFAULT_SHADOW); kanıtlarlarsa kendiliğinden dönerler.
+- Elenen her fikir gölgede izlenir; filtre karnesi tutulur ("filtre haklı mıydı?").
+- IOC limit giriş: en iyi fiyatın en fazla ±%0,1 ötesi, kısmi dolum olabilir. Stop'lar demoda bot tarafında; gerçek API'de borsa tarafında stop-market (2d/9.12).
+- Oynaklığa bağlı stop kayması: 5 bp + günlük ATR'nin %5'i; C sınıfında ×1,5. Canlı ve test aynı.
+- Döngü hız sayacı: 10 sn eşiğinde Telegram uyarısı.
+- Deniz'de saat kuralı kalktı, yerine likidite ölçüsü geldi (15 dk hacmi > 24 saat ortalaması).
+
+**Veri toplayıcı (radar/collect.py, saatlik, `veri` dalı):**
+- OKX: OI (bütün coinler), hesap ve büyük hesap L/S oranı, taker akışı, 1 saatlik likidasyonlar (40 coin).
+- Hyperliquid: tüm zamanlarda ve son ayda kârlı, 1M$+ hesaplı 40 cüzdanın pozisyonları → coin başına akıllı para yönü.
+
+**Faz 1 — varyant yarışı (radar/race.py, data/YARIS_KARAR.md):**
+- 3 coin evreninde yarış yapıldı; benimseme şartı en az 2/3 koşu.
+- Benimsenen: Selin TTM sıkışması, Murat cikis_iz_tp1.
+- Reddedilen: Kemal ADX, Kaan için bütün varyantlar, ayıda long yasağı.
+- Bulgu: kırılım ajanlarında stop'u baştan iz sürdürmek kaybettiriyor.
+
+**Uzman ajanlar (radar/experts.py):**
+- Her yöneticide Gözcü, Balina Gözü, Analist-Hakem, Risk ve Trader var.
+- İlk üçü boyuta gerekçeli görüş verir. Karne katkısı = (çarpan − 1) × R. Söz ağırlığı 0,5'ten başlar, kanıta göre 0–1,5 arası değişir. Gölge işlemler de sayılır.
+- Gözcü'nün göreli güç yorumu varsayım değil, gece ölçülen kanıt.
+- Balina Gözü: OI, fonlama, L/S, likidasyon, akış ve Hyperliquid akıllı para.
+- Analist-Hakem (radar/hakem.py, her gece): ridge meta-labeling. Doğrulamada kanıtlamazsa söz hakkı yok.
+- Genel Müdür · Sermaye Dağıtıcı: çeyrek Kelly; 30+ gerçek işlemden sonra risk 0,5×–1,5×.
+
+**Ortak Masa = Yatırım Komitesi:**
+- Oylar karne ağırlıklı; ön bilgi 5 yıllık testten gelir: Kaan 1, Selin 0,75, Kemal 0,5. Gölgedeki oy sayılmaz.
+- En az iki farklı tarz şartı, eşik 1,25; masanın karnesi eksiye düşerse eşik +0,5.
+- Anlaşan her yönetici bütçesinin %5'ini koyar; kâr/zarar katkı payına göre ona döner.
+
+**Hâlâ açık:**
+- Ayşe'nin 15 dk testi (15 dk geçmiş verisi indirilmeli).
+- Murat, Ayşe ve Deniz'in yeniden tasarımı (Faz 6).
+- Balina Gözü kurallarının toplanan veriyle testi (birkaç hafta veri gerekiyor).
+- Gerçek API modülü (borsa tarafı stop-market, defter eşleştirme, acil durdurma) — kullanıcı kararı: uygulama tam hazır olunca.
+
 ## 2d. Bekleyen kararlar — 26 Ekim 2026 konuşması (ONAY BEKLİYOR, uygulanmadı)
 
 Kullanıcı kuralı: "başla" denmeden hiçbiri uygulanmaz.

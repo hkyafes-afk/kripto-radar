@@ -45,7 +45,7 @@ def test_coin_class_and_sizing():
     _, b, _ = d.evaluate(idea, NOW, meta=MID)
     _, c, _ = d.evaluate(idea, NOW, meta=NEW)
     assert not a["shadow"] and a["coin_class"] == "A"
-    assert not b["shadow"] and abs(b["risk_pct"] - a["risk_pct"] * 0.5) < 0.05, "B sınıfı yarım boyut"
+    assert not b["shadow"] and abs(b["risk_pct"] - a["risk_pct"]) < 0.05, "B sınıfı tam boyut (v9 yarışı)"
     assert c["shadow"] and any("kanıt sınıfı" in g for g in c["gm"]), "C sınıfı gölgede"
 
 
