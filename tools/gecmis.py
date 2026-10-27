@@ -37,13 +37,19 @@ BASE = "https://data.binance.vision"
 LIST = "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision"
 S = requests.Session()
 S.headers["User-Agent"] = "kripto-radar-arastirma/1.0"
+S.mount("https://", requests.adapters.HTTPAdapter(pool_connections=128, pool_maxsize=128))
+POOL = cf.ThreadPoolExecutor(96)          # URL düzeyinde paralel indirme (sembol havuzundan ayrı → kilitlenme yok)
+
+
+def _many(urls: list[str]) -> list[bytes | None]:
+    return list(POOL.map(_get, urls))
 
 
 def _get(url: str, tries: int = 4) -> bytes | None:
     for i in range(tries):
         try:
             r = S.get(url, timeout=30)
-            if r.status_code == 404:
+            if r.status_code in (403, 404):
                 return None
             if r.status_code == 200:
                 return r.content
@@ -104,8 +110,7 @@ def klines(sym: str, iv: str, months: list[str], daily_days: list[str]) -> list[
     urls = [f"{BASE}/data/futures/um/monthly/klines/{sym}/{iv}/{sym}-{iv}-{m}.zip" for m in months]
     urls += [f"{BASE}/data/futures/um/daily/klines/{sym}/{iv}/{sym}-{iv}-{d}.zip" for d in daily_days]
     seen = {}
-    for u in urls:
-        b = _get(u)
+    for b in _many(urls):
         if not b:
             continue
         for r in _rows_from_zip(b):
@@ -119,8 +124,7 @@ def klines(sym: str, iv: str, months: list[str], daily_days: list[str]) -> list[
 
 def funding(sym: str, months: list[str]) -> list[list]:
     seen = {}
-    for m in months:
-        b = _get(f"{BASE}/data/futures/um/monthly/fundingRate/{sym}/{sym}-fundingRate-{m}.zip")
+    for b in _many([f"{BASE}/data/futures/um/monthly/fundingRate/{sym}/{sym}-fundingRate-{m}.zip" for m in months]):
         if not b:
             continue
         for r in _rows_from_zip(b):
@@ -133,8 +137,7 @@ def funding(sym: str, months: list[str]) -> list[list]:
 
 def metrics(sym: str, days: list[str]) -> list[list]:
     out = []
-    for d in days:
-        b = _get(f"{BASE}/data/futures/um/daily/metrics/{sym}/{sym}-metrics-{d}.zip")
+    for b in _many([f"{BASE}/data/futures/um/daily/metrics/{sym}/{sym}-metrics-{d}.zip" for d in days]):
         if not b:
             continue
         z = zipfile.ZipFile(io.BytesIO(b))
@@ -177,7 +180,7 @@ def main():
     ap.add_argument("--h1", type=int, default=80, help="1 saatlik veri için en likit kaç sembol")
     ap.add_argument("--metrics", type=int, default=0, help="OI/long-short metrikleri için en likit kaç sembol")
     ap.add_argument("--metrics_days", type=int, default=1500)
-    ap.add_argument("--workers", type=int, default=24)
+    ap.add_argument("--workers", type=int, default=8)
     ap.add_argument("--limit", type=int, default=0, help="test için en fazla kaç sembol")
     a = ap.parse_args()
     out = Path(a.out)
@@ -260,7 +263,7 @@ def main():
                       ["ts", "oi", "oi_usd", "top_ls_acct", "top_ls_pos", "ls_acct", "taker_ls_vol"], rows)
             return sym, len(rows)
 
-        with cf.ThreadPoolExecutor(min(a.workers * 2, 64)) as ex:
+        with cf.ThreadPoolExecutor(a.workers) as ex:
             for sym, n in ex.map(do_m, by_vol[:a.metrics]):
                 info[sym]["n_metrics"] = n
                 print(f"  metrics {sym}: {n}", flush=True)
