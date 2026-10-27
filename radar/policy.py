@@ -33,6 +33,7 @@ NO_REENTRY_RULE = ("bas", "turbo")
 DEFAULTS = {
     "aktif": True,
     "max_atr_yuzde": 5.0,          # günlük ATR / fiyat (%) üstü → gölge
+    "max_stop_yuzde": 15.0,        # giriş–stop uzaklığı fiyatın bu %'sinden fazlaysa → gölge (v10.1: geniş stop zararlı)
     "kalabalik_long": 30.0,        # funding yıllık % üstünde long → gölge
     "kalabalik_short": -20.0,      # funding yıllık % altında short → gölge
     "kapanis_stop": True,          # 1G işlemlerde ilk stop günlük kapanışla
@@ -80,6 +81,12 @@ def gate(idea: dict, ctx: dict | None, cfg: dict | None) -> str | None:
             and idea.get("mgr") not in (P.get("atr_muaf") or [])):
         return (f"oynaklık kapısı: günlük ATR fiyatın %{ap:.1f}'i (> %{P['max_atr_yuzde']:g}); 5 yıllık testte bu kovada "
                 "kazanç yok → gölgede ölçülüyor")
+    entry = idea.get("entry") or idea.get("market_px")
+    if P.get("max_stop_yuzde") and entry and idea.get("sl") and entry > 0:
+        sp = abs(entry - idea["sl"]) / entry * 100
+        if sp > P["max_stop_yuzde"]:
+            return (f"stop kapısı: giriş–stop uzaklığı fiyatın %{sp:.1f}'i (> %{P['max_stop_yuzde']:g}); "
+                    "geniş stop'lu işlemler 5 yıllık testte kazanmadı → gölgede ölçülüyor")
     fa = funding_ann(idea, ctx)
     if fa is not None:
         if idea["side"] == "long" and P.get("kalabalik_long") is not None and fa > P["kalabalik_long"]:

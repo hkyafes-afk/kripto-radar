@@ -192,6 +192,17 @@ class Desk:
                 shadow = True
                 gm.append(pr)
         idea.pop("recent_closes", None)                  # deftere/emre taşınmasın (yalnızca bu karar için)
+        # ── v10.1 Turbo tekrarı: Turbo bütün ekibin fikrini toplar; aynı coin ve yönde başka bir yöneticinin gerçek
+        #    pozisyonu/emri zaten varsa aynı bahsi ikinci kez gerçek parayla açmaz (risk katlanmasını önler) → gölge.
+        if not shadow and m.id == "turbo":
+            dup = sorted({t["mgr"] for t in self.ledger["open"] if not t.get("shadow") and t.get("mgr") != "turbo"
+                          and t["inst"] == idea["inst"] and t["side"] == idea["side"]}
+                         | {o["mgr"] for o in self.ledger["orders"] if not o.get("shadow") and o["mgr"] != "turbo"
+                            and o["idea"]["inst"] == idea["inst"] and o["idea"]["side"] == idea["side"]})
+            if dup:
+                shadow = True
+                names = ", ".join(self.by_id[d].name if d in self.by_id else d for d in dup)
+                gm.append(f"turbo tekrarı: bu coin ve yönde {names} zaten açık; aynı bahis ikinci kez gerçek parayla açılmaz")
         if not shadow and not full and self.fc.get("carpisma_yasak", True):
             opp = director.opposite_holder(self, idea)
             if opp:

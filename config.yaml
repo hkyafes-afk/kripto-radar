@@ -158,6 +158,7 @@ ekip:
   kurallar:                    # (radar/policy.py)
     aktif: true
     max_atr_yuzde: 5.0         # günlük ATR fiyatın %5'inden büyükse gölge (bu kovada 5 yılda kazanç yok)
+    max_stop_yuzde: 15.0       # giriş–stop uzaklığı bu %'yi aşarsa gölgede (v10.1)
     kalabalik_long: 30         # funding yıllık %30 üstündeyken long gölge
     kalabalik_short: -20       # funding yıllık −%20 altındayken short gölge
     kapanis_stop: true         # günlük işlemlerde ilk stop GÜNLÜK KAPANIŞLA (fitil avı yok); başabaş/iz sonrası normal stop

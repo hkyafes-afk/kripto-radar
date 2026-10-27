@@ -139,8 +139,10 @@ class Engine:
         self.feeds: dict = {}
         self.tg: nt.TelegramWorker | None = None
         self.lock = threading.RLock()
-        self.jobs: queue.Queue = queue.Queue()
+        self.jobs: queue.Queue = queue.Queue()          # hız kritik işler: günlük tarama, mum taraması
+        self.jobs_slow: queue.Queue = queue.Queue()     # ağır arka plan işleri: saatlik yenileme, haber, takvim, funding
         self.job_names: set[str] = set()
+        self.worker_slow: threading.Thread | None = None
         self.pending_open: list[dict] = []
         self.worker: threading.Thread | None = None
         self.t = {"universe": 0.0, "funding": 0.0, "hourly": 0.0, "prices": 0.0, "reconcile": 0.0,
@@ -1035,16 +1037,26 @@ class Engine:
                              "fng_mult": self.news.fng_mult, "corr": self.corr}
 
     # ── arka plan işçisi ─────────────────────────────────────────────
+    SLOW_JOBS = ("hourly", "funding", "news", "cal")
+
     def enqueue(self, name: str):
         with self.lock:
             if name in self.job_names:
                 return
             self.job_names.add(name)
-        self.jobs.put(name)
+        (self.jobs_slow if name.split(":")[0] in self.SLOW_JOBS else self.jobs).put(name)
 
-    def _worker_loop(self):
+    def _start_workers(self):
+        self.worker = threading.Thread(target=self._worker_loop, args=(self.jobs,), daemon=True, name="isci")
+        self.worker.start()
+        self.worker_slow = threading.Thread(target=self._worker_loop, args=(self.jobs_slow,), daemon=True,
+                                            name="isci-agir")
+        self.worker_slow.start()
+
+    def _worker_loop(self, q: queue.Queue | None = None):
+        q = q or self.jobs
         while True:
-            name = self.jobs.get()
+            name = q.get()
             if name == "__stop__":
                 return
             t_job = time.perf_counter()
@@ -2194,9 +2206,14 @@ class Engine:
             elif not f.healthy() and now - self.started > 120:
                 issues.append(("warn", f"{name}-kopuk", f"{name.upper()} akışı kopuk (REST yedeği devrede)"))
         if self.worker and not self.worker.is_alive():
-            self.worker = threading.Thread(target=self._worker_loop, daemon=True, name="isci")
+            self.worker = threading.Thread(target=self._worker_loop, args=(self.jobs,), daemon=True, name="isci")
             self.worker.start()
             issues.append(("warn", "isci", "arka plan işçisi durmuştu, yeniden başlatıldı"))
+        if self.worker_slow and not self.worker_slow.is_alive():
+            self.worker_slow = threading.Thread(target=self._worker_loop, args=(self.jobs_slow,), daemon=True,
+                                                name="isci-agir")
+            self.worker_slow.start()
+            issues.append(("warn", "isci-agir", "ağır işçi durmuştu, yeniden başlatıldı"))
         if self.tg and not (self.tg.t_poll.is_alive() and self.tg.t_send.is_alive()):
             pid = self.tg.panel_id
             self.tg.stop(flush_s=0)
@@ -2380,13 +2397,13 @@ class Engine:
             self.tg = nt.TelegramWorker(self._on_tg_updates).start()
             self.tg.panel_id = self.state.get("panel_msg_id")
         if not self.worker:
-            self.worker = threading.Thread(target=self._worker_loop, daemon=True, name="isci")
-            self.worker.start()
+            self._start_workers()
 
     def stop_live(self):
         for f in self.feeds.values():
             f.stop()
         self.jobs.put("__stop__")
+        self.jobs_slow.put("__stop__")
         if self.tg:
             self.tg.stop()
 

@@ -29,6 +29,16 @@ def _idea(**kw):
     return i
 
 
+def test_turbo_duplicate_is_shadowed():
+    L = lg.empty()
+    d = dk.Desk(CFG, {}, L)
+    L["open"].append(lg.build_trade(_idea(mgr="bas", atr=2.0), 100.0, 10.0, 10.0, 1.0, CFG, NOW, 10_000))
+    kind, det, _ = d.evaluate(_idea(mgr="turbo", atr=2.0), NOW)
+    assert det and det["shadow"] and any("turbo tekrarı" in g for g in det.get("gm") or []), "aynı bahis ikinci kez gerçek olmaz"
+    kind, det, _ = d.evaluate(_idea(mgr="turbo", inst="Y-USDT-SWAP", sym="Y", atr=2.0), NOW)
+    assert det and not det["shadow"], "başka coinde turbo serbest"
+
+
 def test_gates():
     assert policy.gate(_idea(), {}, CFG) is None
     assert "oynaklık" in policy.gate(_idea(atr=6.0), {}, CFG)
@@ -39,6 +49,8 @@ def test_gates():
     assert "Kaan" in policy.gate(_idea(), {"w_trend": "yatay"}, CFG)
     assert policy.gate(_idea(mgr="selin"), {"w_trend": "yatay"}, CFG) is None
     assert policy.gate(_idea(tf="15m", atr=9.0), {}, CFG) is None, "yalnızca günlük fikirler"
+    assert "stop kapısı" in policy.gate(_idea(sl=80.0, tp=130.0), {}, CFG), "giriş–stop %20 > %15 → gölge"
+    assert policy.gate(_idea(sl=86.0, tp=120.0), {}, CFG) is None, "%14 stop serbest"
     off = copy.deepcopy(CFG)
     off["ekip"]["kurallar"]["aktif"] = False
     assert policy.gate(_idea(atr=9.0), {}, off) is None
