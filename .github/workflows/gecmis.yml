@@ -1,0 +1,48 @@
+name: Geçmiş veri seti
+
+# Araştırma için 2020'den bugüne vadeli mum + funding (+ isteğe bağlı OI/long-short) arşivi.
+# Kaynak: data.binance.vision (silinen coinler dahil). Sonuç `gecmis` dalına yazılır. Canlı döngüyü etkilemez.
+on:
+  workflow_dispatch:
+    inputs:
+      h1:
+        description: "1 saatlik veri için en likit kaç sembol"
+        default: "80"
+      metrics:
+        description: "OI/long-short metrikleri için en likit kaç sembol (0 = yok)"
+        default: "0"
+      limit:
+        description: "Test için en fazla kaç sembol (0 = hepsi)"
+        default: "0"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: gecmis
+  cancel-in-progress: false
+
+jobs:
+  topla:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Topla
+        run: python tools/gecmis.py --out /tmp/gecmis --h1 "${{ inputs.h1 }}" --metrics "${{ inputs.metrics }}" --limit "${{ inputs.limit }}"
+      - name: gecmis dalına yaz
+        run: |
+          git config --global user.name "kripto-radar"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          mkdir /tmp/repo && cd /tmp/repo && git init -q -b gecmis
+          cp -r /tmp/gecmis/* .
+          printf '# Geçmiş veri seti\n\nKaynak: data.binance.vision · üretici: tools/gecmis.py\n' > README.md
+          du -sh .
+          git add -A && git commit -qm "📚 geçmiş veri $(date -u +%Y-%m-%d)"
+          git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+          git push -qf origin gecmis
