@@ -3,6 +3,8 @@ name: Geçmiş veri seti
 # Araştırma için 2020'den bugüne vadeli mum + funding (+ isteğe bağlı OI/long-short) arşivi.
 # Kaynak: data.binance.vision (silinen coinler dahil). Sonuç `gecmis` dalına yazılır. Canlı döngüyü etkilemez.
 on:
+  schedule:
+    - cron: "11 4 2 * *"     # her ayın 2'si 07:11 (İstanbul): biten ayın arşivi eklenir
   workflow_dispatch:
     inputs:
       h1:
@@ -34,7 +36,7 @@ jobs:
           cache: pip
       - run: pip install -r requirements.txt
       - name: Topla
-        run: python tools/gecmis.py --out /tmp/gecmis --h1 "${{ inputs.h1 }}" --metrics "${{ inputs.metrics }}" --limit "${{ inputs.limit }}"
+        run: python tools/gecmis.py --out /tmp/gecmis --h1 "${{ inputs.h1 || '40' }}" --metrics "${{ inputs.metrics || '40' }}" --limit "${{ inputs.limit || '0' }}"
       - name: gecmis dalına yaz
         run: |
           git config --global user.name "kripto-radar"

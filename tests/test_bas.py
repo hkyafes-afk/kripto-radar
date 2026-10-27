@@ -143,10 +143,29 @@ def test_pyramid_adds_only_to_risk_free_winner():
         assert det2 and det2["risk_pct"] > 0
 
 
-def test_turbo_same_brain_more_appetite_and_morning_summary():
-    T, B = team.BY_ID["turbo"], team.BY_ID["bas"]
-    assert T.analyze is B.analyze and T.extra["tam_yetki"] and T.extra["piramit_tam"]
-    assert T.base_risk > 3 * B.base_risk and T.extra["lev_cap"] > B.extra["lev_cap"]
+def test_turbo_collects_whole_team_and_morning_summary():
+    T = team.BY_ID["turbo"]
+    assert T.analyze is team.a_turbo and T.extra["tam_yetki"]
+    # iki kaynak aynı yönde → en güçlüsü seçilir, diğeri teyit; yönler eşit çatışırsa girmez
+    mk = lambda mid, side, conv: {"mgr": mid, "side": side, "conviction": conv, "rr": 2.0, "plan": "p", "reasons": [],
+                                  "entry": 100.0, "sl": 95.0 if side == "long" else 105.0, "tp": 120.0 if side == "long" else 80.0}
+    orig = {k: team.BY_ID[k].analyze for k in team.TURBO_SOURCES}
+    try:
+        for k in team.TURBO_SOURCES:
+            team.BY_ID[k].analyze = lambda ctx, m, cfg: None
+        team.BY_ID["kemal"].analyze = lambda ctx, m, cfg: mk("kemal", "long", 0.5)
+        team.BY_ID["kaan"].analyze = lambda ctx, m, cfg: mk("kaan", "long", 0.8)
+        ctx = {"tf": "1D", "sym": "X"}
+        i = team.a_turbo(ctx, T, {"ekip": {}})
+        assert i and i["mgr"] == "turbo" and i["setup"] == "turbo:kaan" and i["sources"] == ["kaan", "kemal"]
+        assert i["conviction"] > 0.8 and "Kemal" in i["plan"]
+        team.BY_ID["selin"].analyze = lambda ctx, m, cfg: mk("selin", "short", 0.9)
+        team.BY_ID["murat"].analyze = lambda ctx, m, cfg: mk("murat", "short", 0.9)
+        assert team.a_turbo(ctx, T, {"ekip": {}}) is None, "2 long – 2 short: çatışma, girmez"
+        assert team.a_turbo(dict(ctx, tf="15m"), T, {"ekip": {}}) is None
+    finally:
+        for k, f in orig.items():
+            team.BY_ID[k].analyze = f
     import tempfile
     from tests.test_engine_live import _engine
     with tempfile.TemporaryDirectory() as d:

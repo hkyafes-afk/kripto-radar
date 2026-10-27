@@ -1,7 +1,41 @@
 # Kripto Radar — Kararlar ve Yol Haritası
 
 > Bu dosya kullanıcıyla birlikte alınan kararların kalıcı kaydıdır. Her yeni çalışma oturumunda **önce bu dosya okunur**.
-> Son güncelleme: 26 Ekim 2026 (v8 uygulandı)
+> Son güncelleme: 27 Ekim 2026 (v10 uygulandı)
+
+## 0. Nihai hedef
+
+Önce demo parayla, **masraflar düştükten sonra işlem başına beklenen kârı (R) kanıtlanmış şekilde pozitif** bir ajan
+ekibi kurmak; sonra güvenli şekilde gerçek paraya taşımak. Kazanma oranı izlenir ve yükseltilir ama tek başına hedef
+değildir (küçük hedef + geniş stop %90 kazandırıp parayı kaybettirir). Her öneri şu soruyla süzülür: "Kârı ölçülebilir
+şekilde artırıyor mu ya da gerçek paraya geçişi güvenli hale getiriyor mu?"
+
+## v10 (27 Ekim 2026) — 5 yıllık laboratuvar ve politika
+
+Kullanıcı 27.10'da bütün geliştirmeleri Claude'a bıraktı ("her şey senin kontrolünde"). Firma durdurma/sınır limitleri
+kullanıcının test kararıyla kapalı kalmaya devam ediyor (dokunulmadı).
+
+- **Veri:** `gecmis` dalı — 895 vadeli sembol (silinenler dahil), 2020–2026, günlük/4S mum, funding, alıcı/satıcı, OI.
+  Üretici `tools/gecmis.py` (Actions: "Geçmiş veri seti"). Sandbox borsalara erişemediği için veri Actions'ta toplanır.
+- **Laboratuvar:** `tools/lab.py` + `tools/lab_analiz.py`; her gün o günün en likit 100 coini (point-in-time), canlı
+  yönetici kodu, gerçek funding, eğitim 2020–24 / doğrulama 2025–26. Rapor: `data/LAB.md`, ham: `data/lab/`.
+- **Bulgu:** bugünkü ekip masraf sonrası ≈0R (eski 28 coinlik test iyimsermiş). Oynaklık (ATR > %5) en büyük düşman.
+- **Politika (`radar/policy.py`, config `ekip.kurallar`):** oynaklık kapısı ≤%5 (Ayşe muaf), kalabalık kapısı
+  (funding long > %30 / short < −%20), günlük kapanış stop'u + 2R felaket stop'u, yeniden giriş kuralı (zarardan sonra
+  5 gün; kârdan sonra yeni zirve; Baş/Turbo hariç), Kaan yatay piyasada gölge. Kapıdan geçemeyen fikir gölgede açılır.
+  Sonuç: ekip eğitim +0,02R → +0,43R, doğrulama −0,00R → +0,17R, maks. düşüş −%43 → −%14; kazanma %51 / %41.
+- **Risk seviyeleri** küçültüldü (Kaan 1–1,5, Selin 2–3, Baş 1–2, Murat/Ayşe 0,5–1, Turbo 1–1,5): eski seviyeler
+  doğrulamada eksi büyüme ya da %50+ düşüş veriyordu.
+- **Turbo = bütün ekip tek elde** (`team.a_turbo`): diğer yöneticilerin fikirlerini toplar, coin başına tek pozisyon,
+  çatışmada çoğunluk. Tam kat piramit kaldırıldı.
+- **Ayşe:** son 1 saat likidasyonları, hesap long/short oranı ve Hyperliquid akıllı para teyitleri eklendi; aday
+  coinlerde veri taze çekilir.
+- **Günlük işlemlerde çıkışlar kapanışla:** kural çıkışları ve kapanış stop'u yalnızca kapanmış günlük mumda (test
+  böyle doğruladı). Girişler kesintisiz (canlı mum) kalmaya devam ediyor.
+- **Reddedilenler:** kâr kilitleme/geri verme sınırı (R düşürdü), Donchian orta nokta stop'u, sadece long, genç coin
+  yasağı, Zarattini topluluğu (bu evrende tekrar edilemedi).
+- **Açık işler:** kesintisiz girişin v10 politikasıyla 4S veride ölçülmesi; Toplayıcı (topla-deney dalı) testte −0,52R →
+  birleştirilmedi; 4S taraması hâlâ yalnızca panel için (karar bekliyor); gerçek paraya geçişte borsa tarafı stop.
 
 ## 1. Değişmeyen temel kararlar
 

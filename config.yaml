@@ -100,20 +100,23 @@ panel:
   telegram_panel: true       # Telegram'da sabitlenmiş, kendiliğinden güncellenen canlı panel mesajı
   panel_sn: 15               # kaç saniyede bir güncellensin
 
-# ── YATIRIM EKİBİ ── 7 yönetici + risk müdürü. Başlangıç sermayesi demo.baslangic_bakiye, eşit dağıtılır.
+# ── YATIRIM EKİBİ ── 10 yönetici + Genel Müdür + risk müdürü. Başlangıç sermayesi demo.baslangic_bakiye.
 # Her yönetici kendi sermayesinin yüzdesi kadar risk alır: taban (az kanıt) → tavan (tüm doğrulamalar tuttu).
 ekip:
   aktif: true
   yoneticiler:
-    bas:   {aktif: true, taban_risk: 1.5, tavan_risk: 4.0, yedek_dusus: 30}   # 👑 Baş Trader (v9 risk kararı 27.10: 5y test yarım Kelly ≈%1,6 → taban 1,5, güçlü sinyalde ≈tam Kelly)
-    turbo: {aktif: true, taban_risk: 5.0, tavan_risk: 10.0, yedek_dusus: 60}  # 🔥 Risk deneyi (27.10): Baş Trader beyni, ≈3× tam Kelly
-    kemal: {aktif: true, taban_risk: 1.0, tavan_risk: 2.0, yedek_dusus: 20}   # Günlük trend (1G) · 5y: kenar küçük (+0,04R), yarım Kelly ≈%0,8 → hafif azaltıldı
+    # v10 risk (data/LAB.md, 5 yıl, 100 coin, silinenler dahil, v10 politikasıyla): eğitimde maks. düşüş ~%25 ve
+    # doğrulamada büyüme artı kalan en yüksek seviye. Eski seviyeler (Kaan 3–5, Selin 4–6, Turbo 5–10) doğrulamada eksi
+    # büyüme ya da %50+ düşüş verdi (kazanan işlemler olsa bile fazla risk bileşik büyümeyi yer).
+    bas:   {aktif: true, taban_risk: 1.0, tavan_risk: 2.0, yedek_dusus: 30}   # 👑 Baş Trader · v10: %1,5–2'de eğitim +%36–40/yıl, düşüş ~%21–26
+    turbo: {aktif: true, taban_risk: 1.0, tavan_risk: 1.5, yedek_dusus: 40}   # 🔥 Bütün ekip tek elde · v10: %1 → +%17/yıl, düşüş %30; %5+ batırıyor
+    kemal: {aktif: true, taban_risk: 1.0, tavan_risk: 2.0, yedek_dusus: 20}   # Günlük trend (1G) · v10: +0,14R / +0,10R
     deniz: {aktif: false, taban_risk: 1.0, tavan_risk: 1.5, yedek_dusus: 15}  # BTC/ETH 15dk maker · DURDURULDU 27.10: testte −%94 (ort. −0,61R)
-    ayse:  {aktif: true, taban_risk: 1.0, tavan_risk: 1.5, yedek_dusus: 15}   # Kapitülasyon (1G)
-    murat: {aktif: true, taban_risk: 1.5, tavan_risk: 2.5, yedek_dusus: 20}   # Baş analist + hacim profili (1G)
+    ayse:  {aktif: true, taban_risk: 0.5, tavan_risk: 1.0, yedek_dusus: 15}   # Kapitülasyon (1G) · v10: yılda birkaç işlem, örneklem az
+    murat: {aktif: true, taban_risk: 0.5, tavan_risk: 1.0, yedek_dusus: 20}   # Baş analist (1G) · v10: politikasız −0,05R, politikayla +0,33R / +0,12R; düşüş büyük → düşük risk
     elif:  {aktif: true}                                                       # Piyasa-nötr funding (spot + vadeli)
-    kaan:  {aktif: true, taban_risk: 3.0, tavan_risk: 5.0, yedek_dusus: 30}   # Günlük kırılım (1G) · 5y: zaten tam Kelly civarı, artırmak büyümeyi düşürür
-    selin: {aktif: true, taban_risk: 4.0, tavan_risk: 6.0, yedek_dusus: 30}   # Günlük sıkışma (1G) · 5y: yarım Kelly ≈%4 → artırıldı
+    kaan:  {aktif: true, taban_risk: 1.0, tavan_risk: 1.5, yedek_dusus: 30}   # Günlük kırılım (1G) · v10: +0,79R / +0,26R; %2+ riskte doğrulama büyümesi eksi
+    selin: {aktif: true, taban_risk: 2.0, tavan_risk: 3.0, yedek_dusus: 30}   # Günlük sıkışma (1G) · v10: +0,44R / +0,43R; %3'te eğitim düşüşü ~%28
   # v8.2 (kullanıcı kararı, 26.10.2026): her yöneticiye ayrı 10.000$ demo bütçe. Gölge politikası kalktı; herkes kendi
   # bütçesiyle işlem yapar. Öğrenme, işlem türlerini (yönetici|yön) canlı kanıta göre gerçek/gölge arasında taşır.
   butce:
@@ -134,7 +137,7 @@ ekip:
     coin_risk_yuzde: 2.5       # % aynı coinde (tüm yöneticiler toplamı) en fazla risk
     yon_risk_yuzde: 6.0        # % aynı yönde (long ya da short) toplam risk
     max_nominal_kat: 2.0       # tek pozisyon en fazla yönetici sermayesinin 2 katı nominal
-    tekrar_bekleme_mum: 3      # aynı yönetici aynı coinde kapanıştan sonra kaç mum bekler
+    tekrar_bekleme_mum: 1      # aynı yönetici aynı coinde kapanıştan sonra kaç mum bekler (v10: asıl kural politika.yeniden_giris)
     yeniden_dagitim_gun: 0     # 0 = kapalı (her yöneticinin kendi bütçesi var); açıkken performansa göre yeniden dağıtır
     dagitim_min_islem: 15
     carry_max_cift: 3          # Elif aynı anda en fazla kaç funding pozisyonu tutar
@@ -148,6 +151,21 @@ ekip:
     sinif_c_gun: 365           # 1 yıldan yeni = C (gölge); arası B (tam boyut — yarışta en iyi sınıf çıktı)
     ioc_bant_bp: 10            # piyasa emri yerine IOC limit: en iyi fiyatın en fazla %0,1 ötesi, dolmayan kısım iptal
     dongu_uyari_sn: 10         # döngü bir turda bundan uzun sürerse Telegram uyarısı
+  # v10 POLİTİKA (radar/policy.py, kanıt: data/LAB.md). Canlı masa, resmi backtest ve laboratuvar aynı kuralları kullanır.
+  # Kapıdan geçemeyen fikir REDDEDİLMEZ, gölgede açılıp ölçülür (veri toplama sürer, gerçek sermaye kullanılmaz).
+  # 5 yıl / her gün en likit 100 coin / silinenler dahil: ekip eğitim +0,02R → +0,43R, doğrulama −0,00R → +0,17R,
+  # maks. düşüş −%43 → −%14. Baş Trader ve Turbo dahil herkese uygulanır.
+  kurallar:                    # (radar/policy.py)
+    aktif: true
+    max_atr_yuzde: 5.0         # günlük ATR fiyatın %5'inden büyükse gölge (bu kovada 5 yılda kazanç yok)
+    kalabalik_long: 30         # funding yıllık %30 üstündeyken long gölge
+    kalabalik_short: -20       # funding yıllık −%20 altındayken short gölge
+    kapanis_stop: true         # günlük işlemlerde ilk stop GÜNLÜK KAPANIŞLA (fitil avı yok); başabaş/iz sonrası normal stop
+    felaket_r: 2.0             # kapanış stop'unun gün içi güvenlik ağı: girişten 2R ötede borsa tipi stop
+    zarar_sonrasi_bekle_gun: 5 # aynı coinde aynı yönde zararla çıkınca o yöne 5 gün girilmez (Baş/Turbo hariç)
+    kar_sonrasi_yeni_zirve: true  # kârla çıkınca yeniden giriş için çıkıştan beri en iyi kapanış aşılmalı
+    kaan_yatay_golge: true     # Kaan: BTC havası yatayken kırılımlar gölgede (5 yılda iki dönemde de eksi)
+    atr_muaf: [ayse]           # Ayşe oynaklık kapısından muaf (kapitülasyon günleri oynak; testte kapısız +0,24R / +0,30R)
   ortak:                       # v9 Yatırım Komitesi (Ortak Masa)
     esik: 1.25                 # karne ağırlıklı oy eşiği; masanın karnesi eksiye düşerse kendiliğinden +0,5
     katki_yuzde: 5             # anlaşan her yönetici bütçesinin %5'i kadar pozisyon koyar; kâr/zarar katkı payına göre ona döner

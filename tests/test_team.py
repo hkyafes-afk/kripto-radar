@@ -198,7 +198,8 @@ def test_desk_layers_sizing_calendar_and_card():
     d, st, L = _desk()
     idea = _kaan_idea()
     kind, det, _ = d.evaluate(idea, NOW)
-    base_pct = 3 + 2 * idea["conviction"]
+    mk = d.by_id["kaan"]
+    base_pct = mk.base_risk + (mk.max_risk - mk.base_risk) * idea["conviction"]
     assert kind == "market" and abs(det["risk_pct"] - base_pct) < 0.05
     d.env = {"weather": {"trend": "ayi", "high_vol": False}}
     kind, det2, _ = d.evaluate(idea, NOW)
@@ -215,7 +216,7 @@ def test_desk_crowding_limit():
     d, st, L = _desk()
     d.env = {"corr": lambda a, b: 0.9}          # hepsi birlikte hareket ediyor
     ideas = [dict(_kaan_idea(), inst=f"C{i}-USDT-SWAP", sym=f"C{i}", mgr=m)
-             for i, m in enumerate(["kaan", "selin", "kemal"] * 5)]
+             for i, m in enumerate(["kaan", "selin", "kemal"] * 10)]   # v10 düşük risk: tavanı aşmak için daha çok fikir
     o, _, r = d.execute(ideas, NOW)
     assert any("yığılma" in w for _, w in r), r
     assert sum(lg.open_risk(t) for t in L["open"] if not t.get("shadow")) <= 1000 * 0.04 + 1e-6

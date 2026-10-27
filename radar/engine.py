@@ -52,6 +52,15 @@ from .scan import (VERSION, _f, _interval_h, btc_info, build_universe, fetch_fun
                    msg_daily, oi_changes, summary_md)
 
 TF_SEC = {"15m": 900, "30m": 1800, "1H": 3600, "2H": 7200, "4H": 14400, "1D": 86400}
+
+
+def _recent_closes(df, n: int = 45) -> list:
+    """Son n kapanmış günün (ts_ms, kapanış) listesi — v10 yeniden giriş kuralı için."""
+    try:
+        w = df.tail(n)
+        return [(int(ts.value // 1_000_000), float(c)) for ts, c in zip(w.index, w["close"])]
+    except Exception:  # noqa: BLE001
+        return []
 SCAN_DELAY = 2           # mum kapanışından sonra ilk deneme (kesinleşmemişse tekrar denenir)
 
 
@@ -521,6 +530,7 @@ class Engine:
             close_ts = df.index[-1] + pd.Timedelta(hours=bh)
             w = self.weather or {}
             ctx = {**qc, "inst": inst, "sym": row["sym"], "tf": tf, "bar_ms": TF_SEC[tf] * 1000,
+                   "recent_closes": _recent_closes(df) if tf == "1D" else None,
                    "price": feat["price"], "regime": regime, "funding_ann": feat["funding_ann"], "funding_rate": rate,
                    "interval_h": iv, "oi_chg24": feat["oi_chg24"], "taker_imb": tk[0] if tk else None,
                    "ret24": feat["ret24"], "chg24": row.get("chg24"), "signals": sigs, "vol24_usd": row["vol24_usd"],
@@ -587,6 +597,8 @@ class Engine:
             self.stats_counter["signal_latency_s"] = round(time.time() - boundary, 1)
         self.dirty = True
         strong = [s for s in sigs if s["score"] >= self.cfg["sinyal"]["guclu_esik"]]
+        if tf == "1D":
+            self._orphan_close_stops({r["inst"] for r in uni})
         if self.team_on and self.desk:
             ideas = []
             for x in results:
@@ -652,7 +664,7 @@ class Engine:
         qc = quant.ctx_at(Q)
         qc["hvn"] = quant.hvn_levels(Q)
         ctx = {**qc, **self._live_fields(row, inst), "tf": "1D", "bar_ms": TF_SEC["1D"] * 1000, "price": px,
-               "live_bar": True}
+               "live_bar": True, "recent_closes": _recent_closes(df.iloc[:-1])}
         bg = self.bg_book.get(row["sym"])
         if bg and time.time() - bg[3] < 30 and abs(bg[0] / px - 1) > 0.03:
             ctx["suspect"] = f"Bitget ile fiyat farkı %{abs(bg[0] / px - 1) * 100:.1f}"
@@ -683,6 +695,12 @@ class Engine:
                 c["crowd"] = self.crowd(c["inst"], fetch=True)
         except Exception as e:  # noqa: BLE001
             print("[baş trader] balina verisi:", e)
+        # Ayşe: kapitülasyon adayı coinler için likidasyon / long-short / akıllı para verisi taze çekilir (en fazla 6)
+        try:
+            for c in [c for c in ctxs if team.ayse_core(c)][:6]:
+                c["crowd"] = self.crowd(c["inst"], fetch=True)
+        except Exception as e:  # noqa: BLE001
+            print("[ayşe] kalabalık verisi:", e)
         try:
             self.bas_watch = {"ts": int(time.time() * 1000), "rows": bas.watch(ctxs)}
         except Exception as e:  # noqa: BLE001
@@ -864,6 +882,11 @@ class Engine:
         """Yöneticinin uzmanları görüş verir (Gözcü, Balina Gözü, Analist-Hakem); karne ağırlıklı çarpan fikre eklenir."""
         if not self.desk:
             return
+        fa = c.get("funding_ann")
+        if isinstance(fa, (int, float)) and fa == fa:
+            idea["funding_ann"] = fa                           # v10 kalabalık kapısı
+        if c.get("recent_closes"):
+            idea["recent_closes"] = c["recent_closes"]         # v10 yeniden giriş kuralı (kapanmış günler)
         try:
             c.setdefault("coin_class", gmd.coin_class(self.meta.get(idea["inst"]), int(time.time() * 1000), self.desk.fc))
             idea["feat"] = team.features_for(c, idea["side"], idea.get("conviction", 0.5))
@@ -879,10 +902,32 @@ class Engine:
         except Exception as e:  # noqa: BLE001
             return None
 
+    def _orphan_close_stops(self, scanned: set):
+        """Evrenden düşmüş coinlerdeki açık işlemlerin kapanış stop'u da günlük kapanışta kontrol edilir."""
+        for inst in {t["inst"] for t in list(self.ledger["open"]) if t.get("sl_close") is not None and t.get("tf") == "1D"} - scanned:
+            try:
+                df = self.client.candles(inst, "1D", 3, closed_only=True)
+                if len(df):
+                    self._queue_rule_exits({"inst": inst, "tf": "1D", "close": float(df["close"].iloc[-1]), "_only_cs": True})
+            except Exception as e:  # noqa: BLE001
+                print(f"[kapanış stop] {inst}: {e}")
+
     def _queue_rule_exits(self, c: dict):
-        """(işçi) Kural tabanlı çıkışlar mum kapanışında kontrol edilir; ana döngü kapatır."""
+        """(işçi) Kural tabanlı çıkışlar ve v10 kapanış stop'u MUM KAPANIŞINDA kontrol edilir; ana döngü kapatır.
+        Günlük işlemlerde canlı (kapanmamış) mumla çıkış yapılmaz: 5 yıllık laboratuvar kapanışla doğrulandı."""
+        live = bool(c.get("live_bar"))
         for t in list(self.ledger["open"]):
+            if (not live and t.get("sl_close") is not None and t["inst"] == c["inst"] and t.get("tf") == c["tf"]
+                    and isinstance(c.get("close"), (int, float))):
+                sgn = 1 if t["side"] == "long" else -1
+                if sgn * (c["close"] - t["sl_close"]) <= 0:
+                    with self.lock:
+                        self.signal_exits.append((t["id"], f"kapanış stop'u: günlük kapanış {c['close']:.6g}, stop "
+                                                           f"{t['sl_close']:.6g}'in ötesinde"))
+                    continue
             r = t.get("exit_rule")
+            if (live and t.get("tf") == "1D") or c.get("_only_cs"):
+                continue
             if r and t["inst"] == c["inst"] and t.get("tf") == c["tf"] and not t.get("carry"):
                 why = quant.exit_signal(r, c, t["side"])
                 if why:
@@ -1589,8 +1634,9 @@ class Engine:
                 L.append(f"➕ <b>Kazanana ekleme · {t.get('layer', 2)}. kat</b>")
             L.append(f"💵 Pozisyon {_usd(t['notional_usd'], False)} · teminat {_usd(t['margin_usd'], False)} · {t.get('lev', 1):g}x · "
                      f"<b>risk {_usd(t.get('risk_usd', 0), False)}</b> (sermayesinin %{_p(t.get('risk_pct', 0), 2)}'i)")
-            L.append(f"Giriş {fp(t['entry'])} ({src}) · Stop {fp(t['sl'])} ({sl_s}%{_p(t['sl_pct'])}) · "
-                     f"Hedef {fp(t['tp'])} ({tp_s}%{_p(t['tp_pct'])})")
+            stop_s = (f"Kapanış stop'u {fp(t['sl_close'])} ({sl_s}%{_p(t['sl_pct'])}, günlük kapanışla) · felaket stop'u "
+                      f"{fp(t['sl'])}" if t.get("sl_close") is not None else f"Stop {fp(t['sl'])} ({sl_s}%{_p(t['sl_pct'])})")
+            L.append(f"Giriş {fp(t['entry'])} ({src}) · {stop_s} · Hedef {fp(t['tp'])} ({tp_s}%{_p(t['tp_pct'])})")
             if t.get("plan"):
                 L.append(f"<i>{nt.esc(t['plan'])}</i>")
             ok = [c[0] for c in chk if c[1]][:4]

@@ -123,7 +123,14 @@ def test_telegram_commands():
         os.environ["TELEGRAM_BOT_TOKEN"] = "TEST"
         os.environ["TELEGRAM_CHAT_ID"] = "111"
         sent.clear()
-        scan.run(Path(d2), client=DemoClient(), notify=True, demo=True)
+        # demo verisi çok oynak (ATR %10–20): v10 oynaklık kapısı her fikri gölgeye alır; bildirim biçimini sınamak için kapalı
+        import yaml
+        from radar.config import ROOT
+        c = yaml.safe_load((ROOT / "config.yaml").read_text(encoding="utf-8"))
+        c["ekip"]["kurallar"]["aktif"] = False
+        cfgp = Path(d2) / "cfg_test.yaml"
+        cfgp.write_text(yaml.safe_dump(c, allow_unicode=True), encoding="utf-8")
+        scan.run(Path(d2), cfgp, client=DemoClient(), notify=True, demo=True)
         assert any("Yeni işlem" in t and "risk" in t and "doğrulama" in t for _, t in sent), [x[1][:80] for x in sent]
         assert any("yatırım ekibi göreve başladı" in t for _, t in sent)
         os.environ.pop("TELEGRAM_CHAT_ID", None)

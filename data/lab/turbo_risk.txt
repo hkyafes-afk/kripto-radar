@@ -1,0 +1,40 @@
+
+== temel: Turbo-Hepsi 7892 işlem, ort R -0.003, kazanma %37.1
+  risk %0.5  tümü CAGR -1.94%  maksDD -73.54%  Sharpe 0.2  atlanan 2693
+  risk %0.5  IS   CAGR -1.61%  maksDD -65.97%  Sharpe 0.2  atlanan 1873
+  risk %0.5  OOS  CAGR -0.94%  maksDD -45.44%  Sharpe 0.21  atlanan 790
+  risk %1    tümü CAGR -4.98%  maksDD -79.34%  Sharpe 0.18  atlanan 4994
+  risk %1    IS   CAGR -5.68%  maksDD -72.79%  Sharpe 0.17  atlanan 3470
+  risk %1    OOS  CAGR -3.12%  maksDD -45.1%  Sharpe 0.18  atlanan 1510
+  risk %2    tümü CAGR 12.14%  maksDD -78.25%  Sharpe 0.49  atlanan 6390
+  risk %2    IS   CAGR 1.85%  maksDD -78.25%  Sharpe 0.32  atlanan 4445
+  risk %2    OOS  CAGR 45.71%  maksDD -33.96%  Sharpe 1.0  atlanan 1938
+  risk %3    tümü CAGR 1.24%  maksDD -81.26%  Sharpe 0.32  atlanan 6892
+  risk %3    IS   CAGR -7.92%  maksDD -81.26%  Sharpe 0.16  atlanan 4816
+  risk %3    OOS  CAGR 46.72%  maksDD -32.43%  Sharpe 1.02  atlanan 2076
+  risk %5    tümü CAGR 3.68%  maksDD -92.35%  Sharpe 0.48  atlanan 6997
+  risk %5    IS   CAGR -0.03%  maksDD -92.08%  Sharpe 0.44  atlanan 4884
+  risk %5    OOS  CAGR 29.45%  maksDD -51.48%  Sharpe 0.74  atlanan 2113
+  risk %8    tümü CAGR -30.44%  maksDD -99.56%  Sharpe 0.46  atlanan 6997
+  risk %8    IS   CAGR -47.39%  maksDD -99.56%  Sharpe 0.27  atlanan 4889
+  risk %8    OOS  CAGR 85.1%  maksDD -58.79%  Sharpe 1.13  atlanan 2109
+
+== F2: Turbo-Hepsi 759 işlem, ort R 0.302, kazanma %45.2
+  risk %0.5  tümü CAGR 16.78%  maksDD -16.28%  Sharpe 0.96  atlanan 0
+  risk %0.5  IS   CAGR 19.9%  maksDD -16.11%  Sharpe 1.05  atlanan 0
+  risk %0.5  OOS  CAGR 9.95%  maksDD -10.05%  Sharpe 0.74  atlanan 0
+  risk %1    tümü CAGR 17.39%  maksDD -30.46%  Sharpe 0.77  atlanan 95
+  risk %1    IS   CAGR 18.43%  maksDD -29.14%  Sharpe 0.8  atlanan 83
+  risk %1    OOS  CAGR 15.29%  maksDD -19.13%  Sharpe 0.7  atlanan 12
+  risk %2    tümü CAGR 24.37%  maksDD -52.69%  Sharpe 0.81  atlanan 260
+  risk %2    IS   CAGR 28.71%  maksDD -37.88%  Sharpe 0.93  atlanan 204
+  risk %2    OOS  CAGR 15.01%  maksDD -34.16%  Sharpe 0.56  atlanan 56
+  risk %3    tümü CAGR 11.32%  maksDD -58.87%  Sharpe 0.46  atlanan 359
+  risk %3    IS   CAGR 11.07%  maksDD -48.03%  Sharpe 0.46  atlanan 269
+  risk %3    OOS  CAGR 12.16%  maksDD -37.52%  Sharpe 0.47  atlanan 90
+  risk %5    tümü CAGR 10.49%  maksDD -76.74%  Sharpe 0.46  atlanan 392
+  risk %5    IS   CAGR 16.66%  maksDD -58.89%  Sharpe 0.55  atlanan 290
+  risk %5    OOS  CAGR -2.86%  maksDD -52.51%  Sharpe 0.29  atlanan 102
+  risk %8    tümü CAGR -2.62%  maksDD -89.33%  Sharpe 0.44  atlanan 394
+  risk %8    IS   CAGR 1.25%  maksDD -84.42%  Sharpe 0.47  atlanan 291
+  risk %8    OOS  CAGR -11.39%  maksDD -66.9%  Sharpe 0.38  atlanan 103

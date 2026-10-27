@@ -117,6 +117,23 @@ def balance(ledger: dict, cfg: dict) -> dict:
             "cash": cash, "in_use": in_use, "free": cash - in_use, "equity": cash + unreal}
 
 
+def eff_sl(t: dict) -> float:
+    """Pozisyonun asıl stop seviyesi: kapanış stop'u varsa o (gün içi `sl` felaket stop'udur), yoksa `sl`."""
+    sc = t.get("sl_close")
+    return sc if sc is not None else t["sl"]
+
+
+def set_sl(t: dict, new_sl: float) -> bool:
+    """Stop'u yalnızca kâr yönüne taşır. Kapanış stop'unun ötesine geçince normal (gün içi) stop'a döner."""
+    sgn = 1 if t["side"] == "long" else -1
+    if sgn * (new_sl - eff_sl(t)) > 0:
+        t["sl"] = new_sl
+        t.pop("sl_close", None)
+        t["liq_first"] = False
+        return True
+    return False
+
+
 def open_risk(t: dict) -> float:
     """Pozisyonun şu anki riski: stop'a gidilirse kaybedilecek tutar (başabaşın ötesindeyse 0)."""
     if t.get("carry"):
@@ -124,7 +141,7 @@ def open_risk(t: dict) -> float:
     if not t.get("real"):
         return t.get("notional_usd", 20.0) * t.get("sl_pct", 0) / 100
     sgn = 1 if t["side"] == "long" else -1
-    return max(0.0, sgn * (t["entry"] - t["sl"]) * t.get("qty_open", t["qty"]))
+    return max(0.0, sgn * (t["entry"] - eff_sl(t)) * t.get("qty_open", t["qty"]))
 
 
 # ── kontrat ve dolum ───────────────────────────────────────────────────
@@ -370,9 +387,7 @@ def _breakeven(t: dict, cfg: dict):
     fc = fees_cfg(cfg)
     sgn = 1 if t["side"] == "long" else -1
     be = t["entry"] * (1 + sgn * (fc["taker_yuzde"] * 2) / 100)
-    if sgn * (be - t["sl"]) > 0:
-        t["sl"] = be
-        t["liq_first"] = False
+    set_sl(t, be)
 
 
 def trail(t: dict, best_px: float, cfg: dict) -> bool:
@@ -386,10 +401,7 @@ def trail(t: dict, best_px: float, cfg: dict) -> bool:
     if k <= 0:
         return False
     new_sl = t["hw"] - sgn * k * t["atr"]
-    if sgn * (new_sl - t["sl"]) > 0:
-        t["sl"] = new_sl
-        return True
-    return False
+    return set_sl(t, new_sl)
 
 
 # ── kapanış ────────────────────────────────────────────────────────────
@@ -780,11 +792,17 @@ def build_trade(idea: dict, entry: float, qty: float, contracts: float, lev: flo
     notional = qty * entry
     fee_entry = notional * (fc["maker_yuzde"] if maker_entry else fc["taker_yuzde"]) / 100
     liq = liq_price(idea["side"], entry, lev, fc["mmr_yuzde"])
-    sl_eff, liq_first = sl, False
-    if liq is not None and ((sgn > 0 and liq >= sl) or (sgn < 0 and liq <= sl)):
+    # v10 kapanış stop'u: ilk stop günlük kapanışla kontrol edilir (sl_close); gün içinde yalnızca felaket stop'u (sl)
+    from . import policy
+    cs = policy.close_stop_levels(entry, sl, idea["side"], cfg) \
+        if idea.get("tf") == "1D" and idea.get("kind") not in ("carry", "consensus") and not idea.get("pyramid") else None
+    sl_intra = cs[0] if cs else sl
+    sl_eff, liq_first = sl_intra, False
+    if liq is not None and ((sgn > 0 and liq >= sl_intra) or (sgn < 0 and liq <= sl_intra)):
         sl_eff, liq_first = liq, True
     risk_now = qty * abs(entry - sl)
-    return {
+    extra = {"sl_close": sl, "felaket_sl": sl_intra} if cs else {}
+    return {**extra, 
         "id": uuid.uuid4().hex[:10], "real": True, "v": 4, "mgr": idea["mgr"], "shadow": shadow,
         "inst": idea["inst"], "sym": idea["sym"], "setup": idea.get("setup", idea["mgr"]), "side": idea["side"],
         "kind": idea.get("kind", "trend"), "tf": idea["tf"], "score": int(round(idea.get("conviction", 0) * 100)),
@@ -796,7 +814,7 @@ def build_trade(idea: dict, entry: float, qty: float, contracts: float, lev: flo
         "trail": bool((idea.get("pp") or {}).get("trail_now")), "exit_rule": idea.get("exit"),
         "card": idea.get("card"),
         "atr": idea.get("atr") or abs(entry - sl), "hw": entry, "liq": liq, "liq_first": liq_first,
-        "sl_pct": abs(entry - sl_eff) / entry * 100, "tp_pct": abs(tp - entry) / entry * 100,
+        "sl_pct": abs(entry - sl) / entry * 100, "tp_pct": abs(tp - entry) / entry * 100,
         "max_saat": idea["max_saat"], "pp": idea.get("pp") or {},
         "contracts": contracts, "qty": qty, "qty_open": qty, "margin_usd": notional / lev, "lev": lev,
         "notional_usd": notional, "risk_usd": risk_now,

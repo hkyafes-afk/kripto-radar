@@ -77,6 +77,15 @@ Bitti. Bundan sonra kendi kendine sürekli çalışır.
 
 ---
 
+## v10: 5 yıllık laboratuvar ve politika (27 Ekim 2026)
+
+895 vadeli coinlik (borsadan silinenler dahil) 2020–2026 veri setiyle, her gün o günün en likit 100 coini üzerinde
+yöneticilerin kendi kodu test edildi (`data/LAB.md`). Canlıya alınan kurallar (`radar/policy.py`):
+günlük oynaklığı %5'i aşan coinlerde gerçek işlem yok (gölgede ölçülür), funding aşırıyken kalabalık tarafa girilmez,
+ilk stop günlük kapanışla çalışır (gün içinde 2R felaket stop'u), zararlı çıkıştan sonra aynı yöne 5 gün girilmez.
+Turbo artık bütün ekibin fikirlerini tek elde toplar. Testte ekip: eğitim +0,43R / doğrulama +0,17R, maks. düşüş %14.
+Yatırım tavsiyesi değildir.
+
 ## v8: kanıta dayalı ekip (Ekim 2026)
 
 Bütün kararlar ve araştırma kaynakları: **[PLAN.md](PLAN.md)**. 5 yıllık test raporu: **[data/BACKTEST.md](data/BACKTEST.md)**.

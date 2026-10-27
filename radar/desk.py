@@ -20,7 +20,7 @@ import uuid
 import numpy as np
 
 from . import ledger as lg
-from . import director, experts, learn, macro, quant
+from . import director, experts, learn, macro, policy, quant
 from . import team
 
 
@@ -182,6 +182,16 @@ class Desk:
                 and (wx.get("btc_bear") or wx.get("trend") == "ayi")):
             shadow = True
             gm.append("BTC kuralı (5 yıllık yarış): BTC 50 günlük ortalamanın altında → long açılmaz, gölgede izleniyor")
+        # ── v10 politika (5 yıllık laboratuvar): oynaklık, kalabalık, Kaan-yatay, yeniden giriş → gölge ──
+        #   Baş Trader ve Turbo dahil herkese uygulanır: veri bu kapıların dışında kalan işlemlerin kazanmadığını gösterdi.
+        if not shadow:
+            pr = policy.gate(idea, {"w_trend": wx.get("trend"), "funding_ann": idea.get("funding_ann")}, self.cfg)
+            if not pr:
+                pr = policy.reentry_block(self.ledger["closed"], idea, now_ms, self.cfg, idea.get("recent_closes"))
+            if pr:
+                shadow = True
+                gm.append(pr)
+        idea.pop("recent_closes", None)                  # deftere/emre taşınmasın (yalnızca bu karar için)
         if not shadow and not full and self.fc.get("carpisma_yasak", True):
             opp = director.opposite_holder(self, idea)
             if opp:
@@ -250,7 +260,10 @@ class Desk:
         stop_dist = abs(entry - (idea["sl"] + (entry - idea["entry"])))
         if stop_dist <= 0:
             return "red", None, "stop mesafesi sıfır"
-        lev, lev_why = self.choose_leverage(m, idea, stop_dist / entry, meta(idea["inst"]) if meta else None)
+        cs = policy.close_stop_levels(entry, entry - (1 if side == "long" else -1) * stop_dist, side, self.cfg) \
+            if idea.get("tf") == "1D" and idea.get("kind") not in ("carry", "consensus") else None
+        lev_dist = abs(entry - cs[0]) if cs else stop_dist          # kapanış stop'unda likidasyon felaket stop'unun ötesinde olmalı
+        lev, lev_why = self.choose_leverage(m, idea, lev_dist / entry, meta(idea["inst"]) if meta else None)
         notional_t = risk_usd / stop_dist * entry
         if self.fc.get("sinirlar_aktif", True) and not full:
             notional_t = min(notional_t, eq_m * self.fc["max_nominal_kat"])

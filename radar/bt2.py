@@ -23,7 +23,7 @@ import numpy as np
 import pandas as pd
 
 from . import ledger as lg
-from . import quant, store, team
+from . import policy, quant, store, team
 from .config import ROOT, load_config
 
 COST = {"taker": 0.10, "maker": 0.04, "slip_entry_bp": 2.0, "slip_stop_bp": 5.0, "funding_long_day_pct": 0.03}
@@ -122,6 +122,15 @@ def simulate_trade(idea, F, i, bar_h, ctx_fn):
                                  "coin_class": idea.get("coin_class")}, {"stop_kayma_bp": COST["slip_stop_bp"]})
     fee_in = entry * (COST["maker"] if maker_in else COST["taker"]) / 100
     qty_open, pnl, tp1_done = 1.0, -fee_in, tp1 is None
+    # v10 kapanış stop'u (canlıyla aynı): ilk stop günlük kapanışla; gün içinde yalnızca felaket stop'u
+    sl_close = None
+    dz = idea.get("felaket_r")
+    if dz and bar_h >= 24:
+        sl_close = sl
+        sl = sl_init - sgn * (float(dz) - 1.0) * risk
+
+    def eff():
+        return sl_close if sl_close is not None else sl
     hw = entry
     max_bars = int(idea["max_saat"] / bar_h)
     path = []
@@ -143,7 +152,12 @@ def simulate_trade(idea, F, i, bar_h, ctx_fn):
         if stop_hit and not (k == j0 and maker_in and False):
             px = (min(o[k], sl) if sgn > 0 else max(o[k], sl)) if k > j0 else sl
             px *= (1 - sgn * slip_stop / 1e4)
-            exit_px, exit_k, why = close_all(px, k, "stop" if not tp1_done and not trail_on else "iz/başabaş stop")
+            exit_px, exit_k, why = close_all(px, k, "felaket stop" if sl_close is not None else
+                                             ("stop" if not tp1_done and not trail_on else "iz/başabaş stop"))
+            break
+        if sl_close is not None and ((c[k] <= sl_close) if sgn > 0 else (c[k] >= sl_close)) and k + 1 < len(o):
+            px = o[k + 1] * (1 - sgn * slip_stop / 1e4)
+            exit_px, exit_k, why = close_all(px, k + 1, "kapanış stop")
             break
         if k > j0 or not maker_in:
             if not tp1_done and ((h[k] > tp1) if sgn > 0 else (l[k] < tp1)):
@@ -156,8 +170,8 @@ def simulate_trade(idea, F, i, bar_h, ctx_fn):
                 if be:
                     fee_rt = (COST["taker"] + COST["taker"]) / 100
                     be_px = entry * (1 + sgn * fee_rt)
-                    if sgn * (be_px - sl) > 0:
-                        sl = be_px
+                    if sgn * (be_px - eff()) > 0:
+                        sl, sl_close = be_px, None
             if (h[k] > tp) if sgn > 0 else (l[k] < tp):
                 exit_px, exit_k, why = close_all(tp, k, "hedef", maker=True)
                 break
@@ -165,8 +179,8 @@ def simulate_trade(idea, F, i, bar_h, ctx_fn):
         if trail_on and trail_k > 0:
             hw = max(hw, h[k]) if sgn > 0 else min(hw, l[k])
             new_sl = hw - sgn * trail_k * atr
-            if sgn * (new_sl - sl) > 0:
-                sl = new_sl
+            if sgn * (new_sl - eff()) > 0:
+                sl, sl_close = new_sl, None
         path.append((ts[k], (pnl + sgn * qty_open * (c[k] - entry)) / risk))
         rule = idea.get("exit")
         if rule and k + 1 < len(o):
@@ -230,6 +244,7 @@ def run_manager(mgr, F, sym, inst, bar_h, warm, ctx_extra_fn, cfg, cooldown_bars
         idea = team.apply_learned(team.apply_variant(mgr.analyze(ctx, mgr, cfg), ctx, cfg), cfg)
         if idea:
             idea["coin_class"] = cls
+            idea = apply_policy(idea, ctx, cfg, trades, F, i)
         if not idea:
             i += 1
             continue
@@ -243,8 +258,28 @@ def run_manager(mgr, F, sym, inst, bar_h, warm, ctx_extra_fn, cfg, cooldown_bars
         t["coin_class"] = cls
         t["feat"] = dict(idea.get("feat") or {}, age_cls={"A": 0.0, "B": 1.0, "C": 2.0}[cls])
         trades.append(t)
-        i = t["exit_i"] + cooldown_bars
+        i = t["exit_i"] + (1 if policy.cfg_of(cfg)["aktif"] and bar_h >= 24 else cooldown_bars)
     return trades
+
+
+def apply_policy(idea, ctx, cfg, trades, F, i):
+    """v10: canlı masanın politikası (radar/policy.py). Gölgeye düşecek fikir testte gerçek sayılmaz (None)."""
+    P = policy.cfg_of(cfg)
+    if not P["aktif"] or idea.get("tf") != "1D":
+        return idea
+    if policy.gate(idea, ctx, cfg):
+        return None
+    if trades:
+        last = trades[-1]
+        closed = [{"mgr": idea["mgr"], "inst": idea["inst"], "side": last["side"], "r": last["r"],
+                   "exit_ts": int(last["exit_ts"].value // 1_000_000)}]
+        k0 = max(0, i - 45)
+        rc = [(int(F.index[k].value // 1_000_000), float(F["close"].iloc[k])) for k in range(k0, i)]
+        if policy.reentry_block(closed, idea, int(F.index[i].value // 1_000_000), cfg, rc):
+            return None
+    if P.get("kapanis_stop") and idea.get("kind") not in ("carry", "consensus"):
+        idea["felaket_r"] = float(P.get("felaket_r") or 2.0)
+    return idea
 
 
 # ── ölçüm ─────────────────────────────────────────────────────────────

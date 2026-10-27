@@ -26,6 +26,7 @@ Yardımcı roller (her yöneticide):
 """
 from __future__ import annotations
 
+import copy
 from dataclasses import dataclass, field
 from typing import Callable
 
@@ -373,20 +374,59 @@ def a_murat(ctx, mgr, cfg):
     return None
 
 
-def a_ayse(ctx, mgr, cfg):
-    """Sadece gerçek aşırılık: uzun vadeli yükseliş trendinde kapitülasyon mumu (RSI2 < 5, alt bant dışı, 2x hacim,
-    büyük mum). Araştırma 'dipte al' kuralının 2022–24'te çöktüğünü gösterdi; bu yüzden filtre çok sıkı, boyut küçük.
-    Canlıda funding/OI/likidasyon teyidi güveni artırır."""
-    c, atr, px = ctx["close"], ctx["atr"], ctx["price"]
+def ayse_core(ctx) -> str | None:
+    """Ayşe'nin çekirdek koşulu (ucuz ön kontrol): motor bu coinler için likidasyon/long-short verisini taze çeker."""
+    c, atr = ctx.get("close"), ctx.get("atr")
     vr = ctx.get("vol_ratio") or 0
-    if not (_ok(ctx["sma200"]) and _ok(atr) and atr > 0):
+    if not (_ok(ctx.get("sma200")) and _ok(atr) and atr and atr > 0 and _ok(c)):
         return None
     big = (ctx.get("range_atr") or 0) >= 1.5 and vr >= 2.0
-    long_core = big and c > ctx["sma200"] and ctx["rsi2"] < 5 and c < ctx["bb_lo"]
-    short_core = big and c < ctx["sma200"] and ctx["rsi2"] > 95 and c > ctx["bb_up"] and _shorts_allowed(ctx)
-    if not (long_core or short_core):
+    if big and c > ctx["sma200"] and ctx["rsi2"] < 5 and c < ctx["bb_lo"]:
+        return "long"
+    if big and c < ctx["sma200"] and ctx["rsi2"] > 95 and c > ctx["bb_up"] and _shorts_allowed(ctx):
+        return "short"
+    return None
+
+
+def _liq_flush(ctx, side) -> bool:
+    """Son 1 saatte sıkışan taraf: long kapitülasyonunda long likidasyonları short'un en az 2 katı (ve tersi)."""
+    lq = ((ctx.get("crowd") or {}).get("liq_1h")) or {}
+    a, b = float(lq.get("long_usd") or 0.0), float(lq.get("short_usd") or 0.0)
+    if a + b < 50_000:                       # anlamlı likidasyon yoksa teyit sayılmaz
+        return False
+    if side == "long":
+        return a > 0 and a >= 2 * b
+    return b > 0 and b >= 2 * a
+
+
+def _crowd_wrong_side(ctx, side) -> bool:
+    """Hesapların çoğu (long/short oranı) yanlış tarafta: long fırsatında kalabalık short'a dönmüş (oran < 1), tersi."""
+    la = (ctx.get("crowd") or {}).get("ls_acct")
+    if not isinstance(la, (int, float)) or la != la:
+        return False
+    return la < 1.0 if side == "long" else la > 2.5
+
+
+def _smart_money(ctx, side) -> bool:
+    """Hyperliquid'de kârlı büyük cüzdanların net yönü aynı tarafta."""
+    hl = (ctx.get("crowd") or {}).get("hl") or {}
+    net = hl.get("net") if isinstance(hl, dict) else None
+    if not isinstance(net, (int, float)) or net != net or (hl.get("n_long") or 0) + (hl.get("n_short") or 0) < 3:
+        return False
+    return net > 0 if side == "long" else net < 0
+
+
+def a_ayse(ctx, mgr, cfg):
+    """Sadece gerçek aşırılık: uzun vadeli trend içinde kapitülasyon mumu (RSI2 < 5, alt bant dışı, 2x hacim,
+    büyük mum). v10: 5 yıllık testte kapanış stop'u + kalabalık kapısıyla eğitim +0,24R, doğrulama +0,30R, kazanma
+    %66–72 (ekibin en yüksek isabeti). Aşırılık günleri tanım gereği oynak olduğu için oynaklık kapısından muaf.
+    Bütün canlı veriyi kullanır: funding, OI, alıcı/satıcı baskısı, son 1 saatin likidasyonları, hesapların
+    long/short oranı ve Hyperliquid akıllı parası (güven = boyut)."""
+    c, atr, px = ctx["close"], ctx["atr"], ctx["price"]
+    vr = ctx.get("vol_ratio") or 0
+    side = ayse_core(ctx)
+    if not side:
         return None
-    side = "long" if long_core else "short"
     sgn = 1 if side == "long" else -1
     raw = ctx["low"] - 0.5 * atr if side == "long" else ctx["high"] + 0.5 * atr
     sl = _clamp_stop(px, raw, atr, side, 1.5, 2.5)
@@ -397,7 +437,10 @@ def a_ayse(ctx, mgr, cfg):
               ("hacim 3 katın üstünde (zincirleme likidasyon izi)", vr >= 3.0),
               ("kalabalık ters tarafta (funding)", _live(ctx, "funding_ann", lambda x: x < -10 if side == "long" else x > 40)),
               ("açık pozisyon eridi (likidasyon)", _live(ctx, "oi_chg24", lambda x: x < -5)),
-              ("satış/alış baskısı tükeniyor", _live(ctx, "taker_imb", lambda x: sgn * x > 0))]
+              ("satış/alış baskısı tükeniyor", _live(ctx, "taker_imb", lambda x: sgn * x > 0)),
+              ("son 1 saatte sıkışan taraf temizlendi (likidasyon)", _liq_flush(ctx, side)),
+              ("hesapların çoğu yanlış tarafta (long/short oranı)", _crowd_wrong_side(ctx, side)),
+              ("akıllı para (Hyperliquid) aynı yönde", _smart_money(ctx, side))]
     plan = (f"Uzun vadeli trend {'yukarı' if sgn > 0 else 'aşağı'} ama bugün {vr:.1f}x hacimle aşırı bir "
             f"{'çöküş' if sgn > 0 else 'şişme'} mumu oldu (RSI2 {ctx['rsi2']:.0f}). Kısa vadeli ortalamaya dönüş bekliyorum; "
             "1R'de yarısını alırım, 20 günlük ortalamaya varınca çıkarım. Stop mumun ötesinde. En fazla 7 gün.")
@@ -452,6 +495,49 @@ def a_bas(ctx, mgr, cfg):
         idea["conviction"] = round(conv, 3)
         idea["bas_score"] = round(s, 3)
         idea["bas_parts"] = {k: round(v, 2) for k, v in p.items()}
+    return idea
+
+
+TURBO_SOURCES = ("bas", "kemal", "kaan", "selin", "murat", "ayse")
+
+
+def a_turbo(ctx, mgr, cfg):
+    """🔥 Turbo = bütün ekip tek elde. Diğer yöneticilerin her birinin bu coin için ürettiği fikri toplar (onların kendi
+    işlemlerine dokunmaz). Aynı yönde birden çok fikir varsa en güçlüsünü seçer, diğerlerini teyit sayar; iki yön
+    çatışırsa çoğunluk kazanır, eşitlikte girmez. Seçilen fikrin kendi stop/çıkış planı aynen kullanılır."""
+    if ctx.get("tf") != "1D":
+        return None
+    got = []
+    for mid in TURBO_SOURCES:
+        m = BY_ID.get(mid)
+        if not m or not m.analyze:
+            continue
+        try:
+            i = apply_learned(apply_variant(m.analyze(dict(ctx), m, cfg), ctx, cfg), cfg)
+        except Exception:  # noqa: BLE001 — bir kaynağın hatası Turbo'yu durdurmasın
+            i = None
+        if i and not i.get("shadow_only"):
+            got.append(i)
+    if not got:
+        return None
+    longs = [i for i in got if i["side"] == "long"]
+    shorts = [i for i in got if i["side"] == "short"]
+    if len(longs) == len(shorts):
+        return None
+    pick = longs if len(longs) > len(shorts) else shorts
+    best = max(pick, key=lambda i: (i.get("conviction") or 0, i.get("rr") or 0))
+    idea = copy.deepcopy(best)
+    src = best["mgr"]
+    others = [i["mgr"] for i in pick if i is not best]
+    names = {k: BY_ID[k].name for k in TURBO_SOURCES if k in BY_ID}
+    idea["mgr"] = "turbo"
+    idea["setup"] = f"turbo:{src}"
+    idea["sources"] = [src] + others
+    idea["conviction"] = round(min(1.0, (best.get("conviction") or 0) + 0.1 * len(others)), 3)
+    idea["plan"] = (f"Turbo (bütün ekip tek elde): fikir {names.get(src, src)}'dan"
+                    + (f"; {', '.join(names.get(o, o) for o in others)} aynı yönde teyit ediyor" if others else "")
+                    + ". " + best.get("plan", ""))
+    idea["reasons"] = [f"kaynak: {names.get(src, src)}"] + [f"✓ teyit: {names.get(o, o)}" for o in others] + list(best.get("reasons") or [])
     return idea
 
 
@@ -536,11 +622,12 @@ ROSTER = [
             "pozisyonları) tek puanda birleştirir; her an long/short karar verir, boyutu ve kaldıracı güvene ve "
             "oynaklığa göre ayarlar, kârı iz süren stopla korur. Genel Müdür kısıtlarına tabi değildir.",
             ["1D"], 0.5, 2.5, 30, aggressive=True, analyze=a_bas, extra={"lev_cap": 20, "tam_yetki": True}),
-    Manager("turbo", "Turbo", "Agresif Baş Trader (risk deneyi)", "🔥",
-            "Baş Trader'la aynı beyin, aynı veri, aynı giriş/çıkış; tek fark para kazanma iştahı: işlem başına çok daha "
-            "yüksek risk, kazanana tam boyutla ekleme, 50x'e kadar kaldıraç. 'Daha çok risk daha çok para mı?' deneyi.",
-            ["1D"], 5.0, 10.0, 60, aggressive=True, analyze=a_bas,
-            extra={"lev_cap": 50, "tam_yetki": True, "piramit_tam": True}),
+    Manager("turbo", "Turbo", "Bütün ekip tek elde", "🔥",
+            "Diğer yöneticilerin (Baş Trader, Kemal, Kaan, Selin, Murat, Ayşe) her fikrini toplar, kendi defterinde açar; "
+            "onların işlemlerine dokunmaz. Aynı yönde birden çok fikir varsa en güçlüsünü alır, gerisi teyit; yönler "
+            "çatışırsa çoğunluk, eşitlikte girmez. 'Bütün ekip tek kişi olsa ne kazanırdı?' deneyi.",
+            ["1D"], 5.0, 10.0, 60, aggressive=True, analyze=a_turbo,
+            extra={"lev_cap": 20, "tam_yetki": True}),
     Manager("kemal", "Kemal", "Trend Yöneticisi (çekirdek)", "🧭",
             "Günlük trend takibi: 50 günlük ortalama + 20/100 trend filtresi. Trend bitene kadar tutar, stop 3 ATR geriden izler.",
             ["1D"], 1.5, 2.5, 20, analyze=a_kemal, extra={"lev_cap": 10}),
