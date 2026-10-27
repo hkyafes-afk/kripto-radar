@@ -455,6 +455,55 @@ def a_bas(ctx, mgr, cfg):
     return idea
 
 
+TOPLA_COINS = ("BTC", "ETH")     # en likit iki coin: en dar spread, en düşük kayma (küçük kârda masraf her şeydir)
+TOPLA_MIN_HEDEF = 0.004          # hedef en az %0,4 uzakta olmalı: maker gidiş-dönüş masrafının (sert model %0,08) 5 katı
+
+
+def a_topla(ctx, mgr, cfg):
+    """💰 Toplayıcı (deney, 27.10): kısa kısa kâr toplar. 15 dakikalıkta yatay piyasada fiyat Bollinger bandının dışına
+    taşıp aşırı gerildiğinde (RSI2 uçta) ortalamaya dönüşü oynar. Girişi de hedefi de limit emirle (maker, en düşük
+    masraf); yolun yarısında kârın yarısını kasaya koyar ve stop'u başabaşa çeker (masraf çıktıktan sonra kâr kilitli);
+    kalanı orta banda gider. Trend güçlüyse (ADX ≥ 22) ya da hedef masrafa göre çok yakınsa işlem yok.
+    Deniz'den farkı: trendle değil yatayla çalışır, hedef masrafın en az 5 katı, kârın yarısı erken toplanır."""
+    if ctx.get("sym") not in TOPLA_COINS:
+        return None
+    c, atr = ctx.get("close"), ctx.get("atr")
+    lo, up, mid, r2, adx = ctx.get("bb_lo"), ctx.get("bb_up"), ctx.get("bb_mid"), ctx.get("rsi2"), ctx.get("adx")
+    if not all(_ok(x) for x in (c, atr, lo, up, mid, r2, adx)) or atr <= 0:
+        return None
+    if adx >= 22:                                         # trend var: ortalamaya dönüş değil, trend günü
+        return None
+    if c < lo and r2 < 10:
+        side = "long"
+    elif c > up and r2 > 90:
+        side = "short"
+    else:
+        return None
+    sgn = 1 if side == "long" else -1
+    lim = c
+    tp = mid
+    tp_dist = sgn * (tp - lim)
+    if tp_dist <= 0 or tp_dist / lim < TOPLA_MIN_HEDEF:
+        return None
+    sl_dist = max(1.25 * atr, 0.8 * tp_dist)
+    sl = lim - sgn * sl_dist
+    tp1_r = 0.5 * tp_dist / sl_dist
+    conv = min(1.0, max(0.0, (10 - r2) / 10 if side == "long" else (r2 - 90) / 10))
+    checks = [("günlük trend aynı yönde", bool(ctx.get("d_up")) if side == "long" else bool(ctx.get("d_dn"))),
+              ("trend zayıf (ADX < 18)", adx < 18),
+              ("aşırı gerilme (RSI2 uçta)", r2 < 5 if side == "long" else r2 > 95)]
+    plan = (f"Yatay piyasa (ADX {adx:.0f}), fiyat Bollinger {'alt' if sgn > 0 else 'üst'} bandının dışına taştı, RSI2 "
+            f"{r2:.0f}. {lim:.6g} seviyesine limit (maker) koydum; hedef orta bant {tp:.6g} (+%{tp_dist / lim * 100:.2f}). "
+            f"Yolun yarısında kârın yarısını kasaya koyup stop'u başabaşa çekerim (masraf karşılandı, kalan kâr kilitli). "
+            f"Stop {sl:.6g}. Ortalamaya 6 saatte dönmezse fikir geçersiz, çıkarım.")
+    idea = _idea(ctx, mgr, side, sl, tp, checks, "yatayda aşırı gerilme → ortalamaya dönüş", plan, tp1_r=tp1_r,
+                 pp={"partial_frac": 0.5, "trail_atr": 0.0, "basabas": True}, max_saat=6, min_checks=0,
+                 entry_type="limit", limit_px=lim, limit_bars=2, setup="topla", kind="scalp", min_rr=0.5)
+    if idea:
+        idea["conviction"] = round(conv, 3)
+    return idea
+
+
 DENIZ_COINS = ("BTC", "ETH")
 
 
@@ -541,6 +590,10 @@ ROSTER = [
             "yüksek risk, kazanana tam boyutla ekleme, 50x'e kadar kaldıraç. 'Daha çok risk daha çok para mı?' deneyi.",
             ["1D"], 5.0, 10.0, 60, aggressive=True, analyze=a_bas,
             extra={"lev_cap": 50, "tam_yetki": True, "piramit_tam": True}),
+    Manager("topla", "Toplayıcı", "Kısa kâr toplayıcı (1.000$ deney)", "💰",
+            "BTC/ETH 15 dakikalıkta yatay piyasada aşırı gerilmeden ortalamaya dönüşü oynar; giriş ve hedef limit emir "
+            "(en düşük masraf), yolun yarısında kârın yarısını kasaya koyar ve stop'u başabaşa çeker.",
+            ["15m"], 1.0, 1.5, 25, analyze=a_topla, kind="directional", extra={"lev_cap": 10, "butce_usd": 1000}),
     Manager("kemal", "Kemal", "Trend Yöneticisi (çekirdek)", "🧭",
             "Günlük trend takibi: 50 günlük ortalama + 20/100 trend filtresi. Trend bitene kadar tutar, stop 3 ATR geriden izler.",
             ["1D"], 1.5, 2.5, 20, analyze=a_kemal, extra={"lev_cap": 10}),
@@ -584,6 +637,8 @@ def roster(cfg: dict) -> list[Manager]:
                 setattr(mm, k_dst, float(o[k_src]))
         if o.get("periyotlar"):
             mm.tfs = list(o["periyotlar"])
+        if o.get("butce_usd") is not None:
+            mm.extra = {**(mm.extra or {}), "butce_usd": float(o["butce_usd"])}
         out.append(mm)
     return out
 

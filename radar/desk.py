@@ -57,7 +57,7 @@ class Desk:
         alloc = st.setdefault("alloc", {})
         self.budget = float(((cfg.get("ekip") or {}).get("butce") or {}).get("yonetici_usd") or start / len(team.ROSTER))
         for m in self.mgrs:
-            alloc.setdefault(m.id, self.budget)
+            alloc.setdefault(m.id, float((m.extra or {}).get("butce_usd") or self.budget))   # ajan bazlı bütçe (Toplayıcı 1.000$)
         st.setdefault("adj", {})
         st.setdefault("peak", {})
         st.setdefault("bench", {})

@@ -422,8 +422,9 @@ def run(client=None, cfg_path=None, n_coins=30, years=5.0, deniz_days=365, out_d
             trades[m.id] += run_manager(m, F, sym, inst, 24.0, warm, extra, cfg)
         print(f"  {sym}: " + ", ".join(f"{m.id} {sum(1 for t in trades[m.id] if t['sym'] == sym)}" for m in daily_mgrs))
 
-    # Deniz: 15dk, BTC/ETH, son 1 yıl
-    if "deniz" in mgrs:
+    # 15dk yöneticileri (Deniz, Toplayıcı): BTC/ETH, son 1 yıl
+    intra_mgrs = [m for m in mgrs.values() if "15m" in m.tfs]
+    if intra_mgrs:
         for sym, df in intraday.items():
             F = quant.features(df)
             D = feats.get(sym)
@@ -443,9 +444,9 @@ def run(client=None, cfg_path=None, n_coins=30, years=5.0, deniz_days=365, out_d
                         "hour": close_ts.hour, "dow": close_ts.dayofweek, "w_trend": w.get("trend"),
                         "high_vol": w.get("high_vol")}
 
-            trades["deniz"] += run_manager(mgrs["deniz"], F, sym, f"{sym}-USDT-SWAP", 0.25, 210, extra15, cfg,
-                                           cooldown_bars=4)
-            print(f"  {sym} 15dk: deniz {sum(1 for t in trades['deniz'] if t['sym'] == sym)}")
+            for im in intra_mgrs:
+                trades[im.id] += run_manager(im, F, sym, f"{sym}-USDT-SWAP", 0.25, 210, extra15, cfg, cooldown_bars=4)
+                print(f"  {sym} 15dk: {im.id} {sum(1 for t in trades[im.id] if t['sym'] == sym)}")
 
     # ── ölçümler ──
     split = test_start + (pd.Timestamp(now_ms, unit="ms", tz="UTC") - test_start) * 0.6
@@ -459,7 +460,7 @@ def run(client=None, cfg_path=None, n_coins=30, years=5.0, deniz_days=365, out_d
     trial_srs = []
     for mid, trs in trades.items():
         m = mgrs[mid]
-        d_days = None if mid == "deniz" else days
+        d_days = None if "15m" in mgrs[mid].tfs else days
         ec = equity_curve(trs, risk[mid], days=d_days)
         ec_w = equity_curve(trs, risk[mid], days=d_days, mult_fn=wmult)
         p, pw = perf(ec["curve"]) if ec else {}, perf(ec_w["curve"]) if ec_w else {}
@@ -473,7 +474,7 @@ def run(client=None, cfg_path=None, n_coins=30, years=5.0, deniz_days=365, out_d
             "long": r_stats([t for t in trs if t["side"] == "long"]), "short": r_stats([t for t in trs if t["side"] == "short"]),
             "by_year": by_year(trs), "equity": p, "equity_weather": pw,
             "exits": {k: int(v) for k, v in pd.Series([t["why"].split(":")[0] for t in trs]).value_counts().items()} if trs else {},
-            "period_days": 365 if mid == "deniz" else int(years * 365),
+            "period_days": 365 if "15m" in mgrs[mid].tfs else int(years * 365),
         }
     # firma birleşik: her yöneticinin riski KENDİ sermaye payına göre (canlıdaki gibi): risk = pay × yönetici riski.
     # Politika (PLAN.md, önceden kararlaştırıldı): örneklem içi ve dışı ortalaması pozitif olan yöneticiler sermaye alır,
