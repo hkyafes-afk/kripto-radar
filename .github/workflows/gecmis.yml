@@ -7,7 +7,7 @@ on:
     inputs:
       h1:
         description: "1 saatlik veri için en likit kaç sembol"
-        default: "80"
+        default: "40"
       metrics:
         description: "OI/long-short metrikleri için en likit kaç sembol (0 = yok)"
         default: "0"

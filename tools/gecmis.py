@@ -151,7 +151,8 @@ def metrics(sym: str, days: list[str]) -> list[list]:
                     ts = int(datetime.strptime(r[0], "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc).timestamp() * 1000)
                 except ValueError:
                     continue
-                out.append([ts] + r[2:8])
+                if (ts // 60000) % 60 == 0:            # saatlik örnek: 5 dk'lık veri 12 kat büyük, araştırma için saatlik yeter
+                    out.append([ts] + r[2:8])
     return out
 
 
@@ -177,7 +178,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="gecmis")
     ap.add_argument("--start", default="2020-01")
-    ap.add_argument("--h1", type=int, default=80, help="1 saatlik veri için en likit kaç sembol")
+    ap.add_argument("--h1", type=int, default=40, help="1 saatlik veri için en likit kaç sembol")
     ap.add_argument("--metrics", type=int, default=0, help="OI/long-short metrikleri için en likit kaç sembol")
     ap.add_argument("--metrics_days", type=int, default=1500)
     ap.add_argument("--workers", type=int, default=8)
