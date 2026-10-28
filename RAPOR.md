@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.476R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.469R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 237 | %43.9 | -0.476 | -112.8 |
+| polat_tum_sinyaller | 238 | %44.1 | -0.469 | -111.66 |
 | polat_girilen | 0 | %- | - | - |
-| polat_girilmeyen | 237 | %43.9 | -0.476 | -112.8 |
+| polat_girilmeyen | 238 | %44.1 | -0.469 | -111.66 |
 | rastgele | 248 | %41.1 | -0.527 | -130.7 |
-| trend_naif | 247 | %36.0 | -0.571 | -141.14 |
+| trend_naif | 248 | %36.3 | -0.564 | -139.99 |
 
-Polat özsermaye: %-0.07 · BTC al-tut: %0.75
+Polat özsermaye: %-0.08 · BTC al-tut: %0.76
 
 ## Öğrenme (walk-forward)
 
@@ -25,51 +25,51 @@ En az işe yarayan okumalar: stoch_5m ×0.746, adx_di_1D ×0.862, supertrend_1D 
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 4912, girilen: 1.
+Kapanmış işlem yok. Görülen kurulum: 4937, girilen: 1.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
+- gösterge aileleri aynı yönde değil: 247
 - ders: 246
-- gösterge aileleri aynı yönde değil: 244
-- büyük zaman dilimi trendi ters: 115
+- büyük zaman dilimi trendi ters: 116
 - puan +0.149 eşiğin (0.25) altında: 36
 - puan +0.146 eşiğin (0.25) altında: 33
-- puan +0.167 eşiğin (0.25) altında: 32
-- puan +0.194 eşiğin (0.25) altında: 28
+- puan +0.167 eşiğin (0.25) altında: 33
+- puan +0.194 eşiğin (0.25) altında: 29
+- puan +0.123 eşiğin (0.25) altında: 28
 - puan +0.161 eşiğin (0.25) altında: 27
-- puan +0.123 eşiğin (0.25) altında: 27
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 4912, girilen: 1.
+Kapanmış işlem yok. Görülen kurulum: 4937, girilen: 1.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
+- gösterge aileleri aynı yönde değil: 247
 - ders: 246
-- gösterge aileleri aynı yönde değil: 244
-- büyük zaman dilimi trendi ters: 115
+- büyük zaman dilimi trendi ters: 116
 - puan +0.149 eşiğin (0.25) altında: 36
 - puan +0.146 eşiğin (0.25) altında: 33
-- puan +0.167 eşiğin (0.25) altında: 32
-- puan +0.194 eşiğin (0.25) altında: 28
+- puan +0.167 eşiğin (0.25) altında: 33
+- puan +0.194 eşiğin (0.25) altında: 29
+- puan +0.123 eşiğin (0.25) altında: 28
 - puan +0.161 eşiğin (0.25) altında: 27
-- puan +0.123 eşiğin (0.25) altında: 27
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 4912, girilen: 1.
+Kapanmış işlem yok. Görülen kurulum: 4937, girilen: 1.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
+- gösterge aileleri aynı yönde değil: 247
 - ders: 246
-- gösterge aileleri aynı yönde değil: 244
-- büyük zaman dilimi trendi ters: 115
+- büyük zaman dilimi trendi ters: 116
 - puan +0.149 eşiğin (0.25) altında: 36
 - puan +0.146 eşiğin (0.25) altında: 33
-- puan +0.167 eşiğin (0.25) altında: 32
-- puan +0.194 eşiğin (0.25) altında: 28
+- puan +0.167 eşiğin (0.25) altında: 33
+- puan +0.194 eşiğin (0.25) altında: 29
+- puan +0.123 eşiğin (0.25) altında: 28
 - puan +0.161 eşiğin (0.25) altında: 27
-- puan +0.123 eşiğin (0.25) altında: 27
