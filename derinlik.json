@@ -1,20 +1,24 @@
 {
   "candles_BTC-USDT-SWAP_1H": {
+    "son_yanit": "<HTTPError 403: 'Forbidden'>",
     "sayfa": 0,
     "kayit": 0,
     "en_eski": null
   },
   "candles_BTC-USDT-SWAP_4H": {
+    "son_yanit": "<HTTPError 403: 'Forbidden'>",
     "sayfa": 0,
     "kayit": 0,
     "en_eski": null
   },
   "candles_BTC-USDT-SWAP_1Dutc": {
+    "son_yanit": "<HTTPError 403: 'Forbidden'>",
     "sayfa": 0,
     "kayit": 0,
     "en_eski": null
   },
   "funding_BTC-USDT-SWAP": {
+    "son_yanit": "<HTTPError 403: 'Forbidden'>",
     "sayfa": 0,
     "kayit": 0,
     "en_eski": null
