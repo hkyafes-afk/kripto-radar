@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.388R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.384R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 441 | %45.6 | -0.388 | -171.08 |
+| polat_tum_sinyaller | 442 | %45.7 | -0.384 | -169.61 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
-| polat_girilmeyen | 439 | %45.6 | -0.387 | -169.88 |
+| polat_girilmeyen | 440 | %45.7 | -0.383 | -168.41 |
 | rastgele | 448 | %43.3 | -0.435 | -194.89 |
-| trend_naif | 450 | %38.2 | -0.505 | -227.44 |
+| trend_naif | 451 | %38.4 | -0.501 | -225.97 |
 
-Polat özsermaye: %-1.99 · BTC al-tut: %-0.33
+Polat özsermaye: %-1.86 · BTC al-tut: %-0.39
 
 ## Öğrenme (walk-forward)
 
@@ -61,7 +61,7 @@ En az işe yarayan okumalar: stoch_5m ×0.798, ema_1D ×0.873, yapi_1D ×0.874, 
 - büyük zaman dilimi trendi ters: 195
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 49
-- yüksek etkili ABD verisi yakın (takvim sessizliği): 48
+- yüksek etkili ABD verisi yakın (takvim sessizliği): 49
 - puan -0.126 eşiğin (0.25) altında: 45
 - puan -0.129 eşiğin (0.25) altında: 44
 
@@ -107,7 +107,7 @@ En az işe yarayan okumalar: stoch_5m ×0.798, ema_1D ×0.873, yapi_1D ×0.874, 
 - büyük zaman dilimi trendi ters: 195
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 49
-- yüksek etkili ABD verisi yakın (takvim sessizliği): 48
+- yüksek etkili ABD verisi yakın (takvim sessizliği): 49
 - puan -0.126 eşiğin (0.25) altında: 45
 - puan -0.129 eşiğin (0.25) altında: 44
 
@@ -153,7 +153,7 @@ En az işe yarayan okumalar: stoch_5m ×0.798, ema_1D ×0.873, yapi_1D ×0.874, 
 - büyük zaman dilimi trendi ters: 195
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 49
-- yüksek etkili ABD verisi yakın (takvim sessizliği): 48
+- yüksek etkili ABD verisi yakın (takvim sessizliği): 49
 - puan -0.126 eşiğin (0.25) altında: 45
 - puan -0.129 eşiğin (0.25) altında: 44
 
