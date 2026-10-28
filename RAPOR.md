@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.424R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.422R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 470 | %43.6 | -0.424 | -199.3 |
+| polat_tum_sinyaller | 472 | %43.6 | -0.422 | -199.04 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
-| polat_girilmeyen | 468 | %43.6 | -0.423 | -198.1 |
+| polat_girilmeyen | 470 | %43.6 | -0.421 | -197.84 |
 | rastgele | 475 | %42.7 | -0.445 | -211.32 |
 | trend_naif | 480 | %36.7 | -0.535 | -256.68 |
 
-Polat özsermaye: %-2.57 · BTC al-tut: %0.08
+Polat özsermaye: %-2.57 · BTC al-tut: %-0.05
 
 ## Öğrenme (walk-forward)
 
@@ -59,13 +59,13 @@ En az işe yarayan okumalar: stoch_5m ×0.798, ema_1D ×0.873, yapi_1D ×0.874, 
 
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- ders: 543
+- ders: 546
 - gösterge aileleri aynı yönde değil: 430
 - büyük zaman dilimi trendi ters: 195
 - bu coinde zaten pozisyon var: 135
-- yüksek etkili ABD verisi yakın (takvim sessizliği): 66
+- yüksek etkili ABD verisi yakın (takvim sessizliği): 67
 - puan +0.149 eşiğin (0.25) altında: 49
-- puan -0.128 eşiğin (0.25) altında: 45
+- puan -0.128 eşiğin (0.25) altında: 46
 - puan -0.126 eşiğin (0.25) altında: 45
 
 **Hata sınıfları**
@@ -109,13 +109,13 @@ En az işe yarayan okumalar: stoch_5m ×0.798, ema_1D ×0.873, yapi_1D ×0.874, 
 
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- ders: 543
+- ders: 546
 - gösterge aileleri aynı yönde değil: 430
 - büyük zaman dilimi trendi ters: 195
 - bu coinde zaten pozisyon var: 135
-- yüksek etkili ABD verisi yakın (takvim sessizliği): 66
+- yüksek etkili ABD verisi yakın (takvim sessizliği): 67
 - puan +0.149 eşiğin (0.25) altında: 49
-- puan -0.128 eşiğin (0.25) altında: 45
+- puan -0.128 eşiğin (0.25) altında: 46
 - puan -0.126 eşiğin (0.25) altında: 45
 
 **Hata sınıfları**
@@ -159,13 +159,13 @@ En az işe yarayan okumalar: stoch_5m ×0.798, ema_1D ×0.873, yapi_1D ×0.874, 
 
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- ders: 543
+- ders: 546
 - gösterge aileleri aynı yönde değil: 430
 - büyük zaman dilimi trendi ters: 195
 - bu coinde zaten pozisyon var: 135
-- yüksek etkili ABD verisi yakın (takvim sessizliği): 66
+- yüksek etkili ABD verisi yakın (takvim sessizliği): 67
 - puan +0.149 eşiğin (0.25) altında: 49
-- puan -0.128 eşiğin (0.25) altında: 45
+- puan -0.128 eşiğin (0.25) altında: 46
 - puan -0.126 eşiğin (0.25) altında: 45
 
 **Hata sınıfları**
