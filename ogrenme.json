@@ -1,29 +1,32 @@
 {
  "carpan": {
-  "yapi_1D": 0.927,
-  "stoch_5m": 0.793,
-  "supertrend_4H": 1.021,
-  "mfi_1H": 1.073,
-  "ema_1D": 0.948,
-  "ema_4H": 1.018,
-  "ustunde_poc": 1.063,
-  "supertrend_1H": 1.094,
-  "ema200_1D": 0.941,
-  "long_short": 1.017,
-  "stoch_15m": 0.88,
-  "psar_4H": 1.002,
-  "psar_1H": 0.991
+  "yapi_1D": 0.937,
+  "adx_di_1H": 1.033,
+  "stoch_5m": 0.766,
+  "supertrend_4H": 1.027,
+  "mfi_1H": 1.061,
+  "pvi_1H": 1.079,
+  "ema_1D": 0.964,
+  "ema_4H": 1.011,
+  "stoch_1H": 0.991,
+  "ustunde_poc": 1.07,
+  "supertrend_1H": 1.107,
+  "ema200_1D": 0.931,
+  "pvi_15m": 0.995,
+  "stoch_15m": 0.835,
+  "psar_4H": 1.02,
+  "ema_1H": 1.078
  },
  "kategori_carpan": {
-  "uyusmazlik": 0.991
+  "uyusmazlik": 0.996
  },
  "meta": {
-  "guncelleme": 1793172132096,
-  "ornek": 179,
-  "uygulanan": 13,
+  "guncelleme": 1793173932121,
+  "ornek": 194,
+  "uygulanan": 16,
   "reddedilen": 6,
-  "egitim": 125,
-  "dogrulama": 54
+  "egitim": 135,
+  "dogrulama": 59
  },
  "kiyas": {
   "btc_baslangic": 80995.6,

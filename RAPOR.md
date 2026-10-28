@@ -18,20 +18,20 @@ Polat özsermaye: %0.0 · BTC al-tut: %0.03
 
 ## Öğrenme (walk-forward)
 
-Örnek 179 (eğitim 125, doğrulama 54) · uygulanan katsayı 13 · doğrulamada tutmadığı için reddedilen 6
+Örnek 194 (eğitim 135, doğrulama 59) · uygulanan katsayı 16 · doğrulamada tutmadığı için reddedilen 6
 
-En çok işe yarayan okumalar: supertrend_1H ×1.094, mfi_1H ×1.073, ustunde_poc ×1.063, supertrend_4H ×1.021, ema_4H ×1.018, long_short ×1.017, psar_4H ×1.002, psar_1H ×0.991, ema_1D ×0.948, ema200_1D ×0.941
-En az işe yarayan okumalar: stoch_5m ×0.793, stoch_15m ×0.88, yapi_1D ×0.927, ema200_1D ×0.941, ema_1D ×0.948, psar_1H ×0.991, psar_4H ×1.002, long_short ×1.017, ema_4H ×1.018, supertrend_4H ×1.021
+En çok işe yarayan okumalar: supertrend_1H ×1.107, pvi_1H ×1.079, ema_1H ×1.078, ustunde_poc ×1.07, mfi_1H ×1.061, adx_di_1H ×1.033, supertrend_4H ×1.027, psar_4H ×1.02, ema_4H ×1.011, pvi_15m ×0.995
+En az işe yarayan okumalar: stoch_5m ×0.766, stoch_15m ×0.835, ema200_1D ×0.931, yapi_1D ×0.937, ema_1D ×0.964, stoch_1H ×0.991, pvi_15m ×0.995, ema_4H ×1.011, psar_4H ×1.02, supertrend_4H ×1.027
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 4000, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 4022, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 572
-- gösterge aileleri aynı yönde değil: 228
-- ders: 163
+- emir defteri doğrulanmadı: 574
+- gösterge aileleri aynı yönde değil: 230
+- ders: 168
 - büyük zaman dilimi trendi ters: 82
 - puan +0.149 eşiğin (0.25) altında: 29
 - puan +0.146 eşiğin (0.25) altında: 26
@@ -42,13 +42,13 @@ Kapanmış işlem yok. Görülen kurulum: 4000, girilen: 0.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 4000, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 4022, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 572
-- gösterge aileleri aynı yönde değil: 228
-- ders: 163
+- emir defteri doğrulanmadı: 574
+- gösterge aileleri aynı yönde değil: 230
+- ders: 168
 - büyük zaman dilimi trendi ters: 82
 - puan +0.149 eşiğin (0.25) altında: 29
 - puan +0.146 eşiğin (0.25) altında: 26
@@ -59,13 +59,13 @@ Kapanmış işlem yok. Görülen kurulum: 4000, girilen: 0.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 4000, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 4022, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 572
-- gösterge aileleri aynı yönde değil: 228
-- ders: 163
+- emir defteri doğrulanmadı: 574
+- gösterge aileleri aynı yönde değil: 230
+- ders: 168
 - büyük zaman dilimi trendi ters: 82
 - puan +0.149 eşiğin (0.25) altında: 29
 - puan +0.146 eşiğin (0.25) altında: 26
