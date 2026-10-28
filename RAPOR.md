@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 536 | %43.7 | -0.425 | -227.55 |
 | trend_naif | 534 | %36.9 | -0.531 | -283.49 |
 
-Polat özsermaye: %-2.57 · BTC al-tut: %0.09
+Polat özsermaye: %-2.57 · BTC al-tut: %0.14
 
 ## Öğrenme (walk-forward)
 
@@ -57,16 +57,16 @@ En az işe yarayan okumalar: yapi_1D ×0.86, ema_4H ×0.891, ema_1D ×0.893, can
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 790
+- ders: 791
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 442
-- büyük zaman dilimi trendi ters: 238
+- büyük zaman dilimi trendi ters: 239
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.127 eşiğin (0.25) altında: 53
 - puan +0.149 eşiğin (0.25) altında: 53
-- puan +0.123 eşiğin (0.25) altında: 49
+- puan +0.123 eşiğin (0.25) altında: 50
 
 **Hata sınıfları**
 
@@ -107,16 +107,16 @@ En az işe yarayan okumalar: yapi_1D ×0.86, ema_4H ×0.891, ema_1D ×0.893, can
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 790
+- ders: 791
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 442
-- büyük zaman dilimi trendi ters: 238
+- büyük zaman dilimi trendi ters: 239
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.127 eşiğin (0.25) altında: 53
 - puan +0.149 eşiğin (0.25) altında: 53
-- puan +0.123 eşiğin (0.25) altında: 49
+- puan +0.123 eşiğin (0.25) altında: 50
 
 **Hata sınıfları**
 
@@ -157,16 +157,16 @@ En az işe yarayan okumalar: yapi_1D ×0.86, ema_4H ×0.891, ema_1D ×0.893, can
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 790
+- ders: 791
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 442
-- büyük zaman dilimi trendi ters: 238
+- büyük zaman dilimi trendi ters: 239
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.127 eşiğin (0.25) altında: 53
 - puan +0.149 eşiğin (0.25) altında: 53
-- puan +0.123 eşiğin (0.25) altında: 49
+- puan +0.123 eşiğin (0.25) altında: 50
 
 **Hata sınıfları**
 
