@@ -4,15 +4,15 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** kanıt yetersiz: 31/100 sonuçlanmış sinyal. Bu sayıdan önce hiçbir sonuç anlamlı değildir.
+**Hüküm:** kanıt yetersiz: 32/100 sonuçlanmış sinyal. Bu sayıdan önce hiçbir sonuç anlamlı değildir.
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 31 | %48.4 | -0.346 | -10.73 |
+| polat_tum_sinyaller | 32 | %50.0 | -0.32 | -10.24 |
 | polat_girilen | 0 | %- | - | - |
-| polat_girilmeyen | 31 | %48.4 | -0.346 | -10.73 |
-| rastgele | 33 | %36.4 | -0.644 | -21.24 |
-| trend_naif | 36 | %36.1 | -0.581 | -20.92 |
+| polat_girilmeyen | 32 | %50.0 | -0.32 | -10.24 |
+| rastgele | 34 | %35.3 | -0.667 | -22.67 |
+| trend_naif | 39 | %33.3 | -0.642 | -25.04 |
 
 Polat özsermaye: %0.0 · BTC al-tut: %0.13
 
@@ -23,12 +23,12 @@ Polat özsermaye: %0.0 · BTC al-tut: %0.13
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 1076, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 1095, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 170
-- gösterge aileleri aynı yönde değil: 95
+- emir defteri doğrulanmadı: 172
+- gösterge aileleri aynı yönde değil: 99
 - büyük zaman dilimi trendi ters: 46
 - puan +0.207 eşiğin (0.25) altında: 13
 - puan +0.137 eşiğin (0.25) altında: 11
@@ -40,12 +40,12 @@ Kapanmış işlem yok. Görülen kurulum: 1076, girilen: 0.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 1076, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 1095, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 170
-- gösterge aileleri aynı yönde değil: 95
+- emir defteri doğrulanmadı: 172
+- gösterge aileleri aynı yönde değil: 99
 - büyük zaman dilimi trendi ters: 46
 - puan +0.207 eşiğin (0.25) altında: 13
 - puan +0.137 eşiğin (0.25) altında: 11
@@ -57,12 +57,12 @@ Kapanmış işlem yok. Görülen kurulum: 1076, girilen: 0.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 1076, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 1095, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 170
-- gösterge aileleri aynı yönde değil: 95
+- emir defteri doğrulanmadı: 172
+- gösterge aileleri aynı yönde değil: 99
 - büyük zaman dilimi trendi ters: 46
 - puan +0.207 eşiğin (0.25) altında: 13
 - puan +0.137 eşiğin (0.25) altında: 11
