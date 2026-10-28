@@ -266,10 +266,16 @@ class Polat:
         m = self.market
         c = m.coin(inst)
         for tf in self.cfg["veri"]["zaman_dilimleri"]:
-            try:
-                rows = await self.rest.candles(inst, tf, self.cfg["veri"]["gecmis_mum"])
-            except Exception as e:  # noqa: BLE001
-                self.journal.write("olaylar", {"olay": "gecmis_hata", "inst": inst, "tf": tf, "hata": str(e)[:200]})
+            rows = None
+            for attempt in range(3):                      # geçici hatada 3 deneme
+                try:
+                    rows = await self.rest.candles(inst, tf, self.cfg["veri"]["gecmis_mum"])
+                    break
+                except Exception as e:  # noqa: BLE001
+                    if attempt == 2:
+                        self.journal.write("olaylar", {"olay": "gecmis_hata", "inst": inst, "tf": tf, "hata": str(e)[:200]})
+                    await asyncio.sleep(1 + attempt)
+            if rows is None:
                 continue
             s = c.series[tf]
             for r in rows:

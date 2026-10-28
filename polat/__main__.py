@@ -58,11 +58,17 @@ async def run(cfg: dict, root: Path, seconds: float | None, push_min: float, dev
     if devir and on_gh:
         await agent.start(standby=True)
         t0 = time.time()
+        released = False
         while time.time() - t0 < 15 * 60:                      # selefin bırakmasını bekle (en çok 15 dk)
             cur = await asyncio.to_thread(lease.remote)
             if not lease.healthy(cur):
+                released = True
                 break
             await asyncio.sleep(2)
+        if not released:                                       # selef hâlâ sağlıklı: ikinci Polat olmasın
+            print("Selef 15 dk içinde bırakmadı ve hâlâ sağlıklı; halef çıkıyor.")
+            await agent.stop("devir alınamadı")
+            return
         await asyncio.to_thread(lease.sync_from_remote)
         info = await agent.activate()
         print(f"Devralındı: boşluk {info.get('bosluk_sn')} sn")

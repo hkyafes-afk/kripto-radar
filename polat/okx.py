@@ -24,8 +24,8 @@ from datetime import datetime, timezone
 from .wsclient import WS, dumps, loads
 
 TF_CHANNEL = {"1m": "candle1m", "5m": "candle5m", "15m": "candle15m", "1H": "candle1H",
-              "4H": "candle4Hutc", "1D": "candle1Dutc"}
-TF_REST = {"1m": "1m", "5m": "5m", "15m": "15m", "1H": "1H", "4H": "4Hutc", "1D": "1Dutc"}
+              "4H": "candle4H", "1D": "candle1Dutc"}   # 4Hutc yok; 4H zaten UTC sınırında
+TF_REST = {"1m": "1m", "5m": "5m", "15m": "15m", "1H": "1H", "4H": "4H", "1D": "1Dutc"}
 TF_MS = {"1m": 60_000, "5m": 300_000, "15m": 900_000, "1H": 3_600_000, "4H": 14_400_000, "1D": 86_400_000}
 CHANNEL_TF = {v: k for k, v in TF_CHANNEL.items()}
 
@@ -45,6 +45,10 @@ class Conn:
         self.task: asyncio.Task | None = None
         self.connected = asyncio.Event()
         self.stopping = False
+        self.pend_sub: dict[str, dict] = {}
+        self.pend_unsub: dict[str, dict] = {}
+        self.flusher: asyncio.Task | None = None
+        self.min_gap = 0.6                       # OKX: bağlantı başına abonelik isteği sınırı → en çok ~2/sn
 
     @staticmethod
     def key(arg: dict) -> str:
@@ -58,22 +62,44 @@ class Conn:
             await self.ws.send_text(dumps({"op": op, "args": args[i:i + 100]}))
 
     async def subscribe(self, args: list[dict]):
-        new = [a for a in args if self.key(a) not in self.subs]
-        for a in new:
-            self.subs[self.key(a)] = a
-        if self.ws and self.connected.is_set():
-            try:
-                await self._send_ops("subscribe", new)
-            except Exception:  # noqa: BLE001
-                pass   # bağlantı yeniden kurulunca hepsi zaten gönderilir
+        for a in args:
+            k = self.key(a)
+            if k not in self.subs:
+                self.subs[k] = a
+                self.pend_sub[k] = a
+            self.pend_unsub.pop(k, None)
+        self._kick()
 
     async def unsubscribe(self, args: list[dict]):
-        gone = [a for a in args if self.subs.pop(self.key(a), None) is not None]
-        if self.ws and self.connected.is_set():
+        for a in args:
+            k = self.key(a)
+            if self.subs.pop(k, None) is not None:
+                self.pend_unsub[k] = a
+            self.pend_sub.pop(k, None)
+        self._kick()
+
+    def _kick(self):
+        if self.flusher is None or self.flusher.done():
             try:
-                await self._send_ops("unsubscribe", gone)
-            except Exception:  # noqa: BLE001
+                self.flusher = asyncio.get_running_loop().create_task(self._flush())
+            except RuntimeError:
                 pass
+
+    async def _flush(self):
+        """Bekleyen abonelikleri birleştirip aralıklı gönder (her istek ≤100 arg, istekler arası ≥0,6 sn)."""
+        while self.pend_sub or self.pend_unsub:
+            await self.connected.wait()
+            for op, pend in (("unsubscribe", self.pend_unsub), ("subscribe", self.pend_sub)):
+                if not pend:
+                    continue
+                keys = list(pend)[:100]
+                args = [pend.pop(k) for k in keys]
+                try:
+                    await self.ws.send_text(dumps({"op": op, "args": args}))
+                except Exception:  # noqa: BLE001
+                    if op == "subscribe":                 # yeniden bağlanınca self.subs zaten tamamen gönderilir
+                        pass
+                await asyncio.sleep(self.min_gap)
 
     def start(self):
         self.task = asyncio.create_task(self._run(), name=f"ws:{self.name}")
@@ -93,9 +119,15 @@ class Conn:
             url = self.urls[i % len(self.urls)]
             try:
                 self.ws = await WS.connect(url)
-                self.connected.set()
                 self.stats["baglanti"][self.name] = url
-                await self._send_ops("subscribe", list(self.subs.values()))
+                self.pend_sub.clear()
+                self.pend_unsub.clear()
+                allargs = list(self.subs.values())
+                for i in range(0, len(allargs), 100):         # yeniden bağlanınca hepsi, aralıklı
+                    await self.ws.send_text(dumps({"op": "subscribe", "args": allargs[i:i + 100]}))
+                    if i + 100 < len(allargs):
+                        await asyncio.sleep(self.min_gap)
+                self.connected.set()
                 delay = 1.0
                 await self._loop()
             except asyncio.CancelledError:
@@ -128,7 +160,14 @@ class Conn:
             msg = loads(raw)
             if "event" in msg:
                 if msg["event"] == "error":
-                    self.stats["son_hata"] = f"{self.name}: {msg.get('code')} {msg.get('msg', '')[:120]}"
+                    code = str(msg.get("code"))
+                    self.stats["son_hata"] = f"{self.name}: {code} {msg.get('msg', '')[:120]}"
+                    self.stats.setdefault("hata_kodlari", {})[code] = self.stats.setdefault("hata_kodlari", {}).get(code, 0) + 1
+                    if code == "60014":                       # çok sık: o anki bütün abonelikleri sonra yeniden iste
+                        for k, a in self.subs.items():
+                            self.pend_sub[k] = a
+                        self.min_gap = min(self.min_gap * 1.5, 3.0)
+                        self._kick()
                 continue
             self.on_msg(msg, t)
 
