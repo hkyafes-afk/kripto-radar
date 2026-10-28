@@ -4,13 +4,13 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.473R; geçtiği kıyaslar: trend_naif → okumaların üstünlüğü kanıtlanmadı
+**Hüküm:** Polat net -0.477R; geçtiği kıyaslar: hiçbiri → okumaların üstünlüğü kanıtlanmadı
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 180 | %42.8 | -0.473 | -85.13 |
+| polat_tum_sinyaller | 181 | %42.5 | -0.477 | -86.4 |
 | polat_girilen | 0 | %- | - | - |
-| polat_girilmeyen | 180 | %42.8 | -0.473 | -85.13 |
+| polat_girilmeyen | 181 | %42.5 | -0.477 | -86.4 |
 | rastgele | 171 | %43.3 | -0.454 | -77.64 |
 | trend_naif | 176 | %39.8 | -0.474 | -83.37 |
 
@@ -25,13 +25,13 @@ En az işe yarayan okumalar: stoch_5m ×0.793, stoch_15m ×0.88, yapi_1D ×0.927
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 3687, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 3697, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 532
+- emir defteri doğrulanmadı: 533
 - gösterge aileleri aynı yönde değil: 224
-- ders: 118
+- ders: 120
 - büyük zaman dilimi trendi ters: 81
 - puan +0.149 eşiğin (0.25) altında: 29
 - puan +0.167 eşiğin (0.25) altında: 26
@@ -42,13 +42,13 @@ Kapanmış işlem yok. Görülen kurulum: 3687, girilen: 0.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 3687, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 3697, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 532
+- emir defteri doğrulanmadı: 533
 - gösterge aileleri aynı yönde değil: 224
-- ders: 118
+- ders: 120
 - büyük zaman dilimi trendi ters: 81
 - puan +0.149 eşiğin (0.25) altında: 29
 - puan +0.167 eşiğin (0.25) altında: 26
@@ -59,13 +59,13 @@ Kapanmış işlem yok. Görülen kurulum: 3687, girilen: 0.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 3687, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 3697, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 532
+- emir defteri doğrulanmadı: 533
 - gösterge aileleri aynı yönde değil: 224
-- ders: 118
+- ders: 120
 - büyük zaman dilimi trendi ters: 81
 - puan +0.149 eşiğin (0.25) altında: 29
 - puan +0.167 eşiğin (0.25) altında: 26
