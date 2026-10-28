@@ -1,0 +1,29 @@
+name: OKX copy-trading probe
+
+# Tek seferlik, elle tetiklenir. Kimlik doğrulamasız halka açık uç noktaları test eder.
+# Rapor (trader kimliği yok, yalnızca durum ve alan adları) okx-probe-veri dalına yazılır.
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Probe
+        run: python scripts/okx_copytrade_probe.py
+      - name: Raporu dala yaz
+        run: |
+          git config user.name "okx-probe"
+          git config user.email "okx-probe@users.noreply.github.com"
+          git fetch -q origin okx-probe-veri 2>/dev/null && git checkout -q -B okx-probe-veri origin/okx-probe-veri || git checkout -q --orphan okx-probe-veri
+          cp okx_probe_report.json rapor.json
+          git add rapor.json && git commit -q -m "probe raporu ${GITHUB_RUN_ID}" || true
+          git push -q origin HEAD:okx-probe-veri

@@ -1,0 +1,31 @@
+name: Teşhis (salt okunur)
+
+# Kaan ve Deniz neden işlem açmıyor? OKX public mumlarını okur; raporu iş özetine ve ayrı `teshis` dalına yazar.
+# main'e, ledger'a, ayarlara dokunmaz.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  teshis:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: python tools/teshis.py | tee /tmp/TESHIS.md
+      - name: Raporu teshis dalına yaz
+        run: |
+          git config user.name "kripto-radar"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan teshis
+          git rm -rq --cached . && git clean -fdq -e .git
+          cp /tmp/TESHIS.md TESHIS.md
+          git add TESHIS.md && git commit -qm "Teşhis raporu"
+          git push -f origin teshis

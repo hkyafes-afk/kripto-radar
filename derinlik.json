@@ -1,0 +1,22 @@
+{
+  "candles_BTC-USDT-SWAP_1H": {
+    "sayfa": 0,
+    "kayit": 0,
+    "en_eski": null
+  },
+  "candles_BTC-USDT-SWAP_4H": {
+    "sayfa": 0,
+    "kayit": 0,
+    "en_eski": null
+  },
+  "candles_BTC-USDT-SWAP_1Dutc": {
+    "sayfa": 0,
+    "kayit": 0,
+    "en_eski": null
+  },
+  "funding_BTC-USDT-SWAP": {
+    "sayfa": 0,
+    "kayit": 0,
+    "en_eski": null
+  }
+}

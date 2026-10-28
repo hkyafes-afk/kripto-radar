@@ -1,0 +1,74 @@
+name: Polat
+
+# Polat: Kripto Radar'dan bağımsız tek ajan (sanal 100.000$). Yatırım tavsiyesi değildir.
+# Süreklilik (polat/lease.py): nöbetçi her dakika nabız yazar; bitişten 8 dk önce halefi çağırır (devir=1).
+# Halef ısınır (veri, abonelikler, göstergeler) ama işlem yapmaz; nöbetçi bırakınca birkaç saniye içinde devralır.
+# Zamanlanmış tetik bekçidir: nabız tazeyse hemen çıkar, nabız durmuşsa (çökme) devralır.
+on:
+  schedule:
+    - cron: "7,27,47 * * * *"
+  workflow_dispatch:
+    inputs:
+      devir:
+        description: "Önceki döngüden devir (otomatik)"
+        default: "0"
+      devam:
+        description: "Risk durdurmasını kaldır (zirveden −%15 sonrası, kullanıcı onayı)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  actions: write
+
+# Bekçiler kendi aralarında sıraya girer; devir koşuları birbirini beklemez (halef selefle aynı anda ısınır).
+concurrency:
+  group: ${{ github.event_name == 'schedule' && 'polat-bekci' || format('polat-{0}', github.run_id) }}
+  cancel-in-progress: false
+
+jobs:
+  polat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Kütüphaneler
+        run: pip install -r polat/requirements.txt
+
+      - name: Önceki durum
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bash scripts/polat_veri.sh pull
+
+      - name: Risk durdurmasını kaldır (onaylı)
+        if: github.event.inputs.devam == 'true'
+        run: python -m polat devam --kok polat_veri
+
+      - name: Polat
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.POLAT_TELEGRAM_CHAT_ID || secrets.TELEGRAM_CHAT_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEVIR: ${{ github.event.inputs.devir || '0' }}
+        run: python -m polat calis --kok polat_veri --sure 20400 --git-push-dk 1
+
+      - name: Son durumu kaydet
+        if: failure()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bash scripts/polat_veri.sh push "çökme sonrası kayıt"
+
+      # Elle durdurulursa nöbeti hemen bırak (yoksa yeni koşu nabız eskiyene kadar 3 dk bekler).
+      - name: Durdurulunca nöbeti bırak
+        if: cancelled()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 -c "import json,os,time;p='polat_veri/lease.json';l=json.load(open(p)) if os.path.exists(p) else {};l.update(released=True,hb=time.time());json.dump(l,open(p,'w'))"
+          bash scripts/polat_veri.sh push "iptal: nöbet bırakıldı"

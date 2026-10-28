@@ -1,0 +1,225 @@
+# ─────────────────────────────────────────────────────────────
+#  KRİPTO RADAR — AYARLAR
+#  Bu dosyayı GitHub'da telefondan düzenleyebilirsin (kalem ikonu).
+#  Kaydettiğin an bir sonraki taramada geçerli olur.
+# ─────────────────────────────────────────────────────────────
+
+borsa:
+  # OKX: GitHub sunucularından (ABD) erişilebilen, likit vadeli piyasa.
+  # Binance ABD IP'lerine 451 hatası veriyor, o yüzden ana veri kaynağı OKX.
+  ana: okx
+  # Diğer borsaların funding oranlarını karşılaştırma için çek (erişilemeyen atlanır).
+  # bitget, gate, mexc, htx: Çin kökenli borsalar. Binance/Bybit GitHub sunucularını (ABD) engelliyor.
+  funding_karsilastir: [bitget, gate, mexc, htx, binance, bybit]
+
+tarama:
+  coin_sayisi: 100          # 24s hacme göre en likit N perpetual
+  min_hacim_usd: 5000000    # 24s hacmi bunun altındaki coinler taranmaz
+  periyot: 4H               # tek seferlik taramada kullanılan periyot (eski ayar)
+  # Canlı döngü bu periyotların HER BİRİNDE mum kapanır kapanmaz tarar.
+  # 15m = çok sinyal / çok gürültü, 4H = az ama daha güvenilir. Demo hesap hangisinin işe yaradığını ölçer.
+  periyotlar: [15m, 4H, 1D]   # v8: yöneticiler günlük (1D) ve Deniz 15dk; 4H panel sinyalleri için
+  sadece_kripto: true       # OKX'teki hisse (SOXS, EWZ...) ve emtia (petrol, altın) kontratlarını atla
+  haric: [USDC, DAI, TUSD, FDUSD, USDE, PYUSD, USDG]  # stabil coinler
+
+gostergeler:
+  supertrend_atr: 10
+  supertrend_carpan: 3.0
+  rsi: 14
+  adx: 14
+  adx_trend_min: 20         # ADX bunun üstündeyse "trend var" sayılır
+  bollinger: 20
+  bollinger_std: 2.0
+  ema_hizli: 20
+  ema_yavas: 50
+  gunluk_ema: 50            # günlük trend filtresi
+  divergence_pivot: 3       # pivot genişliği (sağ/sol mum)
+  divergence_bakis: 30      # kaç mum geriye bakılsın
+
+funding:
+  long_esik_yillik: -10     # %  bunun altı = shortlar kalabalık (long lehine)
+  short_esik_yillik: 50     # %  bunun üstü = longlar kalabalık (short lehine)
+  trend_asiri_yillik: 60    # %  trend long'da bu üstü kalabalık sayılır (puan düşer)
+
+rejim:
+  # BTC günlük EMA200 altındaysa (ayı) longlar, üstündeyse (boğa) shortlar sönümlenir.
+  # Araştırma: kriptoda zaman-serisi momentumu boğa piyasasında yoğunlaşıyor,
+  # short tarafı tarihsel olarak zayıf. O yüzden shortlara ek ceza var.
+  ayi_long_carpan: 0.5
+  boga_short_carpan: 0.6
+  short_temel_carpan: 0.85
+  ayi_donus_long_carpan: 0.6
+
+sinyal:
+  guclu_esik: 65            # bu puan ve üstü = güçlü sinyal (bildirim + deftere yaz)
+  izle_esik: 50             # bu puan ve üstü = izleme listesi
+  # Risk seviyeleri ATR katı olarak. Defter bu kurallarla otomatik kapatır.
+  trend:   {stop_atr: 1.5, hedef_atr: 3.0, max_saat: 168}
+  donus:   {stop_atr: 1.2, hedef_atr: 2.0, max_saat: 72}
+
+# Periyoda göre en uzun tutma süresi (saat). Stop/hedef ATR'ye göre otomatik ölçeklenir.
+periyot_ayar:
+  15m: {trend_max_saat: 24, donus_max_saat: 8}
+  1H:  {trend_max_saat: 72, donus_max_saat: 24}
+  4H:  {trend_max_saat: 168, donus_max_saat: 72}
+
+# ── DEMO HESAP ── her güçlü sinyalde sanal işlem açılır, kâr/zarar dolar olarak kaydedilir
+demo:
+  baslangic_bakiye: 100000   # $ sanal başlangıç bakiyesi (v9: 10 yönetici × 10.000$, Baş Trader + Turbo; ekip.butce ile aynı olmalı)
+  # risk  = profesyonel yöntem: her işlemde bakiyenin risk_yuzde'si kadar risk (stop uzaksa pozisyon küçülür)
+  # sabit = her işleme islem_tutari_usd kadar teminat
+  boyut_modu: risk
+  islem_tutari_usd: 20       # sadece sabit modda
+  kaldirac: 1                # sadece sabit modda
+  max_acik_toplam: 12        # aynı anda en fazla açık işlem
+  max_acik_periyot: 6        # bir periyottan (ör. 15m) aynı anda en fazla açık işlem
+
+# ── RİSK YÖNETİMİ ── profesyonel trader kuralları
+risk:
+  risk_yuzde: 0.5            # % her işlemde riske atılan bakiye (stop'a gidilirse kayıp ≈ bu kadar)
+  max_pozisyon_oran: 0.35    # tek pozisyonun nominali en fazla bakiyenin bu katı
+  max_kaldirac: 5            # teminat hesabı için (pozisyon / 5 = bağlanan teminat)
+  max_isi_yuzde: 3.0         # % tüm açık işlemlerin toplam riski en fazla
+  max_ayni_yon: 5            # aynı yönde (long ya da short) en fazla işlem — coinler birlikte hareket eder
+  max_ayni_yon_risk_yuzde: 2.0
+  max_spread_bp: 15          # alış-satış farkı bundan genişse işleme girme (1 bp = %0,01)
+  max_kayma_bp: 20           # emir defteri derinliğine göre tahmini kayma bundan fazlaysa girme
+  kismi_kar_r: 1.0           # +1R'de ...
+  kismi_kar_oran: 0.5        # ... pozisyonun yarısını kapat
+  basabas: true              # kısmi kârdan sonra stop'u başabaşa (+ücretler) çek
+  iz_suren_atr: 2.0          # kalan pozisyon için iz süren stop: en iyi fiyattan 2 ATR geride (0 = kapalı)
+  gunluk_kayip_yuzde: 2.0    # % gün içinde bu kadar kayıpta o gün yeni işlem açma (UTC günü)
+  max_dusus_yuzde: 10.0      # % zirveden bu kadar düşüşte botu durdur (/devam ile açılır)
+  kayip_serisi: 4            # üst üste bu kadar kayıpta ...
+  seri_risk_carpan: 0.5      # ... riski bu çarpanla küçült (ilk kazançta normale döner)
+  otomatik_kapat: true       # en az setup_kapat_min_islem işlemden sonra beklentisi negatif setup'ı kapat
+  setup_kapat_min_islem: 30
+  setup_kapat_beklenti_r: -0.05
+
+panel:
+  telegram_panel: true       # Telegram'da sabitlenmiş, kendiliğinden güncellenen canlı panel mesajı
+  panel_sn: 15               # kaç saniyede bir güncellensin
+
+# ── YATIRIM EKİBİ ── 10 yönetici + Genel Müdür + risk müdürü. Başlangıç sermayesi demo.baslangic_bakiye.
+# Her yönetici kendi sermayesinin yüzdesi kadar risk alır: taban (az kanıt) → tavan (tüm doğrulamalar tuttu).
+ekip:
+  aktif: true
+  yoneticiler:
+    # v10 risk (data/LAB.md, 5 yıl, 100 coin, silinenler dahil, v10 politikasıyla): eğitimde maks. düşüş ~%25 ve
+    # doğrulamada büyüme artı kalan en yüksek seviye. Eski seviyeler (Kaan 3–5, Selin 4–6, Turbo 5–10) doğrulamada eksi
+    # büyüme ya da %50+ düşüş verdi (kazanan işlemler olsa bile fazla risk bileşik büyümeyi yer).
+    bas:   {aktif: true, taban_risk: 1.0, tavan_risk: 2.0, yedek_dusus: 30}   # 👑 Baş Trader · v10: %1,5–2'de eğitim +%36–40/yıl, düşüş ~%21–26
+    turbo: {aktif: true, taban_risk: 1.0, tavan_risk: 1.5, yedek_dusus: 40}   # 🔥 Bütün ekip tek elde · v10: %1 → +%17/yıl, düşüş %30; %5+ batırıyor
+    kemal: {aktif: true, taban_risk: 1.0, tavan_risk: 2.0, yedek_dusus: 20}   # Günlük trend (1G) · v10: +0,14R / +0,10R
+    deniz: {aktif: false, taban_risk: 1.0, tavan_risk: 1.5, yedek_dusus: 15}  # BTC/ETH 15dk maker · DURDURULDU 27.10: testte −%94 (ort. −0,61R)
+    ayse:  {aktif: true, taban_risk: 0.5, tavan_risk: 1.0, yedek_dusus: 15}   # Kapitülasyon (1G) · v10: yılda birkaç işlem, örneklem az
+    murat: {aktif: true, taban_risk: 0.5, tavan_risk: 1.0, yedek_dusus: 20}   # Baş analist (1G) · v10: politikasız −0,05R, politikayla +0,33R / +0,12R; düşüş büyük → düşük risk
+    elif:  {aktif: true}                                                       # Piyasa-nötr funding (spot + vadeli)
+    kaan:  {aktif: true, taban_risk: 1.0, tavan_risk: 1.5, yedek_dusus: 30}   # Günlük kırılım (1G) · v10: +0,79R / +0,26R; %2+ riskte doğrulama büyümesi eksi
+    selin: {aktif: true, taban_risk: 2.0, tavan_risk: 3.0, yedek_dusus: 30}   # Günlük sıkışma (1G) · v10: +0,44R / +0,43R; %3'te eğitim düşüşü ~%28
+  # v8.2 (kullanıcı kararı, 26.10.2026): her yöneticiye ayrı 10.000$ demo bütçe. Gölge politikası kalktı; herkes kendi
+  # bütçesiyle işlem yapar. Öğrenme, işlem türlerini (yönetici|yön) canlı kanıta göre gerçek/gölge arasında taşır.
+  butce:
+    surum: 1
+    yonetici_usd: 10000
+    onceki_etiket: "v8 · 1.000$ ekip (26.10.2026)"
+  firma:                       # risk müdürünün firma geneli limitleri (işlem SAYISI sınırı yok, sınırlar risk cinsinden)
+    # GERÇEK API'YE KADAR (kullanıcı kararı): işlemi durduran limitler ve firma kısıtları kapalı. Gerçek paraya geçerken
+    # üçü de true yapılır. Her işlemin stop'u, riske göre boyutu ve "olmayan parayla işlem yok" kuralı her zaman geçerli.
+    durdurma_aktif: false      # günlük kayıp / zirveden düşüş durdurması
+    sinirlar_aktif: false      # firma toplam risk, coin, yön, yığılma ve nominal sınırları
+    yedek_kulubesi: false      # zirveden düşen yöneticiyi gölgeye alma
+    gunluk_kayip_yuzde: 3.0    # % firma bugün bu kadar kaybederse o gün yeni işlem yok
+    gunluk_ek_hak_yuzde: 1.5   # % /devam evet ile kullanıcı onayıyla bugün için ek kayıp hakkı
+    gunluk_ek_hak_sayisi: 1    # günde en fazla kaç kez
+    max_dusus_yuzde: 15.0      # % firma zirveden bu kadar düşerse durur (/devam)
+    max_isi_yuzde: 10.0        # % tüm açık işlemlerin toplam riski
+    coin_risk_yuzde: 2.5       # % aynı coinde (tüm yöneticiler toplamı) en fazla risk
+    yon_risk_yuzde: 6.0        # % aynı yönde (long ya da short) toplam risk
+    max_nominal_kat: 2.0       # tek pozisyon en fazla yönetici sermayesinin 2 katı nominal
+    tekrar_bekleme_mum: 1      # aynı yönetici aynı coinde kapanıştan sonra kaç mum bekler (v10: asıl kural politika.yeniden_giris)
+    yeniden_dagitim_gun: 0     # 0 = kapalı (her yöneticinin kendi bütçesi var); açıkken performansa göre yeniden dağıtır
+    dagitim_min_islem: 15
+    carry_max_cift: 3          # Elif aynı anda en fazla kaç funding pozisyonu tutar
+    carry_min_yillik: 15       # % 30 günlük funding ortalaması en az
+    kume_risk_yuzde: 4.0       # % birlikte hareket eden (60 günlük korelasyon ≥ 0,7) aynı yön pozisyonların toplam riski
+    kume_korelasyon: 0.7
+    # v9 Genel Müdür (demo limitlerinden bağımsız, hep açık güvenlik kuralları)
+    carpisma_yasak: true       # aynı coinde başka yönetici ters yönde GERÇEK pozisyondaysa yeni gelen gölgede izlenir
+    coin_tavan_yuzde: 1.25     # % bir coinde bütün yöneticilerin toplam riski (firma sermayesinin); aşan fikir küçülür ya da gölge
+    sinif_a_gun: 1095          # coin kanıt sınıfı: 3 yıl+ = A (tam boyut)
+    sinif_c_gun: 365           # 1 yıldan yeni = C (gölge); arası B (tam boyut — yarışta en iyi sınıf çıktı)
+    ioc_bant_bp: 10            # piyasa emri yerine IOC limit: en iyi fiyatın en fazla %0,1 ötesi, dolmayan kısım iptal
+    dongu_uyari_sn: 10         # döngü bir turda bundan uzun sürerse Telegram uyarısı
+  # v10 POLİTİKA (radar/policy.py, kanıt: data/LAB.md). Canlı masa, resmi backtest ve laboratuvar aynı kuralları kullanır.
+  # Kapıdan geçemeyen fikir REDDEDİLMEZ, gölgede açılıp ölçülür (veri toplama sürer, gerçek sermaye kullanılmaz).
+  # 5 yıl / her gün en likit 100 coin / silinenler dahil: ekip eğitim +0,02R → +0,43R, doğrulama −0,00R → +0,17R,
+  # maks. düşüş −%43 → −%14. Baş Trader ve Turbo dahil herkese uygulanır.
+  kurallar:                    # (radar/policy.py)
+    aktif: true
+    max_atr_yuzde: 5.0         # günlük ATR fiyatın %5'inden büyükse gölge (bu kovada 5 yılda kazanç yok)
+    max_stop_yuzde: 15.0       # giriş–stop uzaklığı bu %'yi aşarsa gölgede (v10.1)
+    kalabalik_long: 30         # funding yıllık %30 üstündeyken long gölge
+    kalabalik_short: -20       # funding yıllık −%20 altındayken short gölge
+    kapanis_stop: true         # günlük işlemlerde ilk stop GÜNLÜK KAPANIŞLA (fitil avı yok); başabaş/iz sonrası normal stop
+    felaket_r: 2.0             # kapanış stop'unun gün içi güvenlik ağı: girişten 2R ötede borsa tipi stop
+    zarar_sonrasi_bekle_gun: 5 # aynı coinde aynı yönde zararla çıkınca o yöne 5 gün girilmez (Baş/Turbo hariç)
+    kar_sonrasi_yeni_zirve: true  # kârla çıkınca yeniden giriş için çıkıştan beri en iyi kapanış aşılmalı
+    kaan_yatay_golge: true     # Kaan: BTC havası yatayken kırılımlar gölgede (5 yılda iki dönemde de eksi)
+    atr_muaf: [ayse]           # Ayşe oynaklık kapısından muaf (kapitülasyon günleri oynak; testte kapısız +0,24R / +0,30R)
+  ortak:                       # v9 Yatırım Komitesi (Ortak Masa)
+    esik: 1.25                 # karne ağırlıklı oy eşiği; masanın karnesi eksiye düşerse kendiliğinden +0,5
+    katki_yuzde: 5             # anlaşan her yönetici bütçesinin %5'i kadar pozisyon koyar; kâr/zarar katkı payına göre ona döner
+    on_bilgi: {kaan: 1.0, selin: 0.75, kemal: 0.5, murat: 0, ayse: 0, deniz: 0}   # 5 yıllık test; 30+ canlı işlemden sonra karne
+  # v9 Faz 1 yarışını kazanan varyantlar (data/YARIS_KARAR.md): 3 ayrı coin evreninde en az 2 kez bütün şartları geçen ve
+  # hiçbirinde doğrulama/büyüme tarafında geri düşmeyen değişiklikler. Diğerleri reddedildi (gerekçeler dosyada).
+  varyant:
+    selin: [ttm]               # sıkışma = Bollinger bantları Keltner içinde (3/3 daha yüksek büyüme, 2/3 tüm şartlar)
+    murat: [cikis_iz_tp1]      # kısmi kâr yok, ilk hedefte başabaş + iz stop (2/3); Murat yine gölgede
+
+# Gerçek OKX ücretleri (VIP0). Giriş ve stop/süre çıkışı piyasa emri (taker), hedef limit emir (maker).
+# v8: SERT maliyet modeli (kullanıcı kararı): OKX liste ücretinin 2 katı + stop kayması. Demo sonuçları gerçeğinden
+# iyi görünmesin. Gerçek hesabın ücret seviyesi öğrenilince güncellenir.
+ucret:
+  taker_yuzde: 0.10          # liste %0,05 × 2
+  maker_yuzde: 0.04          # liste %0,02 × 2
+  spot_taker_yuzde: 0.20     # spot piyasa emri (Elif'in spot bacağı), liste %0,10 × 2
+  stop_kayma_bp: 5           # stop emri stres anında ek kayma (taban)
+  stop_kayma_atr_oran: 0.05  # v9: + günlük ATR'nin %5'i (oynak coinde daha çok kayma); genç (C) coinde ×1,5; en çok 150 bp
+  mmr_yuzde: 0.5             # bakım marjı (kaldıraçta likidasyon hesabı için)
+
+canli:
+  dongu_dakika: 330          # GitHub'da tek çalışma süresi (en fazla ~350); bitince yenisi devralır
+  websocket: true            # OKX canlı fiyat akışı (her fiyat değişiminde stop/hedef kontrolü)
+  bitget_ws: true            # Bitget canlı fiyat akışı (borsalar arası fark)
+  fiyat_kontrol_sn: 60       # ek güvenlik: 1 dk'lık mumlarla kaç saniyede bir kontrol edilsin
+  komut_kontrol_sn: 15       # Telegram komutlarına bakma sıklığı
+  yayin_min_dakika: 6        # dashboard en sık kaç dakikada bir güncellensin (GitHub Pages sınırı)
+
+defter:
+  # Kağıt üstü işlem defteri: gerçek para yok, sadece sinyallerin karnesi.
+  komisyon_gidis_donus: 0.10   # %  (OKX taker 0.05 x2)
+  kayma: 0.05                  # %  sadece mumdan tespit edilen stop'larda (canlı akışta gerçek bid/ask kullanılır)
+  tekrar_bekleme_saat: 24      # aynı coin+setup kapandıktan sonra yeniden açılmadan önce
+  min_ornek: 30                # karar için gereken kapanmış işlem sayısı
+
+harvest:
+  min_perp_hacim_usd: 100000000   # v8: sadece likit coinler (araştırma: sığ coinlerde iki bacak doldurmak zor)
+  min_spot_hacim_usd: 20000000
+  min_yillik: 8              # % 30g ortalama bunun altıysa listeleme
+  min_pozitif_oran: 0.75     # funding'lerin en az %75'i pozitif olmalı
+  gun: 30
+  liste: 15
+  # 4 bacak maliyet: spot al/sat + perp aç/kapa (taker). Başabaş gün hesabı için.
+  maliyet_yuzde: 0.60       # v8 sert maliyet: 2×%0,10 vadeli + 2×%0,20 spot
+
+bildirim:
+  telegram: true
+  whatsapp: true             # CALLMEBOT secret'ları girilmişse çalışır
+  gunluk_ozet_saat: 9        # İstanbul saatiyle günlük özet
+  saat_dilimi: Europe/Istanbul
+  max_sinyal_mesaj: 8        # tek mesajda en fazla kaç sinyal
+
+dashboard:
+  # Boş bırakırsan otomatik: https://KULLANICI.github.io/REPO/
+  url: ""

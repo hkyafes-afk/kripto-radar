@@ -1,0 +1,1012 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0f14">
+<title>Kripto Radar</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%230b0f14' stroke='%2334d399' stroke-width='2'/%3E%3Cpath d='M16 16 L16 4 A12 12 0 0 1 27 12 Z' fill='%2334d399' opacity='.6'/%3E%3Ccircle cx='16' cy='16' r='2' fill='%2334d399'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#0b0f14; --panel:#121820; --panel2:#18202a; --line:#232d39; --text:#e6edf3; --muted:#8b98a7;
+  --dim:#5d6b7a; --green:#34d399; --green-bg:rgba(52,211,153,.12); --red:#f87171; --red-bg:rgba(248,113,113,.12);
+  --amber:#fbbf24; --amber-bg:rgba(251,191,36,.12); --blue:#60a5fa; --blue-bg:rgba(96,165,250,.12);
+  --mono: ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+  --sans: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,"Helvetica Neue",Arial,sans-serif;
+  --r:14px; color-scheme:dark;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#f5f7fa; --panel:#ffffff; --panel2:#f0f3f7; --line:#e1e6ec; --text:#0f1720; --muted:#5b6876; --dim:#8a96a3;
+    --green:#059669; --green-bg:rgba(5,150,105,.10); --red:#dc2626; --red-bg:rgba(220,38,38,.09);
+    --amber:#b45309; --amber-bg:rgba(180,83,9,.10); --blue:#2563eb; --blue-bg:rgba(37,99,235,.09); color-scheme:light;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#f5f7fa; --panel:#ffffff; --panel2:#f0f3f7; --line:#e1e6ec; --text:#0f1720; --muted:#5b6876; --dim:#8a96a3;
+  --green:#059669; --green-bg:rgba(5,150,105,.10); --red:#dc2626; --red-bg:rgba(220,38,38,.09);
+  --amber:#b45309; --amber-bg:rgba(180,83,9,.10); --blue:#2563eb; --blue-bg:rgba(37,99,235,.09); color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-text-size-adjust:100%}
+body{padding-bottom:calc(24px + env(safe-area-inset-bottom))}
+a{color:var(--blue);text-decoration:none}
+.wrap{max-width:980px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top, 0px);z-index:10;background:var(--bg)}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+header.top{padding:18px 0 10px;display:flex;align-items:center;gap:12px}
+.logo{width:34px;height:34px;border-radius:50%;border:2px solid var(--green);position:relative;overflow:hidden;flex:none}
+.logo::before{content:"";position:absolute;inset:0;background:conic-gradient(from 0deg,transparent 0 290deg,rgba(52,211,153,.55) 360deg);animation:sweep 3.2s linear infinite}
+.logo::after{content:"";position:absolute;left:50%;top:50%;width:5px;height:5px;margin:-2.5px;border-radius:50%;background:var(--green)}
+@keyframes sweep{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){.logo::before{animation:none}}
+h1{font-size:19px;margin:0;letter-spacing:.2px}
+.sub{color:var(--muted);font-size:12.5px;margin-top:2px}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;font-size:11.5px;font-weight:600;white-space:nowrap}
+.b-green{background:var(--green-bg);color:var(--green)} .b-red{background:var(--red-bg);color:var(--red)}
+.b-amber{background:var(--amber-bg);color:var(--amber)} .b-blue{background:var(--blue-bg);color:var(--blue)}
+.b-dim{background:var(--panel2);color:var(--muted)}
+.theme-btn{margin-left:auto;background:var(--panel);border:1px solid var(--line);color:var(--muted);border-radius:10px;padding:7px 10px;font-size:13px;cursor:pointer}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:6px 0 14px}
+@media (max-width:640px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px 13px;min-width:0}
+.kpi .l{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.kpi .v{font-size:20px;font-weight:700;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi .s{font-size:12px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.up{color:var(--green)} .down{color:var(--red)}
+nav.tabs{position:sticky;top:env(safe-area-inset-top, 0px);z-index:5;background:var(--bg);padding-block:8px;
+  display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line)}
+nav.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;background:transparent;border:1px solid transparent;color:var(--muted);padding:8px 13px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer}
+.tab.on{background:var(--panel);border-color:var(--line);color:var(--text)}
+.tab .c{font-family:var(--mono);font-size:11.5px;margin-left:5px;color:var(--dim)}
+section{display:none;padding-top:14px} section.on{display:block}
+.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--panel);color:var(--muted);border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer}
+.chip.on{color:var(--text);border-color:var(--muted)}
+.switch{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;cursor:pointer;user-select:none;margin-left:auto}
+.switch input{accent-color:var(--green);width:16px;height:16px}
+h2{font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+h2 .n{font-family:var(--mono);color:var(--dim)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:10px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:13px 14px;position:relative;overflow:hidden;min-width:0}
+.card.long{border-left:3px solid var(--green)} .card.short{border-left:3px solid var(--red)}
+.card .hd{display:flex;align-items:center;gap:8px}
+.sym{font-weight:800;font-size:17px;letter-spacing:.3px}
+.lbl{font-size:12px;color:var(--muted)}
+.score{margin-left:auto;text-align:right}
+.score .v{font-family:var(--mono);font-size:22px;font-weight:800;line-height:1}
+.score .raw{font-size:11px;color:var(--dim)}
+.bar{height:5px;background:var(--panel2);border-radius:99px;overflow:hidden;margin:9px 0 10px}
+.bar i{display:block;height:100%;border-radius:99px}
+.lv{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;font-size:12px}
+.lv div{background:var(--panel2);border-radius:9px;padding:6px 8px;min-width:0}
+.lv .k{color:var(--muted);font-size:10.5px;text-transform:uppercase;letter-spacing:.4px}
+.lv .x{font-family:var(--mono);font-weight:600;font-size:13px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lv .p{font-family:var(--mono);font-size:10.5px;color:var(--muted)}
+ul.why{list-style:none;margin:10px 0 0;padding:0;font-size:12.8px;line-height:1.45}
+ul.why li{padding:2px 0;color:var(--muted)}
+ul.why li.pos::first-letter{color:var(--green)} ul.why li.neg{color:var(--amber)}
+.meta{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
+.meta span{font-size:11.5px;background:var(--panel2);color:var(--muted);padding:3px 7px;border-radius:7px;font-family:var(--mono)}
+.more{background:none;border:0;color:var(--blue);font-size:12.5px;padding:6px 0 0;cursor:pointer}
+.empty{background:var(--panel);border:1px dashed var(--line);border-radius:var(--r);padding:18px;color:var(--muted);font-size:14px;line-height:1.5}
+.note{font-size:12.5px;color:var(--muted);line-height:1.55;margin:8px 0}
+.warn{background:var(--amber-bg);color:var(--text);border:1px solid rgba(251,191,36,.35);border-radius:var(--r);padding:12px 14px;font-size:13px;line-height:1.55;margin:12px 0}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;text-align:right;padding:8px 6px;border-bottom:1px solid var(--line);background:var(--bg);cursor:pointer;white-space:nowrap}
+@media (max-width:520px){.tbl .hm{display:none}}
+.tbl th:first-child,.tbl td:first-child{text-align:left}
+.tbl td{padding:9px 6px;border-bottom:1px solid var(--line);text-align:right;font-family:var(--mono);white-space:nowrap}
+.tbl td:first-child{font-family:var(--sans);font-weight:700}
+.tbl-wrap{overflow-x:auto}
+input.search{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:12px;color:var(--text);padding:11px 13px;font-size:15px;outline:none}
+input.search:focus{border-color:var(--muted)}
+.stat{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
+.stat div{background:var(--panel2);border-radius:9px;padding:7px 8px;min-width:0}
+.stat .x{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:440px){.stat{grid-template-columns:repeat(2,1fr)}}
+.stat .k{font-size:10.5px;color:var(--muted);text-transform:uppercase}
+.stat .x{font-family:var(--mono);font-weight:700;font-size:14px;margin-top:2px}
+.list{display:flex;flex-direction:column;gap:8px}
+/* 👑 Baş Trader */
+.bas-hero{display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,var(--panel) 0%,var(--panel2) 100%);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:12px;position:relative;overflow:hidden}
+.bas-brain{width:84px;height:84px;flex:none;position:relative;border-radius:50%;display:grid;place-items:center}
+.bas-brain .ring{position:absolute;inset:0;border-radius:50%;border:2px solid var(--amber);opacity:0;animation:basPulse 2.8s ease-out infinite}
+.bas-brain .ring:nth-child(2){animation-delay:.93s} .bas-brain .ring:nth-child(3){animation-delay:1.86s}
+.bas-brain .sweep{position:absolute;inset:6px;border-radius:50%;background:conic-gradient(from 0deg,transparent 0 280deg,rgba(251,191,36,.55) 360deg);animation:sweep 2.4s linear infinite}
+.bas-brain .core{position:relative;width:52px;height:52px;border-radius:50%;background:var(--panel);border:2px solid var(--amber);display:grid;place-items:center;font-size:26px;box-shadow:0 0 18px rgba(251,191,36,.35)}
+@keyframes basPulse{0%{transform:scale(.62);opacity:.85}100%{transform:scale(1.25);opacity:0}}
+.bas-think{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bas-think b{color:var(--amber)}
+.bas-think .cur{display:inline-block;width:7px;height:13px;background:var(--amber);vertical-align:-2px;margin-left:2px;animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+.dbar{position:relative;height:8px;background:var(--panel2);border-radius:4px;overflow:hidden;flex:1;min-width:60px}
+.dbar::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--line)}
+.dbar i{position:absolute;top:0;bottom:0;border-radius:4px}
+.dbar .th{position:absolute;top:-2px;bottom:-2px;width:1px;background:var(--dim);opacity:.7}
+.wrow{display:grid;grid-template-columns:64px 1fr 52px;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.wrow:last-child{border-bottom:none}
+.wparts{display:none;grid-column:1/-1;padding:6px 0 2px}
+.wrow.open .wparts{display:grid;grid-template-columns:96px 1fr 40px;gap:4px 10px;font-size:12px;color:var(--muted)}
+.lanes{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.lane{background:var(--panel2);border-radius:10px;padding:8px 10px;font-size:12.5px;min-width:0}
+.lane .n{font-weight:700} .lane .c{color:var(--muted);font-size:11.5px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (prefers-reduced-motion: reduce){.bas-brain .ring,.bas-brain .sweep,.bas-think .cur{animation:none}}
+.li{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:10px;font-size:13px}
+.li.tx-row{cursor:pointer}.li.tx-row:hover{border-color:var(--blue)}.li.tx-row.open{border-bottom-left-radius:0;border-bottom-right-radius:0}
+.txd{background:var(--panel);border:1px solid var(--blue);border-top:none;border-radius:0 0 12px 12px;margin:-7px 0 0;padding:10px 12px 12px;font-size:12.8px;line-height:1.55}
+.txd h4{margin:10px 0 3px;font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--dim)}.txd h4:first-child{margin-top:0}
+.txd p{margin:0 0 4px}.txd .k2{display:grid;grid-template-columns:1fr auto;gap:2px 12px}.txd .k2 span:nth-child(even){text-align:right;font-variant-numeric:tabular-nums}
+.li .m{color:var(--muted);font-size:12px}
+.li .r{margin-left:auto;text-align:right;font-family:var(--mono);font-weight:700}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--green);color:#04130d;font-weight:700;border:0;border-radius:12px;padding:12px 16px;font-size:15px;cursor:pointer}
+.btn.sec{background:var(--panel);color:var(--text);border:1px solid var(--line)}
+.btn[aria-disabled="true"]{opacity:.45;pointer-events:none}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.guide p,.guide li{font-size:14px;line-height:1.6;color:var(--text)}
+.guide li{margin:4px 0} .guide code{font-family:var(--mono);background:var(--panel2);padding:1px 6px;border-radius:6px;font-size:13px}
+.spark{width:100%;height:90px;display:block}
+.foot{color:var(--dim);font-size:12px;text-align:center;margin:28px 0 8px;line-height:1.6}
+.stale{display:none} .stale.on{display:block}
+.livebar{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin:-4px 0 10px}
+.livebar .dot{width:8px;height:8px;border-radius:50%;background:var(--dim);flex:none}
+.livebar.on .dot{background:var(--green);box-shadow:0 0 0 0 rgba(52,211,153,.6);animation:pulse 1.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(52,211,153,.55)}70%{box-shadow:0 0 0 7px rgba(52,211,153,0)}100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}}
+@media (prefers-reduced-motion: reduce){.livebar.on .dot{animation:none}}
+.flash-up{color:var(--green)!important} .flash-dn{color:var(--red)!important}
+.meter{height:8px;background:var(--panel2);border-radius:99px;overflow:hidden;margin-top:6px}
+.meter i{display:block;height:100%;border-radius:99px}
+.chipline{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="logo" aria-hidden="true"></div>
+    <div>
+      <h1>Kripto Radar</h1>
+      <div class="sub" id="sub">yükleniyor…</div>
+    </div>
+    <a class="theme-btn" href="polat.html" style="margin-left:auto" aria-label="Polat paneli">🎯 Polat</a>
+    <button class="theme-btn" id="themeBtn" style="margin-left:0" aria-label="Tema değiştir"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/></svg></button>
+  </header>
+  <div class="warn stale" id="stale"></div>
+  <div class="kpis" id="kpis"></div>
+  <div class="livebar" id="livebar"><span class="dot"></span><span id="livetxt">Canlı fiyat bağlanıyor…</span></div>
+  <nav class="tabs" id="tabs"></nav>
+
+  <section id="t-bas"><div id="basBody"></div></section>
+  <section id="t-sig">
+    <div class="row" style="gap:10px">
+      <div class="chips" id="sigFilters"></div>
+      <label class="switch"><input type="checkbox" id="rawToggle"> Ham skor</label>
+    </div>
+    <div id="sigBody"></div>
+  </section>
+
+  <section id="t-team"><div id="teamBody"></div></section>
+
+  <section id="t-demo">
+    <p class="note">Bot her güçlü sinyalde kendi kendine <b>sanal işlem</b> açar ve stop, hedef ya da süre dolunca kapatır. Komisyon, kayma ve funding düşülür.
+    Gerçek para yoktur; amaç sinyallerin para kazandırıp kazandırmadığını ölçmek.</p>
+    <div id="demoBody"></div>
+  </section>
+
+  <section id="t-shadow">
+    <p class="note"><b>Gölge</b>: sermayesi olmayan yöneticilerin ve testte kazandırmayan işlem türlerinin (ör. Kaan/Selin short'ları)
+    <b>sanal</b> işlemleri. Gerçek fiyat ve aynı komisyonla ölçülür ama firma bakiyesine dokunmaz. 10 gölge işlemde ortalama +0,1R
+    yapan yönetici gerçek sermayeye döner.</p>
+    <div id="shadowBody"></div>
+  </section>
+
+  <section id="t-fund">
+    <p class="note">Delta-nötr carry: spot'tan al + perp'te aynı miktar short aç → fiyat riski ~0, pozitif funding'i toplarsın.
+    Liste 30 günlük istikrara göre sıralı. <b>Başabaş gün</b> = 4 bacağın işlem maliyetini funding'in kaç günde çıkardığı.</p>
+    <div class="warn">Araştırmalar kripto carry getirisinin 2024'ten beri ciddi daraldığını, 2025'te bazı dönemlerde negatife döndüğünü gösteriyor.
+    Funding bir gecede tersine dönebilir; borsa riski ve short bacakta likidasyon riski vardır. Kaldıraç kullanma.</div>
+    <div id="fundBody"></div>
+    <h2>Borsalar arası</h2>
+    <p class="note">Aynı coinin borsalar arasındaki funding farkı: düşük olanda long, yüksek olanda short açılırsa fiyat riski ~0 olur ve fark toplanır.
+    Teminatın iki borsaya bölünmesi, transfer ve komisyon gerçek getiriyi düşürür.</p>
+    <div id="arbBody"></div>
+  </section>
+
+  <section id="t-led">
+    <p class="note">Demo işlemlerin setup ve periyot bazında karnesi.
+    <b>R</b> = risk birimi (stop'a gitmek −1R). 2R hedefte başabaş isabet oranı ≈ %33'tür, yani <b>isabetten çok ortalama R'ye bak</b>.
+    Bir setup en az 30 işlemden sonra pozitif beklenti göstermiyorsa ona güvenme.</p>
+    <div id="ledBody"></div>
+  </section>
+
+  <section id="t-coins">
+    <input class="search" id="coinSearch" placeholder="Coin ara (ör. SOL)" autocomplete="off">
+    <div class="tbl-wrap" style="margin-top:10px"><table class="tbl" id="coinTbl"></table></div>
+  </section>
+
+  <section id="t-bt"><div id="btBody"></div></section>
+
+  <section id="t-guide" class="guide"><div id="guideBody"></div></section>
+
+  <div class="foot" id="foot"></div>
+</div>
+
+<script>
+window.__DATA__ = /*__DATA__*/null;
+(function(){
+"use strict";
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const LBL = {trend_long:"Trend Long",trend_short:"Trend Short",donus_long:"Dönüş Long",donus_short:"Dönüş Short",carry:"Funding carry"};
+const who = t => { const m = D && D.team && D.team[t.mgr]; return m ? `<span class="badge b-dim">${m.emoji} ${esc(m.name)}${t.shadow?" · gölge":""}</span>` : ""; };
+const slbl = t => LBL[t.setup] || (D.team && D.team[t.mgr] ? D.team[t.mgr].title : (t.setup||""));
+let D = window.__DATA__, BT = null;
+let state = {tab:"bas", filter:"all", raw:false, sort:{k:"vol24_usd",d:-1}, q:""};
+try { const s = JSON.parse(localStorage.getItem("kr_ui")||"{}"); Object.assign(state, {tab:(s.bas_seen ? (s.tab||"bas") : "bas"), filter:s.filter||"all", raw:!!s.raw}); } catch(e){}
+const save = () => { try { localStorage.setItem("kr_ui", JSON.stringify({tab:state.tab,filter:state.filter,raw:state.raw,bas_seen:true})); } catch(e){} };
+
+// tema
+try { const t = localStorage.getItem("kr_theme"); if (t) document.documentElement.dataset.theme = t; } catch(e){}
+$("#themeBtn").onclick = () => {
+  const cur = document.documentElement.dataset.theme || (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+  const nx = cur === "light" ? "dark" : "light";
+  document.documentElement.dataset.theme = nx;
+  try { localStorage.setItem("kr_theme", nx); } catch(e){}
+};
+
+function fp(p){
+  if (p == null || isNaN(p)) return "–";
+  if (p >= 1000) return p.toLocaleString("tr-TR",{maximumFractionDigits:0});
+  if (p >= 1) return (+p.toFixed(3)).toLocaleString("tr-TR",{maximumFractionDigits:3});
+  if (p >= 0.01) return p.toFixed(4).replace(".",",");
+  return (+p.toPrecision(4)).toString().replace(".",",");
+}
+const pct = (v,d=1) => (v==null||isNaN(v)) ? "–" : (v>0?"+":"") + v.toFixed(d).replace(".",",") + "%";
+const money = (v,sign=true) => (v==null||isNaN(v)) ? "–" : (sign && v>0 ? "+" : "") + v.toLocaleString("tr-TR",{minimumFractionDigits:2,maximumFractionDigits:2}) + "$";
+const TFL = {"15m":"15dk","1H":"1S","4H":"4S","30m":"30dk","5m":"5dk","2H":"2S"};
+const tfl = t => TFL[t] || t || "4S";
+function dur(h){ if (h==null) return "–"; const m=Math.round(h*60); if (m<60) return m+" dk"; const hh=Math.floor(m/60), mm=m%60; if (hh<24) return hh+" sa"+(mm?" "+mm+" dk":""); const d=Math.floor(hh/24), r=hh%24; return d+" gün"+(r?" "+r+" sa":""); }
+const usd = v => v==null ? "–" : v>=1e9 ? "$"+(v/1e9).toFixed(1).replace(".",",")+"B" : v>=1e6 ? "$"+(v/1e6).toFixed(0)+"M" : "$"+Math.round(v/1e3)+"K";
+const cls = v => v>0 ? "up" : v<0 ? "down" : "";
+function ago(ms){
+  const m = Math.round((Date.now()-ms)/60000);
+  if (m < 1) return "az önce"; if (m < 60) return m+" dk önce";
+  const h = Math.floor(m/60); if (h < 24) return h+" sa "+(m%60)+" dk önce";
+  return Math.floor(h/24)+" gün önce";
+}
+function scoreColor(s){ return s>=75 ? "var(--green)" : s>=65 ? "#a3e635" : s>=50 ? "var(--amber)" : "var(--dim)"; }
+
+function render(){
+  if (!D){ $("#sub").textContent = "Henüz veri yok — ilk tarama bekleniyor."; return; }
+  const b = D.btc || {};
+  $("#sub").innerHTML = `OKX · ${esc(D.timeframe)}${D.live ? (D.feeds && D.feeds.okx && D.feeds.okx.healthy ? ' · <span class="badge b-green">● canlı akış</span>' : ' · <span class="badge b-amber">● REST</span>') : ''} · <span title="${esc(D.generated_local)}">${ago(D.generated_at)}</span>` + (D.demo ? ' · <span class="badge b-amber">ÖRNEK VERİ</span>' : "");
+  const age = (Date.now()-D.generated_at)/60000;
+  const st = $("#stale");
+  const lim = D.live ? 25 : 100;
+  if (age > lim){ st.classList.add("on"); st.innerHTML = `⏳ Veri ${age<120 ? Math.round(age)+" dakikadır" : Math.round(age/60)+" saattir"} güncellenmedi. Canlı döngü yeniden başlıyor olabilir; uzun sürerse Rehber sekmesinden kontrol et.`; }
+  else st.classList.remove("on");
+  const L = D.ledger.stats.overall, DM = D.ledger.stats.demo || {};
+  const reg = b.regime===1 ? '<span class="badge b-green">Boğa</span>' : b.regime===-1 ? '<span class="badge b-red">Ayı</span>' : '<span class="badge b-dim">?</span>';
+  $("#kpis").innerHTML = `
+    <div class="kpi"><div class="l">BTC</div><div class="v num" id="kpiBtc">${fp(b.price)}</div><div class="s num ${cls(b.chg24)}">${pct(b.chg24)} · 24s</div></div>
+    <div class="kpi"><div class="l">Rejim</div><div class="v">${reg}</div><div class="s">EMA200 ${fp(b.ema200)}</div></div>
+    <div class="kpi"><div class="l">Güçlü sinyal</div><div class="v num">${D.counts.strong}</div><div class="s">${D.counts.scanned} coin tarandı</div></div>
+    <div class="kpi"><div class="l">Demo bakiye</div><div class="v num" id="kpiEq">${money(DM.equity,false)}</div><div class="s num ${cls(DM.return_pct)}" id="kpiRet">${pct(DM.return_pct,2)} · ${D.ledger.open.filter(t=>!t.shadow).length} açık</div></div>`;
+  const tabs = (D.bas ? [["bas","👑 Baş Trader",(D.bas.open||[]).length]] : []).concat(D.team ? [["team","Ekip",Object.keys(D.team).length]] : []).concat([["demo","İşlemler",D.ledger.open.filter(t=>!t.shadow).length]]).concat(D.team ? [["shadow","Gölge",D.ledger.open.filter(t=>t.shadow).length]] : []).concat([["sig","Sinyaller",D.counts.strong]]).concat([["led","Karne",L.n||0],["fund","Funding",D.harvest.length],["coins","Coinler",D.coins.length]]);
+  if (BT) tabs.push(["bt","Backtest",""]);
+  tabs.push(["guide","Rehber",""]);
+  if (!tabs.find(t=>t[0]===state.tab)) state.tab = tabs[0][0];
+  $("#tabs").innerHTML = tabs.map(([k,n,c]) => `<button class="tab ${state.tab===k?"on":""}" data-t="${k}">${n}${c!==""?`<span class="c">${c}</span>`:""}</button>`).join("");
+  document.querySelectorAll(".tab").forEach(el => el.onclick = () => { state.tab = el.dataset.t; save(); render(); scrollTo({top:0}); });
+  document.querySelectorAll("section").forEach(s => s.classList.toggle("on", s.id === "t-"+state.tab));
+  ({bas:renderBas,team:renderTeam,shadow:renderShadow,sig:renderSignals,demo:renderDemo,fund:()=>{renderFunding();renderArb();},led:renderLedger,coins:renderCoins,bt:renderBT,guide:renderGuide})[state.tab]();
+  $("#foot").innerHTML = `v${esc(D.version)} · ${D.counts.scanned}/${D.counts.universe} coin · ${D.duration_s!=null ? D.duration_s+" sn · " : ""}${D.scan_times ? "son tarama "+Object.entries(D.scan_times).map(([k,v])=>tfl(k)+" "+v).join(", ")+" · " : ""}OI: ${esc(D.oi_source)} · taker verisi: ${D.taker_real}/${D.coins.length}<br>Karar destek aracıdır · otomatik emir vermez · yatırım tavsiyesi değildir`;
+}
+
+function sigCard(s){
+  const sc = state.raw ? s.raw : s.score;
+  const reasons = s.reasons || [];
+  const id = "w"+Math.random().toString(36).slice(2,8);
+  const li = reasons.map((r,i) => `<li class="${r.startsWith("−")?"neg":"pos"}" ${i>=3?`data-x="${id}" hidden`:""}>${esc(r)}</li>`).join("");
+  const slS = s.side==="long" ? "−" : "+", tpS = s.side==="long" ? "+" : "−";
+  return `<div class="card ${s.side}">
+    <div class="hd"><div><div class="sym">${esc(s.sym)}</div><div class="lbl"><span class="badge b-blue">${tfl(s.tf)}</span> ${esc(s.label)} · <span class="num ${cls(s.chg24)}">${pct(s.chg24)}</span></div></div>
+      <div class="score"><div class="v" style="color:${scoreColor(sc)}">${sc}</div><div class="raw">${state.raw ? "rejimli "+s.score : (s.raw!==s.score ? "ham "+s.raw : "/100")}</div></div></div>
+    <div class="bar"><i style="width:${sc}%;background:${scoreColor(sc)}"></i></div>
+    <div class="lv">
+      <div><div class="k">Giriş</div><div class="x">${fp(s.entry)}</div></div>
+      <div><div class="k">Stop</div><div class="x down">${fp(s.sl)}</div><div class="p">${slS}${s.sl_pct.toFixed(1).replace(".",",")}%</div></div>
+      <div><div class="k">Hedef</div><div class="x up">${fp(s.tp)}</div><div class="p">${tpS}${s.tp_pct.toFixed(1).replace(".",",")}%</div></div>
+    </div>
+    <ul class="why">${li}</ul>
+    ${reasons.length>3 ? `<button class="more" data-more="${id}">+${reasons.length-3} neden daha</button>` : ""}
+    <div class="meta"><span>RSI ${s.rsi!=null?Math.round(s.rsi):"–"}</span><span>ADX ${s.adx!=null?Math.round(s.adx):"–"}</span>
+      <span>Fund ${s.funding_ann!=null?Math.round(s.funding_ann)+"%":"–"}</span><span>OI ${pct(s.oi_chg24)}</span><span>≤${dur(s.max_saat)}</span></div>
+  </div>`;
+}
+
+function renderSignals(){
+  const F = [["all","Tümü"],["long","Long"],["short","Short"],["trend","Trend"],["donus","Dönüş"]].concat((D.timeframes||[]).map(t => [t, tfl(t)]));
+  $("#sigFilters").innerHTML = F.map(([k,n]) => `<button class="chip ${state.filter===k?"on":""}" data-f="${k}">${n}</button>`).join("");
+  document.querySelectorAll("[data-f]").forEach(el => el.onclick = () => { state.filter = el.dataset.f; save(); renderSignals(); });
+  const rt = $("#rawToggle"); rt.checked = state.raw; rt.onchange = () => { state.raw = rt.checked; save(); renderSignals(); };
+  const thr = D.thresholds;
+  let list = D.signals.filter(s => state.filter==="all" || s.side===state.filter || s.kind===state.filter || s.tf===state.filter);
+  const val = s => state.raw ? s.raw : s.score;
+  list = list.slice().sort((a,b) => val(b)-val(a));
+  const strong = list.filter(s => val(s) >= thr.strong), watch = list.filter(s => val(s) >= thr.watch && val(s) < thr.strong);
+  let h = "";
+  h += `<h2>Güçlü <span class="n">≥${thr.strong} · ${strong.length}</span></h2>`;
+  h += strong.length ? `<div class="grid">${strong.map(sigCard).join("")}</div>` :
+       `<div class="empty">Şu an eşik üstü sinyal yok. Zorlamadan beklemek de bir pozisyondur.${state.raw?"":" Rejim filtresi olmadan neler var görmek için <b>Ham skor</b>'u aç."}</div>`;
+  h += `<h2>İzleme listesi <span class="n">${thr.watch}–${thr.strong-1} · ${watch.length}</span></h2>`;
+  h += watch.length ? `<div class="grid">${watch.slice(0,24).map(sigCard).join("")}</div>` : `<div class="empty">İzleme listesi boş.</div>`;
+  if (state.raw) h += `<p class="note">Ham skor: BTC rejim filtresi ve short cezası uygulanmadan önceki puan. Ayı piyasasında long'lar, boğa piyasasında short'lar sönümlenir.</p>`;
+  $("#sigBody").innerHTML = h;
+  document.querySelectorAll("[data-more]").forEach(el => el.onclick = () => {
+    document.querySelectorAll(`[data-x="${el.dataset.more}"]`).forEach(x => x.hidden = false); el.remove(); });
+}
+
+function renderFunding(){
+  const H = D.harvest;
+  if (!H.length){ $("#fundBody").innerHTML = `<div class="empty">Şu an filtreleri geçen istikrarlı harvest adayı yok (min. %${"8"}/yıl, funding'lerin %75'i pozitif, spot+perp likit).</div>`; return; }
+  $("#fundBody").innerHTML = `<div class="grid">` + H.map(h => {
+    const oth = Object.entries(h.other||{}).map(([k,v]) => `<span>${esc(k)} ${Math.round(v)}%</span>`).join("");
+    return `<div class="card">
+      <div class="hd"><div><div class="sym">${esc(h.sym)}</div><div class="lbl">${h.interval_h} saatte bir · spot ${usd(h.spot_vol_usd)} · perp ${usd(h.vol24_usd)}</div></div>
+        <div class="score"><div class="v up">${Math.round(h.ann_30d)}%</div><div class="raw">30g yıllık</div></div></div>
+      <div class="bar"><i style="width:${h.stability}%;background:var(--blue)"></i></div>
+      <div class="stat">
+        <div><div class="k">Şimdi</div><div class="x">${Math.round(h.ann_now)}%</div></div>
+        <div><div class="k">7 gün</div><div class="x">${h.ann_7d!=null?Math.round(h.ann_7d)+"%":"–"}</div></div>
+        <div><div class="k">Pozitif</div><div class="x">%${h.pos_pct}</div></div>
+        <div><div class="k">Başabaş</div><div class="x">${h.breakeven_days!=null?h.breakeven_days+"g":"–"}</div></div>
+      </div>
+      <div class="meta"><span>stabilite ${h.stability}/100</span>${h.cooling?'<span style="color:var(--amber)">soğuyor ↓</span>':""}${oth}</div>
+    </div>`; }).join("") + `</div>`;
+}
+
+function renderArb(){
+  const A = D.arbitrage || [], S = D.spreads || [];
+  let h = A.length ? `<div class="grid">` + A.map(a => {
+    const v = Object.entries(a.venues||{}).sort((x,y)=>x[1]-y[1]).map(([k,x]) => `<span>${esc(k)} ${Math.round(x)}%</span>`).join("");
+    return `<div class="card"><div class="hd"><div><div class="sym">${esc(a.sym)}</div>
+      <div class="lbl"><span class="badge b-green">long ${esc(a.long_at)}</span> <span class="badge b-red">short ${esc(a.short_at)}</span>
+      ${a.check==="ok" ? '<span class="badge b-blue">fiyat doğrulandı</span>' : '<span class="badge b-amber">aynı coin mi, kontrol et</span>'}</div></div>
+      <div class="score"><div class="v up">${Math.round(a.spread)}%</div><div class="raw">yıllık fark</div></div></div>
+      <div class="meta">${v}</div></div>`; }).join("") + `</div>`
+    : `<div class="empty">Şu an %15'in üzerinde funding farkı olan coin yok.</div>`;
+  h += `<h2>OKX ↔ Bitget fiyat farkı <span class="n">${D.spreads_n||0} coin canlı</span></h2>`;
+  h += S.length ? `<div class="list">` + S.map(x => `<div class="li"><b>${esc(x.sym)}</b><span class="m num">OKX ${fp(x.okx)} · Bitget ${fp(x.bitget)}</span>
+    <span class="r ${cls(x.bps)}">${x.bps>0?"+":""}${x.bps.toFixed(1).replace(".",",")} bp</span></div>`).join("") + `</div>`
+    : `<div class="empty">Bitget canlı fiyatı henüz yok.</div>`;
+  $("#arbBody").innerHTML = h;
+}
+
+function spark(eq){
+  if (!eq || eq.length < 2) return "";
+  const ys = eq.map(p=>p[1]), mn = Math.min(0,...ys), mx = Math.max(0,...ys), W=600, H=90, pad=6;
+  const x = i => pad + i*(W-2*pad)/(ys.length-1), y = v => H-pad - (v-mn)*(H-2*pad)/((mx-mn)||1);
+  const d = ys.map((v,i)=>(i?"L":"M")+x(i).toFixed(1)+" "+y(v).toFixed(1)).join(" ");
+  const last = ys[ys.length-1];
+  return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Kümülatif R eğrisi">
+    <line x1="0" x2="${W}" y1="${y(0)}" y2="${y(0)}" stroke="var(--line)" stroke-dasharray="4 4"/>
+    <path d="${d}" fill="none" stroke="${last>=0?"var(--green)":"var(--red)"}" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>`;
+}
+
+function renderLedger(){
+  const S = D.ledger.stats, O = S.overall, vb = {good:"b-green",bad:"b-red",meh:"b-amber",collect:"b-dim"};
+  let h = `<div class="card"><div class="hd"><div><div class="sym">Genel karne</div><div class="lbl">${O.n||0} kapanmış · ${D.ledger.open.length} açık</div></div>
+    <div class="score"><span class="badge ${vb[O.verdict.code]}">${esc(O.verdict.text)}</span></div></div>
+    ${O.n ? `<div class="stat"><div><div class="k">İsabet</div><div class="x">%${O.win_rate}</div></div><div><div class="k">Ort. R</div><div class="x ${cls(O.avg_r)}">${O.avg_r.toFixed(2)}</div></div>
+    <div><div class="k">Toplam R</div><div class="x ${cls(O.sum_r)}">${O.sum_r.toFixed(1)}</div></div><div><div class="k">PF</div><div class="x">${O.pf ?? "–"}</div></div></div>${spark(S.equity)}` : `<p class="note">İlk işlemler kapandıkça burada isabet, ortalama R ve sermaye eğrisi oluşacak.</p>`}</div>`;
+  h += `<h2>Setup bazında</h2><div class="grid">` + Object.entries(S.by_setup).map(([k,s]) => `<div class="card ${k.endsWith("long")?"long":"short"}">
+    <div class="hd"><div><div class="sym" style="font-size:15px">${LBL[k]}</div><div class="lbl">${s.n||0} kapanmış · ${s.open} açık</div></div>
+    <div class="score"><span class="badge ${vb[s.verdict.code]}">${esc(s.verdict.text)}</span></div></div>
+    ${s.n ? `<div class="stat"><div><div class="k">İsabet</div><div class="x">%${s.win_rate}</div></div><div><div class="k">Ort. R</div><div class="x ${cls(s.avg_r)}">${s.avg_r.toFixed(2)}</div></div>
+    <div><div class="k">Toplam</div><div class="x ${cls(s.sum_r)}">${s.sum_r.toFixed(1)}R</div></div><div><div class="k">Süre</div><div class="x">${Math.round(s.avg_hours)}sa</div></div></div>`:""}</div>`).join("") + `</div>`;
+  if (S.by_tag && S.by_tag.length){
+    h += `<h2>Hangi malzeme işe yarıyor?</h2><p class="note">Sinyalde bu neden varken ve yokken ortalama R. Fark büyükse o gösterge gerçekten katkı veriyor.</p>
+    <div class="list">` + S.by_tag.slice(0,12).map(t => `<div class="li"><b>${esc(t.tag)}</b><span class="m">${t.n} işlem</span><span class="r ${cls(t.avg_r)}">${t.avg_r.toFixed(2)}R <span class="m">/ yokken ${t.avg_r_without!=null?t.avg_r_without.toFixed(2):"–"}</span></span></div>`).join("") + `</div>`;
+  }
+  if (S.by_tf && Object.keys(S.by_tf).length){
+    h += `<h2>Periyot bazında</h2><div class="grid">` + Object.entries(S.by_tf).map(([tf,s]) => `<div class="card">
+      <div class="hd"><div><div class="sym" style="font-size:15px">${tfl(tf)} sinyalleri</div><div class="lbl">${s.n||0} kapanmış · ${s.open||0} açık</div></div>
+      <div class="score"><span class="badge ${vb[s.verdict.code]}">${esc(s.verdict.text)}</span></div></div>
+      ${s.n ? `<div class="stat"><div><div class="k">İsabet</div><div class="x">%${s.win_rate}</div></div><div><div class="k">Ort. R</div><div class="x ${cls(s.avg_r)}">${s.avg_r.toFixed(2)}</div></div>
+      <div><div class="k">K/Z</div><div class="x ${cls(s.pnl_usd)}">${money(s.pnl_usd)}</div></div><div><div class="k">Süre</div><div class="x">${dur(s.avg_hours)}</div></div></div>`:""}</div>`).join("") + `</div>`;
+  }
+  $("#ledBody").innerHTML = h;
+}
+
+function eqChart(eq, start){
+  if (!eq || eq.length < 2) return `<p class="note">Bakiye eğrisi ilk işlemler kapandıkça çizilecek.</p>`;
+  const pts = [[eq[0][0]-1, start]].concat(eq);
+  const ys = pts.map(p=>p[1]), mn = Math.min(start,...ys), mx = Math.max(start,...ys), W=600, H=120, pl=6, pr=6, pt=10, pb=10;
+  const x = i => pl + i*(W-pl-pr)/(ys.length-1), y = v => H-pb - (v-mn)*(H-pt-pb)/((mx-mn)||1);
+  const line = ys.map((v,i)=>(i?"L":"M")+x(i).toFixed(1)+" "+y(v).toFixed(1)).join(" ");
+  const last = ys[ys.length-1], col = last>=start ? "var(--green)" : "var(--red)";
+  const area = line + ` L${x(ys.length-1).toFixed(1)} ${y(start).toFixed(1)} L${x(0).toFixed(1)} ${y(start).toFixed(1)} Z`;
+  return `<svg class="spark" style="height:120px" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Demo bakiye eğrisi">
+    <line x1="0" x2="${W}" y1="${y(start)}" y2="${y(start)}" stroke="var(--line)" stroke-dasharray="4 4" vector-effect="non-scaling-stroke"/>
+    <path d="${area}" fill="${col}" opacity=".12"/>
+    <path d="${line}" fill="none" stroke="${col}" stroke-width="2" vector-effect="non-scaling-stroke"/>
+    <circle cx="${x(ys.length-1)}" cy="${y(last)}" r="3.5" fill="${col}"/></svg>
+    <div class="row" style="justify-content:space-between;font-size:11.5px;color:var(--muted)"><span>başlangıç ${money(start,false)}</span><span class="num">min ${money(mn,false)} · max ${money(mx,false)}</span></div>`;
+}
+
+function basHero(link){
+  const B = D.bas; if (!B) return "";
+  const m = (D.team||{}).bas || {}, w = B.watch || [], top = w[0];
+  const think = top ? `${w.slice(0,5).map(r => `${esc(r.sym)} <b>${r.score>0?"+":""}${(+r.score).toFixed(2).replace(".",",")}</b>`).join(" · ")}` : "veri bekleniyor";
+  return `<div class="bas-hero" ${link?'data-go="bas" style="cursor:pointer"':''}>
+    <div class="bas-brain"><span class="ring"></span><span class="ring"></span><span class="ring"></span><span class="sweep"></span><div class="core">👑</div></div>
+    <div style="min-width:0;flex:1">
+      <div class="lbl">Baş Trader · tam yetki · her dakika ${(D.coins||[]).length} coin</div>
+      <div class="row" style="margin-top:2px"><span class="num" style="font-size:24px;font-weight:800">${money(m.equity,false)}</span>
+        <span class="badge ${(m.pnl||0)>=0?"b-green":"b-red"}">${money(m.pnl||0)}</span>
+        <span class="badge b-dim">${(B.open||[]).length} açık · ${B.closed_n||0} kapalı</span></div>
+      <div class="bas-think">şu an düşünüyor: ${think}<span class="cur"></span></div>
+    </div></div>`;
+}
+
+function dbar(v, th){
+  const x = Math.max(-1, Math.min(1, +v||0)), w = Math.abs(x)*50, col = x>=0 ? "var(--green)" : "var(--red)";
+  const left = x>=0 ? 50 : 50-w;
+  const ths = th!=null ? `<span class="th" style="left:${50+th*50}%"></span><span class="th" style="left:${50-th*50}%"></span>` : "";
+  return `<div class="dbar">${ths}<i style="left:${left}%;width:${w}%;background:${col}"></i></div>`;
+}
+
+function renderBas(){
+  const B = D.bas, T = D.team || {}; if (!B){ $("#basBody").innerHTML = '<p class="note">Baş Trader henüz başlamadı.</p>'; return; }
+  const f2 = x => x==null ? "–" : ((+x>0?"+":"") + (+x).toFixed(2).replace(".",","));
+  const L = B.labels || {}, th = B.giris_esik;
+  let h = basHero(false);
+  h += `<p class="note">Bütün veriyi tek puanda birleştirir: ${Object.keys(B.weights||{}).map(k=>esc(L[k]||k)).join(", ")}. Puan −1 güçlü short, +1 güçlü long. <b>±${f2(th).replace("+","")}</b> geçilince girer; ne kadar eminse o kadar büyük girer (sermayenin %${String((T.bas||{}).base_risk||0.5).replace(".",",")}–%${String((T.bas||{}).max_risk||2.5).replace(".",",")}'i), kaldıracı stop mesafesi belirler. Stop'u coinin kendi verisi belirler: oynaklığı geçmişine göre yüksekse geniş, sakinse dar; 10 günlük dip/tepe daha uzaktaysa onun ötesi. 2R'de %30 kâr + başabaş, sonra oynaklığa göre 2–3,5 ATR iz süren stop; tablo tersine dönerse çıkar. Genel Müdür kısıtları ona uygulanmaz; stop ve olmayan parayla işlem yok kuralı hep geçerli.</p>`;
+  const LN = B.learn || {};
+  h += `<div class="chipline" style="margin-bottom:6px"><span class="badge ${Object.keys(B.w_learn||{}).length?"b-green":"b-dim"}">🧠 öğrenme: ${LN.n||0}/${LN.min||100} işlem${Object.keys(B.w_learn||{}).length?" · ağırlıklar ayarlandı":" · 100 işlemden sonra kendi karnesinden öğrenir"}</span>${Object.entries(B.w_learn||{}).map(([k,v])=>`<span class="badge ${v>1?"b-green":v<1?"b-amber":"b-dim"}">${esc(L[k]||k)} ×${String(v).replace(".",",")}</span>`).join("")}<span class="badge b-dim">➕ kazanana ekler (en fazla 3 kat)</span><span class="badge b-dim">🎯 kovalamaz: ortalamadan 3 ATR uzaksa geri çekilmede girer</span></div>`;
+  const op = B.open || [];
+  h += `<h2>Pozisyonları</h2>` + (op.length ? `<div class="list">${op.map(t => `<div class="card ${t.side}"><div class="hd"><div style="min-width:0"><div class="sym">${esc(t.sym)} <span class="badge ${t.side==="long"?"b-green":"b-red"}">${t.side==="long"?"LONG":"SHORT"}</span>${t.lev?` <span class="badge b-dim">${t.lev}x</span>`:""}${(t.layer||1)>1?` <span class="badge b-amber">➕ ${t.layer}. kat</span>`:""}</div><div class="lbl num">giriş ${fp(t.entry)} · stop ${fp(t.sl)}${t.score!=null?" · giriş puanı "+f2(t.score):""}</div></div><div class="score"><div class="v num ${cls(t.upnl)}" style="font-size:18px">${money(t.upnl)}</div><div class="raw num">${f2(t.r)}R</div></div></div></div>`).join("")}</div>` : `<p class="note">Şu an pozisyonu yok; eşiği geçen fırsat bekliyor.</p>`);
+  const w = B.watch || [];
+  h += `<h2>Radarındakiler <span class="badge b-dim">${B.watch_ts?ago(B.watch_ts):""}</span></h2><div class="card">` + (w.length ? w.map((r,i) => {
+    const parts = Object.entries(r.parts||{}).sort((a,b)=>Math.abs(b[1])-Math.abs(a[1]));
+    const pe = (r.peers||{}).who || [];
+    return `<div class="wrow" data-w="${i}"><div class="sym" style="font-size:14px">${esc(r.sym)}</div>${dbar(r.score, th)}<div class="num ${r.score>=0?"up":"down"}" style="text-align:right;font-weight:700">${f2(r.score)}</div>
+      <div class="wparts">${parts.map(([k,v]) => `<span>${esc(L[k]||k)}</span>${dbar(v)}<span class="num" style="text-align:right">${f2(v)}</span>`).join("")}${pe.length?`<span>Ekipte</span><span style="grid-column:2/4">${pe.map(esc).join(", ")}</span>`:""}</div></div>`;
+  }).join("") : `<p class="note">İlk değerlendirme bekleniyor.</p>`) + `<p class="note" style="margin-bottom:0">Çubuğun üstündeki ince çizgiler giriş eşiği. Satıra dokun: puanın hangi veriden geldiğini görürsün.</p></div>`;
+  h += `<h2>Bütün kulvarlar</h2><div class="lanes">${(B.lanes||[]).map(l => `<div class="lane"><div class="n">${l.emoji} ${esc(l.name)} <span class="num ${cls(l.upnl)}" style="float:right">${money(l.upnl)}</span></div><div class="c">${l.open} açık${l.coins.length?" · "+l.coins.map(esc).join(" "):""}</div></div>`).join("")}</div>`;
+  const dec = (B.decisions||[]).slice().reverse();
+  h += `<h2>Son kararları</h2>` + (dec.length ? `<div class="card"><div class="list">${dec.map(j => `<div class="li"><div style="min-width:0"><div><b>${esc(j.sym)}</b> <span class="badge ${j.side==="long"?"b-green":j.side==="short"?"b-red":"b-dim"}">${esc(j.side)}</span> ${esc(j.action)}</div><div class="m">${esc(j.reason||"")} · ${ago(j.ts)}</div></div></div>`).join("")}</div></div>` : `<p class="note">Henüz karar yok.</p>`);
+  $("#basBody").innerHTML = h;
+  document.querySelectorAll(".wrow").forEach(el => el.onclick = () => el.classList.toggle("open"));
+}
+
+function renderTeam(){
+  const T = D.team || {}, R = D.risk || {}, DM = D.ledger.stats.demo || {}, F = (D.risk||{}).cfg || {};
+  const ms = Object.values(T).sort((a,b) => b.equity - a.equity);
+  const tot = ms.reduce((a,m)=>a+m.equity,0), start = (D.ledger.stats.demo||{}).start || 1000;
+  const halt = R.halt==="dusus" ? `<span class="badge b-red">🛑 durduruldu</span>` : R.halt==="gunluk" ? `<span class="badge b-amber">⏸ günlük limit</span>` : `<span class="badge b-green">işlem açık</span>`;
+  const hs = D.health || {}, hsb = hs.status==="sağlıklı" ? "b-green" : hs.status==="kritik" ? "b-red" : hs.status==="uyarı" ? "b-amber" : "b-dim";
+  let h = `<div class="card"><div class="hd"><div><div class="lbl">Firma bakiyesi · ${ms.length} yönetici</div>
+      <div class="num" id="teamEq" style="font-size:30px;font-weight:800;margin-top:4px">${money(tot,false)}</div></div>
+      <div class="score"><div class="v ${cls(tot-start)}" style="font-size:20px">${pct((tot/start-1)*100,2)}</div><div class="raw">başlangıç ${money(start,false)}</div></div></div>
+    <div class="chipline">${halt}<span class="badge ${hsb}">sistem ${esc(hs.status||"?")}</span>
+      <span class="badge b-dim">açık risk ${money(DM.heat_usd,false)} (%${(DM.heat_pct||0).toFixed(1).replace(".",",")})</span>
+      <span class="badge b-dim">bugün ${money(R.day_pnl||0)}</span><span class="badge b-dim">${(D.orders||[]).length} bekleyen emir</span></div>
+    ${(hs.issues||[]).length ? `<p class="note">${hs.issues.map(esc).join("<br>")}</p>` : ""}</div>`;
+  h += basHero(true) + marketCard() + gmCard() + expertCard() + learnCard() + testCard();
+  h += `<h2>Yöneticiler</h2><div class="grid">` + ms.map(m => {
+    const s = m.stats || {}, w = Math.max(4, Math.min(100, m.equity / (tot||1) * 100 * ms.length / 2));
+    const st = m.benched ? `<span class="badge b-amber" title="${esc(m.bench_why||"")}">👤 gölgede${m.bench_why?" · "+esc(m.bench_why):""}</span>` : `<span class="badge b-green">sermayeli</span>`;
+    return `<div class="card" style="border-left:3px solid ${m.aggressive ? "var(--amber)" : m.kind==="carry" ? "var(--blue)" : "var(--green)"}">
+      <div class="hd"><div style="min-width:0"><div class="sym">${m.emoji} ${esc(m.name)}</div><div class="lbl">${esc(m.title)} · ${m.kind==="carry" ? "yön riski yok" : "risk %"+String(m.base_risk).replace(".",",")+"–%"+String(m.max_risk).replace(".",",")}</div></div>
+        <div class="score"><div class="v num ${cls(m.pnl)}" style="font-size:18px">${money(m.equity,false)}</div><div class="raw ${cls(m.return_pct)}">${pct(m.return_pct,2)}</div></div></div>
+      <div class="bar"><i style="width:${w}%;background:${m.pnl>=0?"var(--green)":"var(--red)"}"></i></div>
+      <div class="stat">
+        <div><div class="k">İşlem</div><div class="x">${s.n||0}</div></div>
+        <div><div class="k">İsabet</div><div class="x">${s.n?"%"+Math.round(s.win_rate):"–"}</div></div>
+        <div><div class="k">Ort. R</div><div class="x ${cls(s.avg_r)}">${s.n?(s.avg_r>0?"+":"")+s.avg_r.toFixed(2):"–"}</div></div>
+        <div><div class="k">Açık</div><div class="x">${m.open}${m.orders?" +"+m.orders:""}</div></div>
+      </div>
+      <p class="note" style="margin:8px 0 0">${esc(m.style)}</p>
+      <div class="chipline">${st}${m.aggressive?`<span class="badge b-amber">agresif</span>`:""}<span class="badge b-dim">${(m.tfs||[]).map(tfl).join(" · ")||"8 saatlik funding"}</span>
+        ${m.dd_pct<0?`<span class="badge b-dim">zirveden %${Math.abs(m.dd_pct).toFixed(1).replace(".",",")}</span>`:""}${m.loss_streak>=2?`<span class="badge b-red">${m.loss_streak} kayıp üst üste</span>`:""}
+        ${m.shadow && m.shadow.closed ? `<span class="badge b-dim">gölge ${m.shadow.closed} işlem · ${m.shadow.avg_r>0?"+":""}${(m.shadow.avg_r||0).toFixed(2)}R</span>` : ""}</div>
+    </div>`; }).join("") + `</div>`;
+  const O = D.orders || [];
+  h += `<h2>Bekleyen limit emirler <span class="n">${O.length}</span></h2>`;
+  h += O.length ? `<div class="list">` + O.map(o => { const m = T[o.mgr] || {};
+      return `<div class="li"><div style="min-width:0"><div>${m.emoji||""} <b>${esc(m.name||o.mgr)}</b> · <b>${esc(o.sym)}</b> <span class="badge ${o.side==="long"?"b-green":"b-red"}">${o.side==="long"?"LONG":"SHORT"}</span> <span class="m">${tfl(o.tf)} · güven %${Math.round(o.conviction*100)}</span></div>
+      <div class="m num">emir ${fp(o.px)} · şu an ${fp(o.market)} · ${Math.max(0, Math.round((o.expire_ts - Date.now())/60000))} dk geçerli</div><div class="m">${esc(o.plan||"")}</div></div></div>`; }).join("") + `</div>`
+    : `<div class="empty">Bekleyen emir yok. Yöneticiler geri çekilme beklediklerinde burada görünür.</div>`;
+  const J = (D.journal || []).slice().reverse().slice(0, 40);
+  h += `<h2>Karar günlüğü</h2>`;
+  h += J.length ? `<div class="list">` + J.map(j => { const m = T[j.mgr] || {};
+      const col = /açtı|doldu|döndü/.test(j.action) ? "b-green" : /redd|iptal|vazgeç|yedeğe/.test(j.action) ? "b-amber" : "b-dim";
+      return `<div class="li"><div style="min-width:0"><div>${m.emoji||""} <b>${esc(m.name||j.mgr)}</b> ${j.sym!=="-"?"· <b>"+esc(j.sym)+"</b> "+tfl(j.tf):""} <span class="badge ${col}">${esc(j.action)}</span></div>
+      <div class="m">${esc(j.reason)} · ${ago(j.ts)}</div></div></div>`; }).join("") + `</div>`
+    : `<div class="empty">Henüz karar yok.</div>`;
+  const A = D.archive || {};
+  if (A.n) h += `<p class="note">Eski sistemin ${A.n} işlemi arşivde (${(A.periods||[]).map(p=>money(p.pnl_usd)).join(", ")}). Ekip ${D.team_started?ago(D.team_started).replace(" önce",""):""} önce temiz bir sayfayla başladı.</p>`;
+  $("#teamBody").innerHTML = h;
+  document.querySelectorAll("[data-go]").forEach(el => el.onclick = () => { state.tab = el.dataset.go; save(); render(); scrollTo({top:0}); });
+}
+
+function marketCard(){
+  const W = D.weather || {}, N = D.news || {}, C = D.calendar || {};
+  const wt = {boga:["🟢 Boğa","b-green"], ayi:["🔴 Ayı","b-red"], yatay:["🟡 Yatay","b-amber"]}[W.trend] || ["?","b-dim"];
+  const f = N.fng, fl = Object.entries(N.flags || {}).sort((a,b) => (a[1].level==="kirmizi"?0:1)-(b[1].level==="kirmizi"?0:1));
+  const up = (C.upcoming || []).slice(0, 4);
+  const dt = ms => new Date(ms).toLocaleString("tr-TR", {timeZone:"Europe/Istanbul", day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit"});
+  return `<h2>Piyasa havası ve Haber Masası</h2><div class="card">
+    <div class="chipline"><span class="badge ${wt[1]}">${wt[0]}</span>${W.high_vol?`<span class="badge b-amber">yüksek oynaklık · risk ×0,75</span>`:`<span class="badge b-dim">oynaklık normal</span>`}
+      ${f?`<span class="badge ${f.value>=80||f.value<=20?"b-amber":"b-dim"}">Korku-Açgözlülük ${f.value} · ${esc(f.label||"")}</span>`:""}
+      ${C.block?`<span class="badge b-red">⛔ ${esc(C.block)}</span>`:""}</div>
+    ${up.length?`<p class="note">Yaklaşan olaylar (±60 dk yeni işlem yok): ${up.map(e=>dt(e.ts)+" "+esc(e.title)).join(" · ")}</p>`:""}
+    ${fl.length?`<div class="list" style="margin-top:8px">`+fl.slice(0,8).map(([s,x])=>`<div class="li"><div style="min-width:0"><div>${x.level==="kirmizi"?"🔴":"🟡"} <b>${esc(s)}</b> <span class="m">${esc(x.src)} · ${ago(x.ts)}</span></div><div class="m">${esc(x.title)}</div></div></div>`).join("")+`</div>
+      <p class="note">Kırmızı: o coinde yeni işlem açılmaz. Sarı: yükselişin peşine düşülmez (long yok). Haber Masası al-sat sinyali vermez; sigortadır.</p>`
+      :`<p class="note">Aktif haber uyarısı yok.</p>`}</div>`;
+}
+
+function gmCard(){
+  const G = D.director; if (!G) return "";
+  const T = D.team || {}, f2 = (x,d=2) => x==null ? "–" : (+x).toFixed(d).replace(".",",");
+  const P = G.perf || {}, C = G.classes || {};
+  const sp = P.loop_last_s==null ? ["?","b-dim"] : P.loop_last_s > 10 ? ["yavaş","b-red"] : ["hızlı","b-green"];
+  const live1d = ((P.parts||{})["işçi:live1d"]||{}).last;
+  const conf = (G.conflicts||[]).map(c => `<div class="li"><div style="min-width:0"><div>⚔️ <b>${esc(c.sym)}</b> <span class="badge b-red">ters pozisyon</span></div><div class="m">${c.who.map(esc).join(" · ")} — v9 öncesi açıldı; yenisi açılamaz, bunlar kendi kuralıyla kapanır</div></div></div>`).join("");
+  const crowd = (G.crowd||[]).slice(0,6).map(c => `<div class="li"><div style="min-width:0"><div><b>${esc(c.sym)}</b> <span class="badge ${c.over?"b-amber":"b-dim"}">${c.n} yönetici · risk ${money(c.risk,false)} / tavan ${money(c.cap,false)}</span></div><div class="m">${c.who.map(esc).join(", ")}${c.over?" — tavan üstünde (v9 öncesi); bu coine yeni gerçek risk eklenmez":""}</div></div></div>`).join("");
+  const filt = (G.filters||[]).slice(0,6).map(f => `<span class="badge ${f.verdict.startsWith("filtre kazananları")?"b-amber":f.verdict==="filtre işini yapıyor"?"b-green":"b-dim"}">${esc(f.kind)}: ${f.n} işlem · ort. ${f.avg_r>0?"+":""}${f2(f.avg_r)}R · ${esc(f.verdict)}</span>`).join("");
+  const cst = Object.entries(G.class_state||{}).map(([k,v]) => { const [mid,c] = k.split("|"); return `${esc((T[mid]||{}).name||mid)} ${esc(c)}: ${esc(v)}`; }).join(" · ");
+  return `<h2>🏛 Genel Müdür</h2><div class="card">
+    <div class="chipline"><span class="badge ${conf?"b-red":"b-green"}">${conf?(G.conflicts.length+" ters pozisyon"):"ters pozisyon yok"}</span>
+      <span class="badge b-dim">coin tavanı %${f2(G.coin_cap_pct)} · ${money(G.coin_cap_usd,false)}</span>
+      <span class="badge b-dim">açık gerçek: A ${C.A||0} · B ${C.B||0} · C ${C.C||0}</span>
+      <span class="badge ${sp[1]}">döngü ${sp[0]} · ${f2(P.loop_last_s,2)} sn${live1d!=null?" · günlük değerlendirme "+f2(live1d,1)+" sn":""}</span>
+      ${G.filtered_open?`<span class="badge b-dim">🧪 ${G.filtered_open} elenen fikir gölgede izleniyor</span>`:""}</div>
+    <p class="note">Yöneticiler ayrı departman; Genel Müdür tek defterden bakar. Aynı coinde ters gerçek pozisyon açılmaz (yeni gelen gölgede izlenir). Bir coinde bütün yöneticilerin toplam riski tavanı geçemez. Kanıt sınıfı: A = 3 yıl+ geçmişli coin, B = 1–3 yıl (ikisi de tam boyut; 5 yıllık yarışta B en iyi sınıf çıktı), C = 1 yıldan yeni (gölge: testte ort. ≈0R, üstelik 2025 listelemeleri bir yılda ort. −%71). Sınıflar öğrenir: 30+ işlemde kanıtlayan yönetici o sınıfta bir basamak büyür.</p>
+    ${conf?`<div class="list">${conf}</div>`:""}
+    ${crowd?`<h4 style="margin:10px 0 4px">Aynı coinde birden çok yönetici</h4><div class="list">${crowd}</div>`:""}
+    ${filt?`<h4 style="margin:10px 0 4px">Filtre karnesi (elenen fikirler gölgede nasıl sonuçlandı)</h4><div class="chipline">${filt}</div>`:""}
+    ${cst?`<p class="note">Sınıf öğrenmesi: ${cst}</p>`:""}
+    ${(G.off_style||[]).length?`<p class="note">Denetçi: ${G.off_style.map(o=>esc(o.mgr+" "+o.sym+": "+o.why)).join(" · ")}</p>`:""}</div>`;
+}
+
+function expertCard(){
+  const E = D.experts || {}, H = D.hakem, T = D.team || {};
+  const f2 = (x,d=2) => x==null ? "–" : (+x).toFixed(d).replace(".",",");
+  const RN = {gozcu:"🔭 Gözcü", balina:"🐋 Balina", hakem:"⚖️ Hakem", risk:"🛡 Risk", trader:"🎯 Trader"};
+  const rows = Object.entries(E).map(([mid, roles]) => { const m = T[mid] || {};
+    const cells = ["gozcu","balina","hakem"].map(r => { const x = roles[r]; if (!x) return `<span class="badge b-dim">${RN[r]} · henüz işlem yok</span>`;
+      return `<span class="badge ${x.w>=1?"b-green":x.w<=0.2?"b-red":"b-dim"}">${RN[r]} · ${x.n} işlem · söz ${f2(x.w)}${x.mean!=null?" · katkı "+(x.mean>0?"+":"")+f2(x.mean,3)+"R":""}</span>`; }).join("");
+    const tr = roles.trader, rk = roles.risk;
+    return `<div class="li"><div style="min-width:0"><div>${m.emoji||""} <b>${esc(m.name||mid)}</b></div><div class="chipline">${cells}
+      ${tr?`<span class="badge b-dim">${RN.trader} · kayma ${f2(tr.slip_bp,1)} bp · maker %${f2(tr.maker_pct,0)}</span>`:""}
+      ${rk?`<span class="badge b-dim">${RN.risk} · 1R'yi aşan kayıp %${f2(rk.over_1r_pct,0)}</span>`:""}</div></div></div>`; }).join("");
+  const hg = H && H.groups ? Object.entries(H.groups).map(([k,g]) => `<span class="badge ${g.validated?"b-green":"b-dim"}">${esc(k==="_hepsi"?"hepsi":((T[k]||{}).name||k))}: ${g.n} işlem · ilişki ${f2(g.val_corr)} · ${g.validated?"söz hakkı var":"söz hakkı yok"}</span>`).join("") : "";
+  return `<h2>🧑‍💼 Uzman ajanlar</h2><div class="card">
+    <p class="note">Her yöneticinin 5 uzmanı var: Gözcü (fırsat + BTC'ye göre göreli güç), Balina Gözü (açık pozisyon, fonlama, long/short, likidasyon, akış), Analist-Hakem ("bu sinyal tutar mı?" modeli), Risk Sorumlusu (boyut, kaldıraç, tavan) ve Trader (emir, kayma). İlk üçü boyuta gerekçeli görüş verir; her görüş işlem kapanınca karneye işlenir. Kanıtlanmamış uzmanın sözü yarım sayılır; haklı çıktıkça 1,5'e kadar büyür, yanıldıkça sıfıra iner. Gölge işlemler de sayılır.</p>
+    ${rows?`<div class="list">${rows}</div>`:`<p class="note">Uzman karneleri ilk kapanan işlemlerle dolacak.</p>`}
+    ${hg?`<h4 style="margin:10px 0 4px">Analist-Hakem modeli${H.generated?" ("+esc(H.generated)+")":""}</h4><div class="chipline">${hg}</div>`:`<p class="note">Analist-Hakem modeli her gece eğitilir; ilk eğitimden sonra burada görünür.</p>`}</div>`;
+}
+
+function learnCard(){
+  const LR = D.learning; if (!LR) return "";
+  const T = D.team || {}, f2 = (x,d=2) => x==null ? "–" : (+x).toFixed(d).replace(".",",");
+  const DEF = new Set(LR.default_shadow || ["kaan|short","selin|short"]);
+  const segs = Object.entries(Object.assign(Object.fromEntries([...DEF].map(k=>[k,{}])), LR.segments || {}));
+  const lm = ((LR.learned||{}).managers) || {};
+  const rows = segs.map(([k,v]) => { const [mid, side] = k.split("|"), m = T[mid] || {}, st = v.state || (DEF.has(k) ? "golge" : "gercek");
+    const r = v.real || {}, sh = v.shadow || {};
+    return `<div class="li"><div style="min-width:0"><div>${m.emoji||""} <b>${esc(m.name||mid)}</b> ${side} <span class="badge ${st==="gercek"?"b-green":"b-amber"}">${st==="gercek"?"gerçek":"gölge"}</span></div>
+      <div class="m">gerçek ${r.n||0} işlem ${r.n?"· ort. "+((r.avg_r>0?"+":"")+f2(r.avg_r))+"R":""} · gölge ${sh.n||0} işlem ${sh.n?"· ort. "+((sh.avg_r>0?"+":"")+f2(sh.avg_r))+"R":""} · 30 işlemde karar verilir</div></div></div>`; }).join("");
+  const lrows = Object.entries(lm).map(([mid,v]) => `${esc((T[mid]||{}).name||mid)}: stop ×${f2(v.stop_k)}, iz ×${f2(v.trail_k)}${v.adopted?" (yeni)":""}`).join(" · ");
+  return `<h2>Öğrenme</h2><div class="card">
+    <div class="chipline"><span class="badge ${LR.stops_on?"b-green":"b-amber"}">${LR.stops_on?"durdurma limitleri açık":"durdurma limitleri kapalı (demo, gerçek API'ye kadar)"}</span>
+      <span class="badge ${LR.limits_on?"b-green":"b-amber"}">${LR.limits_on?"firma kısıtları açık":"firma kısıtları kapalı (demo)"}</span></div>
+    <p class="note">Her kapanan işlem için ders yazılır (işleme tıkla). İşlem türleri canlı kanıta göre açılıp kapanır: gölgedeki tür 30 işlemde ort. +0,10R ve kâr faktörü 1,2 yaparsa gerçeğe geçer; gerçek tür 30 işlemde ort. −0,10R'ye düşerse gölgeye alınır. Haftalık öğrenme koşusu stop ve iz stop ayarlarını sınırlar içinde 5 yıllık veride dener, yalnızca hem eski hem görülmemiş veride iyileştirirse benimser.</p>
+    ${lrows ? `<p class="note">Öğrenilmiş ayarlar${(LR.learned||{}).generated?" ("+esc(LR.learned.generated)+")":""}: ${lrows}</p>` : `<p class="note">Haftalık ayar öğrenmesi henüz çalışmadı; tüm yöneticiler varsayılan ayarlarla.</p>`}
+    ${Object.keys(LR.variants||{}).length ? `<p class="note">5 yıllık yarışı kazanan ayarlar (3 coin evreninde en az 2 kez): ${Object.entries(LR.variants).map(([mid,v])=>esc((T[mid]||{}).name||mid)+": "+v.map(x=>({ttm:"TTM sıkışması",cikis_iz_tp1:"kısmi kâr yok, ilk hedefte iz stop",cikis_iz:"baştan iz stop",cikis_hedef:"tek hedef",adx25:"ADX>25",retest:"retest",fitil_stop:"fitil stop"})[x]||x).join(", ")).join(" · ")}. Gerisi reddedildi (data/YARIS_KARAR.md).</p>` : ""}
+    ${rows ? `<div class="list">${rows}</div>` : ""}</div>`;
+}
+
+function testCard(){
+  const B = D.backtest_v8; if (!B || !B.managers) return "";
+  const f2 = (x,d=2) => x==null ? "–" : (+x).toFixed(d).replace(".",",");
+  const pol = new Set(B.policy_active || []);
+  const rows = Object.entries(B.managers).map(([id,b]) => { const a=b.all||{}, e=b.equity||{}, o=b.oos||{};
+    const ev = (a.avg_r||0) > 0.1 ? ["kanıt güçlü","b-green"] : (a.avg_r||0) > 0 ? ["kanıt zayıf","b-blue"] : ["testte kaybettirdi","b-amber"];
+    return `<div class="li"><div style="min-width:0"><div><b>${esc(b.name)}</b> <span class="badge ${ev[1]}">${ev[0]}</span>
+      <span class="m">${a.n||0} işlem · isabet %${f2(a.win_pct,0)} · ort. <b class="${cls(a.avg_r)}">${a.avg_r>0?"+":""}${f2(a.avg_r)}R</b> · örneklem dışı ${o.avg_r>0?"+":""}${f2(o.avg_r)}R</span></div>
+      <div class="m">yıllık %${f2(e.cagr_pct,1)} · maks. düşüş %${f2(e.max_dd_pct,1)} · Sharpe ${f2(e.sharpe)} · long ${f2((b.long||{}).avg_r)}R / short ${f2((b.short||{}).avg_r)}R</div></div></div>`; }).join("");
+  return `<h2>5 yıllık test <span class="n">${esc(B.test_start||"")} → bugün · ${B.n_coins||0} coin</span></h2><div class="card">
+    <div class="list">${rows}</div>
+    <p class="note">Sert maliyet: piyasa emri %${f2(B.cost&&B.cost.taker)}, limit %${f2(B.cost&&B.cost.maker)}, stop kayması ${f2(B.cost&&B.cost.slip_stop_bp,0)} bp, long funding yıllık ~%11. Parametre optimizasyonu yok (kurallar önceden sabit). Evren bugünün likit coinleri olduğu için sonuçlar iyimser tarafta olabilir.</p></div>`;
+}
+
+function riskCard(){
+  const R = D.risk || {}, C = R.cfg || {}, DM = D.ledger.stats.demo || {};
+  if (!C.risk_yuzde) return "";
+  const heat = DM.heat_pct||0, hmax = C.max_isi_yuzde||3, w = Math.min(100, heat/hmax*100);
+  const halt = R.halt==="dusus" ? `<span class="badge b-red">🛑 durduruldu: zirveden düşüş</span>` : R.halt==="gunluk" ? `<span class="badge b-amber">⏸ günlük kayıp limiti</span>` : `<span class="badge b-green">işlem açık</span>`;
+  const ddW = Math.min(100, Math.abs(R.dd_pct||0)/(C.max_dusus_yuzde||10)*100);
+  const stopsOff = D.learning && !D.learning.stops_on;
+  const dayLim = (R.day_start||DM.equity||1000) * (C.gunluk_kayip_yuzde||2)/100 + ((R.extra && R.extra.day===R.day) ? R.extra.usd : 0), dayW = Math.min(100, Math.max(0,-(R.day_pnl||0))/dayLim*100);
+  return `<h2>Risk yönetimi</h2><div class="card">
+    <div class="hd"><div><div class="sym" style="font-size:15px">Risk durumu</div><div class="lbl">işlem başı risk %${String(C.risk_yuzde).replace(".",",")}${(R.risk_mult||1)<1?" × "+R.risk_mult+" (kayıp serisi "+R.loss_streak+")":""}</div></div><div class="score">${halt}</div></div>
+    <div style="margin-top:10px"><div class="row" style="justify-content:space-between;font-size:12.5px"><span>Portföy riski</span><span class="num">${money(DM.heat_usd,false)} · %${heat.toFixed(1).replace(".",",")}${D.learning && !D.learning.limits_on ? " · sınır kapalı (demo)" : " / %"+hmax}</span></div>
+      <div class="meter"><i style="width:${w}%;background:${w>80?"var(--amber)":"var(--blue)"}"></i></div></div>
+    <div style="margin-top:10px"><div class="row" style="justify-content:space-between;font-size:12.5px"><span>Bugün</span><span class="num ${cls(R.day_pnl)}">${money(R.day_pnl||0)}${stopsOff ? " · durdurma kapalı (demo)" : " · limit −"+money(dayLim,false)}</span></div>
+      <div class="meter"><i style="width:${dayW}%;background:var(--red)"></i></div></div>
+    <div style="margin-top:10px"><div class="row" style="justify-content:space-between;font-size:12.5px"><span>Zirveden düşüş</span><span class="num">%${Math.abs(R.dd_pct||0).toFixed(1).replace(".",",")}${stopsOff ? " · durdurma kapalı (demo)" : " / %"+C.max_dusus_yuzde}</span></div>
+      <div class="meter"><i style="width:${ddW}%;background:var(--red)"></i></div></div>
+    <div class="chipline"><span class="badge b-dim">long ${DM.long_n||0} · short ${DM.short_n||0}</span>${D.team ? `<span class="badge b-dim">kısmi kâr, iz stop ve kaldıraç her yöneticinin kendi planında (işleme tıkla)</span>` : `<span class="badge b-dim">yön limiti ${C.max_ayni_yon}</span>
+      <span class="badge b-dim">+${C.kismi_kar_r}R'de %${Math.round((C.kismi_kar_oran||0)*100)} kâr al</span><span class="badge b-dim">iz stop ${C.iz_suren_atr} ATR</span>`}
+      <span class="badge b-dim">spread ≤${C.max_spread_bp} bp</span>${(R.blocked||[]).map(b=>`<span class="badge b-red">kapalı: ${esc(b.replace("|"," "))}</span>`).join("")}</div>
+  </div>`;
+}
+
+function perfCard(){
+  const O = D.ledger.stats.overall || {}, P = D.ledger.stats.perf || {};
+  const f = (v,d=2) => v==null ? "–" : String((+v).toFixed(d)).replace(".",",");
+  return `<h2>Performans</h2><div class="card">
+    <div class="stat">
+      <div><div class="k">Beklenti</div><div class="x ${cls(O.avg_r)}">${O.n?f(O.avg_r)+"R":"–"}</div></div>
+      <div><div class="k">Kâr faktörü</div><div class="x">${f(O.pf)}</div></div>
+      <div><div class="k">Kazanç/kayıp</div><div class="x">${f(O.payoff)}</div></div>
+      <div><div class="k">İsabet</div><div class="x">${O.n?"%"+f(O.win_rate,1):"–"}</div></div>
+    </div>
+    <div class="stat">
+      <div><div class="k">Maks. düşüş</div><div class="x down">${P.max_dd_pct!=null?"%"+f(Math.abs(P.max_dd_pct),1):"–"}</div></div>
+      <div><div class="k">Sharpe</div><div class="x">${f(P.sharpe)}</div></div>
+      <div><div class="k">Sortino</div><div class="x">${f(P.sortino)}</div></div>
+      <div><div class="k">Seri</div><div class="x">${O.n?("+"+(O.max_win_streak||0)+" / −"+(O.max_loss_streak||0)):"–"}</div></div>
+    </div>
+    <p class="note">Sharpe ve Sortino en az 5 günlük veriyle hesaplanır (yıllıklandırılmış). Beklenti = işlem başına ortalama R; pozitifse sistem uzun vadede kazandırır.</p>
+  </div>`;
+}
+
+// ── tarayıcıdan canlı fiyat: saniyede 3 güncelleme ─────────────────────
+const LIVE = {px:{}, ws:null, last:0, ticks:0, want:"", tries:0, prev:{}};
+function liveWanted(){
+  const s = new Set(["BTC-USDT-SWAP"]);
+  if (D) D.ledger.open.forEach(t => { s.add(t.inst); if (t.spot_inst) s.add(t.spot_inst); });
+  return [...s].sort();
+}
+function liveConnect(){
+  const want = liveWanted(), key = want.join(",");
+  if (LIVE.ws && LIVE.want === key && LIVE.ws.readyState <= 1) return;
+  try { if (LIVE.ws) LIVE.ws.close(); } catch(e){}
+  LIVE.want = key;
+  let ws;
+  try { ws = new WebSocket("wss://ws.okx.com:8443/ws/v5/public"); } catch(e){ return; }
+  LIVE.ws = ws;
+  ws.onopen = () => { LIVE.tries = 0; ws.send(JSON.stringify({op:"subscribe", args: want.map(i => ({channel:"tickers", instId:i}))})); };
+  ws.onmessage = ev => {
+    if (ev.data === "pong") return;
+    try { const m = JSON.parse(ev.data); (m.data||[]).forEach(d => { const v = +d.last; if (v > 0){ LIVE.px[d.instId] = v; LIVE.last = Date.now(); LIVE.ticks++; } }); } catch(e){}
+  };
+  ws.onclose = () => { if (LIVE.ws === ws){ LIVE.ws = null; setTimeout(liveConnect, Math.min(30000, 1000 * 2 ** (LIVE.tries++))); } };
+  ws.onerror = () => { try { ws.close(); } catch(e){} };
+}
+setInterval(() => { try { if (LIVE.ws && LIVE.ws.readyState === 1) LIVE.ws.send("ping"); } catch(e){} }, 20000);
+function liveUpnl(t, px){
+  const sg = t.side === "long" ? 1 : -1, tk = ((D.fees||{}).taker_yuzde ?? 0.05) / 100;
+  if (t.carry){ const sp = LIVE.px[t.spot_inst] || t.spot_last || t.spot_entry, q = t.qty; return q*(sp - t.spot_entry) + q*(t.entry - px) - (t.fee_entry_usd||0) - (t.funding_usd||0) - q*px*tk - q*sp*(((D.fees||{}).spot_taker_yuzde ?? 0.1)/100); }
+  if (t.real){ const q = t.qty_open ?? t.qty; return (t.partial_pnl_usd||0) + sg*q*(px - t.entry) - (t.fee_entry_usd||0) - (t.funding_usd||0) - q*px*tk; }
+  return (t.notional_usd||20) * sg * (px / t.entry - 1);
+}
+// ── işleme tıklayınca açılan canlı açıklama ──
+const TX = new Set();
+function explainTrade(t, closed){
+  const m = (D.team||{})[t.mgr] || {}, sg = t.side==="long" ? 1 : -1, sideTr = t.side==="long" ? "LONG (yükselişe)" : "SHORT (düşüşe)";
+  const px = closed ? t.exit : (LIVE.px[t.inst] || t.last || t.entry);
+  const tk = ((D.fees||{}).taker_yuzde ?? 0.1)/100, q = closed ? (t.qty||0) : (t.qty_open ?? t.qty ?? 0);
+  const net = closed ? t.pnl_usd : liveUpnl(t, px);
+  const gross = closed ? (t.gross_usd ?? 0) : ((t.partial_pnl_usd||0) + sg*q*(px - t.entry));
+  const feeIn = t.fee_entry_usd||0, feeOut = closed ? (t.fee_exit_usd||0) : q*px*tk, fund = -(t.funding_usd||0);
+  const risk = t.risk_usd || (t.qty*Math.abs(t.entry-(t.sl_init??t.sl))) || 0;
+  const rNow = risk ? net/risk : 0;
+  const pctTo = x => x ? Math.abs(x/px-1)*100 : null;
+  const chk = (t.checks||[]).filter(c=>c[1]).map(c=>esc(c[0])), miss = (t.checks||[]).filter(c=>!c[1]).map(c=>esc(c[0]));
+  const card = (t.card && t.card.notes && t.card.notes.length) ? t.card.notes.map(esc).join("; ") : "";
+  const learned = (t.reasons||[]).find(r=>/öğrenilmiş/.test(r));
+  let h = "";
+  h += `<h4>Ne oldu</h4><p>${m.emoji||""} <b>${esc(m.name||t.mgr||"")}</b>, <b>${esc(t.sym)}</b> için ${sideTr} işlem ${closed?"açmıştı":"açtı"}: `
+     + `${fp(t.entry)} fiyatından ${t.carry?"spot alıp vadelide short":"giriş"} (${esc(t.entry_src||"piyasa")}${t.entry_src&&/maker|limit/.test(t.entry_src)?", düşük komisyon":""}), ${ago(t.entry_ts)}.`
+     + `${t.shadow?" <b>Gölge işlem</b>: gerçek fiyatlarla ölçülür, bakiyeyi etkilemez.":""}</p>`;
+  if (closed){
+    h += `<p>Sonuç: <b class="${cls(net)}">${money(net)}</b> (${(t.r>0?"+":"")+(+t.r).toFixed(2)}R), ${dur(t.hours)} sürdü, ${fp(t.exit)} fiyatından ${esc(t.outcome||"")} ile kapandı ${ago(t.exit_ts)}.</p>`;
+    if (t.exit_note) h += `<p>Çıkış sebebi: ${esc(t.exit_note)}</p>`;
+  } else {
+    h += `<p>Şu an fiyat <b>${fp(px)}</b>: bu işlem şu anda <b class="${cls(net)}">${money(net)}</b> (${(rNow>0?"+":"")+rNow.toFixed(2)}R) ${net>=0?"kârda":"zararda"}. `
+       + `Stop'a %${(pctTo(t.sl)||0).toFixed(1).replace(".",",")}, hedefe %${(pctTo(t.tp)||0).toFixed(1).replace(".",",")} uzaklıkta.</p>`;
+  }
+  h += `<h4>Neden açtı</h4><p>${esc(t.plan||"")}</p>`;
+  if (chk.length) h += `<p>✓ ${chk.join(" · ")}</p>`;
+  if (miss.length) h += `<p class="m">✗ ${miss.join(" · ")}</p>`;
+  if (card) h += `<p>Baş analist: ${card}</p>`;
+  if (learned) h += `<p>${esc(learned)}</p>`;
+  if (t.coin_class) h += `<p class="m">Coin kanıt sınıfı: <b>${esc(t.coin_class)}</b> ${({A:"(3 yıl+ geçmiş, tam boyut)",B:"(1–3 yıl, tam boyut)",C:"(1 yıldan yeni; kanıtlanana kadar gölge)"})[t.coin_class]||""}</p>`;
+  if (t.gm && t.gm.length) h += `<p>🏛 Genel Müdür: ${t.gm.map(esc).join("; ")}</p>`;
+  if (t.experts && t.experts.length) {
+    const RN = {gozcu:"🔭 Gözcü", balina:"🐋 Balina Gözü", hakem:"⚖️ Analist-Hakem", risk:"🛡 Risk", trader:"🎯 Trader"};
+    h += `<h4>Uzmanların görüşü${t.exp_mult&&t.exp_mult!==1?` · boyut ×${(+t.exp_mult).toFixed(2).replace(".",",")}`:""}</h4>`
+       + t.experts.map(o => `<p class="m"><b>${RN[o.role]||esc(o.role)}</b> <span class="badge ${o.action==="büyüt"?"b-green":o.action==="küçült"?"b-amber":"b-dim"}">${esc(o.action)}${o.action!=="aynen"?" ×"+(+o.mult).toFixed(2).replace(".",","):""}</span>${o.w!=null?` <span class="m">söz ağırlığı ${(+o.w).toFixed(2).replace(".",",")}</span>`:""} — ${(o.reasons||[]).map(esc).join("; ")}</p>`).join("");
+  }
+  if (t.contrib) { const T2 = D.team||{}; h += `<p>🤝 Yatırım komitesi: ${Object.entries(t.contrib).map(([k,v])=>esc((T2[k]||{}).name||k)+" "+money(v,false)+(t.votes&&t.votes[k]!=null?" (oy "+(+t.votes[k]).toFixed(2).replace(".",",")+")":"")).join(" · ")} koydu.${t.distributed?" Kâr/zarar dağıtıldı: "+Object.entries(t.distributed).map(([k,v])=>esc((T2[k]||{}).name||k)+" "+money(v)).join(" · "):" Kapanınca kâr/zarar bu paylara göre onlara döner."}</p>`; }
+  if (t.filtered) h += `<p>🧪 Bu fikir elendi ama gölgede izleniyor (filtre de sınanıyor): <b>${esc(t.filtered)}</b></p>`;
+  h += `<h4>Para dökümü${closed?"":" (canlı)"}</h4><div class="k2">`
+     + `<span>Pozisyon büyüklüğü</span><span>${money(t.notional_usd,false)} · ${fp(t.qty)} ${esc(t.sym)}</span>`
+     + (t.lev ? `<span>Kaldıraç / teminat</span><span>${t.lev}x · ${money(t.margin_usd,false)}</span>` : "")
+     + `<span>Fiyat farkından brüt</span><span class="${cls(gross)}">${money(gross)}</span>`
+     + ((t.partials&&t.partials.length) ? `<span>· bunun içinde kısmi kâr</span><span class="${cls(t.partial_pnl_usd)}">${money(t.partial_pnl_usd)}</span>` : "")
+     + `<span>Giriş komisyonu</span><span class="down">${money(-feeIn)}</span>`
+     + `<span>${closed?"Çıkış komisyonu":"Çıkış komisyonu (tahmini)"}</span><span class="down">${money(-feeOut)}</span>`
+     + (Math.abs(fund)>=0.005 ? `<span>Funding</span><span class="${cls(fund)}">${money(fund)}</span>` : "")
+     + `<span><b>Net</b></span><span class="${cls(net)}"><b>${money(net)}</b></span>`
+     + (risk ? `<span>Riske edilen (stop'a giderse)</span><span>${money(risk,false)}</span>` : "")
+     + `<span>En iyi / en kötü an</span><span>+${(t.mfe_r||0).toFixed(2)}R / −${(t.mae_r||0).toFixed(2)}R</span></div>`;
+  if (t.lev_why) h += `<p class="m">Kaldıraç kararı: ${esc(t.lev_why)}</p>`;
+  if (!closed && !t.carry){
+    const nxt = [];
+    if (t.tp1 && !t.tp1_done) nxt.push(`Fiyat ${fp(t.tp1)}'e gelirse kârın bir kısmını alıp stop'u başabaşa çeker.`);
+    if ((t.partials||[]).length) nxt.push(`Kârın bir kısmı ${fp(t.partials[0].px)}'den alındı; stop başabaşa çekildi, kalan pozisyon artık kayıpla kapanamaz.`);
+    if (t.trail) nxt.push(`Stop fiyatla birlikte en iyi seviyenin ${((t.pp||{}).trail_atr||0).toString().replace(".",",")} ATR gerisinden takip ediyor (şu an ${fp(t.sl)}).`);
+    else nxt.push(`Stop ${fp(t.sl)}: fiyat buraya gelirse çıkar.`);
+    if (t.tp && !((t.pp||{}).trail_now && !t.tp1)) nxt.push(`Hedef ${fp(t.tp)}.`);
+    else if ((t.pp||{}).trail_now) nxt.push("Sabit hedef yok: trend sürdükçe tutar.");
+    const er = t.exit_rule;
+    if (er) nxt.push(er.type==="ma" ? `Fiyat ${er.n} günlük ortalamanın ${sg>0?"altına":"üstüne"} geçerse trend bitti sayıp çıkar.`
+      : er.type==="chan" ? `Fiyat ${er.n} günlük ${sg>0?"dibi":"tepeyi"} kırarsa çıkar.` : er.type==="mid" ? "Fiyat orta banda dönerse (patlama başarısız) çıkar." : "Ortalamaya dönüş tamamlanınca çıkar.");
+    if (t.max_saat) nxt.push(`En fazla ${dur(t.max_saat)} tutar (${dur(Math.max(0, t.max_saat - (Date.now()-t.entry_ts)/3.6e6))} kaldı).`);
+    h += `<h4>Sırada ne var</h4><p>${nxt.join(" ")}</p>`;
+  }
+  if (closed && t.lesson) h += `<h4>Ders</h4><p>📘 ${esc(t.lesson)}</p>`;
+  return h;
+}
+function bindTx(root, open, closedList){
+  if (!root) return;
+  root.querySelectorAll("[data-tx]").forEach(el => {
+    const id = el.dataset.tx;
+    let t = open.find(x => x.id === id), closed = false;
+    if (!t){ t = (closedList||[]).find(x => x.id === id); closed = true; }
+    if (!t) return;
+    el.classList.add("tx-row");
+    const show = () => { let d = document.getElementById("txd-"+id);
+      if (!d){ d = document.createElement("div"); d.className = "txd"; d.id = "txd-"+id; el.after(d); }
+      d.innerHTML = explainTrade(t, closed); el.classList.add("open"); };
+    if (TX.has(id)) show();
+    el.onclick = () => { if (TX.has(id)){ TX.delete(id); const d = document.getElementById("txd-"+id); if (d) d.remove(); el.classList.remove("open"); } else { TX.add(id); show(); } };
+  });
+}
+function liveTx(){
+  if (!D || !TX.size) return;
+  D.ledger.open.forEach(t => { if (TX.has(t.id)){ const d = document.getElementById("txd-"+t.id); if (d) d.innerHTML = explainTrade(t, false); } });
+}
+setInterval(liveTx, 1000);
+
+function setTxt(el, txt, v){
+  if (!el) return;
+  if (el.firstChild && el.firstChild.nodeType === 3) el.firstChild.nodeValue = txt; else el.textContent = txt;
+  const k = el.dataset.k, pv = LIVE.prev[k];
+  el.classList.remove("up","down"); if (v != null) el.classList.add(v > 0 ? "up" : v < 0 ? "down" : "x");
+  if (pv != null && v != null && Math.abs(v - pv) > 1e-9){ el.classList.add(v > pv ? "flash-up" : "flash-dn"); setTimeout(() => el.classList.remove("flash-up","flash-dn"), 250); }
+  if (k) LIVE.prev[k] = v;
+}
+function liveRender(){
+  const bar = $("#livebar"), txt = $("#livetxt");
+  if (!D || !bar) return;
+  const fresh = LIVE.last && Date.now() - LIVE.last < 10000;
+  bar.classList.toggle("on", !!fresh);
+  if (!fresh){ txt.textContent = LIVE.ws ? "Canlı fiyat bağlanıyor…" : "Canlı fiyat yok (son kayıtlı değerler gösteriliyor)"; return; }
+  const DM = D.ledger.stats.demo || {};
+  let snap = 0, live = 0;
+  D.ledger.open.forEach(t => {
+    const px = LIVE.px[t.inst]; const u = px ? liveUpnl(t, px) : (t.upnl_usd||0);
+    if (!t.shadow){ snap += t.upnl_usd||0; live += u; }
+    if (px){
+      const sg = t.side === "long" ? 1 : -1, risk = t.carry ? 0 : (Math.abs(t.entry - (t.sl_init ?? t.sl)) || 1e-12), r = t.carry ? (u / (t.risk_usd || 1)) : sg*(px - t.entry)/risk;
+      const ep = document.querySelector(`[data-lpx="${t.id}"]`); if (ep) ep.textContent = fp(px);
+      const el = document.querySelector(`[data-lpnl="${t.id}"]`); if (el){ el.dataset.k = "p"+t.id; setTxt(el, money(u), u); }
+      const er = document.querySelector(`[data-lr="${t.id}"]`); if (er) er.textContent = pct(t.notional_usd ? u/t.notional_usd*100 : 0, 2) + " · " + (r>0?"+":"") + r.toFixed(2) + "R";
+    }
+  });
+  const eq = (DM.equity||0) - snap + live, ret = DM.start ? (eq/DM.start - 1)*100 : 0, unr = (DM.unrealized||0) - snap + live;
+  const e1 = $("#kpiEq"); if (e1){ e1.dataset.k = "eq"; setTxt(e1, money(eq,false), null); }
+  const r1 = $("#kpiRet"); if (r1) r1.textContent = pct(ret,2) + " · " + D.ledger.open.filter(t=>!t.shadow).length + " açık";
+  const e2 = $("#demoEq"); if (e2){ e2.dataset.k = "eq2"; setTxt(e2, money(eq,false), null); }
+  const e3 = $("#teamEq"); if (e3){ e3.dataset.k = "eq3"; setTxt(e3, money(eq,false), null); }
+  const r2 = $("#demoRet"); if (r2){ r2.textContent = pct(ret,2); r2.className = "v " + cls(ret); }
+  const u2 = $("#demoUnr"); if (u2){ u2.dataset.k = "unr"; setTxt(u2, money(unr), unr); }
+  const bt = LIVE.px["BTC-USDT-SWAP"]; const kb = $("#kpiBtc"); if (bt && kb) kb.textContent = fp(bt);
+  const age = ((Date.now() - LIVE.last)/1000).toFixed(1).replace(".",",");
+  txt.textContent = `Canlı K/Z · OKX fiyatı ${age} sn önce · saniyede 3 güncelleme · ${LIVE.ticks} fiyat`;
+}
+setInterval(liveRender, 333);
+
+function renderShadow(){
+  const T = D.team || {}, op = D.ledger.open.filter(t=>t.shadow), cl = (D.ledger.shadow_closed||[]);
+  const f2 = (x,d=2) => x==null ? "–" : (+x).toFixed(d).replace(".",",");
+  const ms = Object.values(T).filter(m => m.benched || (m.shadow && (m.shadow.open || m.shadow.closed)));
+  let h = `<h2>Gölgedeki yöneticiler</h2>`;
+  h += ms.length ? `<div class="list">` + ms.map(m => { const sh = m.shadow || {};
+      return `<div class="li"><div style="min-width:0"><div>${m.emoji} <b>${esc(m.name)}</b> ${m.benched?`<span class="badge b-amber">gölgede</span>`:`<span class="badge b-dim">sermayeli · bazı işlem türleri gölgede</span>`}</div>
+      <div class="m">${sh.closed||0} gölge işlem kapandı · ortalama ${sh.avg_r!=null?(sh.avg_r>0?"+":"")+f2(sh.avg_r)+"R":"–"} · ${sh.open||0} açık${m.bench_why?" · sebep: "+esc(m.bench_why):""}</div></div></div>`; }).join("") + `</div>`
+    : `<div class="empty">Gölgede yönetici yok.</div>`;
+  const row = (t, open) => { const pnl = open ? (t.upnl_usd||0) : t.pnl_usd, r = open ? (t.r_now||0) : t.r;
+    return `<div class="li" data-tx="${t.id}"><div style="min-width:0"><div><span class="badge ${t.side==="long"?"b-green":"b-red"}">${t.side==="long"?"LONG":"SHORT"}</span> <b>${esc(t.sym)}</b> ${who(t)} <span class="m">${tfl(t.tf)}</span></div>
+      <div class="m num">${fp(t.entry)} → ${open?`<span data-lpx="${t.id}">${fp(t.last)}</span>`:fp(t.exit)+" · "+esc(t.outcome||"")}${open?" · stop "+fp(t.sl):""} · ${ago(open?t.entry_ts:t.exit_ts)}</div></div>
+      <div class="r ${cls(pnl)}" ${open?`data-lpnl="${t.id}"`:""}>${money(pnl)}<div class="m" ${open?`data-lr="${t.id}"`:""}>${(r>0?"+":"")+(+r).toFixed(2)}R</div></div></div>`; };
+  h += `<h2>Açık gölge işlemler <span class="n">${op.length}</span></h2>`;
+  h += op.length ? `<div class="list">` + op.map(t => row(t, true)).join("") + `</div>` : `<div class="empty">Açık gölge işlem yok.</div>`;
+  h += `<h2>Kapanan gölge işlemler <span class="n">${cl.length}</span></h2>`;
+  h += cl.length ? `<div class="list">` + cl.slice(0,60).map(t => row(t, false)).join("") + `</div>` : `<div class="empty">Henüz kapanan gölge işlem yok.</div>`;
+  $("#shadowBody").innerHTML = h;
+  bindTx($("#shadowBody"), op, cl);
+}
+
+function renderDemo(){
+  const DM = D.ledger.stats.demo || {}, O = D.ledger.stats.overall, op = D.ledger.open.filter(t=>!t.shadow), cl = D.ledger.closed.filter(t=>!t.shadow);
+  const icon = {hedef:"✅",stop:"❌","süre":"⏱",manuel:"✋",likidasyon:"💥","iz stop":"🔒"}, what = {hedef:"hedef (limit)",stop:"stop (piyasa)","süre":"süre doldu",manuel:"elle kapatıldı",likidasyon:"likidasyon","iz stop":"iz süren stop"};
+  let h = `<div class="card">
+    <div class="hd"><div><div class="lbl">Demo bakiye · ${DM.mode==="risk" ? "işlem başı risk %"+String(DM.risk_pct).replace(".",",") : "işlem başı "+(DM.trade_size||20)+"$"}</div>
+      <div class="num" id="demoEq" style="font-size:30px;font-weight:800;margin-top:4px">${money(DM.equity,false)}</div></div>
+      <div class="score"><div class="v ${cls(DM.return_pct)}" id="demoRet" style="font-size:20px">${pct(DM.return_pct,2)}</div><div class="raw">toplam getiri</div></div></div>
+    <div class="stat">
+      <div><div class="k">Gerçekleşen</div><div class="x ${cls(DM.realized)}">${money(DM.realized)}</div></div>
+      <div><div class="k">Açık K/Z</div><div class="x ${cls(DM.unrealized)}" id="demoUnr">${money(DM.unrealized)}</div></div>
+      <div><div class="k">İşlemde</div><div class="x">${money(DM.in_use,false)}</div></div>
+      <div><div class="k">Boşta</div><div class="x">${money(DM.free,false)}</div></div>
+    </div>
+    <div class="stat">
+      <div><div class="k">Kapanan</div><div class="x">${O.n||0}</div></div>
+      <div><div class="k">İsabet</div><div class="x">${O.n?"%"+O.win_rate:"–"}</div></div>
+      <div><div class="k">Komisyon</div><div class="x">${money(DM.fees_usd,false)}</div></div>
+      <div><div class="k">Funding</div><div class="x ${cls(-(DM.funding_usd||0))}">${money(-(DM.funding_usd||0))}</div></div>
+    </div>
+    <div style="margin-top:12px">${eqChart((D.eq_hist && D.eq_hist.length>2) ? D.eq_hist : DM.equity_curve, DM.start||1000)}</div>
+  </div>`;
+  h += riskCard() + perfCard();
+  h += `<h2>Açık işlemler <span class="n">${op.length}</span></h2>`;
+  h += op.length ? `<div class="list">` + op.map(t => {
+    const pnl = t.upnl_usd||0, pc = t.notional_usd ? pnl/t.notional_usd*100 : 0;
+    const parts = (t.partials||[]).length, noTgt = (t.pp||{}).trail_now && !t.tp1;
+    const st = parts ? `<span class="badge b-blue">🔒 kârın bir kısmı alındı · ${t.trail?"iz süren stop":"stop başabaşta"}</span>`
+      : noTgt ? `<span class="badge b-dim">↗ iz süren stop · hedef yok, trend bitince çıkar</span>`
+      : (t.tp1 ? `<span class="m">ara hedef ${fp(t.tp1)}</span>` : "");
+    return `<div class="li" data-tx="${t.id}"><div style="min-width:0">
+      <div><span class="badge ${t.side==="long"?"b-green":"b-red"}">${t.side==="long"?"LONG":"SHORT"}</span> <b>${esc(t.sym)}</b> ${who(t)} <span class="m">${tfl(t.tf)} · ${slbl(t)}${t.conviction!=null?" · güven %"+Math.round(t.conviction*100):""}</span> ${st}</div>
+      ${t.carry ? `<div class="m num">spot ${fp(t.spot_entry)} → ${fp(t.spot_last)} · vadeli short ${fp(t.entry)} → <span data-lpx="${t.id}">${fp(t.last)}</span> · toplanan funding ${money(-(t.funding_usd||0))}</div>`
+        : `<div class="m num">${fp(t.entry)} → <span data-lpx="${t.id}">${fp(t.last)}</span> · stop ${fp(t.sl)}${((t.pp||{}).trail_now && !t.tp1) ? "" : " · hedef "+fp(t.tp)}</div>`}
+      ${t.risk_usd!=null ? `<div class="m">risk ${money(t.risk_usd,false)} (%${(t.risk_pct||0).toFixed(2).replace(".",",")}) · teminat ${money(t.margin_usd,false)}</div>` : ""}
+      <div class="m">${money(t.notional_usd,false)}${t.contracts?" · "+t.contracts+" kontrat":""}${t.entry_src==="kitap"?" · kitaptan":""} · ${ago(t.entry_ts)} açıldı${Math.abs(t.funding_usd||0)>=0.005?" · funding "+money(-(t.funding_usd||0)):""}</div></div>
+      <div class="r ${cls(pnl)}" data-lpnl="${t.id}">${money(pnl)}<div class="m" data-lr="${t.id}">${pct(pc,2)} · ${(t.r_now>0?"+":"")+(t.r_now||0).toFixed(2)}R</div></div></div>`; }).join("") + `</div>`
+    : `<div class="empty">Şu an açık demo işlem yok. Güçlü sinyal geldiğinde bot kendisi açar ve Telegram'a yazar.</div>`;
+  h += `<h2>İşlem geçmişi <span class="n">${O.n||0}</span></h2>`;
+  h += cl.length ? `<div class="list">` + cl.slice(0,80).map(t => `<div class="li" data-tx="${t.id}"><div style="min-width:0">
+      <div>${icon[t.outcome]||"•"} <b>${esc(t.sym)}</b> ${who(t)} <span class="m">${t.carry?"nötr":(t.side==="long"?"long":"short")} · ${tfl(t.tf)} · ${slbl(t)}</span></div>
+      <div class="m num">${fp(t.entry)} → ${fp(t.exit)} · ${what[t.outcome]||t.outcome} · ${dur(t.hours)}${(t.partials&&t.partials.length)?" · yarısı "+fp(t.partials[0].px)+"'den alındı":""}</div>
+      <div class="m">${ago(t.exit_ts)} kapandı${t.fee_usd!=null?" · ücret "+money(t.fee_usd,false):""}${Math.abs(t.funding_usd||0)>=0.005?" · funding "+money(-t.funding_usd):""}</div></div>
+      <div class="r ${cls(t.pnl_usd)}">${money(t.pnl_usd)}<div class="m">${pct(t.pnl_pct,2)} · ${(t.r>0?"+":"")+t.r.toFixed(2)}R</div></div></div>`).join("") + `</div>`
+    : `<div class="empty">Henüz kapanan işlem yok. İlk sonuçlar periyoda göre birkaç saat ile birkaç gün içinde gelir.</div>`;
+  const SK = D.ledger.skipped || [];
+  if (SK.length) h += `<h2>Açılamayan sinyaller</h2><div class="list">` + SK.map(x => `<div class="li"><b>${esc(x.sym)}</b><span class="m">${tfl(x.tf)} · ${esc(x.reason)}</span></div>`).join("") + `</div>`;
+  const F = D.fees || {};
+  h += `<p class="note">Ücretler OKX VIP0: piyasa emri %${String(F.taker_yuzde??0.05).replace(".",",")}, limit emir %${String(F.maker_yuzde??0.02).replace(".",",")}. Giriş ve stop piyasa emri, hedef limit emir sayılır; hedefe dokunmak yetmez, fiyatın içinden geçmesi gerekir. Funding, borsanın gerçek kesim saatinde gerçek oranla düşülür.</p>`;
+  $("#demoBody").innerHTML = h;
+  bindTx($("#demoBody"), op, cl);
+}
+
+function renderCoins(){
+  const cols = [["sym","Coin"],["price","Fiyat"],["chg24","24s"],["vol24_usd","Hacim","hm"],["rsi","RSI"],["adx","ADX","hm"],["funding_ann","Fund/yıl"],["oi_chg24","OI 24s"],["bitget_bps","Bitget","hm"],["st","Trend"],["best","En iyi"]];
+  const q = state.q.trim().toUpperCase();
+  let rows = D.coins.filter(c => !q || c.sym.includes(q));
+  const k = state.sort.k, d = state.sort.d;
+  const v = c => k==="best" ? (c.best?c.best.score:-1) : k==="sym" ? c.sym : (c[k]==null?-1e18:c[k]);
+  rows = rows.slice().sort((a,b) => { const x=v(a), y=v(b); return (x>y?1:x<y?-1:0)*d; });
+  const tr = c => `<tr><td>${esc(c.sym)}</td><td>${fp(c.price)}</td><td class="${cls(c.chg24)}">${pct(c.chg24)}</td><td class="hm">${usd(c.vol24_usd)}</td>
+    <td>${c.rsi!=null?Math.round(c.rsi):"–"}</td><td class="hm">${c.adx!=null?Math.round(c.adx):"–"}</td>
+    <td class="${c.funding_ann>50?"down":c.funding_ann<-10?"up":""}">${c.funding_ann!=null?Math.round(c.funding_ann)+"%":"–"}</td>
+    <td class="${cls(c.oi_chg24)}">${pct(c.oi_chg24)}</td>
+    <td class="hm">${c.bitget_bps!=null ? (c.bitget_bps>0?"+":"")+c.bitget_bps.toFixed(1).replace(".",",")+"bp" : "–"}</td>
+    <td>${c.st===1?'<span class="up">▲</span>':'<span class="down">▼</span>'}${c.d_trend===1?'<span class="up">▲</span>':c.d_trend===-1?'<span class="down">▼</span>':'<span style="color:var(--dim)">•</span>'}</td>
+    <td>${c.best?`<span class="${c.best.side==="long"?"up":"down"}">${c.best.score}</span> <span style="color:var(--muted);font-family:var(--sans);font-size:11px">${esc(c.best.label)}</span>`:"–"}</td></tr>`;
+  $("#coinTbl").innerHTML = `<thead><tr>${cols.map(([k2,n,hc]) => `<th data-k="${k2}" class="${hc||""}">${n}${state.sort.k===k2?(state.sort.d>0?" ↑":" ↓"):""}</th>`).join("")}</tr></thead><tbody>${rows.map(tr).join("")}</tbody>`;
+  document.querySelectorAll("#coinTbl th").forEach(th => th.onclick = () => {
+    const k2 = th.dataset.k; state.sort = {k:k2, d: state.sort.k===k2 ? -state.sort.d : -1}; renderCoins(); });
+  const si = $("#coinSearch"); si.value = state.q; si.oninput = () => { state.q = si.value; renderCoins(); };
+}
+
+function renderBT(){
+  if (!BT){ $("#btBody").innerHTML = ""; return; }
+  let h = `<p class="note">Son backtest: ${esc(BT.generated_local||"")} · ${BT.coins} coin · ${BT.days} gün · yalnızca fiyat bazlı parçalar (funding/OI geçmişi yetersiz).
+  Parametreler ilk %70 dönemde seçilip son %30'da (görülmemiş veri) test edildi.</p>`;
+  h += `<div class="grid">` + Object.entries(BT.setups||{}).map(([k,s]) => {
+    const o = s.oos_best || {}, df = s.oos_default || {};
+    return `<div class="card ${k.endsWith("long")?"long":"short"}"><div class="hd"><div><div class="sym" style="font-size:15px">${LBL[k]}</div><div class="lbl">en iyi: ${esc(JSON.stringify(s.best_params||{}))}</div></div></div>
+    <div class="stat"><div><div class="k">OOS işlem</div><div class="x">${o.n??0}</div></div><div><div class="k">Ort. R</div><div class="x ${cls(o.avg_r)}">${o.avg_r!=null?o.avg_r.toFixed(2):"–"}</div></div>
+    <div><div class="k">İsabet</div><div class="x">${o.win_rate!=null?"%"+o.win_rate:"–"}</div></div><div><div class="k">Varsayılan</div><div class="x ${cls(df.avg_r)}">${df.avg_r!=null?df.avg_r.toFixed(2)+"R":"–"}</div></div></div></div>`;
+  }).join("") + `</div>`;
+  if (BT.note) h += `<div class="warn">${esc(BT.note)}</div>`;
+  $("#btBody").innerHTML = h;
+}
+
+function feedLines(){
+  const f = D.feeds || {}, L = [];
+  const hs = D.health || {};
+  if (hs.status) L.push(`Sistem: <b>${esc(hs.status)}</b>${(hs.issues||[]).length ? " · "+hs.issues.map(esc).join(" · ") : ""}`);
+  const ls = D.lease || {};
+  if (ls.holder) L.push(`Nöbetteki döngü: ${esc(String(ls.holder))}${ls.handoff_s!=null ? " · son "+(ls.handoff_kind==="kurtarma" ? "kurtarma" : "devir")+" kesintisi "+String(ls.handoff_s).replace(".",",")+" sn" : ""}${ls.ok===false ? " · ⚠ nabız yazılamadı" : ""}`);
+  if ((hs.suspect||[]).length) L.push(`Şüpheli veri (işlem açılmıyor): ${hs.suspect.map(x=>esc(x.sym)+" ("+esc(x.reason)+")").join(", ")}`);
+  for (const [k,v] of Object.entries(f)){
+    if (k === "telegram") L.push(`Telegram: ${v.listening?"🟢 dinliyor":"🟡 bekliyor"} · ${v.sent} mesaj gönderildi${v.median_send_ms!=null?" · ort. "+v.median_send_ms+" ms":""}${v.failed?" · "+v.failed+" hata":""}`);
+    else L.push(`${k.toUpperCase()} akışı: ${v.healthy?"🟢 canlı":"🔴 kopuk"} · ${v.ticks} fiyat · ${v.reconnects} yeniden bağlanma${v.error?" · "+esc(v.error):""}`);
+  }
+  const lp = D.loop || {};
+  if (lp.signal_latency_s!=null) L.push(`Son tarama mum kapanışından ${String(lp.signal_latency_s).replace(".",",")} sn sonra bitti`);
+  if (lp.ws_closes!=null) L.push(`Kapanışlar: akıştan ${lp.ws_closes}, mum kontrolünden ${lp.rest_closes||0} · funding kesimi ${lp.funding_events||0}`);
+  return L.length ? L.join("<br>") : "Canlı akış bilgisi yok (tek seferlik tarama).";
+}
+
+function renderGuide(){
+  const repo = D.repo || "";
+  const act = repo ? `https://github.com/${repo}/actions/workflows/canli.yml` : "#";
+  const cfg = repo ? `https://github.com/${repo}/edit/main/config.yaml` : "#";
+  const dis = repo ? "" : ' aria-disabled="true"';
+  const ex = Object.entries(D.exchanges_status||{}).map(([k,v]) => `<code>${esc(k)}: ${esc(v)}</code>`).join(" ");
+  $("#guideBody").innerHTML = `
+  <div class="row" style="gap:8px;margin-bottom:6px">
+    <a class="btn" href="${act}" target="_blank" rel="noopener"${dis}>⟳ Canlı döngü</a>
+    <a class="btn sec" href="${cfg}" target="_blank" rel="noopener"${dis}>⚙ Ayarlar</a>
+  </div>${repo ? "" : `<p class="note">Bu butonlar bot GitHub reposunda çalışmaya başlayınca aktif olur.</p>`}
+  <p class="note">Bot GitHub'da sürekli açık bir döngüde çalışır: OKX ve Bitget'e WebSocket ile bağlıdır, demo pozisyonları her fiyat değişiminde kontrol eder, 15 dakikalık, 1 saatlik ve 4 saatlik mumlar kapanır kapanmaz tarar. Her döngü ~5,5 saat sürer, bitince yenisi devralır. Telegram'dan <code>/tara</code> yazarsan hemen tarar.</p>
+  <h2>Setup'lar ne demek?</h2>
+  <ul>
+    <li><b>Trend Long/Short</b> — 4S SuperTrend, günlük trend ve 7/14/28 günlük momentum aynı yönde. Kriptoda en güçlü akademik kanıt zaman-serisi momentumunda; o yüzden ana setup bu.</li>
+    <li><b>Dönüş Long/Short</b> — aşırı satım/alım (RSI, Bollinger) + RSI uyumsuzluğu, kalabalık funding, OI ve alıcı/satıcı akışı. Trende karşı olduğu için daha riskli, hedefi daha kısa.</li>
+    <li><b>Rejim</b> — BTC günlük EMA200 altındaysa long puanları %50 kırpılır; boğada short'lar kırpılır. Araştırmalar momentumun boğa piyasasında yoğunlaştığını, short tarafının zayıf olduğunu gösteriyor.</li>
+    <li><b>Puan</b> — 0–100. ${D.thresholds.strong}+ güçlü (bildirim gelir, demo işlem açılır), ${D.thresholds.watch}+ izleme listesi.</li>
+    <li><b>Periyot</b> — 15dk çok sinyal ama gürültülü, 4S az ama daha güvenilir. Karne sekmesi hangisinin para kazandırdığını gösterir.</li>
+  </ul>
+  <h2>Telegram komutları</h2>
+  <ul><li><code>/durum</code> BTC ve en iyi sinyaller</li><li><code>/sinyaller</code> tüm güçlü sinyaller</li><li><code>/coin SOL</code> tek coin detayı</li>
+  <li><code>/demo</code> demo bakiye ve kâr/zarar</li><li><code>/pozisyonlar</code> açık demo işlemler</li>
+  <li><code>/funding</code> harvest listesi</li><li><code>/karne</code> setup ve periyot karnesi</li><li><code>/tara</code> hemen tarama başlat</li>
+  <li><code>/kapat SOL</code> demo işlemi elle kapat (mesajdaki ❌ butonu da aynı işi yapar)</li>
+  <li><code>/borsalar</code> borsalar arası funding ve fiyat farkı</li><li><code>/saglik</code> canlı akış ve bağlantı durumu</li>
+  <li><code>/sessiz 8</code> 8 saat bildirim kapat · <code>/ac</code> aç</li></ul>
+  <h2>Doğru kullanım</h2>
+  <ul><li>Bu bir <b>radar</b>: “buna bak” der, “al/sat” demez. Otomatik emir vermez.</li>
+  <li>Defter en az 30 kapanmış işlem toplamadan hiçbir setup'a para bağlama. Ortalama R negatifse o setup'ı görmezden gel.</li>
+  <li>Stop seviyesine göre pozisyon büyüklüğü: hesabının en fazla %1'ini riske at. Kaldıraç kayıpları büyütür.</li></ul>
+  <h2>Sistem durumu</h2>
+  <p class="note">${feedLines()}</p>
+  <p class="note">Borsa: OKX (public API) · OI kaynağı: ${esc(D.oi_source)} · gerçek taker verisi: ${D.taker_real}/${D.coins.length} coin<br>Diğer borsalar: ${ex || "–"}
+  ${D.errors && D.errors.length ? "<br>Atlanan coinler: "+D.errors.map(esc).join(", ") : ""}</p>`;
+}
+
+async function refresh(){
+  try {
+    const r = await fetch("data.json?t="+Date.now(), {cache:"no-store"});
+    if (r.ok){ const nd = await r.json(); if (!D || nd.generated_at >= D.generated_at){ D = nd; } }
+  } catch(e){}
+  try { const r = await fetch("backtest.json?t="+Date.now(), {cache:"no-store"}); if (r.ok) BT = await r.json(); } catch(e){}
+  render();
+}
+render();
+refresh();
+setInterval(refresh, 60*1000);
+setInterval(liveConnect, 5000);
+liveConnect();
+setInterval(() => {
+  if (!D) return;
+  const el = document.querySelector("#sub span[title]");
+  if (el) el.textContent = ago(D.generated_at);
+}, 60*1000);
+})();
+</script>
+</body>
+</html>

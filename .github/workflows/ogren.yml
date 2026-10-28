@@ -1,0 +1,39 @@
+name: Öğrenme
+
+# Haftalık ayar öğrenmesi: her yöneticinin stop ve iz stop katsayısı sınırlı ızgarada 5 yıllık veride denenir;
+# yalnızca hem eğitimde hem hiç görülmemiş doğrulama döneminde iyileştiren değişiklik benimsenir.
+# Sonuç data/learned.json → canlı motor saatte bir okur.
+on:
+  schedule:
+    - cron: "41 2 * * 0"     # her pazar 05:41 (İstanbul)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ogren
+  cancel-in-progress: false
+
+jobs:
+  learn:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Ayar öğrenmesi
+        run: python -m radar ogren --coins 30 --years 5
+      - name: Sonucu kaydet
+        run: |
+          git config user.name "kripto-radar"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A data/
+          if ! git diff --cached --quiet; then
+            git commit -qm "🧠 haftalık öğrenme"
+            git pull -q --rebase && git push -q
+          fi
