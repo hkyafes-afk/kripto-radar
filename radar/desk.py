@@ -147,6 +147,9 @@ class Desk:
         full = bool((m.extra or {}).get("tam_yetki"))     # 👑 Baş Trader: Genel Müdür kısıtları yok, hep gerçek işlem
         shadow = False if full else (self.benched(m.id) or (seg == "golge")
                                      or (bool(idea.get("shadow_only")) and seg != "gercek"))
+        virtual = m.id in (((self.cfg.get("ekip") or {}).get("sanal")) or [])   # v10.2: Turbo, Ortak Masa
+        if virtual:
+            shadow = True
         if any(t["mgr"] == m.id and t["inst"] == idea["inst"] for t in self.ledger["open"] if t.get("mgr")) \
                 and not (full and idea.get("pyramid")):
             return "red", None, None                         # zaten pozisyonu var (sessiz); Baş Trader piramitte ekler
@@ -168,6 +171,9 @@ class Desk:
             return "red", None, "baş analist: " + "; ".join(card.get("notes") or ["uygun değil"])
         # ── Genel Müdür (v9 Faz 0): kanıt sınıfı + çatışma hakemi ──
         gm: list[str] = []
+        if virtual:
+            gm.append("sanal portföy (v10.2): diğer ajanların bahislerini tekrarladığı için gerçek sermaye kullanmaz; "
+                      "işlem gölgede ölçülür")
         cls = director.coin_class(meta(idea["inst"]) if meta else None, now_ms, self.fc)
         cstate = director.class_state(self, m.id, cls)
         cm = 1.0 if full else director.STEP_MULT[cstate]

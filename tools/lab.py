@@ -346,6 +346,9 @@ def run(data: Path, cfg, variants: dict[str, dict], min_age=0, min_qv=5e6, top_n
                         i += 1
                         continue
                     idea["coin_class"] = cls
+                    if V.get("stop_mult"):     # stop mesafesi çarpanı (hedef fiyatı aynı; kapıdan önce)
+                        idea = dict(idea)
+                        idea["sl"] = idea["entry"] - (idea["entry"] - idea["sl"]) * V["stop_mult"]
                     if not passes(V, idea, ctx, last_exit, i, F):
                         i += 1
                         continue
@@ -407,6 +410,12 @@ def passes(V, idea, ctx, last_exit, i, F) -> bool:
         return False
     if V.get("bear_no_long") and side == "long" and ctx.get("w_trend") == "ayi":
         return False
+    if V.get("bull_no_short") and side == "short" and ctx.get("w_trend") == "boga":
+        return False
+    if V.get("uyum"):              # v10.2 rejim kapısı: yalnız boğada long, ayıda short
+        w = ctx.get("w_trend")
+        if not ((side == "long" and w == "boga") or (side == "short" and w == "ayi")):
+            return False
     rr = V.get("reentry")
     if rr and last_exit:
         k, s0, loss, why = last_exit
@@ -491,6 +500,8 @@ def dump_trades(out, path: Path):
 
 
 LOCK = [(2.0, 0.5), (3.0, 1.5), (4.0, 2.5), (6.0, 4.0), (10.0, 7.0)]
+V10 = {"exit": {"close_stop": True, "disaster": 2.0}, "crowd_long": 30, "crowd_short": -20, "max_atr_pct": 5,
+       "reentry": {"after_loss": 5, "fresh_high": True}, "cooldown": 1}      # canlı v10 politikası (F2)
 PRESETS = {
     "temel": {"temel": {}},
     "tekli": {                     # her değişikliğin tek başına etkisi (aynı veri geçişi)
@@ -520,6 +531,14 @@ PRESETS = {
         "K_stop15_yg": {"exit": {"close_stop": True}, "crowd_long": 30, "crowd_short": -20, "max_stop_pct": 15,
                         "reentry": {"after_loss": 5, "fresh_high": True}, "cooldown": 1},
         "K_stop15_kl10": {"exit": {"close_stop": True}, "crowd_long": 10, "crowd_short": -20, "max_stop_pct": 15},
+    },
+    "rejim": {                     # v10.2 (28.10.2026): v10 üzerine tek tek değişiklikler; evren için --top / --min_age
+        "V0_v10": dict(V10),
+        "V1_bogada_short_yok": dict(V10, bull_no_short=True),
+        "V2_stop_x1.33": dict(V10, stop_mult=1.33),
+        "V3_stop_x1.67": dict(V10, stop_mult=1.67),
+        "V4_kilit_1.5R_0.5R": dict(V10, exit={**V10["exit"], "ratchet": [(1.5, 0.5)]}),
+        "V5_rejim_uyumu": dict(V10, uyum=True),
     },
     "final": {
         "temel": {},

@@ -30,13 +30,26 @@ def _idea(**kw):
 
 
 def test_turbo_duplicate_is_shadowed():
+    """v10.1 kuralı: sanal portföy kapalıyken Turbo aynı bahsi ikinci kez gerçek parayla açmaz."""
+    cfg = copy.deepcopy(CFG)
+    cfg["ekip"]["sanal"] = []
     L = lg.empty()
-    d = dk.Desk(CFG, {}, L)
-    L["open"].append(lg.build_trade(_idea(mgr="bas", atr=2.0), 100.0, 10.0, 10.0, 1.0, CFG, NOW, 10_000))
+    d = dk.Desk(cfg, {}, L)
+    L["open"].append(lg.build_trade(_idea(mgr="bas", atr=2.0), 100.0, 10.0, 10.0, 1.0, cfg, NOW, 10_000))
     kind, det, _ = d.evaluate(_idea(mgr="turbo", atr=2.0), NOW)
     assert det and det["shadow"] and any("turbo tekrarı" in g for g in det.get("gm") or []), "aynı bahis ikinci kez gerçek olmaz"
     kind, det, _ = d.evaluate(_idea(mgr="turbo", inst="Y-USDT-SWAP", sym="Y", atr=2.0), NOW)
     assert det and not det["shadow"], "başka coinde turbo serbest"
+
+
+def test_virtual_managers_always_shadow():
+    """v10.2: Turbo ve Ortak Masa fikir üretir, kaydı tutulur, ama hep gölgede (gerçek sermaye yok)."""
+    assert set(CFG["ekip"]["sanal"]) == {"turbo", "ortak"}
+    d = dk.Desk(CFG, {}, lg.empty())
+    kind, det, _ = d.evaluate(_idea(mgr="turbo", inst="Y-USDT-SWAP", sym="Y", atr=2.0), NOW)
+    assert det and det["shadow"] and any("sanal portföy" in g for g in det.get("gm") or [])
+    kind, det, _ = d.evaluate(_idea(mgr="kemal", inst="Z-USDT-SWAP", sym="Z", atr=2.0), NOW)
+    assert det and not det["shadow"], "diğer ajanlar etkilenmez"
 
 
 def test_gates():
@@ -46,14 +59,40 @@ def test_gates():
     assert "kalabalık" in policy.gate(_idea(), {"funding_ann": 45}, CFG)
     assert policy.gate(_idea(side="short", sl=104, tp=76), {"funding_ann": 45}, CFG) is None
     assert "kalabalık" in policy.gate(_idea(side="short", sl=104, tp=76), {"funding_ann": -30}, CFG)
-    assert "Kaan" in policy.gate(_idea(), {"w_trend": "yatay"}, CFG)
-    assert policy.gate(_idea(mgr="selin"), {"w_trend": "yatay"}, CFG) is None
+    assert "Kaan" in policy.gate(_idea(), {"w_trend": "yatay"}, CFG), "Kaan'ın kendi kuralı önce gelir"
+    assert "rejim" in policy.gate(_idea(mgr="selin"), {"w_trend": "yatay"}, CFG), "v10.2: yatayda hiçbir yön gerçek değil"
     assert policy.gate(_idea(tf="15m", atr=9.0), {}, CFG) is None, "yalnızca günlük fikirler"
     assert "stop kapısı" in policy.gate(_idea(sl=80.0, tp=130.0), {}, CFG), "giriş–stop %20 > %15 → gölge"
     assert policy.gate(_idea(sl=86.0, tp=120.0), {}, CFG) is None, "%14 stop serbest"
     off = copy.deepcopy(CFG)
     off["ekip"]["kurallar"]["aktif"] = False
     assert policy.gate(_idea(atr=9.0), {}, off) is None
+
+
+def test_regime_gate():
+    short = dict(side="short", sl=104.0, tp=76.0)
+    assert policy.gate(_idea(mgr="selin"), {"w_trend": "boga"}, CFG) is None, "boğada long gerçek"
+    assert "rejim" in policy.gate(_idea(mgr="selin"), {"w_trend": "ayi"}, CFG), "ayıda long gölge"
+    assert policy.gate(_idea(mgr="selin", **short), {"w_trend": "ayi"}, CFG) is None, "ayıda short gerçek"
+    assert "rejim" in policy.gate(_idea(mgr="selin", **short), {"w_trend": "boga"}, CFG), "boğada short gölge"
+    assert "rejim" in policy.gate(_idea(mgr="bas", **short), {"w_trend": "yatay"}, CFG), "Baş Trader dahil"
+    assert policy.gate(_idea(mgr="selin"), {}, CFG) is None, "hava bilinmiyorsa kapı yok"
+    assert policy.gate(_idea(mgr="elif", kind="carry"), {"w_trend": "ayi"}, CFG) is None, "Elif (carry) muaf"
+    assert policy.gate(_idea(mgr="selin", tf="1H"), {"w_trend": "ayi"}, CFG) is None, "yalnızca günlük fikirler"
+    off = copy.deepcopy(CFG)
+    off["ekip"]["kurallar"]["rejim_uyumu"] = False
+    assert policy.gate(_idea(mgr="selin"), {"w_trend": "ayi"}, off) is None
+
+
+def test_desk_regime_gate_and_policy_version():
+    d = dk.Desk(CFG, {}, lg.empty())
+    d.env = {"weather": {"trend": "ayi", "btc_bear": True, "btc_bull": False}}
+    kind, det, _ = d.evaluate(_idea(mgr="kemal", atr=2.0), NOW)
+    assert det and det["shadow"] and any("rejim kapısı" in g for g in det.get("gm") or []), "ayıda long gölgede ölçülür"
+    kind, det, _ = d.evaluate(_idea(mgr="kemal", inst="Y-USDT-SWAP", sym="Y", side="short", sl=104.0, tp=76.0, atr=2.0), NOW)
+    assert det and not det["shadow"], "ayıda short gerçek"
+    t = lg.build_trade(_idea(), 100.0, 10.0, 10.0, 1.0, CFG, NOW, 10_000)
+    assert t["politika"] == policy.VERSION == "v10.2"
 
 
 def test_reentry():

@@ -18,9 +18,9 @@ MID = lambda i: {"list_ts": NOW - 2 * 365 * DAY}          # noqa: E731  B sını
 NEW = lambda i: {"list_ts": NOW - 60 * DAY}               # noqa: E731  C sınıfı
 
 
-def _desk():
+def _desk(cfg=None):
     st, L = {}, lg.empty()
-    return dk.Desk(CFG, st, L), st, L
+    return dk.Desk(cfg or CFG, st, L), st, L
 
 
 def _kaan(**kw):
@@ -200,7 +200,11 @@ def test_variants_shared_by_live_and_backtest():
 
 
 def test_committee_trust_family_and_contribution():
-    d, st, L = _desk()
+    """v9 komite mekaniği (gerçek sermayeli Ortak Masa). v10.2'de Ortak Masa sanal; mekanik sanal kapalıyken sınanır."""
+    import copy
+    real = copy.deepcopy(CFG)
+    real["ekip"]["sanal"] = []
+    d, st, L = _desk(real)
     base = {"inst": "Q-USDT-SWAP", "sym": "Q", "side": "long", "entry": 100.0, "sl": 95.0, "atr": 3.0, "qty": 1.0,
             "shadow": False}
     L["open"] = [dict(base, mgr="kemal"), dict(base, mgr="kaan")]
@@ -227,6 +231,24 @@ def test_committee_trust_family_and_contribution():
     assert abs(d.equity("kaan") - eq0["kaan"] - tr["pnl_usd"] / 3) < 0.02
     d.on_closed([tr])
     assert abs(d.equity("ortak") - (eq0["ortak"] - tr["pnl_usd"])) < 1e-6, "iki kez dağıtılmaz"
+
+
+def test_virtual_committee_is_shadow_and_not_distributed():
+    """v10.2: Ortak Masa sanal → işlemi gölgede, kapanışta kimsenin gerçek bakiyesine dağıtılmaz."""
+    d, st, L = _desk()
+    base = {"inst": "Q-USDT-SWAP", "sym": "Q", "side": "long", "entry": 100.0, "sl": 95.0, "atr": 3.0, "qty": 1.0,
+            "shadow": False}
+    L["open"] = [dict(base, mgr="kemal"), dict(base, mgr="kaan"), dict(base, mgr="selin")]
+    to_open, _ = d.consensus_plan(NOW, {"Q-USDT-SWAP": 101.0})
+    o, _, _ = d.execute([to_open[0]], NOW, meta=OLD)
+    t = o[0]
+    tr = next(x for x in L["open"] if x.get("id") == t["id"])
+    assert tr["shadow"], "sanal Ortak Masa gerçek sermaye kullanmaz"
+    L["open"].remove(tr)
+    tr = lg.close_trade(tr, 110.0, NOW + 1000, "hedef", CFG, maker=True)
+    eq0 = {m: d.equity(m) for m in ("kemal", "kaan", "selin")}
+    d.on_closed([tr])
+    assert not tr.get("distributed") and all(abs(d.equity(m) - eq0[m]) < 1e-9 for m in eq0)
 
 
 if __name__ == "__main__":
