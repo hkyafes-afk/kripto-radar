@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 314 | %41.4 | -0.503 | -157.88 |
 | trend_naif | 314 | %34.7 | -0.577 | -181.22 |
 
-Polat özsermaye: %-0.66 · BTC al-tut: %-0.55
+Polat özsermaye: %-0.51 · BTC al-tut: %-0.64
 
 ## Öğrenme (walk-forward)
 
@@ -54,15 +54,15 @@ En az işe yarayan okumalar: uyusmazlik_macd_1H ×0.846, yapi_1D ×0.88, adx_di_
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 340
-- gösterge aileleri aynı yönde değil: 315
+- ders: 344
+- gösterge aileleri aynı yönde değil: 317
 - büyük zaman dilimi trendi ters: 153
-- bu coinde zaten pozisyon var: 81
+- bu coinde zaten pozisyon var: 82
 - puan +0.149 eşiğin (0.25) altında: 44
 - puan +0.146 eşiğin (0.25) altında: 39
 - puan +0.167 eşiğin (0.25) altında: 38
+- puan +0.161 eşiğin (0.25) altında: 36
 - puan +0.207 eşiğin (0.25) altında: 36
-- puan +0.158 eşiğin (0.25) altında: 36
 
 ## Son 50 gün
 
@@ -95,15 +95,15 @@ En az işe yarayan okumalar: uyusmazlik_macd_1H ×0.846, yapi_1D ×0.88, adx_di_
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 340
-- gösterge aileleri aynı yönde değil: 315
+- ders: 344
+- gösterge aileleri aynı yönde değil: 317
 - büyük zaman dilimi trendi ters: 153
-- bu coinde zaten pozisyon var: 81
+- bu coinde zaten pozisyon var: 82
 - puan +0.149 eşiğin (0.25) altında: 44
 - puan +0.146 eşiğin (0.25) altında: 39
 - puan +0.167 eşiğin (0.25) altında: 38
+- puan +0.161 eşiğin (0.25) altında: 36
 - puan +0.207 eşiğin (0.25) altında: 36
-- puan +0.158 eşiğin (0.25) altında: 36
 
 ## Son 500 gün
 
@@ -136,12 +136,12 @@ En az işe yarayan okumalar: uyusmazlik_macd_1H ×0.846, yapi_1D ×0.88, adx_di_
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 340
-- gösterge aileleri aynı yönde değil: 315
+- ders: 344
+- gösterge aileleri aynı yönde değil: 317
 - büyük zaman dilimi trendi ters: 153
-- bu coinde zaten pozisyon var: 81
+- bu coinde zaten pozisyon var: 82
 - puan +0.149 eşiğin (0.25) altında: 44
 - puan +0.146 eşiğin (0.25) altında: 39
 - puan +0.167 eşiğin (0.25) altında: 38
+- puan +0.161 eşiğin (0.25) altında: 36
 - puan +0.207 eşiğin (0.25) altında: 36
-- puan +0.158 eşiğin (0.25) altında: 36
