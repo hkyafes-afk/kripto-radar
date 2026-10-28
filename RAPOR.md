@@ -23,51 +23,51 @@ Polat özsermaye: %0.0 · BTC al-tut: %-0.12
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 351, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 363, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 66
-- gösterge aileleri aynı yönde değil: 33
+- emir defteri doğrulanmadı: 68
+- gösterge aileleri aynı yönde değil: 34
 - büyük zaman dilimi trendi ters: 11
 - puan +0.137 eşiğin (0.25) altında: 5
 - puan +0.235 eşiğin (0.25) altında: 5
 - puan +0.207 eşiğin (0.25) altında: 5
 - puan +0.193 eşiğin (0.25) altında: 4
+- puan +0.185 eşiğin (0.25) altında: 4
 - puan +0.164 eşiğin (0.25) altında: 4
 - puan +0.177 eşiğin (0.25) altında: 4
-- puan +0.213 eşiğin (0.25) altında: 4
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 351, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 363, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 66
-- gösterge aileleri aynı yönde değil: 33
+- emir defteri doğrulanmadı: 68
+- gösterge aileleri aynı yönde değil: 34
 - büyük zaman dilimi trendi ters: 11
 - puan +0.137 eşiğin (0.25) altında: 5
 - puan +0.235 eşiğin (0.25) altında: 5
 - puan +0.207 eşiğin (0.25) altında: 5
 - puan +0.193 eşiğin (0.25) altında: 4
+- puan +0.185 eşiğin (0.25) altında: 4
 - puan +0.164 eşiğin (0.25) altında: 4
 - puan +0.177 eşiğin (0.25) altında: 4
-- puan +0.213 eşiğin (0.25) altında: 4
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 351, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 363, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 66
-- gösterge aileleri aynı yönde değil: 33
+- emir defteri doğrulanmadı: 68
+- gösterge aileleri aynı yönde değil: 34
 - büyük zaman dilimi trendi ters: 11
 - puan +0.137 eşiğin (0.25) altında: 5
 - puan +0.235 eşiğin (0.25) altında: 5
 - puan +0.207 eşiğin (0.25) altında: 5
 - puan +0.193 eşiğin (0.25) altında: 4
+- puan +0.185 eşiğin (0.25) altında: 4
 - puan +0.164 eşiğin (0.25) altında: 4
 - puan +0.177 eşiğin (0.25) altında: 4
-- puan +0.213 eşiğin (0.25) altında: 4
