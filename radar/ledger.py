@@ -25,6 +25,8 @@ import uuid
 import numpy as np
 import pandas as pd
 
+from . import policy as _policy
+
 
 def empty() -> dict:
     return {"version": 3, "open": [], "closed": []}
@@ -316,7 +318,7 @@ def open_new(ledger: dict, signals: list[dict], cfg: dict, now_ms: int | None = 
             tp1 = None                                    # hedef 1R'den yakınsa kısmi kâr yok
         atr = s.get("atr") or r_unit / max(cfg["sinyal"][s["kind"]]["stop_atr"], 0.1)
         t = {
-            "id": uuid.uuid4().hex[:10], "real": True, "v": 3,
+            "id": uuid.uuid4().hex[:10], "real": True, "v": 3, "politika": _policy.VERSION,
             "inst": s["inst"], "sym": s["sym"], "setup": s["setup"], "side": s["side"],
             "kind": s["kind"], "tf": tf, "score": s["score"], "raw": s["raw"],
             "entry_ts": now_ms, "entry": entry, "entry_src": src, "signal_px": s["entry"], "slip_bp": round(slip_bp, 2),
@@ -390,18 +392,34 @@ def _breakeven(t: dict, cfg: dict):
     set_sl(t, be)
 
 
+def lock_profit(t: dict, cfg: dict) -> bool:
+    """v10.2 kâr kilidi (kullanıcı kararı, 28.10.2026): tepe kâr baslangic_r × ilk riski geçince stop, tepe kârın
+    `koru` oranını koruyacak seviyeye çekilir. Tepe, işlem açıkken görülen en iyi fiyattır (`hw`)."""
+    kc = risk_cfg(cfg).get("kar_kilidi") or {}
+    if not kc.get("aktif") or t.get("carry") or not t.get("sl_init"):
+        return False
+    sgn = 1 if t["side"] == "long" else -1
+    r0 = abs(t["entry"] - t["sl_init"])
+    peak = sgn * (t.get("hw", t["entry"]) - t["entry"])
+    if r0 <= 0 or peak < float(kc.get("baslangic_r", 0.5)) * r0:
+        return False
+    return set_sl(t, t["entry"] + sgn * float(kc.get("koru", 0.6)) * peak)
+
+
 def trail(t: dict, best_px: float, cfg: dict) -> bool:
-    """İz süren stop: en iyi fiyattan ATR × k geride. Stop sadece kâr yönüne hareket eder."""
-    if not t.get("trail"):
+    """Tepe fiyatı izler; kâr kilidi + (açıksa) iz süren stop: en iyi fiyattan ATR × k geride. Stop yalnız kâr yönüne."""
+    if t.get("carry"):
         return False
     sgn = 1 if t["side"] == "long" else -1
     if sgn * (best_px - t.get("hw", t["entry"])) > 0:
         t["hw"] = best_px
+    moved = lock_profit(t, cfg)
+    if not t.get("trail"):
+        return moved
     k = (t.get("pp") or {}).get("trail_atr", risk_cfg(cfg)["iz_suren_atr"])
     if k <= 0:
-        return False
-    new_sl = t["hw"] - sgn * k * t["atr"]
-    return set_sl(t, new_sl)
+        return moved
+    return set_sl(t, t["hw"] - sgn * k * t["atr"]) or moved
 
 
 # ── kapanış ────────────────────────────────────────────────────────────
@@ -803,7 +821,7 @@ def build_trade(idea: dict, entry: float, qty: float, contracts: float, lev: flo
     risk_now = qty * abs(entry - sl)
     extra = {"sl_close": sl, "felaket_sl": sl_intra} if cs else {}
     return {**extra, 
-        "id": uuid.uuid4().hex[:10], "real": True, "v": 4, "mgr": idea["mgr"], "shadow": shadow,
+        "id": uuid.uuid4().hex[:10], "real": True, "v": 4, "politika": _policy.VERSION, "mgr": idea["mgr"], "shadow": shadow,
         "inst": idea["inst"], "sym": idea["sym"], "setup": idea.get("setup", idea["mgr"]), "side": idea["side"],
         "kind": idea.get("kind", "trend"), "tf": idea["tf"], "score": int(round(idea.get("conviction", 0) * 100)),
         "raw": int(round(idea.get("conviction", 0) * 100)), "conviction": idea.get("conviction", 0),
@@ -835,7 +853,7 @@ def build_carry(mgr: str, inst: str, sym: str, spot_inst: str, perp_px: float, s
     fee_entry = qty * perp_px * fc["taker_yuzde"] / 100 + qty * spot_px * fc["spot_taker_yuzde"] / 100
     margin = qty * spot_px + notional / 5          # spot tam ödenir, vadeli 5x teminat
     return {
-        "id": uuid.uuid4().hex[:10], "real": True, "v": 4, "carry": True, "mgr": mgr, "shadow": shadow,
+        "id": uuid.uuid4().hex[:10], "real": True, "v": 4, "politika": _policy.VERSION, "carry": True, "mgr": mgr, "shadow": shadow,
         "inst": inst, "sym": sym, "spot_inst": spot_inst, "setup": "carry", "side": "short", "kind": "carry",
         "tf": "8H", "score": int(min(99, info.get("stability", 0))), "raw": 0, "conviction": info.get("stability", 0) / 100,
         "entry_ts": now_ms, "entry": perp_px, "spot_entry": spot_px, "spot_last": spot_px, "entry_src": "piyasa",

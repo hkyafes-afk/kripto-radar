@@ -88,6 +88,10 @@ risk:
   kismi_kar_oran: 0.5        # ... pozisyonun yarısını kapat
   basabas: true              # kısmi kârdan sonra stop'u başabaşa (+ücretler) çek
   iz_suren_atr: 2.0          # kalan pozisyon için iz süren stop: en iyi fiyattan 2 ATR geride (0 = kapalı)
+  kar_kilidi:                 # v10.2 (kullanıcı kararı): tepe kâr 0,5R'yi geçince stop tepe kârın %60'ını korur.
+    aktif: true                #   5 yıllık testte benzer kurallar kazanma oranını artırıp ortalama R'yi biraz düşürdü;
+    baslangic_r: 0.5           #   demoda kâr korumak tercih edildi. Açık pozisyonlara da uygulanır (tepe bundan sonra
+    koru: 0.6                  #   görülen en iyi fiyattan ölçülür).
   gunluk_kayip_yuzde: 2.0    # % gün içinde bu kadar kayıpta o gün yeni işlem açma (UTC günü)
   max_dusus_yuzde: 10.0      # % zirveden bu kadar düşüşte botu durdur (/devam ile açılır)
   kayip_serisi: 4            # üst üste bu kadar kayıpta ...
@@ -104,6 +108,11 @@ panel:
 # Her yönetici kendi sermayesinin yüzdesi kadar risk alır: taban (az kanıt) → tavan (tüm doğrulamalar tuttu).
 ekip:
   aktif: true
+  # v10.2 sanal portföyler: bu ajanlar fikir üretmeye ve kayıt tutmaya devam eder ama her işlemi gölgede (sanal
+  # sermayeyle, firma bakiyesine dokunmadan) açılır. Sebep: 28.10.2026'da 108 açık pozisyonun 63'ü başka ajanların
+  # bahislerinin kopyasıydı (Turbo 35, Ortak Masa 4); 5 yıllık testte aynı bahse 4+ ajan girmesi sonucu iyileştirmedi
+  # (doğrulama +0,04R, tek ajan +0,20R). Kopya riski katlar, yeni veri getirmez.
+  sanal: [turbo, ortak]
   yoneticiler:
     # v10 risk (data/LAB.md, 5 yıl, 100 coin, silinenler dahil, v10 politikasıyla): eğitimde maks. düşüş ~%25 ve
     # doğrulamada büyüme artı kalan en yüksek seviye. Eski seviyeler (Kaan 3–5, Selin 4–6, Turbo 5–10) doğrulamada eksi
@@ -167,6 +176,8 @@ ekip:
     kar_sonrasi_yeni_zirve: true  # kârla çıkınca yeniden giriş için çıkıştan beri en iyi kapanış aşılmalı
     kaan_yatay_golge: true     # Kaan: BTC havası yatayken kırılımlar gölgede (5 yılda iki dönemde de eksi)
     atr_muaf: [ayse]           # Ayşe oynaklık kapısından muaf (kapitülasyon günleri oynak; testte kapısız +0,24R / +0,30R)
+    rejim_uyumu: true          # v10.2: long yalnız BTC havası boğayken, short yalnız ayıyken gerçek; gerisi gölgede ölçülür
+                               # (5 yıl: kârın %96'sı bu iki kovadan; 3 evrende doğrulama ort. R arttı, düşüş azaldı)
   ortak:                       # v9 Yatırım Komitesi (Ortak Masa)
     esik: 1.25                 # karne ağırlıklı oy eşiği; masanın karnesi eksiye düşerse kendiliğinden +0,5
     katki_yuzde: 5             # anlaşan her yönetici bütçesinin %5'i kadar pozisyon koyar; kâr/zarar katkı payına göre ona döner

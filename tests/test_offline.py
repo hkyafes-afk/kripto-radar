@@ -23,6 +23,7 @@ CFG["demo"]["boyut_modu"] = "sabit"
 CFG["risk"]["kismi_kar_oran"] = 0
 CFG["risk"]["iz_suren_atr"] = 0
 PRO = load_config()
+PRO["risk"]["kar_kilidi"] = {"aktif": False}   # bu dosya kısmi kâr/başabaş/ATR iz mekaniğini sınar; v10.2 kâr kilidi test_policy'de
 # Eski (tekli) sistemin hesap mantığı testleri OKX liste ücretleriyle yazıldı; v8'in sert ücretleri ayrıca test edilir.
 for _c in (CFG, PRO):
     _c["ucret"].update({"taker_yuzde": 0.05, "maker_yuzde": 0.02, "spot_taker_yuzde": 0.10, "stop_kayma_bp": 0})
@@ -67,38 +68,41 @@ def _signal(side="long"):
 
 
 def test_ledger_tp_sl_time():
+    import copy
+    C0 = copy.deepcopy(CFG)                     # hedef/stop/süre mekaniği: v10.2 kâr kilidi kapalıyken sınanır
+    C0.setdefault("risk", {})["kar_kilidi"] = {"aktif": False}
     t0 = 1_700_000_000_000
     # hedef
     L = lg.empty()
-    lg.open_new(L, [_signal()], CFG, now_ms=t0)
+    lg.open_new(L, [_signal()], C0, now_ms=t0)
     df = _bars(t0, [(100, 103, 99, 102), (102, 111, 101, 109)])
-    closed = lg.update(L, lambda i: df, {}, CFG, now_ms=t0 + 3 * 3600_000)
+    closed = lg.update(L, lambda i: df, {}, C0, now_ms=t0 + 3 * 3600_000)
     assert closed and closed[0]["outcome"] == "hedef" and closed[0]["r"] > 1.9
     # aynı mumda stop + hedef → muhafazakâr: stop
     L = lg.empty()
-    lg.open_new(L, [_signal()], CFG, now_ms=t0)
+    lg.open_new(L, [_signal()], C0, now_ms=t0)
     df = _bars(t0, [(100, 112, 94, 100)])
-    closed = lg.update(L, lambda i: df, {}, CFG, now_ms=t0 + 2 * 3600_000)
+    closed = lg.update(L, lambda i: df, {}, C0, now_ms=t0 + 2 * 3600_000)
     assert closed[0]["outcome"] == "stop" and closed[0]["r"] < -1.0
     # short hedef
     L = lg.empty()
-    lg.open_new(L, [_signal("short")], CFG, now_ms=t0)
+    lg.open_new(L, [_signal("short")], C0, now_ms=t0)
     df = _bars(t0, [(100, 101, 89, 90)])
-    closed = lg.update(L, lambda i: df, {}, CFG, now_ms=t0 + 2 * 3600_000)
+    closed = lg.update(L, lambda i: df, {}, C0, now_ms=t0 + 2 * 3600_000)
     assert closed[0]["outcome"] == "hedef" and closed[0]["r"] > 1.9
     # süre dolumu
     L = lg.empty()
-    lg.open_new(L, [_signal()], CFG, now_ms=t0)
+    lg.open_new(L, [_signal()], C0, now_ms=t0)
     df = _bars(t0, [(100, 101, 99, 101)] * 200)
-    closed = lg.update(L, lambda i: df, {}, CFG, now_ms=t0 + 170 * 3600_000)
+    closed = lg.update(L, lambda i: df, {}, C0, now_ms=t0 + 170 * 3600_000)
     assert closed[0]["outcome"] == "süre" and abs(closed[0]["pnl_pct"]) < 1.5
     # açık kalır + cooldown
     L = lg.empty()
-    lg.open_new(L, [_signal()], CFG, now_ms=t0)
-    lg.update(L, lambda i: _bars(t0, [(100, 101, 99, 100)]), {"X-USDT-SWAP": 102.0}, CFG, now_ms=t0 + 2 * 3600_000)
+    lg.open_new(L, [_signal()], C0, now_ms=t0)
+    lg.update(L, lambda i: _bars(t0, [(100, 101, 99, 100)]), {"X-USDT-SWAP": 102.0}, C0, now_ms=t0 + 2 * 3600_000)
     assert len(L["open"]) == 1 and L["open"][0]["r_now"] == 0.4
-    assert not lg.open_new(L, [_signal()], CFG, now_ms=t0 + 5 * 3600_000)   # zaten açık
-    st = lg.stats(L, CFG)
+    assert not lg.open_new(L, [_signal()], C0, now_ms=t0 + 5 * 3600_000)   # zaten açık
+    st = lg.stats(L, C0)
     assert st["open_count"] == 1
 
 

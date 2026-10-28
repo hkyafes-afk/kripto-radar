@@ -115,11 +115,43 @@ Eski Turbo ayarı (%5–10) 5 yılda hesabı batırma bölgesinde: kazanan işle
   5209907) en likit 20 coin, 1 yıl+ listeleme ve oynaklık hedefleme kullanıyor; bizim haliyle tekrar edilemedi.
 - **Donchian orta nokta iz stop'u, sadece long, genç coin yasağı:** yukarıdaki tabloda.
 
-## 6. Kaynaklar
+## 6. v10.2 — rejim kapısı (28.10.2026)
+
+`python tools/lab.py --data <gecmis> --set rejim` (evren için `--top 30`, `--min_age 365`). v10 politikasının üzerine tek
+tek değişiklik; ekip, işlem başına R:
+
+| Değişiklik | IS ort. R (n) | OOS ort. R (n) | Karar |
+|---|---|---|---|
+| v10 | +0,434 (1098) | +0,171 (466) | temel |
+| Boğada short yasağı | +0,437 (1095) | +0,171 (466) | etkisiz: boğada 5 yılda 4 short |
+| Stop ×1,33 | +0,325 (1090) | +0,135 (462) | reddedildi |
+| Stop ×1,67 | +0,266 (1084) | +0,108 (459) | reddedildi |
+| +1,5R'de stop +0,5R | +0,376 (1099) | +0,181 (472) | reddedildi (IS kötü) |
+| **Rejim uyumu** (long yalnız BTC boğa, short yalnız ayı) | +0,480 (961) | **+0,292** (344) | **kabul: gölge yönlendirmesi** |
+
+Kârın kaynağı (v10, tüm dönem, 555,6R): long·boğa %70, short·ayı %27, geri kalan dört kova toplam %3. Uyumsuz işlemler
+IS +0,20R, OOS −0,13R.
+
+Üç evren (OOS ort. R · OOS maks. düşüş · IS toplam R), v10 → rejim uyumu:
+
+| Evren | OOS ort. R | OOS maks. düşüş | IS toplam R |
+|---|---|---|---|
+| en likit 100 | +0,171 → +0,292 | −%14,2 → −%10,6 | +476 → +461 |
+| en likit 30 | +0,234 → +0,276 | −%15,4 → −%13,8 | +131 → +125 |
+| en az 1 yaşında, en likit 100 | +0,101 → +0,244 | −%23,0 → −%14,5 | +610 → +619 |
+
+IS'te toplam R neredeyse aynı: kural yeni kâr üretmiyor, sıfıra yakın getirili işlemleri sermayeden çıkarıyor. Bu yüzden
+uyumsuz fikir reddedilmez, gölgede ölçülür (`radar/policy.py` kural 7). Ayrıca denenip reddedilenler (aynı evren, 1 gün
+tutma, gidiş-dönüş ≈ %0,24): illikit coinlerde günlük geri dönüş (OOS günlük −%0,54), likit 20 coinde günlük momentum
+(OOS Sharpe −0,06). Aynı bahse 4+ yöneticinin girmesi sonucu iyileştirmedi (OOS +0,04R; tek yönetici +0,20R) →
+Turbo ve Ortak Masa sanal portföy (`ekip.sanal`).
+
+## 7. Kaynaklar
 
 - Kaminski & Lo, "When do stop-loss rules stop losses?" (MIT) — stop'lar ancak momentum/rejim varsa değer katar.
 - Kwok ve ark., *Journal of Empirical Finance* (2023) — kriptoda düşük oynaklık anomalisi.
 - Schmeling, Schrimpf, Todorov, "Crypto carry", BIS WP 1087 — yüksek carry çöküşleri öngörüyor.
 - Zarattini, Pagani, Barbon, "Catching Crypto Trends" (SSRN 5209907, 2025).
 - Zaremba ve ark., *IRFA* 78 (2021) — likit coinlerde günlük momentum, illikitlerde geri dönüş.
+- He, Manela, Ross, von Wachter, "Fundamentals of Perpetual Futures" (arXiv 2212.06888, 2024) — vadeli–spot farkı.
 - arXiv 2607.27070 — likidasyon kaskadlarından önce tek bir güvenilir erken uyarı sinyali yok (5 dk OI/long-short dahil).

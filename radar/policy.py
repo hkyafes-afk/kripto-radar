@@ -22,13 +22,23 @@ Kurallar (canlı masa, bt2 ve laboratuvar AYNI fonksiyonları kullanır):
   5. Kaan (kırılım): BTC havası yatayken kırılımlar iki dönemde de eksi (−0,29R / −0,40R) → gölgede.
   6. Ayşe oynaklık kapısından muaf: kapitülasyon günleri tanım gereği oynak; kapanış stop'u + kalabalık kapısıyla
      eğitim +0,24R / doğrulama +0,30R, kazanma %66 / %72 (130 + 32 işlem).
+  7. v10.2 rejim kapısı: sermaye yalnızca BTC havasıyla uyumlu fikre gider (boğada long, ayıda short; yatayda hiçbiri).
+     Uyumsuz fikir REDDEDİLMEZ, gölgede açılıp ölçülür. Kanıt (tools/lab.py --set rejim, 28.10.2026): v10 kurallarıyla
+     5 yılda ekibin kârının %96'sı bu iki kovadan geldi; uyumsuz işlemler eğitimde +0,20R, doğrulamada −0,13R.
+     Üç coin evreninde (en likit 100 / en likit 30 / en az 1 yaşında) doğrulama ortalaması +0,17→+0,29R,
+     +0,23→+0,28R, +0,10→+0,24R; doğrulama maks. düşüşü üçünde de azaldı. Eğitimde toplam R neredeyse aynı: kural yeni
+     kâr üretmez, sıfıra yakın getirili işlemleri sermayeden çıkarır. Elif (carry) ve Ortak Masa kapsam dışı.
 Kâr kilitleme merdiveni / tepe kârın %25–40'ını geri vermeden çıkma test edildi: kazanma oranı +3 puan ama ortalama
-R düştü (büyük kazananları erken kesiyor) → uygulanmadı; mevcut iz süren stop kaldı.
+R düştü (büyük kazananları erken kesiyor) → uygulanmadı; mevcut iz süren stop kaldı. v10.2'de yeniden sınandı
+(+1,5R'de stop +0,5R'ye): eğitim +0,434→+0,376R → reddedildi. Stop mesafesini ×1,33/×1,67 açmak da iki dönemde
+düşürdü; boğada short yasağı etkisiz (günlük ajanlar 5 yılda boğada 4 short açtı).
 """
 from __future__ import annotations
 
+VERSION = "v10.2"                  # her yeni işleme yazılır (ledger "politika"): canlı sonuç sürüme göre ayrılabilsin
 DAY_MS = 86_400_000
 NO_REENTRY_RULE = ("bas", "turbo")
+REJIM_TEXT = {"boga": "boğa", "ayi": "ayı", "yatay": "yatay"}
 
 DEFAULTS = {
     "aktif": True,
@@ -42,6 +52,7 @@ DEFAULTS = {
     "kar_sonrasi_yeni_zirve": True,
     "kaan_yatay_golge": True,
     "atr_muaf": ["ayse"],          # aşırılık avcısı: tanım gereği oynak günlerde çalışır (testte kapı olmadan da artı)
+    "rejim_uyumu": True,           # v10.2: long yalnız BTC boğayken, short yalnız ayıyken gerçek; gerisi gölge
 }
 
 
@@ -93,8 +104,13 @@ def gate(idea: dict, ctx: dict | None, cfg: dict | None) -> str | None:
             return f"kalabalık kapısı: funding yıllık %{fa:.0f} (long tarafı kalabalık) → gölgede"
         if idea["side"] == "short" and P.get("kalabalik_short") is not None and fa < P["kalabalik_short"]:
             return f"kalabalık kapısı: funding yıllık %{fa:.0f} (short tarafı kalabalık) → gölgede"
-    if P.get("kaan_yatay_golge") and idea.get("mgr") == "kaan" and (ctx or {}).get("w_trend") == "yatay":
+    w = (ctx or {}).get("w_trend")
+    if P.get("kaan_yatay_golge") and idea.get("mgr") == "kaan" and w == "yatay":
         return "Kaan kuralı: BTC havası yatay; kırılımlar yatay piyasada 5 yılda iki dönemde de eksi → gölgede"
+    if P.get("rejim_uyumu") and w in REJIM_TEXT:     # hava bilinmiyorsa (veri yok) kapı uygulanmaz
+        if not ((idea["side"] == "long" and w == "boga") or (idea["side"] == "short" and w == "ayi")):
+            return (f"rejim kapısı: BTC havası {REJIM_TEXT[w]}, fikir {idea['side']}; 5 yıllık testte kârın %96'sı boğada "
+                    "long ve ayıda short işlemlerinden geldi → gölgede ölçülüyor")
     return None
 
 
