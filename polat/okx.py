@@ -89,6 +89,9 @@ class Conn:
         """Bekleyen abonelikleri birleştirip aralıklı gönder (her istek ≤100 arg, istekler arası ≥0,6 sn)."""
         while self.pend_sub or self.pend_unsub:
             await self.connected.wait()
+            wait = getattr(self, "cool_until", 0) - time.monotonic()
+            if wait > 0:                                  # 60014 sonrası soğuma
+                await asyncio.sleep(wait)
             for op, pend in (("unsubscribe", self.pend_unsub), ("subscribe", self.pend_sub)):
                 if not pend:
                     continue
@@ -163,11 +166,10 @@ class Conn:
                     code = str(msg.get("code"))
                     self.stats["son_hata"] = f"{self.name}: {code} {msg.get('msg', '')[:120]}"
                     self.stats.setdefault("hata_kodlari", {})[code] = self.stats.setdefault("hata_kodlari", {}).get(code, 0) + 1
-                    if code == "60014":                       # çok sık: o anki bütün abonelikleri sonra yeniden iste
-                        for k, a in self.subs.items():
-                            self.pend_sub[k] = a
+                    if code == "60014":                       # çok sık: yeniden listeleme YOK (fırtınayı büyütüyordu);
+                        # yalnızca bir süre soğu, aralığı artır. Kopmada zaten tüm abonelikler yeniden gider.
+                        self.cool_until = time.monotonic() + 8
                         self.min_gap = min(self.min_gap * 1.5, 3.0)
-                        self._kick()
                 continue
             self.on_msg(msg, t)
 

@@ -32,7 +32,7 @@ secici:
   cikis_sirasi: 40           # histerezis: listedeki coin ancak bu sıranın dışına düşünce çıkar
   min_hacim_usd: 20000000    # 24 saat
   max_spread_bp: 8
-  yenileme_dk: 5
+  yenileme_dk: 30
   agirlik_hacim: 0.5         # 24 saatlik hacim sırası
   agirlik_ivme: 0.5          # son 1 saat hacmi / önceki 24 saatin saatlik ortalaması
   sabit: ["BTC-USDT-SWAP", "ETH-USDT-SWAP"]   # piyasa referansı, hep izlenir
