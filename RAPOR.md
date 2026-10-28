@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.403R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.396R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 320 | %45.3 | -0.403 | -129.06 |
-| polat_girilen | 1 | %100.0 | 0.215 | 0.21 |
-| polat_girilmeyen | 319 | %45.1 | -0.405 | -129.27 |
-| rastgele | 333 | %42.6 | -0.474 | -157.92 |
-| trend_naif | 330 | %37.9 | -0.521 | -172.03 |
+| polat_tum_sinyaller | 323 | %45.5 | -0.396 | -127.83 |
+| polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
+| polat_girilmeyen | 321 | %45.5 | -0.394 | -126.63 |
+| rastgele | 335 | %43.0 | -0.466 | -156.25 |
+| trend_naif | 333 | %38.1 | -0.513 | -170.81 |
 
-Polat özsermaye: %-1.2 · BTC al-tut: %-0.43
+Polat özsermaye: %-1.42 · BTC al-tut: %-0.41
 
 ## Öğrenme (walk-forward)
 
@@ -25,31 +25,32 @@ En az işe yarayan okumalar: adx_di_1D ×0.816, trix_1D ×0.835, yapi_1D ×0.841
 
 ## Son 1 gün
 
-İşlem 1 · kazanma %100.0 · ort. 0.337R · toplam 0.34R · net 167.16$ · maks. düşüş 0.0$ · kâr faktörü None
+İşlem 2 · kazanma %50.0 · ort. -0.494R · toplam -0.99R · net -490.91$ · maks. düşüş -658.07$ · kâr faktörü 0.25
 
 **Kuruluma göre**
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
-| yapi_bozulmasi_15m+geri_test_15m+trend_cizgisi_kirilim_1H | 1 | %100.0 | 0.337 | 167.16 |
+| yapi_bozulmasi_15m+geri_test_15m+trend_cizgisi_kirilim_1H | 2 | %50.0 | -0.494 | -490.91 |
 
 **Çıkış nedenine göre**
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
-| stop | 1 | %100.0 | 0.337 | 167.16 |
+| stop | 2 | %50.0 | -0.494 | -490.91 |
 
 **Seansa göre**
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
-| ABD | 1 | %100.0 | 0.337 | 167.16 |
+| ABD | 2 | %50.0 | -0.494 | -490.91 |
 
 **Teyit sayısına göre**
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
 | 5 | 1 | %100.0 | 0.337 | 167.16 |
+| 8 | 1 | %0.0 | -1.324 | -658.07 |
 
 **Girilmeyen kurulumlar (engel)**
 
@@ -57,40 +58,45 @@ En az işe yarayan okumalar: adx_di_1D ×0.816, trix_1D ×0.835, yapi_1D ×0.841
 - ders: 377
 - gösterge aileleri aynı yönde değil: 323
 - büyük zaman dilimi trendi ters: 153
-- bu coinde zaten pozisyon var: 92
+- bu coinde zaten pozisyon var: 96
 - puan +0.149 eşiğin (0.25) altında: 44
 - puan +0.146 eşiğin (0.25) altında: 40
 - puan +0.167 eşiğin (0.25) altında: 38
 - puan +0.161 eşiğin (0.25) altında: 36
 - puan +0.207 eşiğin (0.25) altında: 36
+
+**Hata sınıfları**
+
+- ilk 15 dk'da stop (giriş zamanlaması): 1
 
 ## Son 50 gün
 
-İşlem 1 · kazanma %100.0 · ort. 0.337R · toplam 0.34R · net 167.16$ · maks. düşüş 0.0$ · kâr faktörü None
+İşlem 2 · kazanma %50.0 · ort. -0.494R · toplam -0.99R · net -490.91$ · maks. düşüş -658.07$ · kâr faktörü 0.25
 
 **Kuruluma göre**
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
-| yapi_bozulmasi_15m+geri_test_15m+trend_cizgisi_kirilim_1H | 1 | %100.0 | 0.337 | 167.16 |
+| yapi_bozulmasi_15m+geri_test_15m+trend_cizgisi_kirilim_1H | 2 | %50.0 | -0.494 | -490.91 |
 
 **Çıkış nedenine göre**
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
-| stop | 1 | %100.0 | 0.337 | 167.16 |
+| stop | 2 | %50.0 | -0.494 | -490.91 |
 
 **Seansa göre**
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
-| ABD | 1 | %100.0 | 0.337 | 167.16 |
+| ABD | 2 | %50.0 | -0.494 | -490.91 |
 
 **Teyit sayısına göre**
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
 | 5 | 1 | %100.0 | 0.337 | 167.16 |
+| 8 | 1 | %0.0 | -1.324 | -658.07 |
 
 **Girilmeyen kurulumlar (engel)**
 
@@ -98,40 +104,45 @@ En az işe yarayan okumalar: adx_di_1D ×0.816, trix_1D ×0.835, yapi_1D ×0.841
 - ders: 377
 - gösterge aileleri aynı yönde değil: 323
 - büyük zaman dilimi trendi ters: 153
-- bu coinde zaten pozisyon var: 92
+- bu coinde zaten pozisyon var: 96
 - puan +0.149 eşiğin (0.25) altında: 44
 - puan +0.146 eşiğin (0.25) altında: 40
 - puan +0.167 eşiğin (0.25) altında: 38
 - puan +0.161 eşiğin (0.25) altında: 36
 - puan +0.207 eşiğin (0.25) altında: 36
+
+**Hata sınıfları**
+
+- ilk 15 dk'da stop (giriş zamanlaması): 1
 
 ## Son 500 gün
 
-İşlem 1 · kazanma %100.0 · ort. 0.337R · toplam 0.34R · net 167.16$ · maks. düşüş 0.0$ · kâr faktörü None
+İşlem 2 · kazanma %50.0 · ort. -0.494R · toplam -0.99R · net -490.91$ · maks. düşüş -658.07$ · kâr faktörü 0.25
 
 **Kuruluma göre**
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
-| yapi_bozulmasi_15m+geri_test_15m+trend_cizgisi_kirilim_1H | 1 | %100.0 | 0.337 | 167.16 |
+| yapi_bozulmasi_15m+geri_test_15m+trend_cizgisi_kirilim_1H | 2 | %50.0 | -0.494 | -490.91 |
 
 **Çıkış nedenine göre**
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
-| stop | 1 | %100.0 | 0.337 | 167.16 |
+| stop | 2 | %50.0 | -0.494 | -490.91 |
 
 **Seansa göre**
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
-| ABD | 1 | %100.0 | 0.337 | 167.16 |
+| ABD | 2 | %50.0 | -0.494 | -490.91 |
 
 **Teyit sayısına göre**
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
 | 5 | 1 | %100.0 | 0.337 | 167.16 |
+| 8 | 1 | %0.0 | -1.324 | -658.07 |
 
 **Girilmeyen kurulumlar (engel)**
 
@@ -139,9 +150,13 @@ En az işe yarayan okumalar: adx_di_1D ×0.816, trix_1D ×0.835, yapi_1D ×0.841
 - ders: 377
 - gösterge aileleri aynı yönde değil: 323
 - büyük zaman dilimi trendi ters: 153
-- bu coinde zaten pozisyon var: 92
+- bu coinde zaten pozisyon var: 96
 - puan +0.149 eşiğin (0.25) altında: 44
 - puan +0.146 eşiğin (0.25) altında: 40
 - puan +0.167 eşiğin (0.25) altında: 38
 - puan +0.161 eşiğin (0.25) altında: 36
 - puan +0.207 eşiğin (0.25) altında: 36
+
+**Hata sınıfları**
+
+- ilk 15 dk'da stop (giriş zamanlaması): 1
