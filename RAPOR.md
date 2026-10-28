@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.373R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.375R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 421 | %46.1 | -0.373 | -156.87 |
+| polat_tum_sinyaller | 422 | %46.0 | -0.375 | -158.08 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
-| polat_girilmeyen | 419 | %46.1 | -0.372 | -155.67 |
-| rastgele | 432 | %44.2 | -0.417 | -180.11 |
-| trend_naif | 430 | %39.3 | -0.479 | -206.1 |
+| polat_girilmeyen | 420 | %46.0 | -0.374 | -156.88 |
+| rastgele | 433 | %44.1 | -0.419 | -181.32 |
+| trend_naif | 431 | %39.2 | -0.481 | -207.31 |
 
-Polat özsermaye: %-1.39 · BTC al-tut: %-0.67
+Polat özsermaye: %-1.42 · BTC al-tut: %-0.64
 
 ## Öğrenme (walk-forward)
 
@@ -55,9 +55,9 @@ En az işe yarayan okumalar: stoch_5m ×0.781, ema_1D ×0.873, yapi_1D ×0.874, 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- günlük işlem tavanı (8): 566
-- ders: 508
-- gösterge aileleri aynı yönde değil: 416
+- günlük işlem tavanı (8): 568
+- ders: 509
+- gösterge aileleri aynı yönde değil: 419
 - büyük zaman dilimi trendi ters: 185
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 48
@@ -101,9 +101,9 @@ En az işe yarayan okumalar: stoch_5m ×0.781, ema_1D ×0.873, yapi_1D ×0.874, 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- günlük işlem tavanı (8): 566
-- ders: 508
-- gösterge aileleri aynı yönde değil: 416
+- günlük işlem tavanı (8): 568
+- ders: 509
+- gösterge aileleri aynı yönde değil: 419
 - büyük zaman dilimi trendi ters: 185
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 48
@@ -147,9 +147,9 @@ En az işe yarayan okumalar: stoch_5m ×0.781, ema_1D ×0.873, yapi_1D ×0.874, 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- günlük işlem tavanı (8): 566
-- ders: 508
-- gösterge aileleri aynı yönde değil: 416
+- günlük işlem tavanı (8): 568
+- ders: 509
+- gösterge aileleri aynı yönde değil: 419
 - büyük zaman dilimi trendi ters: 185
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 48
