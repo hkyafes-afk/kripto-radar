@@ -4,24 +4,24 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.426R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.424R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 533 | %43.5 | -0.426 | -227.28 |
+| polat_tum_sinyaller | 535 | %43.7 | -0.424 | -226.96 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
-| polat_girilmeyen | 531 | %43.5 | -0.426 | -226.07 |
-| rastgele | 548 | %43.2 | -0.432 | -236.52 |
+| polat_girilmeyen | 533 | %43.7 | -0.424 | -225.76 |
+| rastgele | 549 | %43.4 | -0.43 | -236.26 |
 | trend_naif | 550 | %36.2 | -0.544 | -298.94 |
 
-Polat özsermaye: %-2.57 · BTC al-tut: %0.33
+Polat özsermaye: %-2.57 · BTC al-tut: %0.24
 
 ## Öğrenme (walk-forward)
 
-Örnek 522 (eğitim 365, doğrulama 157) · uygulanan katsayı 33 · doğrulamada tutmadığı için reddedilen 39
+Örnek 535 (eğitim 374, doğrulama 161) · uygulanan katsayı 37 · doğrulamada tutmadığı için reddedilen 35
 
-En çok işe yarayan okumalar: ultimate_5m ×1.21, ustunde_hafta_acilis ×1.146, ustunde_gecen_hafta_kapanis ×1.146, ustunde_poc ×1.109, momentum_5m ×1.108, vwap_hafta ×1.099, cci_5m ×1.086, trix_4H ×1.072, trix_1H ×1.061, uyusmazlik_cci_15m ×1.034
-En az işe yarayan okumalar: yapi_1D ×0.86, ema_4H ×0.891, ema_1D ×0.893, canli_mum_1H ×0.902, adx_di_1D ×0.923, tetik_geri_test_1H ×0.934, long_short ×0.943, psar_1D ×0.952, ema200_4H ×0.953, supertrend_1D ×0.955
+En çok işe yarayan okumalar: oi_fiyat ×1.236, ultimate_5m ×1.216, momentum_15m ×1.16, ustunde_hafta_acilis ×1.154, ustunde_gecen_hafta_kapanis ×1.154, ustunde_poc ×1.121, demand_15m ×1.115, cci_15m ×1.115, vwap_hafta ×1.101, trix_4H ×1.1
+En az işe yarayan okumalar: yapi_1D ×0.836, ema_1D ×0.884, ema_4H ×0.884, adx_di_1D ×0.892, long_short ×0.907, supertrend_1D ×0.928, ema200_4H ×0.939, tetik_geri_test_1H ×0.941, psar_1D ×0.942, cvd_5dk ×0.947
 
 ## Son 1 gün
 
@@ -57,11 +57,11 @@ En az işe yarayan okumalar: yapi_1D ×0.86, ema_4H ×0.891, ema_1D ×0.893, can
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 843
+- ders: 848
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 447
-- büyük zaman dilimi trendi ters: 250
+- büyük zaman dilimi trendi ters: 252
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.127 eşiğin (0.25) altında: 54
@@ -107,11 +107,11 @@ En az işe yarayan okumalar: yapi_1D ×0.86, ema_4H ×0.891, ema_1D ×0.893, can
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 843
+- ders: 848
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 447
-- büyük zaman dilimi trendi ters: 250
+- büyük zaman dilimi trendi ters: 252
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.127 eşiğin (0.25) altında: 54
@@ -157,11 +157,11 @@ En az işe yarayan okumalar: yapi_1D ×0.86, ema_4H ×0.891, ema_1D ×0.893, can
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 843
+- ders: 848
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 447
-- büyük zaman dilimi trendi ters: 250
+- büyük zaman dilimi trendi ters: 252
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.127 eşiğin (0.25) altında: 54
