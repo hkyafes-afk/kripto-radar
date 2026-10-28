@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.441R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.438R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 307 | %43.3 | -0.441 | -135.26 |
+| polat_tum_sinyaller | 308 | %43.5 | -0.438 | -134.87 |
 | polat_girilen | 1 | %100.0 | 0.215 | 0.21 |
-| polat_girilmeyen | 306 | %43.1 | -0.443 | -135.47 |
+| polat_girilmeyen | 307 | %43.3 | -0.44 | -135.08 |
 | rastgele | 324 | %41.4 | -0.503 | -162.84 |
-| trend_naif | 317 | %35.3 | -0.569 | -180.34 |
+| trend_naif | 318 | %35.5 | -0.566 | -179.95 |
 
-Polat özsermaye: %-0.62 · BTC al-tut: %-0.6
+Polat özsermaye: %-0.56 · BTC al-tut: %-0.65
 
 ## Öğrenme (walk-forward)
 
@@ -54,10 +54,10 @@ En az işe yarayan okumalar: adx_di_1D ×0.816, trix_1D ×0.835, yapi_1D ×0.841
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 366
+- ders: 370
 - gösterge aileleri aynı yönde değil: 323
 - büyük zaman dilimi trendi ters: 153
-- bu coinde zaten pozisyon var: 85
+- bu coinde zaten pozisyon var: 86
 - puan +0.149 eşiğin (0.25) altında: 44
 - puan +0.146 eşiğin (0.25) altında: 39
 - puan +0.167 eşiğin (0.25) altında: 38
@@ -95,10 +95,10 @@ En az işe yarayan okumalar: adx_di_1D ×0.816, trix_1D ×0.835, yapi_1D ×0.841
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 366
+- ders: 370
 - gösterge aileleri aynı yönde değil: 323
 - büyük zaman dilimi trendi ters: 153
-- bu coinde zaten pozisyon var: 85
+- bu coinde zaten pozisyon var: 86
 - puan +0.149 eşiğin (0.25) altında: 44
 - puan +0.146 eşiğin (0.25) altında: 39
 - puan +0.167 eşiğin (0.25) altında: 38
@@ -136,10 +136,10 @@ En az işe yarayan okumalar: adx_di_1D ×0.816, trix_1D ×0.835, yapi_1D ×0.841
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 366
+- ders: 370
 - gösterge aileleri aynı yönde değil: 323
 - büyük zaman dilimi trendi ters: 153
-- bu coinde zaten pozisyon var: 85
+- bu coinde zaten pozisyon var: 86
 - puan +0.149 eşiğin (0.25) altında: 44
 - puan +0.146 eşiğin (0.25) altında: 39
 - puan +0.167 eşiğin (0.25) altında: 38
