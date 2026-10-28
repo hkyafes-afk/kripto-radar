@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.389R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.39R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 444 | %45.5 | -0.389 | -172.54 |
+| polat_tum_sinyaller | 445 | %45.4 | -0.39 | -173.64 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
-| polat_girilmeyen | 442 | %45.5 | -0.388 | -171.34 |
-| rastgele | 449 | %43.2 | -0.438 | -196.62 |
-| trend_naif | 453 | %38.2 | -0.505 | -228.9 |
+| polat_girilmeyen | 443 | %45.4 | -0.389 | -172.44 |
+| rastgele | 450 | %43.1 | -0.439 | -197.73 |
+| trend_naif | 454 | %38.1 | -0.507 | -230.0 |
 
-Polat özsermaye: %-2.35 · BTC al-tut: %-0.24
+Polat özsermaye: %-2.35 · BTC al-tut: %-0.22
 
 ## Öğrenme (walk-forward)
 
@@ -62,7 +62,7 @@ En az işe yarayan okumalar: stoch_5m ×0.798, ema_1D ×0.873, yapi_1D ×0.874, 
 - gösterge aileleri aynı yönde değil: 427
 - büyük zaman dilimi trendi ters: 195
 - bu coinde zaten pozisyon var: 135
-- yüksek etkili ABD verisi yakın (takvim sessizliği): 58
+- yüksek etkili ABD verisi yakın (takvim sessizliği): 59
 - puan +0.149 eşiğin (0.25) altında: 49
 - puan -0.126 eşiğin (0.25) altında: 45
 - puan -0.129 eşiğin (0.25) altında: 44
@@ -111,7 +111,7 @@ En az işe yarayan okumalar: stoch_5m ×0.798, ema_1D ×0.873, yapi_1D ×0.874, 
 - gösterge aileleri aynı yönde değil: 427
 - büyük zaman dilimi trendi ters: 195
 - bu coinde zaten pozisyon var: 135
-- yüksek etkili ABD verisi yakın (takvim sessizliği): 58
+- yüksek etkili ABD verisi yakın (takvim sessizliği): 59
 - puan +0.149 eşiğin (0.25) altında: 49
 - puan -0.126 eşiğin (0.25) altında: 45
 - puan -0.129 eşiğin (0.25) altında: 44
@@ -160,7 +160,7 @@ En az işe yarayan okumalar: stoch_5m ×0.798, ema_1D ×0.873, yapi_1D ×0.874, 
 - gösterge aileleri aynı yönde değil: 427
 - büyük zaman dilimi trendi ters: 195
 - bu coinde zaten pozisyon var: 135
-- yüksek etkili ABD verisi yakın (takvim sessizliği): 58
+- yüksek etkili ABD verisi yakın (takvim sessizliği): 59
 - puan +0.149 eşiğin (0.25) altında: 49
 - puan -0.126 eşiğin (0.25) altında: 45
 - puan -0.129 eşiğin (0.25) altında: 44
