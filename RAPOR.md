@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.399R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.409R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 141 | %46.1 | -0.399 | -56.24 |
+| polat_tum_sinyaller | 143 | %45.5 | -0.409 | -58.5 |
 | polat_girilen | 0 | %- | - | - |
-| polat_girilmeyen | 141 | %46.1 | -0.399 | -56.24 |
-| rastgele | 140 | %42.9 | -0.444 | -62.09 |
-| trend_naif | 142 | %42.3 | -0.406 | -57.69 |
+| polat_girilmeyen | 143 | %45.5 | -0.409 | -58.5 |
+| rastgele | 142 | %42.3 | -0.453 | -64.35 |
+| trend_naif | 144 | %41.7 | -0.416 | -59.94 |
 
-Polat özsermaye: %0.0 · BTC al-tut: %-0.09
+Polat özsermaye: %0.0 · BTC al-tut: %-0.12
 
 ## Öğrenme (walk-forward)
 
@@ -25,11 +25,11 @@ En az işe yarayan okumalar: stoch_5m ×0.844, stoch_15m ×0.874, stoch_1H ×0.9
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 3141, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 3152, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 425
+- emir defteri doğrulanmadı: 428
 - gösterge aileleri aynı yönde değil: 201
 - ders: 96
 - büyük zaman dilimi trendi ters: 80
@@ -42,11 +42,11 @@ Kapanmış işlem yok. Görülen kurulum: 3141, girilen: 0.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 3141, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 3152, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 425
+- emir defteri doğrulanmadı: 428
 - gösterge aileleri aynı yönde değil: 201
 - ders: 96
 - büyük zaman dilimi trendi ters: 80
@@ -59,11 +59,11 @@ Kapanmış işlem yok. Görülen kurulum: 3141, girilen: 0.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 3141, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 3152, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 425
+- emir defteri doğrulanmadı: 428
 - gösterge aileleri aynı yönde değil: 201
 - ders: 96
 - büyük zaman dilimi trendi ters: 80
