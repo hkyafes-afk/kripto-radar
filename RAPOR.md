@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.37R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.381R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 128 | %48.4 | -0.37 | -47.37 |
+| polat_tum_sinyaller | 130 | %47.7 | -0.381 | -49.52 |
 | polat_girilen | 0 | %- | - | - |
-| polat_girilmeyen | 128 | %48.4 | -0.37 | -47.37 |
-| rastgele | 127 | %43.3 | -0.478 | -60.75 |
+| polat_girilmeyen | 130 | %47.7 | -0.381 | -49.52 |
+| rastgele | 129 | %42.6 | -0.489 | -63.06 |
 | trend_naif | 129 | %43.4 | -0.438 | -56.46 |
 
-Polat özsermaye: %0.0 · BTC al-tut: %-0.13
+Polat özsermaye: %0.0 · BTC al-tut: %-0.08
 
 ## Öğrenme (walk-forward)
 
@@ -25,11 +25,11 @@ En az işe yarayan okumalar: stoch_5m ×0.79, stoch_15m ×0.855
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2927, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2932, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 394
+- emir defteri doğrulanmadı: 395
 - gösterge aileleri aynı yönde değil: 193
 - ders: 86
 - büyük zaman dilimi trendi ters: 74
@@ -42,11 +42,11 @@ Kapanmış işlem yok. Görülen kurulum: 2927, girilen: 0.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2927, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2932, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 394
+- emir defteri doğrulanmadı: 395
 - gösterge aileleri aynı yönde değil: 193
 - ders: 86
 - büyük zaman dilimi trendi ters: 74
@@ -59,11 +59,11 @@ Kapanmış işlem yok. Görülen kurulum: 2927, girilen: 0.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2927, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2932, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 394
+- emir defteri doğrulanmadı: 395
 - gösterge aileleri aynı yönde değil: 193
 - ders: 86
 - büyük zaman dilimi trendi ters: 74
