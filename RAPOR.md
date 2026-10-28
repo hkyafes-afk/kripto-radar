@@ -23,11 +23,11 @@ Polat özsermaye: %0.0 · BTC al-tut: %-0.05
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2113, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2121, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 325
+- emir defteri doğrulanmadı: 326
 - gösterge aileleri aynı yönde değil: 152
 - büyük zaman dilimi trendi ters: 58
 - ders: 24
@@ -40,11 +40,11 @@ Kapanmış işlem yok. Görülen kurulum: 2113, girilen: 0.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2113, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2121, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 325
+- emir defteri doğrulanmadı: 326
 - gösterge aileleri aynı yönde değil: 152
 - büyük zaman dilimi trendi ters: 58
 - ders: 24
@@ -57,11 +57,11 @@ Kapanmış işlem yok. Görülen kurulum: 2113, girilen: 0.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2113, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2121, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 325
+- emir defteri doğrulanmadı: 326
 - gösterge aileleri aynı yönde değil: 152
 - büyük zaman dilimi trendi ters: 58
 - ders: 24
