@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 72 | %43.1 | -0.515 | -37.06 |
 | trend_naif | 78 | %34.6 | -0.604 | -47.12 |
 
-Polat özsermaye: %0.0 · BTC al-tut: %-0.06
+Polat özsermaye: %0.0 · BTC al-tut: %-0.01
 
 ## Öğrenme (walk-forward)
 
@@ -23,11 +23,11 @@ Polat özsermaye: %0.0 · BTC al-tut: %-0.06
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 1897, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 1906, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 304
+- emir defteri doğrulanmadı: 306
 - gösterge aileleri aynı yönde değil: 130
 - büyük zaman dilimi trendi ters: 57
 - puan +0.149 eşiğin (0.25) altında: 17
@@ -36,15 +36,15 @@ Kapanmış işlem yok. Görülen kurulum: 1897, girilen: 0.
 - puan +0.137 eşiğin (0.25) altında: 14
 - puan +0.138 eşiğin (0.25) altında: 14
 - puan +0.180 eşiğin (0.25) altında: 13
-- puan +0.150 eşiğin (0.25) altında: 13
+- puan +0.127 eşiğin (0.25) altında: 13
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 1897, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 1906, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 304
+- emir defteri doğrulanmadı: 306
 - gösterge aileleri aynı yönde değil: 130
 - büyük zaman dilimi trendi ters: 57
 - puan +0.149 eşiğin (0.25) altında: 17
@@ -53,15 +53,15 @@ Kapanmış işlem yok. Görülen kurulum: 1897, girilen: 0.
 - puan +0.137 eşiğin (0.25) altında: 14
 - puan +0.138 eşiğin (0.25) altında: 14
 - puan +0.180 eşiğin (0.25) altında: 13
-- puan +0.150 eşiğin (0.25) altında: 13
+- puan +0.127 eşiğin (0.25) altında: 13
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 1897, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 1906, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 304
+- emir defteri doğrulanmadı: 306
 - gösterge aileleri aynı yönde değil: 130
 - büyük zaman dilimi trendi ters: 57
 - puan +0.149 eşiğin (0.25) altında: 17
@@ -70,4 +70,4 @@ Kapanmış işlem yok. Görülen kurulum: 1897, girilen: 0.
 - puan +0.137 eşiğin (0.25) altında: 14
 - puan +0.138 eşiğin (0.25) altında: 14
 - puan +0.180 eşiğin (0.25) altında: 13
-- puan +0.150 eşiğin (0.25) altında: 13
+- puan +0.127 eşiğin (0.25) altında: 13
