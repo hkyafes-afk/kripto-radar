@@ -162,6 +162,64 @@ def test_orderbook_checksum_and_updates():
     assert not b.apply(bad, False) and not b.ok and b.bad == 1
 
 
+def test_orderbook_okx_format_checksum_zero_and_seq():
+    """OKX 'books' gerçek biçimi (28.10.2026 teşhisi): checksum her mesajda 0, doğrulama seqId/prevSeqId ile."""
+    b = OrderBook()
+    snap = book_msg(100.0)
+    snap.update(checksum=0, seqId=1000, prevSeqId=-1)
+    assert b.apply(snap, True) and b.ok, "checksum 0 'gönderilmedi' sayılmalı; defter doğrulanmalı"
+    up = {"bids": [["99.995", "7", "0", "1"]], "asks": [], "ts": "2", "checksum": 0, "seqId": 1001, "prevSeqId": 1000}
+    assert b.apply(up, False) and b.ok and b.seq == 1001
+    same = {"bids": [], "asks": [], "ts": "3", "checksum": 0, "seqId": 1001, "prevSeqId": 1001}   # değişiklik yok
+    assert b.apply(same, False) and b.ok
+    gap = {"bids": [], "asks": [], "ts": "4", "checksum": 0, "seqId": 1010, "prevSeqId": 1005}    # mesaj kaçtı
+    assert not b.apply(gap, False) and not b.ok
+    after = {"bids": [], "asks": [], "ts": "5", "checksum": 0, "seqId": 1011, "prevSeqId": 1010}
+    assert not b.apply(after, False), "bozuk deftere snapshot gelmeden güncelleme işlenmemeli"
+    snap2 = book_msg(101.0)
+    snap2.update(checksum=0, seqId=2000, prevSeqId=-1)
+    assert b.apply(snap2, True) and b.ok and b.seq == 2000
+    crossed = {"bids": [["150.0", "1", "0", "1"]], "asks": [], "ts": "6", "checksum": 0, "seqId": 2001, "prevSeqId": 2000}
+    assert not b.apply(crossed, False) and not b.ok, "çapraz defter (alış ≥ satış) bozuk sayılmalı"
+
+
+def test_conn_resubscribe_and_60014_requeue():
+    """Kurtarma gerçekten unsubscribe → subscribe gönderir; 60014'te yalnızca onaylanmamışlar yeniden istenir."""
+    from polat.okx import Conn
+
+    class FakeWS:
+        def __init__(self):
+            self.sent = []
+
+        async def send_text(self, s):
+            self.sent.append(json.loads(s))
+
+    async def go():
+        c = Conn("defter", ["wss://x"], lambda m, t: None, {"baglanti": {}, "kopma": {}, "son_hata": ""})
+        c.ws, c.min_gap = FakeWS(), 0.0
+        c.connected.set()
+        a = {"channel": "books", "instId": "BTC-USDT-SWAP"}
+        e = {"channel": "books", "instId": "ETH-USDT-SWAP"}
+        await c.subscribe([a, e])
+        await c.flusher
+        c.confirmed.add(c.key(a))                         # OKX yalnızca BTC'yi onayladı
+        c.ws.sent.clear()
+        await c.resubscribe([a])
+        await c.flusher
+        ops = [m["op"] for m in c.ws.sent]
+        assert ops == ["unsubscribe", "subscribe"], ops   # birleştirilip yutulmamalı
+        assert c.key(a) in c.subs
+        # 60014: onaylanmamış ETH yeniden sıraya girer, onaylı BTC girmez
+        c.ws.sent.clear()
+        c.pend_sub.clear()
+        for k, v in c.subs.items():
+            if k not in c.confirmed and k not in c.pend_resub:
+                c.pend_sub[k] = v
+        assert c.key(e) in c.pend_sub and c.key(a) not in c.pend_sub
+
+    asyncio.run(go())
+
+
 def test_walk_book():
     px, got = walk([(100, 1.0), (101, 1.0), (102, 5.0)], 2.5)
     assert got == 2.5 and math.isclose(px, (100 + 101 + 102 * 0.5) / 2.5)

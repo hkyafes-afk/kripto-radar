@@ -76,7 +76,9 @@ class Polat:
         self.tasks: list[asyncio.Task] = []
         self.started = now_ms()
         self.stopping = False
-        self.counters = {"degerlendirme": 0, "sinyal": 0, "giris": 0, "karar_ms_max": 0.0, "engel": {}}
+        self.counters = {"degerlendirme": 0, "sinyal": 0, "giris": 0, "karar_ms_max": 0.0, "engel": {},
+                         "defter_yeniden": 0}
+        self._book_resync_at: dict[str, float] = {}
         self.learner = Learner(cfg, self.root)
         self.learner.risk = self.risk
         self._apply_adjust()
@@ -339,6 +341,14 @@ class Polat:
             self._enqueue(c.inst, anlik=True)
 
     def _on_book_bad(self, c):
+        # Bozuk defter her güncellemede (100 ms) yeniden bildirilir; coin başına en çok 20 sn'de bir yeniden iste.
+        # (Eskiden her mesajda istek gidiyordu → OKX 60014 hız sınırı fırtınası.)
+        now = time.monotonic()
+        last = self._book_resync_at.get(c.inst, 0.0)
+        if now - last < 20.0:
+            return
+        self._book_resync_at[c.inst] = now
+        self.counters["defter_yeniden"] = self.counters.get("defter_yeniden", 0) + 1
         _spawn(self.feed.resync_book(c.inst))
 
     def _on_close(self, c, tf: str):

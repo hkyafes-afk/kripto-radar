@@ -20,7 +20,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from polat.market import OrderBook  # noqa: E402
 from polat.wsclient import WS, dumps, loads  # noqa: E402
 
-URL = "wss://ws.okx.com:8443/ws/v5/public"
+URL = "wss://ws.okx.com:443/ws/v5/public"
 INSTS = ["BTC-USDT-SWAP", "ETH-USDT-SWAP"]
 OUT: dict = {"olaylar": [], "coin": {}}
 

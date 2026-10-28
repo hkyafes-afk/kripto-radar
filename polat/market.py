@@ -1,6 +1,6 @@
 """Piyasa durumu: her WebSocket mesajı geldiği anda ilgili coinin durumuna işlenir.
 
-Coin başına: ticker, emir defteri (checksum doğrulamalı), tape + delta/CVD, büyük işlemler, açık pozisyon,
+Coin başına: ticker, emir defteri (seqId sıra doğrulamalı), tape + delta/CVD, büyük işlemler, açık pozisyon,
 fonlama, mark/index (basis), likidasyonlar, long/short oranı, duvar takibi, 5 zaman diliminde mum serisi.
 """
 from __future__ import annotations
@@ -20,11 +20,27 @@ class OrderBook:
         self.ts = 0
         self.ok = False
         self.bad = 0
+        self.seq: int | None = None      # OKX seqId: son işlenen mesajın sıra numarası
 
     def apply(self, d: dict, snapshot: bool) -> bool:
+        """Snapshot/güncellemeyi işler; defter doğruysa True.
+
+        Doğrulama (28.10.2026 teşhisi): OKX 'books' kanalında checksum alanını artık 0 gönderiyor; bu yüzden
+        asıl doğrulama sıra numarasıyla yapılır: güncellemenin prevSeqId'si son seqId'ye eşit olmalı.
+        Eşit değilse mesaj kaçmıştır → defter bozuk, yeni snapshot gelene kadar güncelleme işlenmez.
+        Checksum yalnızca OKX sıfırdan farklı bir değer gönderirse kontrol edilir.
+        """
+        seq, prev = d.get("seqId"), d.get("prevSeqId")
         if snapshot:
             self.bids.clear()
             self.asks.clear()
+        else:
+            if not self.ok:                  # bozuk defter üstüne güncelleme yığılmaz; snapshot beklenir
+                return False
+            if seq is not None and prev is not None and self.seq is not None and int(prev) != self.seq:
+                self.ok = False              # sıra boşluğu: en az bir güncelleme kaçtı
+                self.bad += 1
+                return False
         for side, book in (("bids", self.bids), ("asks", self.asks)):
             for lv in d.get(side, ()):
                 px_s, sz_s = lv[0], lv[1]
@@ -34,8 +50,15 @@ class OrderBook:
                 else:
                     book[px] = (px_s, sz_s)
         self.ts = int(d.get("ts") or 0)
+        if seq is not None:
+            self.seq = int(seq)
         cs = d.get("checksum")
-        if cs is not None and not self.checksum_ok(int(cs)):
+        if cs not in (None, 0, "0") and not self.checksum_ok(int(cs)):
+            self.ok = False
+            self.bad += 1
+            return False
+        bb, ba = self.best()
+        if bb is not None and ba is not None and bb >= ba:   # çapraz defter: veri bozuk
             self.ok = False
             self.bad += 1
             return False

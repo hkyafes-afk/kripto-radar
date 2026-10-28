@@ -47,8 +47,11 @@ class Conn:
         self.stopping = False
         self.pend_sub: dict[str, dict] = {}
         self.pend_unsub: dict[str, dict] = {}
+        self.pend_resub: dict[str, dict] = {}    # önce unsubscribe, sonra subscribe (yeni snapshot için)
+        self.confirmed: set[str] = set()         # OKX'in "subscribe" olayıyla onayladığı abonelikler
         self.flusher: asyncio.Task | None = None
         self.min_gap = 0.6                       # OKX: bağlantı başına abonelik isteği sınırı → en çok ~2/sn
+        self.cool_until = 0.0                    # 60014 sonrası soğuma bitişi (monotonic)
 
     @staticmethod
     def key(arg: dict) -> str:
@@ -76,6 +79,16 @@ class Conn:
             if self.subs.pop(k, None) is not None:
                 self.pend_unsub[k] = a
             self.pend_sub.pop(k, None)
+            self.pend_resub.pop(k, None)
+        self._kick()
+
+    async def resubscribe(self, args: list[dict]):
+        """Abonelikten çık → tekrar abone ol. OKX aynı kanala ikinci 'subscribe'a yeni snapshot göndermiyor
+        (28.10.2026 teşhisi); yeni snapshot ancak unsubscribe + subscribe ile geliyor. Birleştirilmez."""
+        for a in args:
+            k = self.key(a)
+            if k in self.subs:
+                self.pend_resub[k] = a
         self._kick()
 
     def _kick(self):
@@ -87,21 +100,30 @@ class Conn:
 
     async def _flush(self):
         """Bekleyen abonelikleri birleştirip aralıklı gönder (her istek ≤100 arg, istekler arası ≥0,6 sn)."""
-        while self.pend_sub or self.pend_unsub:
+        while self.pend_sub or self.pend_unsub or self.pend_resub:
             await self.connected.wait()
-            wait = getattr(self, "cool_until", 0) - time.monotonic()
+            wait = self.cool_until - time.monotonic()
             if wait > 0:                                  # 60014 sonrası soğuma
                 await asyncio.sleep(wait)
-            for op, pend in (("unsubscribe", self.pend_unsub), ("subscribe", self.pend_sub)):
+            for op, pend in (("unsubscribe", self.pend_unsub), ("resub", self.pend_resub),
+                             ("subscribe", self.pend_sub)):
                 if not pend:
                     continue
                 keys = list(pend)[:100]
                 args = [pend.pop(k) for k in keys]
+                if op == "resub":
+                    args = [a for a in args if self.key(a) in self.subs]
+                    if not args:
+                        continue
                 try:
-                    await self.ws.send_text(dumps({"op": op, "args": args}))
+                    if op == "resub":
+                        await self.ws.send_text(dumps({"op": "unsubscribe", "args": args}))
+                        await asyncio.sleep(self.min_gap)
+                        await self.ws.send_text(dumps({"op": "subscribe", "args": args}))
+                    else:
+                        await self.ws.send_text(dumps({"op": op, "args": args}))
                 except Exception:  # noqa: BLE001
-                    if op == "subscribe":                 # yeniden bağlanınca self.subs zaten tamamen gönderilir
-                        pass
+                    pass                                  # yeniden bağlanınca self.subs zaten tamamen gönderilir
                 await asyncio.sleep(self.min_gap)
 
     def start(self):
@@ -125,6 +147,8 @@ class Conn:
                 self.stats["baglanti"][self.name] = url
                 self.pend_sub.clear()
                 self.pend_unsub.clear()
+                self.pend_resub.clear()
+                self.confirmed.clear()
                 allargs = list(self.subs.values())
                 for i in range(0, len(allargs), 100):         # yeniden bağlanınca hepsi, aralıklı
                     await self.ws.send_text(dumps({"op": "subscribe", "args": allargs[i:i + 100]}))
@@ -162,14 +186,24 @@ class Conn:
                 continue
             msg = loads(raw)
             if "event" in msg:
-                if msg["event"] == "error":
+                ev = msg["event"]
+                if ev == "subscribe" and msg.get("arg"):
+                    self.confirmed.add(self.key(msg["arg"]))
+                elif ev == "unsubscribe" and msg.get("arg"):
+                    self.confirmed.discard(self.key(msg["arg"]))
+                elif ev == "error":
                     code = str(msg.get("code"))
                     self.stats["son_hata"] = f"{self.name}: {code} {msg.get('msg', '')[:120]}"
                     self.stats.setdefault("hata_kodlari", {})[code] = self.stats.setdefault("hata_kodlari", {}).get(code, 0) + 1
-                    if code == "60014":                       # çok sık: yeniden listeleme YOK (fırtınayı büyütüyordu);
-                        # yalnızca bir süre soğu, aralığı artır. Kopmada zaten tüm abonelikler yeniden gider.
+                    if code == "60014":
+                        # Çok sık istek: soğu, aralığı aç; yalnızca OKX'in henüz onaylamadığı abonelikleri yeniden iste
+                        # (hepsini yeniden istemek fırtınayı büyütüyordu; hiç istememek aboneliği kaybettiriyordu).
                         self.cool_until = time.monotonic() + 8
                         self.min_gap = min(self.min_gap * 1.5, 3.0)
+                        for k, a in self.subs.items():
+                            if k not in self.confirmed and k not in self.pend_resub:
+                                self.pend_sub[k] = a
+                        self._kick()
                 continue
             self.on_msg(msg, t)
 
@@ -217,10 +251,8 @@ class Feed:
             await self.conns[name].unsubscribe(args)
 
     async def resync_book(self, inst: str):
-        """Checksum tutmazsa defteri yeniden iste (abonelikten çık + gir → yeni snapshot)."""
-        a = [{"channel": self.book_channel, "instId": inst}]
-        await self.conns["defter"].unsubscribe(a)
-        await self.conns["defter"].subscribe(a)
+        """Defter bozulunca (sıra boşluğu) yeni snapshot iste: gerçekten abonelikten çık, sonra tekrar gir."""
+        await self.conns["defter"].resubscribe([{"channel": self.book_channel, "instId": inst}])
 
 
 # OKX genel uç nokta sınırları (istek / 2 sn). Her uç noktaya kendi kovası; %80'inde tutulur.
