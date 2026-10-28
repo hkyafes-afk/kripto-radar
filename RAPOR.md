@@ -14,62 +14,62 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 232 | %40.9 | -0.528 | -122.4 |
 | trend_naif | 233 | %36.5 | -0.554 | -129.04 |
 
-Polat özsermaye: %0.0 · BTC al-tut: %0.51
+Polat özsermaye: %0.0 · BTC al-tut: %0.52
 
 ## Öğrenme (walk-forward)
 
-Örnek 194 (eğitim 135, doğrulama 59) · uygulanan katsayı 16 · doğrulamada tutmadığı için reddedilen 6
+Örnek 223 (eğitim 156, doğrulama 67) · uygulanan katsayı 33 · doğrulamada tutmadığı için reddedilen 3
 
-En çok işe yarayan okumalar: supertrend_1H ×1.107, pvi_1H ×1.079, ema_1H ×1.078, ustunde_poc ×1.07, mfi_1H ×1.061, adx_di_1H ×1.033, supertrend_4H ×1.027, psar_4H ×1.02, ema_4H ×1.011, pvi_15m ×0.995
-En az işe yarayan okumalar: stoch_5m ×0.766, stoch_15m ×0.835, ema200_1D ×0.931, yapi_1D ×0.937, ema_1D ×0.964, stoch_1H ×0.991, pvi_15m ×0.995, ema_4H ×1.011, psar_4H ×1.02, supertrend_4H ×1.027
+En çok işe yarayan okumalar: ustunde_gecen_hafta_kapanis ×1.256, ustunde_hafta_acilis ×1.256, vwap_hafta ×1.169, momentum_1H ×1.168, cci_1H ×1.154, ema_1H ×1.147, supertrend_1H ×1.143, ustunde_poc ×1.138, trix_1H ×1.129, pvi_1H ×1.128
+En az işe yarayan okumalar: stoch_5m ×0.746, adx_di_1D ×0.862, supertrend_1D ×0.88, trix_1D ×0.9, ema200_1D ×0.917, psar_1D ×0.918, yapi_1D ×0.933, ema_1D ×0.958, ema200_4H ×0.96, uyusmazlik_macd_1H ×0.96
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 4692, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 4714, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- gösterge aileleri aynı yönde değil: 238
-- ders: 227
+- gösterge aileleri aynı yönde değil: 239
+- ders: 230
 - büyük zaman dilimi trendi ters: 103
 - puan +0.149 eşiğin (0.25) altında: 33
 - puan +0.146 eşiğin (0.25) altında: 31
 - puan +0.167 eşiğin (0.25) altında: 31
 - puan +0.123 eşiğin (0.25) altında: 27
+- puan +0.194 eşiğin (0.25) altında: 27
 - puan +0.161 eşiğin (0.25) altında: 26
-- puan +0.187 eşiğin (0.25) altında: 26
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 4692, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 4714, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- gösterge aileleri aynı yönde değil: 238
-- ders: 227
+- gösterge aileleri aynı yönde değil: 239
+- ders: 230
 - büyük zaman dilimi trendi ters: 103
 - puan +0.149 eşiğin (0.25) altında: 33
 - puan +0.146 eşiğin (0.25) altında: 31
 - puan +0.167 eşiğin (0.25) altında: 31
 - puan +0.123 eşiğin (0.25) altında: 27
+- puan +0.194 eşiğin (0.25) altında: 27
 - puan +0.161 eşiğin (0.25) altında: 26
-- puan +0.187 eşiğin (0.25) altında: 26
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 4692, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 4714, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- gösterge aileleri aynı yönde değil: 238
-- ders: 227
+- gösterge aileleri aynı yönde değil: 239
+- ders: 230
 - büyük zaman dilimi trendi ters: 103
 - puan +0.149 eşiğin (0.25) altında: 33
 - puan +0.146 eşiğin (0.25) altında: 31
 - puan +0.167 eşiğin (0.25) altında: 31
 - puan +0.123 eşiğin (0.25) altında: 27
+- puan +0.194 eşiğin (0.25) altında: 27
 - puan +0.161 eşiğin (0.25) altında: 26
-- puan +0.187 eşiğin (0.25) altında: 26

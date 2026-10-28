@@ -63,3 +63,4 @@
 {"olay": "halef_cagrildi", "ok": true, "ts": 1793174061207}
 {"olay": "durdu", "neden": "süre doldu", "veri": {"mesaj": 33792999, "gecikme_ms_p50": 109, "gecikme_ms_p95": 153, "isleme_us_p50": 21.1, "isleme_us_p95": 252.8}, "ts": 1793174533729}
 {"olay": "devraldi", "bosluk_sn": 11.951, "pozisyon": 0, "ts": 1793174545670}
+{"olay": "ogrenme", "durum": "güncellendi", "uygulanan": 33, "reddedilen": 3, "ts": 1793176345700}
