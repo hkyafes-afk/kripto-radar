@@ -57,10 +57,10 @@ En az işe yarayan okumalar: yapi_1D ×0.796, stoch_5m ×0.818, ema_1D ×0.856, 
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 1331
+- ders: 1333
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- gösterge aileleri aynı yönde değil: 506
+- gösterge aileleri aynı yönde değil: 507
 - üst üste 3 zarar: 391
 - büyük zaman dilimi trendi ters: 354
 - bu coinde zaten pozisyon var: 135
@@ -107,10 +107,10 @@ En az işe yarayan okumalar: yapi_1D ×0.796, stoch_5m ×0.818, ema_1D ×0.856, 
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 1331
+- ders: 1333
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- gösterge aileleri aynı yönde değil: 506
+- gösterge aileleri aynı yönde değil: 507
 - üst üste 3 zarar: 391
 - büyük zaman dilimi trendi ters: 354
 - bu coinde zaten pozisyon var: 135
@@ -157,10 +157,10 @@ En az işe yarayan okumalar: yapi_1D ×0.796, stoch_5m ×0.818, ema_1D ×0.856, 
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 1331
+- ders: 1333
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- gösterge aileleri aynı yönde değil: 506
+- gösterge aileleri aynı yönde değil: 507
 - üst üste 3 zarar: 391
 - büyük zaman dilimi trendi ters: 354
 - bu coinde zaten pozisyon var: 135
