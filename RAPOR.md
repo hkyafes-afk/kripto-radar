@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.368R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.37R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 432 | %46.5 | -0.368 | -158.91 |
+| polat_tum_sinyaller | 433 | %46.4 | -0.37 | -160.02 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
-| polat_girilmeyen | 430 | %46.5 | -0.367 | -157.71 |
-| rastgele | 444 | %43.7 | -0.427 | -189.71 |
+| polat_girilmeyen | 431 | %46.4 | -0.368 | -158.82 |
+| rastgele | 445 | %43.6 | -0.429 | -190.87 |
 | trend_naif | 442 | %38.9 | -0.49 | -216.38 |
 
-Polat özsermaye: %-1.62 · BTC al-tut: %-0.48
+Polat özsermaye: %-1.74 · BTC al-tut: %-0.44
 
 ## Öğrenme (walk-forward)
 
@@ -56,7 +56,7 @@ En az işe yarayan okumalar: stoch_5m ×0.798, ema_1D ×0.873, yapi_1D ×0.874, 
 
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- ders: 521
+- ders: 522
 - gösterge aileleri aynı yönde değil: 425
 - büyük zaman dilimi trendi ters: 195
 - bu coinde zaten pozisyon var: 135
@@ -102,7 +102,7 @@ En az işe yarayan okumalar: stoch_5m ×0.798, ema_1D ×0.873, yapi_1D ×0.874, 
 
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- ders: 521
+- ders: 522
 - gösterge aileleri aynı yönde değil: 425
 - büyük zaman dilimi trendi ters: 195
 - bu coinde zaten pozisyon var: 135
@@ -148,7 +148,7 @@ En az işe yarayan okumalar: stoch_5m ×0.798, ema_1D ×0.873, yapi_1D ×0.874, 
 
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- ders: 521
+- ders: 522
 - gösterge aileleri aynı yönde değil: 425
 - büyük zaman dilimi trendi ters: 195
 - bu coinde zaten pozisyon var: 135
