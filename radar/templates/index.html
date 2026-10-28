@@ -195,6 +195,12 @@ input.search:focus{border-color:var(--muted)}
     <div id="demoBody"></div>
   </section>
 
+  <section id="t-old">
+    <p class="note"><b>Eski sürüm</b>: v10.2 (28.10.2026) öncesi kurallarla açılmış işlemler. Kendi kurallarıyla kapanana kadar
+    izlenir (yeni kâr kilidi bunlara da uygulanır) ama yeni sürümün sonuçlarına karıştırılmaz.</p>
+    <div id="oldBody"></div>
+  </section>
+
   <section id="t-shadow">
     <p class="note"><b>Gölge</b>: sermayesi olmayan yöneticilerin ve testte kazandırmayan işlem türlerinin (ör. Kaan/Selin short'ları)
     <b>sanal</b> işlemleri. Gerçek fiyat ve aynı komisyonla ölçülür ama firma bakiyesine dokunmaz. 10 gölge işlemde ortalama +0,1R
@@ -278,8 +284,33 @@ function ago(ms){
 }
 function scoreColor(s){ return s>=75 ? "var(--green)" : s>=65 ? "#a3e635" : s>=50 ? "var(--amber)" : "var(--dim)"; }
 
+const POLICY_V = "v10.2";
+function splitVersions(){   // v10.2 öncesi işlemler ana listelerden "Eski sürüm" sekmesine taşınır (silinmez)
+  if (!D || D.__split) return;
+  const nv = t => t.politika === POLICY_V, L = D.ledger;
+  D.old = {open: L.open.filter(t=>!nv(t)), closed: L.closed.filter(t=>!nv(t)), shadow_closed: (L.shadow_closed||[]).filter(t=>!nv(t))};
+  L.open = L.open.filter(nv); L.closed = L.closed.filter(nv); L.shadow_closed = (L.shadow_closed||[]).filter(nv);
+  if (D.bas && D.bas.open) D.bas.open = D.bas.open.filter(nv);
+  D.__split = true;
+}
+function renderOld(){
+  const O = D.old || {open:[],closed:[],shadow_closed:[]}, cl = O.closed.concat(O.shadow_closed);
+  const sum = a => a.reduce((x,y)=>x+(+y||0),0);
+  const row = (t, open) => { const pnl = open ? (t.upnl_usd||0) : t.pnl_usd, r = open ? (t.r_now||0) : t.r;
+    return `<div class="li" data-tx="${t.id}"><div style="min-width:0"><div><span class="badge ${t.side==="long"?"b-green":"b-red"}">${t.side==="long"?"LONG":"SHORT"}</span> <b>${esc(t.sym)}</b> ${who(t)} <span class="badge ${t.shadow?"b-dim":"b-amber"}">${t.shadow?"gölge":"gerçek"}</span></div>
+      <div class="m num">${fp(t.entry)} → ${open?fp(t.last):fp(t.exit)+" · "+esc(t.outcome||"")}${open?" · stop "+fp(t.sl):""} · ${ago(open?t.entry_ts:t.exit_ts)}</div></div>
+      <div class="r ${cls(pnl)}">${money(pnl)}<div class="m">${(r>0?"+":"")+(+(r||0)).toFixed(2)}R</div></div></div>`; };
+  const opR = O.open.filter(t=>!t.shadow), opS = O.open.filter(t=>t.shadow);
+  let h = `<div class="kpis"><div class="kpi"><div class="l">Açık · gerçek</div><div class="v num ${cls(sum(opR.map(t=>t.upnl_usd)))}">${money(sum(opR.map(t=>t.upnl_usd)))}</div><div class="s">${opR.length} işlem</div></div>
+    <div class="kpi"><div class="l">Açık · gölge</div><div class="v num ${cls(sum(opS.map(t=>t.upnl_usd)))}">${money(sum(opS.map(t=>t.upnl_usd)))}</div><div class="s">${opS.length} işlem</div></div>
+    <div class="kpi"><div class="l">Kapanan</div><div class="v num ${cls(sum(cl.map(t=>t.pnl_usd)))}">${money(sum(cl.map(t=>t.pnl_usd)))}</div><div class="s">${cl.length} işlem</div></div></div>`;
+  h += `<h2>Açık eski işlemler <span class="n">${O.open.length}</span></h2>` + (O.open.length ? `<div class="list">${O.open.map(t=>row(t,true)).join("")}</div>` : `<div class="empty">Yok.</div>`);
+  h += `<h2>Kapanan eski işlemler <span class="n">${cl.length}</span></h2>` + (cl.length ? `<div class="list">${cl.slice(0,80).map(t=>row(t,false)).join("")}</div>` : `<div class="empty">Yok.</div>`);
+  $("#oldBody").innerHTML = h;
+}
 function render(){
   if (!D){ $("#sub").textContent = "Henüz veri yok — ilk tarama bekleniyor."; return; }
+  splitVersions();
   const b = D.btc || {};
   $("#sub").innerHTML = `OKX · ${esc(D.timeframe)}${D.live ? (D.feeds && D.feeds.okx && D.feeds.okx.healthy ? ' · <span class="badge b-green">● canlı akış</span>' : ' · <span class="badge b-amber">● REST</span>') : ''} · <span title="${esc(D.generated_local)}">${ago(D.generated_at)}</span>` + (D.demo ? ' · <span class="badge b-amber">ÖRNEK VERİ</span>' : "");
   const age = (Date.now()-D.generated_at)/60000;
@@ -295,13 +326,14 @@ function render(){
     <div class="kpi"><div class="l">Güçlü sinyal</div><div class="v num">${D.counts.strong}</div><div class="s">${D.counts.scanned} coin tarandı</div></div>
     <div class="kpi"><div class="l">Demo bakiye</div><div class="v num" id="kpiEq">${money(DM.equity,false)}</div><div class="s num ${cls(DM.return_pct)}" id="kpiRet">${pct(DM.return_pct,2)} · ${D.ledger.open.filter(t=>!t.shadow).length} açık</div></div>`;
   const tabs = (D.bas ? [["bas","👑 Baş Trader",(D.bas.open||[]).length]] : []).concat(D.team ? [["team","Ekip",Object.keys(D.team).length]] : []).concat([["demo","İşlemler",D.ledger.open.filter(t=>!t.shadow).length]]).concat(D.team ? [["shadow","Gölge",D.ledger.open.filter(t=>t.shadow).length]] : []).concat([["sig","Sinyaller",D.counts.strong]]).concat([["led","Karne",L.n||0],["fund","Funding",D.harvest.length],["coins","Coinler",D.coins.length]]);
+  tabs.push(["old","Eski sürüm",(D.old||{open:[]}).open.length]);
   if (BT) tabs.push(["bt","Backtest",""]);
   tabs.push(["guide","Rehber",""]);
   if (!tabs.find(t=>t[0]===state.tab)) state.tab = tabs[0][0];
   $("#tabs").innerHTML = tabs.map(([k,n,c]) => `<button class="tab ${state.tab===k?"on":""}" data-t="${k}">${n}${c!==""?`<span class="c">${c}</span>`:""}</button>`).join("");
   document.querySelectorAll(".tab").forEach(el => el.onclick = () => { state.tab = el.dataset.t; save(); render(); scrollTo({top:0}); });
   document.querySelectorAll("section").forEach(s => s.classList.toggle("on", s.id === "t-"+state.tab));
-  ({bas:renderBas,team:renderTeam,shadow:renderShadow,sig:renderSignals,demo:renderDemo,fund:()=>{renderFunding();renderArb();},led:renderLedger,coins:renderCoins,bt:renderBT,guide:renderGuide})[state.tab]();
+  ({old:renderOld,bas:renderBas,team:renderTeam,shadow:renderShadow,sig:renderSignals,demo:renderDemo,fund:()=>{renderFunding();renderArb();},led:renderLedger,coins:renderCoins,bt:renderBT,guide:renderGuide})[state.tab]();
   $("#foot").innerHTML = `v${esc(D.version)} · ${D.counts.scanned}/${D.counts.universe} coin · ${D.duration_s!=null ? D.duration_s+" sn · " : ""}${D.scan_times ? "son tarama "+Object.entries(D.scan_times).map(([k,v])=>tfl(k)+" "+v).join(", ")+" · " : ""}OI: ${esc(D.oi_source)} · taker verisi: ${D.taker_real}/${D.coins.length}<br>Karar destek aracıdır · otomatik emir vermez · yatırım tavsiyesi değildir`;
 }
 
