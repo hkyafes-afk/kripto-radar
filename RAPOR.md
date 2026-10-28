@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.448R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.441R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 280 | %43.9 | -0.448 | -125.41 |
-| polat_girilen | 0 | %- | - | - |
-| polat_girilmeyen | 280 | %43.9 | -0.448 | -125.41 |
-| rastgele | 294 | %41.8 | -0.498 | -146.34 |
-| trend_naif | 292 | %34.6 | -0.588 | -171.8 |
+| polat_tum_sinyaller | 286 | %44.1 | -0.441 | -126.17 |
+| polat_girilen | 1 | %100.0 | 0.215 | 0.21 |
+| polat_girilmeyen | 285 | %43.9 | -0.443 | -126.39 |
+| rastgele | 300 | %42.0 | -0.495 | -148.62 |
+| trend_naif | 298 | %34.9 | -0.579 | -172.57 |
 
-Polat özsermaye: %-0.38 · BTC al-tut: %-0.51
+Polat özsermaye: %-0.7 · BTC al-tut: %-0.39
 
 ## Öğrenme (walk-forward)
 
@@ -25,13 +25,37 @@ En az işe yarayan okumalar: uyusmazlik_macd_1H ×0.846, yapi_1D ×0.88, adx_di_
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 6507, girilen: 2.
+İşlem 1 · kazanma %100.0 · ort. 0.337R · toplam 0.34R · net 167.16$ · maks. düşüş 0.0$ · kâr faktörü None
+
+**Kuruluma göre**
+
+| | işlem | kazanma | ort. R | net $ |
+|---|---|---|---|---|
+| yapi_bozulmasi_15m+geri_test_15m+trend_cizgisi_kirilim_1H | 1 | %100.0 | 0.337 | 167.16 |
+
+**Çıkış nedenine göre**
+
+| | işlem | kazanma | ort. R | net $ |
+|---|---|---|---|---|
+| stop | 1 | %100.0 | 0.337 | 167.16 |
+
+**Seansa göre**
+
+| | işlem | kazanma | ort. R | net $ |
+|---|---|---|---|---|
+| ABD | 1 | %100.0 | 0.337 | 167.16 |
+
+**Teyit sayısına göre**
+
+| | işlem | kazanma | ort. R | net $ |
+|---|---|---|---|---|
+| 5 | 1 | %100.0 | 0.337 | 167.16 |
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
 - ders: 326
-- gösterge aileleri aynı yönde değil: 303
+- gösterge aileleri aynı yönde değil: 306
 - büyük zaman dilimi trendi ters: 153
 - bu coinde zaten pozisyon var: 81
 - puan +0.149 eşiğin (0.25) altında: 44
@@ -42,13 +66,37 @@ Kapanmış işlem yok. Görülen kurulum: 6507, girilen: 2.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 6507, girilen: 2.
+İşlem 1 · kazanma %100.0 · ort. 0.337R · toplam 0.34R · net 167.16$ · maks. düşüş 0.0$ · kâr faktörü None
+
+**Kuruluma göre**
+
+| | işlem | kazanma | ort. R | net $ |
+|---|---|---|---|---|
+| yapi_bozulmasi_15m+geri_test_15m+trend_cizgisi_kirilim_1H | 1 | %100.0 | 0.337 | 167.16 |
+
+**Çıkış nedenine göre**
+
+| | işlem | kazanma | ort. R | net $ |
+|---|---|---|---|---|
+| stop | 1 | %100.0 | 0.337 | 167.16 |
+
+**Seansa göre**
+
+| | işlem | kazanma | ort. R | net $ |
+|---|---|---|---|---|
+| ABD | 1 | %100.0 | 0.337 | 167.16 |
+
+**Teyit sayısına göre**
+
+| | işlem | kazanma | ort. R | net $ |
+|---|---|---|---|---|
+| 5 | 1 | %100.0 | 0.337 | 167.16 |
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
 - ders: 326
-- gösterge aileleri aynı yönde değil: 303
+- gösterge aileleri aynı yönde değil: 306
 - büyük zaman dilimi trendi ters: 153
 - bu coinde zaten pozisyon var: 81
 - puan +0.149 eşiğin (0.25) altında: 44
@@ -59,13 +107,37 @@ Kapanmış işlem yok. Görülen kurulum: 6507, girilen: 2.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 6507, girilen: 2.
+İşlem 1 · kazanma %100.0 · ort. 0.337R · toplam 0.34R · net 167.16$ · maks. düşüş 0.0$ · kâr faktörü None
+
+**Kuruluma göre**
+
+| | işlem | kazanma | ort. R | net $ |
+|---|---|---|---|---|
+| yapi_bozulmasi_15m+geri_test_15m+trend_cizgisi_kirilim_1H | 1 | %100.0 | 0.337 | 167.16 |
+
+**Çıkış nedenine göre**
+
+| | işlem | kazanma | ort. R | net $ |
+|---|---|---|---|---|
+| stop | 1 | %100.0 | 0.337 | 167.16 |
+
+**Seansa göre**
+
+| | işlem | kazanma | ort. R | net $ |
+|---|---|---|---|---|
+| ABD | 1 | %100.0 | 0.337 | 167.16 |
+
+**Teyit sayısına göre**
+
+| | işlem | kazanma | ort. R | net $ |
+|---|---|---|---|---|
+| 5 | 1 | %100.0 | 0.337 | 167.16 |
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
 - ders: 326
-- gösterge aileleri aynı yönde değil: 303
+- gösterge aileleri aynı yönde değil: 306
 - büyük zaman dilimi trendi ters: 153
 - bu coinde zaten pozisyon var: 81
 - puan +0.149 eşiğin (0.25) altında: 44
