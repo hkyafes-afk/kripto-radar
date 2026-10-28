@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.337R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.356R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 110 | %49.1 | -0.337 | -37.12 |
+| polat_tum_sinyaller | 112 | %48.2 | -0.356 | -39.86 |
 | polat_girilen | 0 | %- | - | - |
-| polat_girilmeyen | 110 | %49.1 | -0.337 | -37.12 |
+| polat_girilmeyen | 112 | %48.2 | -0.356 | -39.86 |
 | rastgele | 107 | %44.9 | -0.454 | -48.53 |
-| trend_naif | 108 | %40.7 | -0.485 | -52.38 |
+| trend_naif | 109 | %40.4 | -0.491 | -53.5 |
 
-Polat özsermaye: %0.0 · BTC al-tut: %-0.13
+Polat özsermaye: %0.0 · BTC al-tut: %-0.12
 
 ## Öğrenme (walk-forward)
 
@@ -25,11 +25,11 @@ En az işe yarayan okumalar: stoch_5m ×0.83, stoch_15m ×0.858, ema200_1D ×0.9
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2586, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2593, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 349
+- emir defteri doğrulanmadı: 350
 - gösterge aileleri aynı yönde değil: 179
 - büyük zaman dilimi trendi ters: 74
 - ders: 63
@@ -42,11 +42,11 @@ Kapanmış işlem yok. Görülen kurulum: 2586, girilen: 0.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2586, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2593, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 349
+- emir defteri doğrulanmadı: 350
 - gösterge aileleri aynı yönde değil: 179
 - büyük zaman dilimi trendi ters: 74
 - ders: 63
@@ -59,11 +59,11 @@ Kapanmış işlem yok. Görülen kurulum: 2586, girilen: 0.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2586, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2593, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 349
+- emir defteri doğrulanmadı: 350
 - gösterge aileleri aynı yönde değil: 179
 - büyük zaman dilimi trendi ters: 74
 - ders: 63
