@@ -11,10 +11,10 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 524 | %43.7 | -0.423 | -221.85 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
 | polat_girilmeyen | 522 | %43.7 | -0.423 | -220.65 |
-| rastgele | 535 | %43.6 | -0.428 | -228.98 |
+| rastgele | 536 | %43.7 | -0.425 | -227.55 |
 | trend_naif | 534 | %36.9 | -0.531 | -283.49 |
 
-Polat özsermaye: %-2.57 · BTC al-tut: %0.17
+Polat özsermaye: %-2.57 · BTC al-tut: %0.03
 
 ## Öğrenme (walk-forward)
 
@@ -57,7 +57,7 @@ En az işe yarayan okumalar: yapi_1D ×0.86, ema_4H ×0.891, ema_1D ×0.893, can
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 784
+- ders: 788
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 442
@@ -65,7 +65,7 @@ En az işe yarayan okumalar: yapi_1D ×0.86, ema_4H ×0.891, ema_1D ×0.893, can
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.127 eşiğin (0.25) altında: 53
-- puan +0.149 eşiğin (0.25) altında: 52
+- puan +0.149 eşiğin (0.25) altında: 53
 - puan +0.123 eşiğin (0.25) altında: 49
 
 **Hata sınıfları**
@@ -107,7 +107,7 @@ En az işe yarayan okumalar: yapi_1D ×0.86, ema_4H ×0.891, ema_1D ×0.893, can
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 784
+- ders: 788
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 442
@@ -115,7 +115,7 @@ En az işe yarayan okumalar: yapi_1D ×0.86, ema_4H ×0.891, ema_1D ×0.893, can
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.127 eşiğin (0.25) altında: 53
-- puan +0.149 eşiğin (0.25) altında: 52
+- puan +0.149 eşiğin (0.25) altında: 53
 - puan +0.123 eşiğin (0.25) altında: 49
 
 **Hata sınıfları**
@@ -157,7 +157,7 @@ En az işe yarayan okumalar: yapi_1D ×0.86, ema_4H ×0.891, ema_1D ×0.893, can
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 784
+- ders: 788
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 442
@@ -165,7 +165,7 @@ En az işe yarayan okumalar: yapi_1D ×0.86, ema_4H ×0.891, ema_1D ×0.893, can
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.127 eşiğin (0.25) altında: 53
-- puan +0.149 eşiğin (0.25) altında: 52
+- puan +0.149 eşiğin (0.25) altında: 53
 - puan +0.123 eşiğin (0.25) altında: 49
 
 **Hata sınıfları**
