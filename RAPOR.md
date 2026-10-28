@@ -56,8 +56,8 @@ En az işe yarayan okumalar: stoch_5m ×0.769, adx_di_1D ×0.779, yapi_1D ×0.78
 
 - emir defteri doğrulanmadı: 593
 - ders: 489
-- günlük işlem tavanı (8): 428
-- gösterge aileleri aynı yönde değil: 399
+- günlük işlem tavanı (8): 432
+- gösterge aileleri aynı yönde değil: 400
 - büyük zaman dilimi trendi ters: 166
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 47
@@ -102,8 +102,8 @@ En az işe yarayan okumalar: stoch_5m ×0.769, adx_di_1D ×0.779, yapi_1D ×0.78
 
 - emir defteri doğrulanmadı: 593
 - ders: 489
-- günlük işlem tavanı (8): 428
-- gösterge aileleri aynı yönde değil: 399
+- günlük işlem tavanı (8): 432
+- gösterge aileleri aynı yönde değil: 400
 - büyük zaman dilimi trendi ters: 166
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 47
@@ -148,8 +148,8 @@ En az işe yarayan okumalar: stoch_5m ×0.769, adx_di_1D ×0.779, yapi_1D ×0.78
 
 - emir defteri doğrulanmadı: 593
 - ders: 489
-- günlük işlem tavanı (8): 428
-- gösterge aileleri aynı yönde değil: 399
+- günlük işlem tavanı (8): 432
+- gösterge aileleri aynı yönde değil: 400
 - büyük zaman dilimi trendi ters: 166
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 47
