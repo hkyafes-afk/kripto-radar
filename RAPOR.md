@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.45R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.453R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 257 | %44.0 | -0.45 | -115.75 |
+| polat_tum_sinyaller | 258 | %43.8 | -0.453 | -116.97 |
 | polat_girilen | 0 | %- | - | - |
-| polat_girilmeyen | 257 | %44.0 | -0.45 | -115.75 |
-| rastgele | 265 | %41.9 | -0.496 | -131.53 |
-| trend_naif | 264 | %35.6 | -0.57 | -150.56 |
+| polat_girilmeyen | 258 | %43.8 | -0.453 | -116.97 |
+| rastgele | 266 | %42.1 | -0.492 | -130.96 |
+| trend_naif | 265 | %35.8 | -0.566 | -149.99 |
 
-Polat özsermaye: %-0.81 · BTC al-tut: %0.47
+Polat özsermaye: %-0.82 · BTC al-tut: %0.46
 
 ## Öğrenme (walk-forward)
 
@@ -25,12 +25,12 @@ En az işe yarayan okumalar: uyusmazlik_macd_1H ×0.875, yapi_1D ×0.889, adx_di
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 5952, girilen: 2.
+Kapanmış işlem yok. Görülen kurulum: 5967, girilen: 2.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 304
+- ders: 305
 - gösterge aileleri aynı yönde değil: 281
 - büyük zaman dilimi trendi ters: 148
 - bu coinde zaten pozisyon var: 54
@@ -42,12 +42,12 @@ Kapanmış işlem yok. Görülen kurulum: 5952, girilen: 2.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 5952, girilen: 2.
+Kapanmış işlem yok. Görülen kurulum: 5967, girilen: 2.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 304
+- ders: 305
 - gösterge aileleri aynı yönde değil: 281
 - büyük zaman dilimi trendi ters: 148
 - bu coinde zaten pozisyon var: 54
@@ -59,12 +59,12 @@ Kapanmış işlem yok. Görülen kurulum: 5952, girilen: 2.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 5952, girilen: 2.
+Kapanmış işlem yok. Görülen kurulum: 5967, girilen: 2.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 304
+- ders: 305
 - gösterge aileleri aynı yönde değil: 281
 - büyük zaman dilimi trendi ters: 148
 - bu coinde zaten pozisyon var: 54
