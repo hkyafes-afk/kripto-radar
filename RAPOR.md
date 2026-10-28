@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.383R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.381R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 399 | %45.4 | -0.383 | -152.71 |
+| polat_tum_sinyaller | 400 | %45.5 | -0.381 | -152.3 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
-| polat_girilmeyen | 397 | %45.3 | -0.382 | -151.51 |
+| polat_girilmeyen | 398 | %45.5 | -0.38 | -151.1 |
 | rastgele | 413 | %44.6 | -0.415 | -171.47 |
-| trend_naif | 411 | %38.4 | -0.492 | -202.15 |
+| trend_naif | 412 | %38.6 | -0.49 | -201.75 |
 
-Polat özsermaye: %-1.7 · BTC al-tut: %-0.55
+Polat özsermaye: %-1.61 · BTC al-tut: %-0.6
 
 ## Öğrenme (walk-forward)
 
@@ -56,8 +56,8 @@ En az işe yarayan okumalar: yapi_1D ×0.715, adx_di_1D ×0.739, ema_1D ×0.741,
 
 - emir defteri doğrulanmadı: 593
 - ders: 483
-- günlük işlem tavanı (8): 386
-- gösterge aileleri aynı yönde değil: 372
+- günlük işlem tavanı (8): 389
+- gösterge aileleri aynı yönde değil: 373
 - büyük zaman dilimi trendi ters: 165
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 47
@@ -102,8 +102,8 @@ En az işe yarayan okumalar: yapi_1D ×0.715, adx_di_1D ×0.739, ema_1D ×0.741,
 
 - emir defteri doğrulanmadı: 593
 - ders: 483
-- günlük işlem tavanı (8): 386
-- gösterge aileleri aynı yönde değil: 372
+- günlük işlem tavanı (8): 389
+- gösterge aileleri aynı yönde değil: 373
 - büyük zaman dilimi trendi ters: 165
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 47
@@ -148,8 +148,8 @@ En az işe yarayan okumalar: yapi_1D ×0.715, adx_di_1D ×0.739, ema_1D ×0.741,
 
 - emir defteri doğrulanmadı: 593
 - ders: 483
-- günlük işlem tavanı (8): 386
-- gösterge aileleri aynı yönde değil: 372
+- günlük işlem tavanı (8): 389
+- gösterge aileleri aynı yönde değil: 373
 - büyük zaman dilimi trendi ters: 165
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 47
