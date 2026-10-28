@@ -11,10 +11,10 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 349 | %46.1 | -0.394 | -137.36 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
 | polat_girilmeyen | 347 | %46.1 | -0.392 | -136.16 |
-| rastgele | 361 | %42.7 | -0.477 | -172.07 |
-| trend_naif | 362 | %39.5 | -0.495 | -179.28 |
+| rastgele | 364 | %42.9 | -0.475 | -172.77 |
+| trend_naif | 364 | %39.6 | -0.495 | -180.33 |
 
-Polat özsermaye: %-1.63 · BTC al-tut: %-0.51
+Polat özsermaye: %-1.56 · BTC al-tut: %-0.58
 
 ## Öğrenme (walk-forward)
 
@@ -55,13 +55,13 @@ En az işe yarayan okumalar: yapi_1D ×0.747, adx_di_1D ×0.761, stoch_5m ×0.77
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 394
+- ders: 398
 - gösterge aileleri aynı yönde değil: 325
-- günlük işlem tavanı (8): 226
-- büyük zaman dilimi trendi ters: 154
+- günlük işlem tavanı (8): 227
+- büyük zaman dilimi trendi ters: 155
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 45
-- puan +0.146 eşiğin (0.25) altında: 40
+- puan +0.146 eşiğin (0.25) altında: 41
 - puan +0.167 eşiğin (0.25) altında: 39
 - puan +0.161 eşiğin (0.25) altında: 37
 
@@ -101,13 +101,13 @@ En az işe yarayan okumalar: yapi_1D ×0.747, adx_di_1D ×0.761, stoch_5m ×0.77
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 394
+- ders: 398
 - gösterge aileleri aynı yönde değil: 325
-- günlük işlem tavanı (8): 226
-- büyük zaman dilimi trendi ters: 154
+- günlük işlem tavanı (8): 227
+- büyük zaman dilimi trendi ters: 155
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 45
-- puan +0.146 eşiğin (0.25) altında: 40
+- puan +0.146 eşiğin (0.25) altında: 41
 - puan +0.167 eşiğin (0.25) altında: 39
 - puan +0.161 eşiğin (0.25) altında: 37
 
@@ -147,13 +147,13 @@ En az işe yarayan okumalar: yapi_1D ×0.747, adx_di_1D ×0.761, stoch_5m ×0.77
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 394
+- ders: 398
 - gösterge aileleri aynı yönde değil: 325
-- günlük işlem tavanı (8): 226
-- büyük zaman dilimi trendi ters: 154
+- günlük işlem tavanı (8): 227
+- büyük zaman dilimi trendi ters: 155
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 45
-- puan +0.146 eşiğin (0.25) altında: 40
+- puan +0.146 eşiğin (0.25) altında: 41
 - puan +0.167 eşiğin (0.25) altında: 39
 - puan +0.161 eşiğin (0.25) altında: 37
 
