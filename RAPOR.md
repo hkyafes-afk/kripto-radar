@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 52 | %36.5 | -0.649 | -33.76 |
 | trend_naif | 53 | %30.2 | -0.692 | -36.7 |
 
-Polat özsermaye: %0.0 · BTC al-tut: %0.24
+Polat özsermaye: %0.0 · BTC al-tut: %0.19
 
 ## Öğrenme (walk-forward)
 
@@ -23,16 +23,16 @@ Polat özsermaye: %0.0 · BTC al-tut: %0.24
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 1317, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 1332, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 220
-- gösterge aileleri aynı yönde değil: 100
-- büyük zaman dilimi trendi ters: 49
+- emir defteri doğrulanmadı: 221
+- gösterge aileleri aynı yönde değil: 101
+- büyük zaman dilimi trendi ters: 50
+- puan +0.149 eşiğin (0.25) altında: 14
 - puan +0.146 eşiğin (0.25) altında: 13
 - puan +0.207 eşiğin (0.25) altında: 13
-- puan +0.149 eşiğin (0.25) altında: 13
 - puan +0.137 eşiğin (0.25) altında: 11
 - puan +0.180 eşiğin (0.25) altında: 11
 - puan +0.138 eşiğin (0.25) altında: 11
@@ -40,16 +40,16 @@ Kapanmış işlem yok. Görülen kurulum: 1317, girilen: 0.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 1317, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 1332, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 220
-- gösterge aileleri aynı yönde değil: 100
-- büyük zaman dilimi trendi ters: 49
+- emir defteri doğrulanmadı: 221
+- gösterge aileleri aynı yönde değil: 101
+- büyük zaman dilimi trendi ters: 50
+- puan +0.149 eşiğin (0.25) altında: 14
 - puan +0.146 eşiğin (0.25) altında: 13
 - puan +0.207 eşiğin (0.25) altında: 13
-- puan +0.149 eşiğin (0.25) altında: 13
 - puan +0.137 eşiğin (0.25) altında: 11
 - puan +0.180 eşiğin (0.25) altında: 11
 - puan +0.138 eşiğin (0.25) altında: 11
@@ -57,16 +57,16 @@ Kapanmış işlem yok. Görülen kurulum: 1317, girilen: 0.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 1317, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 1332, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 220
-- gösterge aileleri aynı yönde değil: 100
-- büyük zaman dilimi trendi ters: 49
+- emir defteri doğrulanmadı: 221
+- gösterge aileleri aynı yönde değil: 101
+- büyük zaman dilimi trendi ters: 50
+- puan +0.149 eşiğin (0.25) altında: 14
 - puan +0.146 eşiğin (0.25) altında: 13
 - puan +0.207 eşiğin (0.25) altında: 13
-- puan +0.149 eşiğin (0.25) altında: 13
 - puan +0.137 eşiğin (0.25) altında: 11
 - puan +0.180 eşiğin (0.25) altında: 11
 - puan +0.138 eşiğin (0.25) altında: 11
