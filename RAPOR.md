@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.426R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.403R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 314 | %44.3 | -0.426 | -133.81 |
+| polat_tum_sinyaller | 320 | %45.3 | -0.403 | -129.06 |
 | polat_girilen | 1 | %100.0 | 0.215 | 0.21 |
-| polat_girilmeyen | 313 | %44.1 | -0.428 | -134.02 |
-| rastgele | 329 | %41.9 | -0.493 | -162.28 |
-| trend_naif | 323 | %36.5 | -0.551 | -177.85 |
+| polat_girilmeyen | 319 | %45.1 | -0.405 | -129.27 |
+| rastgele | 333 | %42.6 | -0.474 | -157.92 |
+| trend_naif | 330 | %37.9 | -0.521 | -172.03 |
 
-Polat özsermaye: %-0.93 · BTC al-tut: %-0.54
+Polat özsermaye: %-1.2 · BTC al-tut: %-0.43
 
 ## Öğrenme (walk-forward)
 
@@ -54,10 +54,10 @@ En az işe yarayan okumalar: adx_di_1D ×0.816, trix_1D ×0.835, yapi_1D ×0.841
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 376
+- ders: 377
 - gösterge aileleri aynı yönde değil: 323
 - büyük zaman dilimi trendi ters: 153
-- bu coinde zaten pozisyon var: 89
+- bu coinde zaten pozisyon var: 92
 - puan +0.149 eşiğin (0.25) altında: 44
 - puan +0.146 eşiğin (0.25) altında: 40
 - puan +0.167 eşiğin (0.25) altında: 38
@@ -95,10 +95,10 @@ En az işe yarayan okumalar: adx_di_1D ×0.816, trix_1D ×0.835, yapi_1D ×0.841
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 376
+- ders: 377
 - gösterge aileleri aynı yönde değil: 323
 - büyük zaman dilimi trendi ters: 153
-- bu coinde zaten pozisyon var: 89
+- bu coinde zaten pozisyon var: 92
 - puan +0.149 eşiğin (0.25) altında: 44
 - puan +0.146 eşiğin (0.25) altında: 40
 - puan +0.167 eşiğin (0.25) altında: 38
@@ -136,10 +136,10 @@ En az işe yarayan okumalar: adx_di_1D ×0.816, trix_1D ×0.835, yapi_1D ×0.841
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 376
+- ders: 377
 - gösterge aileleri aynı yönde değil: 323
 - büyük zaman dilimi trendi ters: 153
-- bu coinde zaten pozisyon var: 89
+- bu coinde zaten pozisyon var: 92
 - puan +0.149 eşiğin (0.25) altında: 44
 - puan +0.146 eşiğin (0.25) altında: 40
 - puan +0.167 eşiğin (0.25) altında: 38
