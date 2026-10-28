@@ -11,10 +11,10 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 518 | %43.4 | -0.427 | -220.96 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
 | polat_girilmeyen | 516 | %43.4 | -0.426 | -219.76 |
-| rastgele | 529 | %43.5 | -0.428 | -226.18 |
+| rastgele | 530 | %43.4 | -0.429 | -227.42 |
 | trend_naif | 528 | %36.6 | -0.535 | -282.61 |
 
-Polat özsermaye: %-2.57 · BTC al-tut: %0.21
+Polat özsermaye: %-2.57 · BTC al-tut: %0.18
 
 ## Öğrenme (walk-forward)
 
@@ -57,15 +57,15 @@ En az işe yarayan okumalar: yapi_1D ×0.879, ema_4H ×0.897, ema_1D ×0.911, ca
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 756
+- ders: 757
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 442
 - büyük zaman dilimi trendi ters: 230
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
+- puan +0.127 eşiğin (0.25) altında: 52
 - puan +0.149 eşiğin (0.25) altında: 52
-- puan +0.127 eşiğin (0.25) altında: 51
 - puan +0.123 eşiğin (0.25) altında: 49
 
 **Hata sınıfları**
@@ -107,15 +107,15 @@ En az işe yarayan okumalar: yapi_1D ×0.879, ema_4H ×0.897, ema_1D ×0.911, ca
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 756
+- ders: 757
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 442
 - büyük zaman dilimi trendi ters: 230
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
+- puan +0.127 eşiğin (0.25) altında: 52
 - puan +0.149 eşiğin (0.25) altında: 52
-- puan +0.127 eşiğin (0.25) altında: 51
 - puan +0.123 eşiğin (0.25) altında: 49
 
 **Hata sınıfları**
@@ -157,15 +157,15 @@ En az işe yarayan okumalar: yapi_1D ×0.879, ema_4H ×0.897, ema_1D ×0.911, ca
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 756
+- ders: 757
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 442
 - büyük zaman dilimi trendi ters: 230
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
+- puan +0.127 eşiğin (0.25) altında: 52
 - puan +0.149 eşiğin (0.25) altında: 52
-- puan +0.127 eşiğin (0.25) altında: 51
 - puan +0.123 eşiğin (0.25) altında: 49
 
 **Hata sınıfları**
