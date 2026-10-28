@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 13 | %46.2 | -0.514 | -6.68 |
 | trend_naif | 11 | %18.2 | -0.835 | -9.18 |
 
-Polat özsermaye: %0.0 · BTC al-tut: %-0.12
+Polat özsermaye: %0.0 · BTC al-tut: %-0.1
 
 ## Öğrenme (walk-forward)
 
@@ -23,12 +23,12 @@ Polat özsermaye: %0.0 · BTC al-tut: %-0.12
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 403, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 420, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 74
-- gösterge aileleri aynı yönde değil: 41
+- emir defteri doğrulanmadı: 79
+- gösterge aileleri aynı yönde değil: 42
 - büyük zaman dilimi trendi ters: 11
 - puan +0.137 eşiğin (0.25) altında: 6
 - puan +0.235 eşiğin (0.25) altında: 5
@@ -36,16 +36,16 @@ Kapanmış işlem yok. Görülen kurulum: 403, girilen: 0.
 - puan +0.214 eşiğin (0.25) altında: 5
 - puan +0.193 eşiğin (0.25) altında: 4
 - puan +0.185 eşiğin (0.25) altında: 4
-- puan +0.223 eşiğin (0.25) altında: 4
+- puan +0.204 eşiğin (0.25) altında: 4
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 403, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 420, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 74
-- gösterge aileleri aynı yönde değil: 41
+- emir defteri doğrulanmadı: 79
+- gösterge aileleri aynı yönde değil: 42
 - büyük zaman dilimi trendi ters: 11
 - puan +0.137 eşiğin (0.25) altında: 6
 - puan +0.235 eşiğin (0.25) altında: 5
@@ -53,16 +53,16 @@ Kapanmış işlem yok. Görülen kurulum: 403, girilen: 0.
 - puan +0.214 eşiğin (0.25) altında: 5
 - puan +0.193 eşiğin (0.25) altında: 4
 - puan +0.185 eşiğin (0.25) altında: 4
-- puan +0.223 eşiğin (0.25) altında: 4
+- puan +0.204 eşiğin (0.25) altında: 4
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 403, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 420, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 74
-- gösterge aileleri aynı yönde değil: 41
+- emir defteri doğrulanmadı: 79
+- gösterge aileleri aynı yönde değil: 42
 - büyük zaman dilimi trendi ters: 11
 - puan +0.137 eşiğin (0.25) altında: 6
 - puan +0.235 eşiğin (0.25) altında: 5
@@ -70,4 +70,4 @@ Kapanmış işlem yok. Görülen kurulum: 403, girilen: 0.
 - puan +0.214 eşiğin (0.25) altında: 5
 - puan +0.193 eşiğin (0.25) altında: 4
 - puan +0.185 eşiğin (0.25) altında: 4
-- puan +0.223 eşiğin (0.25) altında: 4
+- puan +0.204 eşiğin (0.25) altında: 4
