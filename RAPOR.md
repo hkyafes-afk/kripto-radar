@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 308 | %41.2 | -0.503 | -155.04 |
 | trend_naif | 309 | %34.6 | -0.576 | -178.12 |
 
-Polat özsermaye: %-0.7 · BTC al-tut: %-0.3
+Polat özsermaye: %-0.7 · BTC al-tut: %-0.35
 
 ## Öğrenme (walk-forward)
 
