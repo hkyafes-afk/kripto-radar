@@ -11,10 +11,10 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 87 | %50.6 | -0.322 | -28.04 |
 | polat_girilen | 0 | %- | - | - |
 | polat_girilmeyen | 87 | %50.6 | -0.322 | -28.04 |
-| rastgele | 85 | %44.7 | -0.477 | -40.54 |
-| trend_naif | 88 | %34.1 | -0.615 | -54.16 |
+| rastgele | 86 | %45.3 | -0.465 | -39.96 |
+| trend_naif | 89 | %34.8 | -0.602 | -53.58 |
 
-Polat özsermaye: %0.0 · BTC al-tut: %-0.02
+Polat özsermaye: %0.0 · BTC al-tut: %-0.0
 
 ## Öğrenme (walk-forward)
 
@@ -23,14 +23,14 @@ Polat özsermaye: %0.0 · BTC al-tut: %-0.02
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2053, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2073, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 320
-- gösterge aileleri aynı yönde değil: 148
+- emir defteri doğrulanmadı: 322
+- gösterge aileleri aynı yönde değil: 150
 - büyük zaman dilimi trendi ters: 57
-- ders: 19
+- ders: 22
 - puan +0.149 eşiğin (0.25) altında: 18
 - puan +0.146 eşiğin (0.25) altında: 17
 - puan +0.207 eşiğin (0.25) altında: 16
@@ -40,14 +40,14 @@ Kapanmış işlem yok. Görülen kurulum: 2053, girilen: 0.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2053, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2073, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 320
-- gösterge aileleri aynı yönde değil: 148
+- emir defteri doğrulanmadı: 322
+- gösterge aileleri aynı yönde değil: 150
 - büyük zaman dilimi trendi ters: 57
-- ders: 19
+- ders: 22
 - puan +0.149 eşiğin (0.25) altında: 18
 - puan +0.146 eşiğin (0.25) altında: 17
 - puan +0.207 eşiğin (0.25) altında: 16
@@ -57,14 +57,14 @@ Kapanmış işlem yok. Görülen kurulum: 2053, girilen: 0.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2053, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2073, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 320
-- gösterge aileleri aynı yönde değil: 148
+- emir defteri doğrulanmadı: 322
+- gösterge aileleri aynı yönde değil: 150
 - büyük zaman dilimi trendi ters: 57
-- ders: 19
+- ders: 22
 - puan +0.149 eşiğin (0.25) altında: 18
 - puan +0.146 eşiğin (0.25) altında: 17
 - puan +0.207 eşiğin (0.25) altında: 16
