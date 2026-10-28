@@ -132,7 +132,8 @@ Polat, kendisine verilen her okumayı hesaplar ve her okuma kararda oy kullanır
 
 `polat_veri/gunluk/` klasöründe üç dosya tutulur:
 
-- `kararlar.jsonl`: zorunlu koşulları tutan **her** kurulum. Girildi mi, girilmediyse neden, o anki bütün okumalar.
+- `kararlar.jsonl`: zorunlu koşulları tutan **her** kurulum (son 2 UTC günü). Girildi mi, girilmediyse neden, oylar ve plan. Ham okumalar buraya yazılmaz.
+- `arsiv/okuma-GG.jsonl.gz`: ham okumalar, yalnızca girilen kurulumların ve her 100 kurulumdan birinin (örnek). Günde yaklaşık 25 MB sıkıştırılmış olduğu için hepsi tutulmaz.
 - `islemler.jsonl`: açılış, kısmi satış, stop taşıma, funding ve kapanış. Kapanışta R, MFE/MAE, ücret, kayma, süre, giriş ve çıkış okumaları ve hata sınıfları kaydedilir. Hata sınıfları: ilk 15 dakikada stop, büyük kayma, 1R+ kârdayken zararla kapanış, likidasyon.
 - `olaylar.jsonl`: başlama ve durma, seçici değişiklikleri, risk durdurmaları, hatalar.
 

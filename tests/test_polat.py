@@ -568,6 +568,9 @@ def test_agent_every_reading_votes_and_full_cycle():
         assert {"polat", "rastgele", "trend_naif"} <= kinds, kinds
         dec_j = ag.journal.read("kararlar")
         assert dec_j and dec_j[-1]["oylar"] and dec_j[-1]["plan"]["stop_neden"]
+        assert "okuma" not in dec_j[-1], "ham okuma canlı kayda yazılmamalı"
+        okz = ag.journal.read_okuma()
+        assert okz and okz[-1]["okuma"], "girilen kurulumun ham okuması arşive yazılmalı"
         assert rec["engel"] is None, rec["engel"]
         p = list(ag.broker.positions.values())[0]
         assert p["sl"] < p["entry"] < p["tp"] and math.isclose(p["tp"] / p["entry"], 1.125)
