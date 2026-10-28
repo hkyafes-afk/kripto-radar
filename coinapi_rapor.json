@@ -1,0 +1,191 @@
+{
+ "ts": "2026-10-28T17:46:35Z",
+ "butce_kredi": 10.0,
+ "istekler": [
+  {
+   "etiket": "sembol BTC",
+   "yol": "/v1/symbols/OKEX",
+   "param": {
+    "filter_symbol_id": "OKEX_PERP_BTC_USDT"
+   },
+   "durum": 403,
+   "sure_sn": 1.77,
+   "bayt": 517,
+   "basliklar": {},
+   "kredi": null,
+   "ornek": {
+    "title": "Forbidden",
+    "status": 403,
+    "detail": "Quota exceeded: Insufficient Usage Credits or Subscription.",
+    "error": "Forbidden (Quota exceeded: Insufficient Usage Credits or Subscription.)",
+    "QuotaKey": "BA",
+    "QuotaName": "Insufficient Usage Credits or Subscription",
+    "QuotaType": "Organization Limit",
+    "QuotaValueCurrentUsage": 0,
+    "QuotaValue": 0,
+    "QuotaValueUnit": "$",
+    "QuotaValueAdjustable": "Yes, acquire or upgrade subscription, add service credits manually or setup auto-recharge."
+   }
+  },
+  {
+   "etiket": "sembol ETH",
+   "yol": "/v1/symbols/OKEX",
+   "param": {
+    "filter_symbol_id": "OKEX_PERP_ETH_USDT"
+   },
+   "durum": 403,
+   "sure_sn": 0.68,
+   "bayt": 517,
+   "basliklar": {},
+   "kredi": null,
+   "ornek": {
+    "title": "Forbidden",
+    "status": 403,
+    "detail": "Quota exceeded: Insufficient Usage Credits or Subscription.",
+    "error": "Forbidden (Quota exceeded: Insufficient Usage Credits or Subscription.)",
+    "QuotaKey": "BA",
+    "QuotaName": "Insufficient Usage Credits or Subscription",
+    "QuotaType": "Organization Limit",
+    "QuotaValueCurrentUsage": 0,
+    "QuotaValue": 0,
+    "QuotaValueUnit": "$",
+    "QuotaValueAdjustable": "Yes, acquire or upgrade subscription, add service credits manually or setup auto-recharge."
+   }
+  },
+  {
+   "etiket": "mum 1dk ×100",
+   "yol": "/v1/ohlcv/OKEX_PERP_BTC_USDT/history",
+   "param": {
+    "period_id": "1MIN",
+    "time_start": "2026-10-20T00:00:00",
+    "limit": 100
+   },
+   "durum": 403,
+   "sure_sn": 0.28,
+   "bayt": 517,
+   "basliklar": {},
+   "kredi": null,
+   "ornek": {
+    "title": "Forbidden",
+    "status": 403,
+    "detail": "Quota exceeded: Insufficient Usage Credits or Subscription.",
+    "error": "Forbidden (Quota exceeded: Insufficient Usage Credits or Subscription.)",
+    "QuotaKey": "BA",
+    "QuotaName": "Insufficient Usage Credits or Subscription",
+    "QuotaType": "Organization Limit",
+    "QuotaValueCurrentUsage": 0,
+    "QuotaValue": 0,
+    "QuotaValueUnit": "$",
+    "QuotaValueAdjustable": "Yes, acquire or upgrade subscription, add service credits manually or setup auto-recharge."
+   }
+  },
+  {
+   "etiket": "işlem ×100",
+   "yol": "/v1/trades/OKEX_PERP_BTC_USDT/history",
+   "param": {
+    "time_start": "2026-10-20T00:00:00",
+    "limit": 100
+   },
+   "durum": 403,
+   "sure_sn": 0.2,
+   "bayt": 517,
+   "basliklar": {},
+   "kredi": null,
+   "ornek": {
+    "title": "Forbidden",
+    "status": 403,
+    "detail": "Quota exceeded: Insufficient Usage Credits or Subscription.",
+    "error": "Forbidden (Quota exceeded: Insufficient Usage Credits or Subscription.)",
+    "QuotaKey": "BA",
+    "QuotaName": "Insufficient Usage Credits or Subscription",
+    "QuotaType": "Organization Limit",
+    "QuotaValueCurrentUsage": 0,
+    "QuotaValue": 0,
+    "QuotaValueUnit": "$",
+    "QuotaValueAdjustable": "Yes, acquire or upgrade subscription, add service credits manually or setup auto-recharge."
+   }
+  },
+  {
+   "etiket": "kotasyon ×100",
+   "yol": "/v1/quotes/OKEX_PERP_BTC_USDT/history",
+   "param": {
+    "time_start": "2026-10-20T00:00:00",
+    "limit": 100
+   },
+   "durum": 403,
+   "sure_sn": 0.2,
+   "bayt": 517,
+   "basliklar": {},
+   "kredi": null,
+   "ornek": {
+    "title": "Forbidden",
+    "status": 403,
+    "detail": "Quota exceeded: Insufficient Usage Credits or Subscription.",
+    "error": "Forbidden (Quota exceeded: Insufficient Usage Credits or Subscription.)",
+    "QuotaKey": "BA",
+    "QuotaName": "Insufficient Usage Credits or Subscription",
+    "QuotaType": "Organization Limit",
+    "QuotaValueCurrentUsage": 0,
+    "QuotaValue": 0,
+    "QuotaValueUnit": "$",
+    "QuotaValueAdjustable": "Yes, acquire or upgrade subscription, add service credits manually or setup auto-recharge."
+   }
+  },
+  {
+   "etiket": "emir defteri ×10 anlık görüntü, 20 kademe",
+   "yol": "/v1/orderbooks/OKEX_PERP_BTC_USDT/history",
+   "param": {
+    "time_start": "2026-10-20T00:00:00",
+    "limit": 10,
+    "limit_levels": 20
+   },
+   "durum": 403,
+   "sure_sn": 0.27,
+   "bayt": 517,
+   "basliklar": {},
+   "kredi": null,
+   "ornek": {
+    "title": "Forbidden",
+    "status": 403,
+    "detail": "Quota exceeded: Insufficient Usage Credits or Subscription.",
+    "error": "Forbidden (Quota exceeded: Insufficient Usage Credits or Subscription.)",
+    "QuotaKey": "BA",
+    "QuotaName": "Insufficient Usage Credits or Subscription",
+    "QuotaType": "Organization Limit",
+    "QuotaValueCurrentUsage": 0,
+    "QuotaValue": 0,
+    "QuotaValueUnit": "$",
+    "QuotaValueAdjustable": "Yes, acquire or upgrade subscription, add service credits manually or setup auto-recharge."
+   }
+  },
+  {
+   "etiket": "emir defteri ×100 anlık görüntü, 20 kademe",
+   "yol": "/v1/orderbooks/OKEX_PERP_BTC_USDT/history",
+   "param": {
+    "time_start": "2026-10-20T00:00:00",
+    "limit": 100,
+    "limit_levels": 20
+   },
+   "durum": 403,
+   "sure_sn": 0.2,
+   "bayt": 517,
+   "basliklar": {},
+   "kredi": null,
+   "ornek": {
+    "title": "Forbidden",
+    "status": 403,
+    "detail": "Quota exceeded: Insufficient Usage Credits or Subscription.",
+    "error": "Forbidden (Quota exceeded: Insufficient Usage Credits or Subscription.)",
+    "QuotaKey": "BA",
+    "QuotaName": "Insufficient Usage Credits or Subscription",
+    "QuotaType": "Organization Limit",
+    "QuotaValueCurrentUsage": 0,
+    "QuotaValue": 0,
+    "QuotaValueUnit": "$",
+    "QuotaValueAdjustable": "Yes, acquire or upgrade subscription, add service credits manually or setup auto-recharge."
+   }
+  }
+ ],
+ "toplam_kredi": 0.0,
+ "hata": null
+}
