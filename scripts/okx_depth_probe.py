@@ -41,8 +41,8 @@ def walk_candles(inst, bar, max_pages=400):
         oldest = min(int(x[0]) for x in d)
         after = str(oldest)
         time.sleep(0.25)
-    OUT[f"candles_{inst}_{bar}"] = {"sayfa": pages, "kayit": total,
-                                    "en_eski": ts(oldest) if oldest else None}
+    OUT.setdefault(f"candles_{inst}_{bar}", {}).update({"sayfa": pages, "kayit": total,
+                                    "en_eski": ts(oldest) if oldest else None})
 
 
 def walk_funding(inst, max_pages=200):
@@ -58,7 +58,7 @@ def walk_funding(inst, max_pages=200):
         oldest = min(int(x["fundingTime"]) for x in d)
         after = str(oldest)
         time.sleep(0.25)
-    OUT[f"funding_{inst}"] = {"sayfa": pages, "kayit": total, "en_eski": ts(oldest) if oldest else None}
+    OUT.setdefault(f"funding_{inst}", {}).update({"sayfa": pages, "kayit": total, "en_eski": ts(oldest) if oldest else None})
 
 
 def main():
