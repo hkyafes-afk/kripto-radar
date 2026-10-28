@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 623 | %48.2 | -0.299 | -186.18 |
+| polat_tum_sinyaller | 626 | %48.1 | -0.299 | -187.41 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
-| polat_girilmeyen | 621 | %48.1 | -0.298 | -184.98 |
-| rastgele | 636 | %42.8 | -0.42 | -267.34 |
-| trend_naif | 632 | %37.8 | -0.504 | -318.56 |
+| polat_girilmeyen | 624 | %48.1 | -0.298 | -186.21 |
+| rastgele | 637 | %42.7 | -0.422 | -268.55 |
+| trend_naif | 634 | %37.9 | -0.503 | -318.64 |
 
-Polat özsermaye: %-2.57 · BTC al-tut: %0.19
+Polat özsermaye: %-2.57 · BTC al-tut: %0.18
 
 ## Öğrenme (walk-forward)
 
@@ -57,11 +57,11 @@ En az işe yarayan okumalar: yapi_1D ×0.824, ema_4H ×0.865, ema_1D ×0.876, ob
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 1220
+- ders: 1223
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 487
-- üst üste 3 zarar: 356
+- üst üste 3 zarar: 359
 - büyük zaman dilimi trendi ters: 354
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
@@ -107,11 +107,11 @@ En az işe yarayan okumalar: yapi_1D ×0.824, ema_4H ×0.865, ema_1D ×0.876, ob
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 1220
+- ders: 1223
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 487
-- üst üste 3 zarar: 356
+- üst üste 3 zarar: 359
 - büyük zaman dilimi trendi ters: 354
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
@@ -157,11 +157,11 @@ En az işe yarayan okumalar: yapi_1D ×0.824, ema_4H ×0.865, ema_1D ×0.876, ob
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 1220
+- ders: 1223
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 487
-- üst üste 3 zarar: 356
+- üst üste 3 zarar: 359
 - büyük zaman dilimi trendi ters: 354
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
