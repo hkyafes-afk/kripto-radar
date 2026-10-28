@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 538 | %43.5 | -0.427 | -229.86 |
 | trend_naif | 536 | %36.8 | -0.533 | -285.8 |
 
-Polat özsermaye: %-2.57 · BTC al-tut: %0.16
+Polat özsermaye: %-2.57 · BTC al-tut: %0.24
 
 ## Öğrenme (walk-forward)
 
@@ -57,10 +57,10 @@ En az işe yarayan okumalar: yapi_1D ×0.86, ema_4H ×0.891, ema_1D ×0.893, can
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 794
+- ders: 795
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- gösterge aileleri aynı yönde değil: 442
+- gösterge aileleri aynı yönde değil: 443
 - büyük zaman dilimi trendi ters: 239
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
@@ -107,10 +107,10 @@ En az işe yarayan okumalar: yapi_1D ×0.86, ema_4H ×0.891, ema_1D ×0.893, can
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 794
+- ders: 795
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- gösterge aileleri aynı yönde değil: 442
+- gösterge aileleri aynı yönde değil: 443
 - büyük zaman dilimi trendi ters: 239
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
@@ -157,10 +157,10 @@ En az işe yarayan okumalar: yapi_1D ×0.86, ema_4H ×0.891, ema_1D ×0.893, can
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 794
+- ders: 795
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- gösterge aileleri aynı yönde değil: 442
+- gösterge aileleri aynı yönde değil: 443
 - büyük zaman dilimi trendi ters: 239
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
