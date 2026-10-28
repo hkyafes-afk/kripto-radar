@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 9 | %44.4 | -0.605 | -5.44 |
 | trend_naif | 10 | %10.0 | -0.954 | -9.54 |
 
-Polat özsermaye: %0.0 · BTC al-tut: %-0.07
+Polat özsermaye: %0.0 · BTC al-tut: %-0.09
 
 ## Öğrenme (walk-forward)
 
@@ -23,51 +23,51 @@ Polat özsermaye: %0.0 · BTC al-tut: %-0.07
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 207, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 225, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 45
-- gösterge aileleri aynı yönde değil: 21
+- emir defteri doğrulanmadı: 47
+- gösterge aileleri aynı yönde değil: 24
 - büyük zaman dilimi trendi ters: 11
 - puan +0.235 eşiğin (0.25) altında: 5
 - puan +0.193 eşiğin (0.25) altında: 3
 - puan +0.185 eşiğin (0.25) altında: 3
 - puan +0.137 eşiğin (0.25) altında: 3
 - puan +0.204 eşiğin (0.25) altında: 3
-- puan +0.177 eşiğin (0.25) altında: 3
-- puan +0.213 eşiğin (0.25) altında: 3
+- puan +0.186 eşiğin (0.25) altında: 3
+- puan +0.190 eşiğin (0.25) altında: 3
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 207, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 225, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 45
-- gösterge aileleri aynı yönde değil: 21
+- emir defteri doğrulanmadı: 47
+- gösterge aileleri aynı yönde değil: 24
 - büyük zaman dilimi trendi ters: 11
 - puan +0.235 eşiğin (0.25) altında: 5
 - puan +0.193 eşiğin (0.25) altında: 3
 - puan +0.185 eşiğin (0.25) altında: 3
 - puan +0.137 eşiğin (0.25) altında: 3
 - puan +0.204 eşiğin (0.25) altında: 3
-- puan +0.177 eşiğin (0.25) altında: 3
-- puan +0.213 eşiğin (0.25) altında: 3
+- puan +0.186 eşiğin (0.25) altında: 3
+- puan +0.190 eşiğin (0.25) altında: 3
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 207, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 225, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 45
-- gösterge aileleri aynı yönde değil: 21
+- emir defteri doğrulanmadı: 47
+- gösterge aileleri aynı yönde değil: 24
 - büyük zaman dilimi trendi ters: 11
 - puan +0.235 eşiğin (0.25) altında: 5
 - puan +0.193 eşiğin (0.25) altında: 3
 - puan +0.185 eşiğin (0.25) altında: 3
 - puan +0.137 eşiğin (0.25) altında: 3
 - puan +0.204 eşiğin (0.25) altında: 3
-- puan +0.177 eşiğin (0.25) altında: 3
-- puan +0.213 eşiğin (0.25) altında: 3
+- puan +0.186 eşiğin (0.25) altında: 3
+- puan +0.190 eşiğin (0.25) altında: 3
