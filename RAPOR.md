@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 383 | %43.6 | -0.435 | -166.43 |
 | trend_naif | 389 | %38.8 | -0.487 | -189.46 |
 
-Polat özsermaye: %-1.98 · BTC al-tut: %-0.36
+Polat özsermaye: %-1.98 · BTC al-tut: %-0.37
 
 ## Öğrenme (walk-forward)
 
@@ -57,7 +57,7 @@ En az işe yarayan okumalar: yapi_1D ×0.716, adx_di_1D ×0.752, stoch_5m ×0.79
 - emir defteri doğrulanmadı: 593
 - ders: 456
 - gösterge aileleri aynı yönde değil: 334
-- günlük işlem tavanı (8): 281
+- günlük işlem tavanı (8): 283
 - büyük zaman dilimi trendi ters: 165
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 47
@@ -103,7 +103,7 @@ En az işe yarayan okumalar: yapi_1D ×0.716, adx_di_1D ×0.752, stoch_5m ×0.79
 - emir defteri doğrulanmadı: 593
 - ders: 456
 - gösterge aileleri aynı yönde değil: 334
-- günlük işlem tavanı (8): 281
+- günlük işlem tavanı (8): 283
 - büyük zaman dilimi trendi ters: 165
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 47
@@ -149,7 +149,7 @@ En az işe yarayan okumalar: yapi_1D ×0.716, adx_di_1D ×0.752, stoch_5m ×0.79
 - emir defteri doğrulanmadı: 593
 - ders: 456
 - gösterge aileleri aynı yönde değil: 334
-- günlük işlem tavanı (8): 281
+- günlük işlem tavanı (8): 283
 - büyük zaman dilimi trendi ters: 165
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 47
