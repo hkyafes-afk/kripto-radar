@@ -25,7 +25,7 @@ En az işe yarayan okumalar: stoch_5m ×0.766, stoch_15m ×0.835, ema200_1D ×0.
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 4278, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 4290, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
@@ -35,14 +35,14 @@ Kapanmış işlem yok. Görülen kurulum: 4278, girilen: 0.
 - büyük zaman dilimi trendi ters: 95
 - puan +0.149 eşiğin (0.25) altında: 32
 - puan +0.146 eşiğin (0.25) altında: 29
-- puan +0.167 eşiğin (0.25) altında: 28
-- puan +0.161 eşiğin (0.25) altında: 23
+- puan +0.167 eşiğin (0.25) altında: 29
+- puan +0.161 eşiğin (0.25) altında: 24
 - puan +0.123 eşiğin (0.25) altında: 23
 - puan +0.194 eşiğin (0.25) altında: 23
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 4278, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 4290, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
@@ -52,14 +52,14 @@ Kapanmış işlem yok. Görülen kurulum: 4278, girilen: 0.
 - büyük zaman dilimi trendi ters: 95
 - puan +0.149 eşiğin (0.25) altında: 32
 - puan +0.146 eşiğin (0.25) altında: 29
-- puan +0.167 eşiğin (0.25) altında: 28
-- puan +0.161 eşiğin (0.25) altında: 23
+- puan +0.167 eşiğin (0.25) altında: 29
+- puan +0.161 eşiğin (0.25) altında: 24
 - puan +0.123 eşiğin (0.25) altında: 23
 - puan +0.194 eşiğin (0.25) altında: 23
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 4278, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 4290, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
@@ -69,7 +69,7 @@ Kapanmış işlem yok. Görülen kurulum: 4278, girilen: 0.
 - büyük zaman dilimi trendi ters: 95
 - puan +0.149 eşiğin (0.25) altında: 32
 - puan +0.146 eşiğin (0.25) altında: 29
-- puan +0.167 eşiğin (0.25) altında: 28
-- puan +0.161 eşiğin (0.25) altında: 23
+- puan +0.167 eşiğin (0.25) altında: 29
+- puan +0.161 eşiğin (0.25) altında: 24
 - puan +0.123 eşiğin (0.25) altında: 23
 - puan +0.194 eşiğin (0.25) altında: 23
