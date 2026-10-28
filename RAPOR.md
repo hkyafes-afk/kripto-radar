@@ -11,8 +11,8 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 547 | %44.1 | -0.419 | -229.2 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
 | polat_girilmeyen | 545 | %44.0 | -0.418 | -228.0 |
-| rastgele | 567 | %42.7 | -0.444 | -251.94 |
-| trend_naif | 568 | %35.4 | -0.56 | -318.0 |
+| rastgele | 568 | %42.6 | -0.446 | -253.15 |
+| trend_naif | 569 | %35.3 | -0.561 | -319.21 |
 
 Polat özsermaye: %-2.57 · BTC al-tut: %0.64
 
@@ -57,14 +57,14 @@ En az işe yarayan okumalar: yapi_1D ×0.836, ema_1D ×0.884, ema_4H ×0.884, ad
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 899
+- ders: 903
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 448
-- büyük zaman dilimi trendi ters: 328
+- büyük zaman dilimi trendi ters: 334
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
-- üst üste 3 zarar: 105
+- üst üste 3 zarar: 108
 - puan +0.149 eşiğin (0.25) altında: 56
 - puan +0.123 eşiğin (0.25) altında: 55
 
@@ -107,14 +107,14 @@ En az işe yarayan okumalar: yapi_1D ×0.836, ema_1D ×0.884, ema_4H ×0.884, ad
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 899
+- ders: 903
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 448
-- büyük zaman dilimi trendi ters: 328
+- büyük zaman dilimi trendi ters: 334
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
-- üst üste 3 zarar: 105
+- üst üste 3 zarar: 108
 - puan +0.149 eşiğin (0.25) altında: 56
 - puan +0.123 eşiğin (0.25) altında: 55
 
@@ -157,14 +157,14 @@ En az işe yarayan okumalar: yapi_1D ×0.836, ema_1D ×0.884, ema_4H ×0.884, ad
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 899
+- ders: 903
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 448
-- büyük zaman dilimi trendi ters: 328
+- büyük zaman dilimi trendi ters: 334
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
-- üst üste 3 zarar: 105
+- üst üste 3 zarar: 108
 - puan +0.149 eşiğin (0.25) altında: 56
 - puan +0.123 eşiğin (0.25) altında: 55
 
