@@ -11,10 +11,10 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 529 | %43.7 | -0.424 | -224.42 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
 | polat_girilmeyen | 527 | %43.6 | -0.424 | -223.22 |
-| rastgele | 541 | %43.8 | -0.422 | -228.12 |
-| trend_naif | 540 | %36.7 | -0.535 | -288.67 |
+| rastgele | 542 | %43.7 | -0.423 | -229.3 |
+| trend_naif | 541 | %36.6 | -0.536 | -289.86 |
 
-Polat özsermaye: %-2.57 · BTC al-tut: %0.22
+Polat özsermaye: %-2.57 · BTC al-tut: %0.24
 
 ## Öğrenme (walk-forward)
 
@@ -57,7 +57,7 @@ En az işe yarayan okumalar: yapi_1D ×0.86, ema_4H ×0.891, ema_1D ×0.893, can
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 822
+- ders: 824
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 447
@@ -107,7 +107,7 @@ En az işe yarayan okumalar: yapi_1D ×0.86, ema_4H ×0.891, ema_1D ×0.893, can
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 822
+- ders: 824
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 447
@@ -157,7 +157,7 @@ En az işe yarayan okumalar: yapi_1D ×0.86, ema_4H ×0.891, ema_1D ×0.893, can
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 822
+- ders: 824
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 447
