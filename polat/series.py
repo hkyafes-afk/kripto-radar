@@ -100,6 +100,8 @@ class Series:
         self.pivots_lo: deque = deque(maxlen=40)
         self.n = 0
         self.closed_count = 0                         # bu oturumda kapanan mum (yeni kapanış tespiti)
+        self._ext, self._ext_n = {}, -1
+        self._pat, self._pat_n = {}, -1
 
     # ---------------------------------------------------------------------------------------
     def on_candle(self, c: list) -> bool:
@@ -178,6 +180,24 @@ class Series:
             self.pivots_hi.append((mid[0], mid[2], idx))
         if mid[3] == min(b[3] for b in win) and all(mid[3] < b[3] for b in win[:k]):
             self.pivots_lo.append((mid[0], mid[3], idx))
+
+    # --- geniş göstergeler ve formasyonlar (mum kapanışında bir kez hesaplanır, önbellekte) ----
+    def ext(self) -> dict:
+        if self._ext_n != self.n:
+            from .indicators import compute
+            self._ext = compute(list(self.bars))
+            self._ext_n = self.n
+        return self._ext
+
+    def patterns(self) -> dict:
+        if self._pat_n != self.n:
+            from . import patterns as P
+            bars = list(self.bars)
+            atr = self.ext().get("atr")
+            self._pat = {"grafik": P.chart_patterns(bars, atr), "harmonik": P.harmonics(bars, atr),
+                         "mum": P.candle_patterns(bars, atr), "cizgi": P.trendlines(bars, atr)}
+            self._pat_n = self.n
+        return self._pat
 
     # --- yardımcılar ------------------------------------------------------------------------
     @property

@@ -99,6 +99,25 @@ def report(j: Journal, now_ms: int | None = None) -> dict:
 
 def report_md(rep: dict) -> str:
     L = ["# Polat günlük raporu", "", f"_{rep['uyari']}_", ""]
+    k = rep.get("kiyas")
+    if k:
+        L += ["## Kıyaslama (maliyetler düşülmüş, net R)", "", f"**Hüküm:** {k.get('hukum')}", "",
+              "| | sinyal | kazanma | ort. net R | toplam net R |", "|---|---|---|---|---|"]
+        for nm in ("polat_tum_sinyaller", "polat_girilen", "polat_girilmeyen", "rastgele", "trend_naif"):
+            x = k.get(nm) or {}
+            L.append(f"| {nm} | {x.get('n', 0)} | %{x.get('kazanma', '-')} | {x.get('ort_R_net', '-')} | {x.get('toplam_R_net', '-')} |")
+        L += ["", f"Polat özsermaye: %{k.get('polat_ozsermaye_yuzde')} · BTC al-tut: %{k.get('btc_al_tut_yuzde')}", ""]
+    o = rep.get("ogrenme")
+    if o:
+        m = o.get("meta", {})
+        L += ["## Öğrenme (walk-forward)", "",
+              f"Örnek {m.get('ornek', 0)} (eğitim {m.get('egitim', '-')}, doğrulama {m.get('dogrulama', '-')}) · "
+              f"uygulanan katsayı {m.get('uygulanan', 0)} · doğrulamada tutmadığı için reddedilen {m.get('reddedilen', 0)}", ""]
+        if o.get("en_guclu"):
+            L.append("En çok işe yarayan okumalar: " + ", ".join(f"{a} ×{b}" for a, b in o["en_guclu"][:10]))
+        if o.get("en_zayif"):
+            L.append("En az işe yarayan okumalar: " + ", ".join(f"{a} ×{b}" for a, b in o["en_zayif"][:10]))
+        L.append("")
     for name, w in rep["pencereler"].items():
         g = w["genel"]
         L.append(f"## Son {name.replace('_gun', '')} gün")

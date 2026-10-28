@@ -19,7 +19,7 @@ veri:
   ws_public: ["wss://ws.okx.com:8443/ws/v5/public", "wss://wsaws.okx.com:8443/ws/v5/public"]
   ws_business: ["wss://ws.okx.com:8443/ws/v5/business", "wss://wsaws.okx.com:8443/ws/v5/business"]
   rest: ["https://www.okx.com", "https://aws.okx.com"]
-  zaman_dilimleri: ["5m", "15m", "1H", "4H", "1D"]
+  zaman_dilimleri: ["1m", "5m", "15m", "1H", "4H", "1D"]
   gecmis_mum: 300            # açılışta her zaman dilimi için
   defter_kanali: books       # books = 400 kademe artımlı (100 ms, checksum'lı); books5 daha hafif
   long_short_dk: 5           # OKX bu veriyi 5 dk aralıkla verir
@@ -67,8 +67,27 @@ cikis:
   iz_yapi: 15m               # iz stop ayrıca bu zaman diliminin son dibine/tepesine taşınır
   max_sure_saat: 72          # plan süresi; gerekçe bitti ise çık
 
+karar:
+  # Bütün okumalar oy verir (polat/karar.py). Aşağıdakiler başlangıç değerleri; kullanıcı onayına açıktır.
+  esik: 0.25                 # toplam puan (−1…+1) en az bu kadar olmalı
+  gece_ek_esik: 0.05         # gece (21–24 UTC) ve hafta sonu likidite düşük → eşik yükselir
+  trend_tolerans: 0.05       # büyük zaman dilimi trendi bu kadardan fazla ters olamaz
+  aileler: ["trend", "hacim", "momentum"]   # kitap: her gösterge ailesi aynı yönü göstermeli
+  anlik_aralik_sn: 10        # bir coin için anlık (mum kapanışı beklemeden) değerlendirme aralığı
+
+ogrenme:
+  golge_min_puan: 0.12       # bu puanın üstündeki ve tetikli her sinyal, işlem açılmasa da takip edilir
+  golge_aralik_dk: 30        # aynı coin + yön için en sık gölge kaydı
+  golge_ufuk_saat: 24
+  min_ornek: 30              # bir okumanın ağırlığı en az bu kadar örnekten sonra değişir
+  kanit_islem: 100           # raporda bu sayıya kadar "kanıt yetersiz"
+  dogrulama_orani: 0.3       # walk-forward: son %30 örnek doğrulama; ağırlıklar ancak orada da iyiyse uygulanır
+  guncelleme_dk: 30
+  carpan_alt: 0.25
+  carpan_ust: 2.0
+
 kurulum:
-  aktif: ["kirilim", "geri_cekilme", "supurme"]
+  aktif: ["kirilim", "geri_cekilme", "supurme"]   # karar.py'de tetik olarak kullanılır (sınır değil)
   hacim_kirilim_kat: 1.5
   climax_kat: 3.0
   min_teyit: 3               # zorunlu koşullara ek olarak en az 3 bağımsız teyit

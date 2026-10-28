@@ -256,6 +256,11 @@ class Rest:
         rows = await self.get("/api/v5/market/candles", {"instId": inst, "bar": TF_REST[tf], "limit": 300})
         return [c for c in (parse_candle(r) for r in reversed(rows)) if c[0] >= since_ms - TF_MS[tf]]
 
+    async def oi_history(self, inst: str, limit: int = 100) -> list[tuple[int, float]]:
+        rows = await self.get("/api/v5/rubik/stat/contracts/open-interest-history",
+                              {"instId": inst, "period": "1H", "limit": limit})
+        return sorted((int(r[0]), float(r[2])) for r in rows)
+
     async def long_short(self, inst: str) -> float | None:
         try:
             rows = await self.get("/api/v5/rubik/stat/contracts/long-short-account-ratio-contract",

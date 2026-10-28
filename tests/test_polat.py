@@ -17,6 +17,7 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from polat import brain, selector  # noqa: E402
+from polat import karar as karar_mod  # noqa: E402
 from polat.__main__ import load_cfg  # noqa: E402
 from polat.agent import Polat  # noqa: E402
 from polat.broker import PaperBroker, round_contracts, walk  # noqa: E402
@@ -379,14 +380,19 @@ class FakeRest:
         return {i: dict(META, ctVal=0.01) for i in self.data}
 
     async def tickers(self):
-        return [{"instId": i, "last": str(d["1D"][-1][4]), "bidPx": str(d["1D"][-1][4] - 0.01),
-                 "askPx": str(d["1D"][-1][4] + 0.01), "volCcy24h": "5000000", "ts": "0"} for i, d in self.data.items()]
+        k = lambda d: d["1m"][-1][4] if "1m" in d else d["1D"][-1][4]
+        return [{"instId": i, "last": str(k(d)), "bidPx": str(k(d) - 0.01),
+                 "askPx": str(k(d) + 0.01), "volCcy24h": "5000000", "ts": "0"} for i, d in self.data.items()]
 
     async def candles(self, inst, tf, limit=300):
         return [r[:] for r in self.data[inst][tf][-limit:]]
 
     async def candles_since(self, inst, tf, since):
         return self.data[inst].get("1m_gap", [])
+
+    async def oi_history(self, inst, limit=100):
+        h1 = self.data[inst]["1H"][-limit:]
+        return [(r[0], 1e6 + k * 2e3) for k, r in enumerate(h1)]
 
     async def long_short(self, inst):
         return 0.8
@@ -417,15 +423,15 @@ class FakeFeed:
 
 
 def _uptrend_data(inst_px=100.0):
-    """1G/4S/1S yükselen yapı; 15dk'da önceki gün tepesinin hacimle kırılması için zemin."""
+    """Bütün zaman dilimlerinde dalgalı yükseliş (6 yukarı, 3 aşağı)."""
     d = {}
     end = T0 + 40 * 86_400_000
-    for tf, ms, n in (("1D", 86_400_000, 120), ("4H", 4 * H, 300), ("1H", H, 300), ("15m", 900_000, 300), ("5m", 300_000, 300)):
+    for tf, ms, n in (("1D", 86_400_000, 120), ("4H", 4 * H, 300), ("1H", H, 300), ("15m", 900_000, 300),
+                      ("5m", 300_000, 300), ("1m", 60_000, 300)):
         rows, p = [], inst_px
         start = end - n * ms
         rng = np.random.default_rng(7)
         for i in range(n):
-            # dalgalı yükseliş: 6 yukarı, 3 aşağı
             step = 0.004 if (i % 9) < 6 else -0.003
             o = p
             c = o * (1 + step + rng.normal(0, 0.0005))
@@ -435,7 +441,23 @@ def _uptrend_data(inst_px=100.0):
     return d
 
 
-def test_agent_end_to_end_decision_journal_and_restart():
+def _prime_live(m, inst, px, now):
+    c = m.coins[inst]
+    m._book(inst, [book_msg(px, levels=40, size="500000")], "snapshot", now)
+    c.last, c.bid, c.ask, c.tick_ts = px, px - 0.005, px + 0.005, now
+    for i in range(40):
+        m._trade({"instId": inst, "px": str(px), "sz": "100", "side": "buy", "ts": str(now - 800_000 + i * 20_000)}, now)
+    c.funding, c.next_funding_ts = 0.00001, now + 8 * H
+    c.mark, c.index = px * 1.0002, px
+    c.ls_ratio = 0.8
+    c.liqs.append((now - 60_000, "short", 10_000.0))
+    c.oi_hist.extend([(now - 3_000_000, 1e6), (now - 1000, 1.05e6)])
+    m.global_.update(btc_dom_chg=-0.2, stable_chg24=0.1, haber_tepki=0.3)
+    return c
+
+
+def test_agent_every_reading_votes_and_full_cycle():
+    """Her okuma kategorisi oy veriyor mu; karar → gölge + kıyas kaydı → işlem → devir arası stop → rapor."""
     async def go():
         tmp = Path(tempfile.mkdtemp())
         inst = "X-USDT-SWAP"
@@ -444,68 +466,91 @@ def test_agent_end_to_end_decision_journal_and_restart():
         cfg["secici"]["min_hacim_usd"] = 0
         cfg["secici"]["sabit"] = ["BTC-USDT-SWAP"]
         cfg["bildirim"]["telegram"] = False
+        cfg["kurulum"]["takvim_sessizlik_dk"] = 0
         ag = Polat(cfg, tmp, rest=FakeRest(data), feed_cls=FakeFeed)
         await ag.start()
-        assert inst in ag.deep and inst in ag.feed.watched
         m = ag.market
         c = m.coins[inst]
-        s15, s5 = c.series["15m"], c.series["5m"]
-        assert s15.n >= 299 and s5.ready
-        # zorla bir kırılım kurulumu: dünkü tepenin üstünde, 4 kat hacimli, güçlü 15 dk kapanışı
-        lv = {x["ad"]: x["px"] for x in brain.levels(c)}
-        L = lv["dun_yuksek"]
-        last = s15.bars[-1]
-        o = L * 0.997
-        cl = L * 1.004
-        nb = [last[0] + 900_000, o, cl * 1.0005, o * 0.9995, cl, 1, s15.ind["vol_avg"] * 2.2, 1]
-        # önceki kapanış seviyenin altında olsun
-        s15.bars[-1] = [last[0], last[1], min(last[2], L * 0.999), min(last[3], L * 0.995), L * 0.998, last[5], last[6]]
-        s15.on_candle(nb)
-        # canlı fiyat, defter, akış
-        px = cl
-        m._book(inst, [book_msg(px, levels=40, size="500000")], "snapshot", nb[0] + 900_000)
-        c.last, c.bid, c.ask = px, px - 0.005, px + 0.005
-        c.tick_ts = nb[0] + 900_000
-        now = nb[0] + 900_000
-        for i in range(30):
-            m._trade({"instId": inst, "px": str(px), "sz": "100", "side": "buy", "ts": str(now - 600_000 + i * 20_000)}, now)
-        c.funding, c.next_funding_ts = 0.00001, now + 8 * H
-        ag.btc_rd = brain.read_all(m, m.coins["BTC-USDT-SWAP"], now)
-        s5.bars.append([now - 300_000, px, px, px, px, 1, 1, ])
-        rd = brain.read_all(m, c, now)
-        side = brain.bias(rd, ag.btc_rd, False)
-        assert side == "long", (rd["yapi_1D"], rd["yapi_4H"])
-        sts = brain.setups(m, c, rd, "long")
-        assert sts and sts[0]["ad"] == "kirilim", rd["mum_15m"]
-        rec = ag.evaluate(c)
-        assert rec is not None and rec["kurulum"] == "kirilim"
-        dec = ag.journal.read("kararlar")
-        assert dec and dec[-1]["okuma"]["seviyeler"] and "plan" in dec[-1]
-        if rec["girildi"]:
-            p = list(ag.broker.positions.values())[0]
-            assert p["kurulum"] == "kirilim" and p["sl"] < p["entry"] < p["tp"]
-            assert math.isclose(p["tp"] / p["entry"], 1.125)
-            # aynı coinde ikinci giriş engellenir
-            assert ag.risk.can_open(now, 1e5, list(ag.broker.positions.values()), inst, "long", 1) is not None
-            # devir: kaydet → yeni ajan → arada stop tetiklenmiş
-            ag.save()
-            await ag.stop("test")
-            data[inst]["1m_gap"] = [[now + 60_000, px, px, p["sl"] * 0.99, p["sl"] * 0.995, 1, 1, 1]]
-            ag2 = Polat(cfg, tmp, rest=FakeRest(data), feed_cls=FakeFeed)
-            await ag2.start()
-            assert not ag2.broker.positions
-            closes = [x for x in ag2.journal.read("islemler") if x.get("olay") == "kapanis"]
-            assert closes and "devir arası" in closes[-1]["neden"] and closes[-1]["r"] < 0
-            await ag2.stop("test")
-            rep = report(ag2.journal)
-            assert rep["pencereler"]["1_gun"]["genel"]["islem"] >= 0
-            assert "Yatırım tavsiyesi değildir" in report_md(rep)
-        else:
-            await ag.stop("test")
-            assert rec["engel"], rec
-        return rec
-    rec = asyncio.run(go())
-    print("   karar:", "girildi" if rec["girildi"] else rec["engel"], "| teyit:", rec["teyit"])
+        assert inst in ag.deep and c.series["1m"].n >= 290 and len(c.oi_h1) >= 50
+        now = c.series["1m"].bars[-1][0] + 60_000
+        px = c.series["1m"].bars[-1][4]
+        btc = _prime_live(m, "BTC-USDT-SWAP", m.coins["BTC-USDT-SWAP"].series["1m"].bars[-1][4], now)
+        ag.btc_rd = brain.read_all(m, btc, now)
+        _prime_live(m, inst, px, now)
+        rd = karar_mod.full_read(m, c, now)
+        dec = karar_mod.decide(m, c, rd, ag.btc_rd, {}, {}, cfg)
+        cats = set(dec["kategoriler"])
+        need = {"trend", "seviye", "momentum", "hacim", "turev", "akis", "piyasa"}
+        assert need <= cats, f"oy vermeyen kategori: {need - cats}"
+        names = set(dec["oylar"])
+        for must in ("yapi_1D", "adx_di_4H", "psar_1H", "supertrend_4H", "trix_1H", "rsi_15m", "stoch_15m", "cci_1H",
+                     "willr_15m", "ultimate_1H", "macd_hist_15m", "obv_egim_1H", "mfi_15m", "pvi_1H", "demand_15m",
+                     "oi_fiyat", "fonlama", "basis", "long_short", "cvd_5dk", "defter_dengesi", "btc_4H",
+                     "btc_dominans", "stablecoin", "haber_tepkisi", "konum"):
+            assert must in names, f"{must} oy vermedi"
+        assert dec["yon"] == 1 and dec["kategoriler"]["trend"] > 0, dec["kategoriler"]
+        # karar ajanda: eşik düşük tutulup tetik zorlanarak işlem yolunu da dene
+        ag.cfg["karar"]["esik"] = 0.0
+        orig = karar_mod.triggers
+        karar_mod.triggers = lambda *a, **k: [("test_tetik", 1)]
+        try:
+            rec = ag.evaluate(c)
+        finally:
+            karar_mod.triggers = orig
+        assert rec["yon"] == 1 and "oylar" in rec
+        kinds = {x["tip"] for x in ag.learner.active}
+        assert {"polat", "rastgele", "trend_naif"} <= kinds, kinds
+        dec_j = ag.journal.read("kararlar")
+        assert dec_j and dec_j[-1]["oylar"] and dec_j[-1]["plan"]["stop_neden"]
+        assert rec["engel"] is None, rec["engel"]
+        p = list(ag.broker.positions.values())[0]
+        assert p["sl"] < p["entry"] < p["tp"] and math.isclose(p["tp"] / p["entry"], 1.125)
+        # gölge sinyal maliyetli sonuçlanır: stop → −1R'den kötü
+        sh = [x for x in ag.learner.active if x["tip"] == "polat"][0]
+        done = ag.learner.on_price(inst, sh["sl"] - 0.01, now + 60_000)
+        polat_done = [x for x in done if x["tip"] == "polat"]
+        assert polat_done and polat_done[0]["R"] < -1.0 and polat_done[0]["R_brut"] == -1.0
+        ag.save()
+        await ag.stop("test")
+        data[inst]["1m_gap"] = [[now + 120_000, px, px, p["sl"] * 0.99, p["sl"] * 0.995, 1, 1, 1]]
+        ag2 = Polat(cfg, tmp, rest=FakeRest(data), feed_cls=FakeFeed)
+        await ag2.start()
+        assert not ag2.broker.positions
+        closes = [x for x in ag2.journal.read("islemler") if x.get("olay") == "kapanis"]
+        assert closes and "devir arası" in closes[-1]["neden"] and closes[-1]["r"] < 0, [(x["neden"], x["r"]) for x in closes]
+        rep = ag2.write_report()
+        assert "kanıt yetersiz" in rep["kiyas"]["hukum"]
+        md = (tmp / "RAPOR.md").read_text(encoding="utf-8")
+        assert "Kıyaslama" in md and "Yatırım tavsiyesi değildir" in md
+        await ag2.stop("test")
+        return dec
+    dec = asyncio.run(go())
+    print(f"   puan {dec['S']:+.3f} · oy veren okuma {len(dec['oylar'])} · kategoriler {dec['kategoriler']}")
+
+
+def test_learner_walk_forward_rejects_unstable():
+    tmp = Path(tempfile.mkdtemp())
+    cfg = copy.deepcopy(CFG)
+    cfg["ogrenme"]["min_ornek"] = 10
+    from polat.learn import Learner
+    L = Learner(cfg, tmp)
+    rows = []
+    for i in range(200):
+        good = 1 if i % 2 else -1                      # "iyi" okuma her dönemde sonucu doğru gösteriyor
+        flip = good if i < 140 else -good              # "kararsız" okuma doğrulama döneminde tersine dönüyor
+        rows.append({"tip": "polat", "d": 1, "ts": i, "R": 1.0 if good > 0 else -1.0,
+                     "oylar": {"iyi": good * 0.8, "kararsiz": flip * 0.8, "gurultu": 0.0},
+                     "kategoriler": {"trend": good * 0.5}})
+    (tmp / "gunluk").mkdir(parents=True, exist_ok=True)
+    with (tmp / "gunluk" / "golge.jsonl").open("w") as f:
+        for r in rows:
+            f.write(json.dumps(r) + "\n")
+    res = L.update(1)
+    assert L.mult.get("iyi", 1) > 1.3, L.mult
+    assert "kararsiz" not in L.mult and res["reddedilen"] >= 1
+    assert L.cat_mult.get("trend", 1) > 1
+    # maliyet: ücret + kayma + fonlama R'yi düşürür
+    assert L.cost_r(100, 1, 2, 0.0001, 8, 1) > 0.1
 
 
 def test_live_mode_refused():

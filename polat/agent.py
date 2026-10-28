@@ -18,14 +18,15 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 
-from . import brain, extras, selector
+from . import brain, extras, karar, selector
+from .learn import Learner
 from .broker import PaperBroker
 from .journal import DISCLAIMER, Journal, report, report_md
 from .market import Market
 from .okx import Feed, Rest, TF_MS, now_ms
 from .risk import Risk, utc_day as _utc_day
 
-VERSION = "1.0"
+VERSION = "2.0"
 
 
 class Notifier:
@@ -75,8 +76,13 @@ class Polat:
         self.tasks: list[asyncio.Task] = []
         self.started = now_ms()
         self.stopping = False
-        self.counters = {"degerlendirme": 0, "kurulum": 0, "giris": 0, "karar_ms_max": 0.0}
-        self.pending_eval: set[str] = set()
+        self.counters = {"degerlendirme": 0, "sinyal": 0, "giris": 0, "karar_ms_max": 0.0, "engel": {}}
+        self.learner = Learner(cfg, self.root)
+        self.eval_q: asyncio.Queue | None = None
+        self.queued: set[str] = set()
+        self.last_eval: dict[str, float] = {}
+        self.key_levels: dict[str, list[float]] = {}
+        self.dom_hist: list[tuple[int, float]] = []
 
     # ===================================================================================== durum
     @property
@@ -85,7 +91,7 @@ class Polat:
 
     def save(self):
         st = {"version": VERSION, "saved": now_ms(), "broker": self.broker.to_state(), "risk": self.risk.to_state(),
-              "deep": sorted(self.deep)}
+              "deep": sorted(self.deep), "learner": self.learner.to_state()}
         tmp = self.state_file.with_suffix(".tmp")
         tmp.write_text(json.dumps(st, ensure_ascii=False, default=str), encoding="utf-8")
         tmp.replace(self.state_file)
@@ -98,6 +104,7 @@ class Polat:
         st = json.loads(self.state_file.read_text(encoding="utf-8"))
         self.broker.load_state(st["broker"])
         self.risk.load_state(st["risk"])
+        self.learner.load_state(st.get("learner"))
         return st
 
     def status(self) -> dict:
@@ -120,9 +127,14 @@ class Polat:
         m.on_trade = self._on_trade
         m.on_book_bad = self._on_book_bad
         st = self.load()
+        self.eval_q = asyncio.Queue()
         for t in await self.rest.tickers():
             if t["instId"] in meta:
                 m._ticker(t, now_ms())
+        btc = m.coins.get("BTC-USDT-SWAP")
+        if not self.learner.bench.get("btc_baslangic") and btc and btc.last:
+            self.learner.bench.update(btc_baslangic=btc.last, baslangic_ts=now_ms())
+            self.learner.save_weights()
         self.feed = self.feed_cls(self.cfg, m.handle)
         self.feed.start()
         await self.feed.market_wide(list(meta))
@@ -136,7 +148,7 @@ class Polat:
         await self.notify.send(f"Başladı · özsermaye {self.broker.equity(m.coins):,.0f}$ · izlenen {len(self.deep)} coin"
                                f" · açık pozisyon {len(self.broker.positions)}")
         loops = [self._loop_select(), self._loop_second(), self._loop_save(), self._loop_ls(), self._loop_extras(),
-                 self._bootstrap_h1_all(list(meta))]
+                 self._bootstrap_h1_all(list(meta)), self._loop_eval(), self._loop_learn()]
         self.tasks = [asyncio.create_task(x) for x in loops]
         if run_seconds:
             await asyncio.sleep(run_seconds)
@@ -185,6 +197,11 @@ class Polat:
             for r in rows:
                 if r[7]:
                     s.on_candle(r)
+        try:
+            for ts, oi in await self.rest.oi_history(inst):
+                c.oi_h1.append((ts, oi))
+        except Exception:  # noqa: BLE001
+            pass
         c.deep = True
         await self.feed.watch(inst)
         asyncio.create_task(self._backfill(inst))
@@ -228,15 +245,48 @@ class Polat:
     def _on_close(self, c, tf: str):
         if not c.deep:
             return
-        if tf == "5m":
-            if c.inst == "BTC-USDT-SWAP":
-                self.btc_rd = brain.read_all(self.market, c, c.series["5m"].bars[-1][0] + TF_MS["5m"])
-            try:
-                self.evaluate(c)
-            except Exception as e:  # noqa: BLE001
-                self.journal.write("olaylar", {"olay": "degerlendirme_hata", "inst": c.inst, "hata": repr(e)[:300]})
+        if tf == "5m" and c.inst == "BTC-USDT-SWAP":
+            self.btc_rd = brain.read_all(self.market, c, c.series["5m"].bars[-1][0] + TF_MS["5m"])
+        if tf == "1m":
+            self._enqueue(c.inst)                       # her dakika kapanışında tam değerlendirme
+
+    def _enqueue(self, inst: str, anlik: bool = False):
+        if self.eval_q is None or inst in self.queued:
+            return
+        if anlik and time.monotonic() - self.last_eval.get(inst, 0) < self.cfg["karar"]["anlik_aralik_sn"]:
+            return
+        self.queued.add(inst)
+        self.eval_q.put_nowait(inst)
+
+    async def _loop_eval(self):
+        """Değerlendirmeler sırayla; her biri arasında olay döngüsüne nefes (stop/hedef kontrolleri gecikmesin)."""
+        while True:
+            inst = await self.eval_q.get()
+            self.queued.discard(inst)
+            c = self.market.coins.get(inst)
+            if c and c.deep and c.series["15m"].n >= 60:
+                self.last_eval[inst] = time.monotonic()
+                try:
+                    self.evaluate(c)
+                except Exception as e:  # noqa: BLE001
+                    self.journal.write("olaylar", {"olay": "degerlendirme_hata", "inst": inst, "hata": repr(e)[:300]})
+            await asyncio.sleep(0)
+
+    async def _loop_learn(self):
+        while True:
+            await asyncio.sleep(self.cfg["ogrenme"]["guncelleme_dk"] * 60)
+            res = self.learner.update(now_ms())
+            self.journal.write("olaylar", {"olay": "ogrenme", **res})
 
     def _on_trade(self, c, px: float, ts: int):
+        if self.learner.active:
+            self.learner.on_price(c.inst, px, ts)
+        kl = self.key_levels.get(c.inst)
+        if kl and c.deep:
+            prev = getattr(c, "_prev_px", None)
+            if prev is not None and any((prev - L) * (px - L) < 0 for L in kl):
+                self._enqueue(c.inst, anlik=True)       # önemli seviye geçildi → mum kapanışını beklemeden bak
+            c._prev_px = px
         if not self.broker.positions:
             return
         evs = self.broker.on_price(c, px, ts)
@@ -311,100 +361,119 @@ class Polat:
 
     # ===================================================================================== karar
     def evaluate(self, c):
+        """Tam okuma → bütün okumaların oyu → tetik → yapısal stop → sert kapılar → risk → emir. Her sinyal gölgede de takip edilir."""
         t0 = time.perf_counter()
         m = self.market
         self.counters["degerlendirme"] += 1
-        now = c.series["5m"].bars[-1][0] + TF_MS["5m"]
-        rd = brain.read_all(m, c, now)
-        side = brain.bias(rd, self.btc_rd, c.inst == "BTC-USDT-SWAP")
-        if not side:
-            return None
-        sts = brain.setups(m, c, rd, side)
-        if not sts:
-            return None
-        st = sts[0]
-        self.counters["kurulum"] += 1
-        teyit, veto = brain.confirmations(m, c, rd, st, self.btc_rd)
-        L = side == "long"
+        now = now_ms()
+        rd = karar.full_read(m, c, now)
+        self.key_levels[c.inst] = [x["px"] for x in rd.get("seviyeler") or []] + list(rd.get("yuvarlak") or [])
+        dec = karar.decide(m, c, rd, self.btc_rd, self.learner.mult, self.learner.cat_mult, self.cfg)
+        d = dec["yon"]
+        L = d > 0
+        r, k = self.cfg["risk"], self.cfg["kurulum"]
         entry = (c.ask if L else c.bid) or c.price()
-        sl = st["sl"]
-        k, r = self.cfg["kurulum"], self.cfg["risk"]
-        atr15 = c.series["15m"].ind.get("atr") or 0
+        engel = dec["engel"]
+        sl, sl_why = (None, "")
+        if d and entry:
+            sl, sl_why = karar.structural_stop(c, rd, d, entry, r["min_stop_atr"])
+        if not engel and not sl:
+            engel = "stop yeri bulunamadı"
         eq = self.broker.equity(m.coins)
-        engel = None
-        dist_pct = abs(entry - sl) / entry * 100 if entry else 0
-        wall_t = now_ms()
-        if (sl - entry) * (1 if L else -1) >= 0:
-            engel = "stop yanlış tarafta (fiyat stop seviyesini geçmiş)"
-        elif not c.tick_ts and not c.tape:
-            engel = "veri yok"
-        elif c.tape and wall_t - c.tape[-1][0] > 60_000 and c.tick_ts and wall_t - c.tick_ts > 60_000:
-            engel = "veri bayat (60 sn'den eski)"
-        elif not c.book.ok:
-            engel = "emir defteri doğrulanmadı"
-        elif (c.spread_bp() or 99) > r["max_spread_bp"]:
-            engel = f"spread {c.spread_bp():.1f} bp > {r['max_spread_bp']}"
-        elif dist_pct > r["max_stop_yuzde"]:
-            engel = f"stop çok geniş (%{dist_pct:.2f} > %{r['max_stop_yuzde']})"
-        elif atr15 and abs(entry - sl) < r["min_stop_atr"] * atr15:
-            engel = "stop gürültü bandında (< 0,5 × 15dk ATR)"
-        elif any(abs(e["ts"] - wall_t) <= k["takvim_sessizlik_dk"] * 60_000 for e in m.global_.get("events") or []):
-            engel = "yüksek etkili ABD verisi yakın (takvim sessizliği)"
-        elif veto:
-            engel = "veto: " + "; ".join(veto)
-        elif len(teyit) < k["min_teyit"]:
-            engel = f"teyit yetersiz ({len(teyit)} < {k['min_teyit']})"
+        dist_pct = abs(entry - sl) / entry * 100 if (entry and sl) else 0
+        if not engel:
+            engel = self._hard_gates(c, rd, dec, entry, sl, dist_pct, now)
         sz = None
         if not engel:
             sz = self.risk.size(eq, entry, sl, c.meta.get("maxLever", 20))
-            if not sz:
-                engel = "büyüklük hesaplanamadı"
-        if not engel:
-            engel = self.risk.can_open(now, eq, list(self.broker.positions.values()), c.inst, side, sz["risk_usd"])
+            engel = "büyüklük hesaplanamadı" if not sz else self.risk.can_open(
+                now, eq, list(self.broker.positions.values()), c.inst, "long" if L else "short", sz["risk_usd"])
         if not engel:
             lv = c.book.levels("asks" if L else "bids", 5, c.ct)
-            depth = sum(p * s for p, s in lv)
+            depth = sum(p * q for p, q in lv)
             if depth < r["min_derinlik_kat"] * sz["notional"]:
                 engel = f"derinlik yetersiz (ilk 5 kademe {depth:,.0f}$ < {r['min_derinlik_kat']} × {sz['notional']:,.0f}$)"
-        tp = entry * (1 + (1 if L else -1) * self.cfg["cikis"]["hedef_yuzde"] / 100)
-        plan = {"giris": entry, "stop": sl, "hedef": tp, "stop_yuzde": round(dist_pct, 3),
-                "hedef_r": round(abs(tp - entry) / abs(entry - sl), 2) if entry != sl else None,
+        tp = entry * (1 + (1 if L else -1) * self.cfg["cikis"]["hedef_yuzde"] / 100) if entry else None
+        plan = {"giris": entry, "stop": sl, "stop_neden": sl_why, "hedef": tp, "stop_yuzde": round(dist_pct, 3),
+                "hedef_r": round(abs(tp - entry) / abs(entry - sl), 2) if (sl and entry != sl) else None,
                 "kismi": f"{self.cfg['cikis']['kismi_r']:g}R'de %{self.cfg['cikis']['kismi_oran'] * 100:.0f}",
                 "risk_usd": round(sz["risk_usd"], 2) if sz else None, "kaldirac": sz["lev"] if sz else None}
-        rec = {"inst": c.inst, "kurulum": st["ad"], "yon": side, "girildi": False, "engel": engel,
-               "gerekce": st["gerekce"], "teyit": teyit, "veto": veto, "plan": plan, "okuma": _compact(rd)}
+        dec["engel"] = engel
+        side = "long" if L else "short"
+        taken = False
         if not engel:
-            tag = {"kurulum": st["ad"], "sl0": sl, "r_dist": abs(entry - sl), "risk_usd": sz["risk_usd"],
-                   "risk_usd_now": sz["risk_usd"], "gerekce": st["gerekce"], "teyit": teyit,
-                   "teyit_sayisi": len(teyit), "seans": rd["seans"],
+            tag = {"kurulum": "+".join(dec["tetik_yonde"][:3]), "sl0": sl, "r_dist": abs(entry - sl),
+                   "risk_usd": sz["risk_usd"], "risk_usd_now": sz["risk_usd"], "gerekce": dec["tetik_yonde"],
+                   "teyit": _top_votes(dec, d), "teyit_sayisi": sum(1 for v in dec["kategoriler"].values() if v * d > 0),
+                   "puan": dec["S"], "kategoriler": dec["kategoriler"], "seans": rd["seans"],
                    "btc_rejim": (self.btc_rd or {}).get("yapi_4H", {}).get("yon"), "okuma_giris": _compact(rd)}
-            res = self.broker.open(c, side, sz["qty"], sz["lev"], sl, tp, now_ms(), tag)
+            res = self.broker.open(c, side, sz["qty"], sz["lev"], sl, tp, now, tag)
             if not res["ok"]:
-                rec["engel"] = "emir: " + res["neden"]
+                dec["engel"] = engel = "emir: " + res["neden"]
             else:
+                taken = True
                 p = res["pos"]
-                # gerçek dolum fiyatına göre R mesafesi ve hedef yeniden
                 p["r_dist"] = abs(p["entry"] - sl)
                 p["tp"] = p["entry"] * (1 + (1 if L else -1) * self.cfg["cikis"]["hedef_yuzde"] / 100)
                 p["risk_usd"] = p["risk_usd_now"] = p["r_dist"] * p["qty"]
                 self.risk.on_open()
-                rec["girildi"] = True
-                rec["pid"] = p["id"]
                 self.counters["giris"] += 1
                 self.journal.write("islemler", {"olay": "acilis", "pid": p["id"], "inst": c.inst, "yon": side,
-                                                "kurulum": st["ad"], "giris": p["entry"], "sl": sl, "tp": p["tp"],
+                                                "kurulum": tag["kurulum"], "giris": p["entry"], "sl": sl, "tp": p["tp"],
                                                 "miktar": p["qty"], "kaldirac": p["lev"], "marj": p["margin"],
                                                 "risk_usd": p["risk_usd"], "kayma_bp": p["slip_bp"], "ucret": p["fees"],
-                                                "gerekce": st["gerekce"], "teyit": teyit, "plan": plan})
+                                                "puan": dec["S"], "kategoriler": dec["kategoriler"], "tetik": dec["tetik_yonde"],
+                                                "oylar": dec["oylar"], "plan": plan})
+                cats = " · ".join(f"{kk} {vv:+.2f}" for kk, vv in sorted(dec["kategoriler"].items(), key=lambda x: -abs(x[1]))[:6])
                 _spawn(self.notify.send(
-                    f"<b>{'🟢 LONG' if L else '🔴 SHORT'} {c.sym}</b> · {st['ad']}\n"
-                    f"Giriş {p['entry']:.6g} · Stop {sl:.6g} (%{dist_pct:.2f}) · Hedef {p['tp']:.6g} (%12,5)\n"
-                    f"Risk {p['risk_usd']:,.0f}$ · {p['lev']}x\n"
-                    f"Gerekçe: {'; '.join(st['gerekce'])}\nTeyit ({len(teyit)}): {'; '.join(teyit)}"))
-        self.journal.write("kararlar", rec)
+                    f"<b>{'🟢 LONG' if L else '🔴 SHORT'} {c.sym}</b> · puan {dec['S']:+.2f}\n"
+                    f"Giriş {p['entry']:.6g} · Stop {sl:.6g} (%{dist_pct:.2f}, {sl_why}) · Hedef {p['tp']:.6g} (%12,5)\n"
+                    f"Risk {p['risk_usd']:,.0f}$ · {p['lev']}x\nTetik: {', '.join(dec['tetik_yonde'][:4])}\n{cats}"))
+        if d:
+            trend_dir = karar._sgn((dec["kategoriler"].get("trend") or 0))
+            if plan["giris"] and plan["stop"]:
+                self.learner.record(c, dec, plan, taken, now, trend_dir)
+        if dec.get("tetik_yonde") and abs(dec["S"]) >= self.cfg["ogrenme"]["golge_min_puan"]:
+            self.counters["sinyal"] += 1
+            self.journal.write("kararlar", {"inst": c.inst, "yon": side if d else None, "girildi": taken, "engel": engel,
+                                            "puan": dec["S"], "esik": dec["esik"], "kategoriler": dec["kategoriler"],
+                                            "tetik": dec["tetikler"], "oylar": dec["oylar"], "plan": plan, "okuma": _compact(rd)})
+        else:
+            key = (engel or "").split(" (")[0].split(":")[0][:40]
+            self.counters["engel"][key] = self.counters["engel"].get(key, 0) + 1
         dt = (time.perf_counter() - t0) * 1000
         self.counters["karar_ms_max"] = max(self.counters["karar_ms_max"], round(dt, 2))
-        return rec
+        return dec
+
+    def _hard_gates(self, c, rd, dec, entry, sl, dist_pct, now) -> str | None:
+        r, k = self.cfg["risk"], self.cfg["kurulum"]
+        d = dec["yon"]
+        atr15 = (rd["ext"].get("15m") or {}).get("atr") or 0
+        if (sl - entry) * d >= 0:
+            return "stop yanlış tarafta"
+        if not c.tick_ts and not c.tape:
+            return "veri yok"
+        last = max(c.tape[-1][0] if c.tape else 0, c.tick_ts or 0)
+        if now - last > 60_000:
+            return "veri bayat (60 sn'den eski)"
+        if not c.book.ok:
+            return "emir defteri doğrulanmadı"
+        sp = c.spread_bp()
+        if sp is None or sp > r["max_spread_bp"]:
+            return f"spread {sp} bp > {r['max_spread_bp']}"
+        if dist_pct > r["max_stop_yuzde"]:
+            return f"stop çok geniş (%{dist_pct:.2f} > %{r['max_stop_yuzde']})"
+        if atr15 and abs(entry - sl) < r["min_stop_atr"] * atr15:
+            return "stop gürültü bandında"
+        if any(abs(e["ts"] - now) <= k["takvim_sessizlik_dk"] * 60_000 for e in self.market.global_.get("events") or []):
+            return "yüksek etkili ABD verisi yakın (takvim sessizliği)"
+        fa = rd["turev"].get("fonlama_yillik")
+        if fa is not None and ((d > 0 and fa > 2 * k["fonlama_kalabalik_long"]) or (d < 0 and fa < 2 * k["fonlama_kalabalik_short"])):
+            return f"fonlama aşırı kalabalık (%{fa})"
+        wall = rd["akis"].get("duvar_ust" if d > 0 else "duvar_alt")
+        if wall and abs(wall["px"] - entry) < abs(entry - sl):
+            return f"karşıda kalıcı duvar 1R'den yakın ({wall['px']:.6g})"
+        return None
 
     def _partial(self, c, p, ev, why):
         self.journal.write("islemler", {"olay": "kismi", "pid": p["id"], "inst": p["inst"], "fiyat": ev["px"],
@@ -483,7 +552,12 @@ class Polat:
                 d = await extras.btc_dominance()
                 if d is not None:
                     g["btc_dom"], g["btc_dom_ts"] = d, n
+                    self.dom_hist.append((n, d))
+                    self.dom_hist = [x for x in self.dom_hist if x[0] >= n - 7 * 3_600_000]
+                    old = next((x for x in self.dom_hist if x[0] >= n - 6 * 3_600_000), None)
+                    g["btc_dom_chg"] = round(d - old[1], 3) if old and old[0] < n - 3_600_000 else None
                 last["dom"] = n
+            g["haber_tepki"] = self._news_reaction(n)
             if n - last["st"] >= v["stablecoin_dk"] * 60_000:
                 s = await extras.stablecoins()
                 if s:
@@ -495,6 +569,21 @@ class Polat:
                     g["events"] = ev
                 last["cal"] = n
             await asyncio.sleep(30)
+
+    def _news_reaction(self, now: int) -> float | None:
+        """Haber beklentiden saparsa piyasa tepki verir (txt). Yüksek etkili veriden 15 dk sonra BTC'nin o 15 dk'lık
+        hareketi ATR cinsinden okunur ve 2 saat boyunca oy olarak kullanılır."""
+        btc = self.market.coins.get("BTC-USDT-SWAP") if self.market else None
+        if not btc or not btc.series.get("1m") or not btc.series["1m"].bars:
+            return None
+        for e in self.market.global_.get("events") or []:
+            t = e["ts"]
+            if t + 15 * 60_000 <= now <= t + 2 * 3_600_000:
+                bars = [b for b in btc.series["1m"].bars if t <= b[0] < t + 15 * 60_000]
+                atr = (btc.series["15m"].ind or {}).get("atr")
+                if len(bars) >= 10 and atr:
+                    return max(-1.0, min(1.0, (bars[-1][4] - bars[0][1]) / (2 * atr)))
+        return None
 
     async def _reconcile_gap(self, since_ms: int):
         """Devir arasında (kayıt → yeniden başlama) stop/hedef tetiklendi mi? 1 dk mumlarla, muhafazakâr:
@@ -522,6 +611,14 @@ class Polat:
 
     def write_report(self):
         rep = report(self.journal)
+        m = self.market
+        btc = m.coins.get("BTC-USDT-SWAP") if m else None
+        eq = self.broker.equity(m.coins) if m else self.broker.cash
+        rep["kiyas"] = self.learner.benchmark_report(btc.last if btc else None, (eq / self.cfg["sermaye_usd"] - 1) * 100)
+        rep["ogrenme"] = {"meta": self.learner.meta,
+                          "en_guclu": sorted(self.learner.mult.items(), key=lambda x: -x[1])[:15],
+                          "en_zayif": sorted(self.learner.mult.items(), key=lambda x: x[1])[:15],
+                          "kategori": self.learner.cat_mult}
         (self.root / "RAPOR.md").write_text(report_md(rep), encoding="utf-8")
         return rep
 
@@ -535,9 +632,15 @@ def _spawn(coro):
         return None
 
 
+def _top_votes(dec: dict, d: int, n: int = 12) -> list[str]:
+    vs = sorted(((k, v) for k, v in dec["oylar"].items() if v * d > 0), key=lambda x: -abs(x[1]))[:n]
+    return [f"{k} {v:+.2f}" for k, v in vs]
+
+
 def _compact(rd: dict) -> dict:
     """Günlüğe yazılacak okuma: her şey, ama seviyeler yalnızca fiyata en yakın 8 tanesi."""
     out = dict(rd)
+    out.pop("piyasa", None)
     px = rd.get("fiyat") or 0
     lv = rd.get("seviyeler") or []
     out["seviyeler"] = sorted(lv, key=lambda x: abs(x["px"] - px))[:8]

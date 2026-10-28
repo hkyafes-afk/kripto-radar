@@ -35,47 +35,56 @@ Seçim 5 dakikada bir yenilenir:
 - Açık pozisyonu olan coin listeden çıkmaz.
 - BTC ve ETH her zaman izlenir.
 
-## Beyin: notundaki her başlığın karşılığı
+## Beyin: her okuma oy verir (`karar.py`)
 
-| Not | Polat'taki fonksiyon |
+Polat, kendisine verilen her okumayı hesaplar ve her okuma kararda oy kullanır. Oy +1 ile −1 arasındadır: +1 long yönünü, −1 short yönünü gösterir. Testte tek bir coin için 83 ayrı okuma oy verdi.
+
+| Kategori | Okumalar (kaynak) |
 |---|---|
-| Yapı: HH/HL, LH/LL, yapı bozulması, range | `brain.structure` (salınımlar k=3 mum sonra kesinleşir, geleceği görmez) |
-| Mum: gövde, iğne, kapanış konumu, formasyon | `brain.candle` (pin, güçlü, yutan, doji) |
-| Hacim: kırılım onayı, climax, hacim profili (POC/değer alanı) | `brain.volume`, `brain.volume_profile` |
-| Seviyeler: önceki gün/hafta Y-D-K, gün/hafta açılışı, VWAP, test sayısı | `brain.levels`, `brain.vwap` |
-| Göstergeler: EMA 20/50/200, RSI, MACD, Bollinger + sıkışma yüzdeliği, ATR, Fibonacci | `series.Series`, `brain.fib_zone` |
-| Türev: OI–fiyat dörtlüsü, fonlama, likidasyon patlaması, long/short, basis | `brain.derivatives` |
-| Akış: derinlik, defter dengesi, kalıcı duvar (yerinde kalma süresi), büyük işlemler, delta/CVD, ayrışma | `brain.flow`, `Market._walls` |
-| Seans ve saat | `brain.session` (günlüğe yazılır, raporda seansa göre kırılır) |
-| BTC fiyatı/rejimi, dominans, stablecoin, takvim | BTC okuması, `extras` |
-| Okuma sırası: büyük zaman dilimi → seviye → hacim → türev → akış | `brain.bias` → `brain.setups` → `brain.confirmations` |
+| trend (ağırlık 2) | 1G/4S/1S yapı ve yapı bozulması, EMA20/50/200 ve eğimleri, ADX + DI spread, Parabolic SAR, SuperTrend, TRIX, Dow hacim teyidi (kitap, txt) |
+| seviye | destek/direnç konumu ve test sayısı, önceki gün/hafta Y-D-K, gün/hafta açılışı, VWAP, POC/VAH/VAL, 4S salınımları, yuvarlak seviyeler, trend çizgileri |
+| formasyon | OBO/TOBO, çift tepe/dip, üçgenler, takozlar, kanallar, elmas, bayrak/flama, fincan; Gartley, Yarasa, Yengeç, ABCD, Wolfe; mum formasyonları (seviyede ve trend bağlamında güçlenir) |
+| momentum | RSI (yatayda aşırı bölge dönüş, trendde güç), Stokastik, CCI, Williams %R, Ultimate, Momentum, MACD histogramı |
+| hacim | hacim oranı, climax, OBV eğimi ve kendi direncini kırması, MFI, PVI, Demand Index |
+| uyuşmazlık | fiyat ile RSI, MACD, OBV, MFI ve CCI arasında (1S ve 15dk); CVD ayrışması |
+| türev | OI–fiyat ilişkisi, fonlama (kalabalığın tersi), basis, long/short, likidasyon patlaması (tükenme), tahmini likidasyon kümesi (mıknatıs) |
+| akış | CVD 5/15 dk, defter dengesi, kalıcı duvarlar, büyük işlemler, tape hızı |
+| piyasa | BTC 4S/1S yönü, BTC dominansı değişimi, stablecoin arzı, haber sonrası piyasa tepkisi |
 
-Göstergeler tek başına sinyal sayılmaz. Polat yalnızca tanıdığı üç kurulumda işlem açar. Her kurulumun zorunlu koşulları yapı, seviye ve mumdan oluşur:
+**Tetikler (zamanlama):**
+- kırılım ve anlık kırılım (canlı 1 dk mumda seviye geçişi, 2 kat hacim, CVD aynı yönde)
+- geri test ve rol değişimi
+- seviyede ret mumu
+- süpürme
+- sıkışmadan çıkış (kitap: sıkışmada yön tayini)
+- 15 dk yapı bozulması, trend çizgisi kırılımı
+- formasyonun tamamlanması
+- uyuşmazlık + dönüş mumu
+- SAR ve SuperTrend dönüşü, OBV kırılımı
+- MACD ve Stokastik kesişimi
+- likidasyon tükenmesi
 
-1. **Kırılım:** Önemli bir seviye, güçlü bir 15 dakikalık kapanışla ve en az 1,5 kat hacimle kırılır. Hacim patlaması (climax) varsa işlem yok.
-2. **Geri çekilme:** Trend içinde destek bölgesinde bir ret mumu oluşur. Destek bölgesi şunlardan biri olabilir: 4S EMA20, Fibonacci 0,5–0,618, POC, VWAP, dünün dibi. Ayrıca 1S RSI'ın aşırı bölgede olmaması gerekir.
-3. **Süpürme:** Stop kümesinin altı (ya da üstü) iğneyle alınır, mum seviyenin içinde kapanır. Bunu bir likidasyon patlaması ya da hacim desteklemelidir.
+**Giriş şartları (hepsi birden):**
+1. Toplam puan eşiğin üstünde. Gece ve hafta sonu eşik yükselir.
+2. Büyük zaman dilimi trendi ters değil.
+3. Kitaptaki şablon kuralı: trend, hacim ve momentum ailelerinin üçü de aynı yönü gösteriyor.
+4. En az bir tetik aynı yönde.
+5. Sert kapıların hiçbiri engellemiyor: veri tazeliği, defter doğrulaması, spread, stop genişliği, takvim, aşırı fonlama, 1R'den yakın karşı duvar, risk motoru, derinlik.
 
-Yön, 1G ve 4S yapısından gelir. BTC'nin 4S yapısı terse dönmüşse altcoinlerde o yönde işlem açılmaz.
-Zorunlu koşullar sağlandıktan sonra en az 3 bağımsız teyit gerekir. Teyitler:
-- hacim
-- CVD
-- defter dengesi
-- arkadaki kalıcı duvar
-- OI–fiyat ilişkisi
-- karşı tarafın kalabalık olması
-- MACD
-- EMA dizilimi
-- Bollinger sıkışmasından çıkış
-- BTC'nin aynı yönde olması
-- seviyenin daha önce test edilmiş olması
+**Stop:** Yapıya göre konur: girişin aleyhindeki en yakın tepe, dip, stop kümesi ya da seviyenin 0,2 ATR ötesine.
 
-Vetolar, teyit sayısından bağımsız olarak işlemi engeller:
-- karşı tarafta, 1R'den yakın kalıcı bir duvar
-- CVD ayrışması
-- kalabalık fonlama
-- hacim patlaması
-- yakında yüksek etkili ABD verisi
+**Ne zaman bakıyor:** Her 1 dakikalık kapanışta tam değerlendirme yapılır. Fiyat önemli bir seviyeyi geçtiği an, mum kapanışı beklenmeden ayrıca bakılır (en sık 10 saniyede bir).
+
+Ölçülen süre: bir coinin ilk tam değerlendirmesi ~80 ms sürüyor; sonrakiler önbellek sayesinde daha kısa. 30 coin aynı anda yaklaşık 3 saniyede sırayla değerlendiriliyor. Her değerlendirmeden sonra olay döngüsüne söz veriliyor; bu yüzden stop ve hedef kontrolleri en fazla ~80 ms gecikiyor.
+
+## Öğrenme ve dürüst ölçüm (`learn.py`)
+
+- **Gölge sinyaller:** Eşiğe yakın ve tetikli her sinyal, işlem açılmasa bile aynı plana göre takip edilir.
+- **Maliyetler:** Gölge sinyallerin sonucundan giriş ve çıkış taker ücreti, spread ve kayma tahmini ve fonlama düşülür.
+- **Kıyaslamalar:** Her sinyalin yanına aynı anda, aynı stop ve aynı maliyetle iki giriş konur: biri **rastgele yönlü**, diğeri **sadece trend yönünde**. Bunlara ek olarak **BTC al-tut** ile kıyaslanır. Polat bunları geçemiyorsa rapor bunu açıkça yazar.
+- **Walk-forward:** Örneklerin ilk %70'i eğitim, son %30'u doğrulama için kullanılır. Bir okumanın katsayısı ancak iki dönemde de etkisi aynı yöndeyse ve yeterli örnek varsa değişir (eğitimde ≥30, doğrulamada ≥10). Değişim, örnek sayısına göre küçültülerek uygulanır. Doğrulamada tutmayan okumalar raporda "reddedilen" olarak sayılır.
+- **Kanıt eşiği:** 100 sonuçlanmış sinyale kadar raporda "kanıt yetersiz" yazar.
+- **Sınır:** Bütün okumalarıyla geriye dönük bir test yapılamaz, çünkü geçmiş emir defteri, tape ve likidasyon verisi ücretsiz olarak yok. Polat'ın gerçek örneklem dışı testi, canlı veriyle yaptığı sanal işlemlerdir.
 
 ## Kurallar (senin ilkelerin)
 
@@ -122,5 +131,6 @@ python -m polat devam --kok polat_veri          # −%15 durdurmasından sonra, 
 
 ## Dürüst notlar
 
-- Kurulum parametreleri (1,5 kat hacim, 3 teyit, %50 geri verme vb.) mantıklı başlangıç değerleri. Geçmiş veride kanıtlanmış değiller. Polat bir deney: hangi okumanın para kazandırdığını günlük gösterecek.
+- Eşik, kategori ağırlıkları, risk ve çıkış sayıları başlangıç değerleri (`config.yaml`, `karar.py`). Geçmiş veride kanıtlanmış değiller ve kullanıcı onayına açıklar. Hangi okumanın işe yaradığını gölge sinyaller ve kıyaslamalar gösterecek.
+- Demand Index basitleştirilmiş bir hesap. Likidasyon kümeleri OI ve fiyattan çıkarılmış bir tahmin; gerçek bir likidasyon haritası değil.
 - Bu ortamdan OKX'e ağ erişimi yok. Akış kodu, yerel sahte bir OKX sunucusuna karşı test edildi: abonelik, veri, kopma ve yeniden bağlanma. Gerçek OKX'e ilk bağlantı GitHub'da olacak.

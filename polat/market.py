@@ -90,6 +90,7 @@ class Coin:
         self.cvd_hist: deque = deque(maxlen=2000)     # (ts, cvd, px) her işlemde değil, 1 sn'de bir
         self.big_trades: deque = deque(maxlen=200)
         self.oi_hist: deque = deque(maxlen=2000)      # (ts, oi_baz)
+        self.oi_h1: deque = deque(maxlen=200)         # saatlik OI (likidasyon kümesi tahmini için)
         self.funding = None
         self.next_funding_ts = 0
         self.mark = self.index = None
@@ -156,7 +157,11 @@ class Market:
             elif ch == "open-interest":
                 for d in data:
                     c = self.coin(d["instId"])
-                    c.oi_hist.append((int(d["ts"]), float(d.get("oiCcy") or 0) or float(d["oi"]) * c.ct))
+                    ts, oi = int(d["ts"]), float(d.get("oiCcy") or 0) or float(d["oi"]) * c.ct
+                    c.oi_hist.append((ts, oi))
+                    hr = ts - ts % 3_600_000
+                    if not c.oi_h1 or c.oi_h1[-1][0] < hr:
+                        c.oi_h1.append((hr, oi))
             elif ch == "funding-rate":
                 for d in data:
                     c = self.coin(d["instId"])
