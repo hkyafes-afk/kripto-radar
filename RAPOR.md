@@ -12,9 +12,9 @@ _Yatırım tavsiyesi değildir._
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
 | polat_girilmeyen | 545 | %44.0 | -0.418 | -228.0 |
 | rastgele | 567 | %42.7 | -0.444 | -251.94 |
-| trend_naif | 567 | %35.4 | -0.558 | -316.62 |
+| trend_naif | 568 | %35.4 | -0.56 | -318.0 |
 
-Polat özsermaye: %-2.57 · BTC al-tut: %0.61
+Polat özsermaye: %-2.57 · BTC al-tut: %0.64
 
 ## Öğrenme (walk-forward)
 
@@ -57,16 +57,16 @@ En az işe yarayan okumalar: yapi_1D ×0.836, ema_1D ×0.884, ema_4H ×0.884, ad
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 894
+- ders: 899
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 448
-- büyük zaman dilimi trendi ters: 323
+- büyük zaman dilimi trendi ters: 328
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
-- üst üste 3 zarar: 98
+- üst üste 3 zarar: 105
+- puan +0.149 eşiğin (0.25) altında: 56
 - puan +0.123 eşiğin (0.25) altında: 55
-- puan +0.149 eşiğin (0.25) altında: 55
 
 **Hata sınıfları**
 
@@ -107,16 +107,16 @@ En az işe yarayan okumalar: yapi_1D ×0.836, ema_1D ×0.884, ema_4H ×0.884, ad
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 894
+- ders: 899
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 448
-- büyük zaman dilimi trendi ters: 323
+- büyük zaman dilimi trendi ters: 328
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
-- üst üste 3 zarar: 98
+- üst üste 3 zarar: 105
+- puan +0.149 eşiğin (0.25) altında: 56
 - puan +0.123 eşiğin (0.25) altında: 55
-- puan +0.149 eşiğin (0.25) altında: 55
 
 **Hata sınıfları**
 
@@ -157,16 +157,16 @@ En az işe yarayan okumalar: yapi_1D ×0.836, ema_1D ×0.884, ema_4H ×0.884, ad
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 894
+- ders: 899
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 448
-- büyük zaman dilimi trendi ters: 323
+- büyük zaman dilimi trendi ters: 328
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
-- üst üste 3 zarar: 98
+- üst üste 3 zarar: 105
+- puan +0.149 eşiğin (0.25) altında: 56
 - puan +0.123 eşiğin (0.25) altında: 55
-- puan +0.149 eşiğin (0.25) altında: 55
 
 **Hata sınıfları**
 
