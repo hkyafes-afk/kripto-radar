@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 101 | %44.6 | -0.466 | -47.1 |
 | trend_naif | 101 | %38.6 | -0.525 | -52.98 |
 
-Polat özsermaye: %0.0 · BTC al-tut: %-0.1
+Polat özsermaye: %0.0 · BTC al-tut: %-0.11
 
 ## Öğrenme (walk-forward)
 
@@ -25,15 +25,15 @@ En az işe yarayan okumalar: stoch_15m ×0.859, stoch_5m ×0.869
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2392, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2406, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 339
 - gösterge aileleri aynı yönde değil: 166
-- büyük zaman dilimi trendi ters: 70
-- ders: 38
-- puan +0.149 eşiğin (0.25) altında: 20
+- büyük zaman dilimi trendi ters: 71
+- ders: 39
+- puan +0.149 eşiğin (0.25) altında: 21
 - puan +0.146 eşiğin (0.25) altında: 17
 - puan +0.127 eşiğin (0.25) altında: 16
 - puan +0.207 eşiğin (0.25) altında: 16
@@ -42,15 +42,15 @@ Kapanmış işlem yok. Görülen kurulum: 2392, girilen: 0.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2392, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2406, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 339
 - gösterge aileleri aynı yönde değil: 166
-- büyük zaman dilimi trendi ters: 70
-- ders: 38
-- puan +0.149 eşiğin (0.25) altında: 20
+- büyük zaman dilimi trendi ters: 71
+- ders: 39
+- puan +0.149 eşiğin (0.25) altında: 21
 - puan +0.146 eşiğin (0.25) altında: 17
 - puan +0.127 eşiğin (0.25) altında: 16
 - puan +0.207 eşiğin (0.25) altında: 16
@@ -59,15 +59,15 @@ Kapanmış işlem yok. Görülen kurulum: 2392, girilen: 0.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2392, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2406, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 339
 - gösterge aileleri aynı yönde değil: 166
-- büyük zaman dilimi trendi ters: 70
-- ders: 38
-- puan +0.149 eşiğin (0.25) altında: 20
+- büyük zaman dilimi trendi ters: 71
+- ders: 39
+- puan +0.149 eşiğin (0.25) altında: 21
 - puan +0.146 eşiğin (0.25) altında: 17
 - puan +0.127 eşiğin (0.25) altında: 16
 - puan +0.207 eşiğin (0.25) altında: 16
