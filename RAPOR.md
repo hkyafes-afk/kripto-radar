@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** kanıt yetersiz: 60/100 sonuçlanmış sinyal. Bu sayıdan önce hiçbir sonuç anlamlı değildir.
+**Hüküm:** kanıt yetersiz: 62/100 sonuçlanmış sinyal. Bu sayıdan önce hiçbir sonuç anlamlı değildir.
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 60 | %56.7 | -0.194 | -11.64 |
+| polat_tum_sinyaller | 62 | %54.8 | -0.225 | -13.96 |
 | polat_girilen | 0 | %- | - | - |
-| polat_girilmeyen | 60 | %56.7 | -0.194 | -11.64 |
+| polat_girilmeyen | 62 | %54.8 | -0.225 | -13.96 |
 | rastgele | 61 | %42.6 | -0.523 | -31.93 |
-| trend_naif | 61 | %31.1 | -0.657 | -40.08 |
+| trend_naif | 62 | %30.6 | -0.665 | -41.24 |
 
-Polat özsermaye: %0.0 · BTC al-tut: %0.12
+Polat özsermaye: %0.0 · BTC al-tut: %0.09
 
 ## Öğrenme (walk-forward)
 
@@ -23,11 +23,11 @@ Polat özsermaye: %0.0 · BTC al-tut: %0.12
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 1558, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 1571, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 261
+- emir defteri doğrulanmadı: 265
 - gösterge aileleri aynı yönde değil: 117
 - büyük zaman dilimi trendi ters: 57
 - puan +0.146 eşiğin (0.25) altında: 15
@@ -40,11 +40,11 @@ Kapanmış işlem yok. Görülen kurulum: 1558, girilen: 0.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 1558, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 1571, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 261
+- emir defteri doğrulanmadı: 265
 - gösterge aileleri aynı yönde değil: 117
 - büyük zaman dilimi trendi ters: 57
 - puan +0.146 eşiğin (0.25) altında: 15
@@ -57,11 +57,11 @@ Kapanmış işlem yok. Görülen kurulum: 1558, girilen: 0.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 1558, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 1571, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 261
+- emir defteri doğrulanmadı: 265
 - gösterge aileleri aynı yönde değil: 117
 - büyük zaman dilimi trendi ters: 57
 - puan +0.146 eşiğin (0.25) altında: 15
