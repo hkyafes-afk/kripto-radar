@@ -4,34 +4,34 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.484R; geçtiği kıyaslar: trend_naif → okumaların üstünlüğü kanıtlanmadı
+**Hüküm:** Polat net -0.478R; geçtiği kıyaslar: trend_naif → okumaların üstünlüğü kanıtlanmadı
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 178 | %42.1 | -0.484 | -86.12 |
+| polat_tum_sinyaller | 179 | %42.5 | -0.478 | -85.59 |
 | polat_girilen | 0 | %- | - | - |
-| polat_girilmeyen | 178 | %42.1 | -0.484 | -86.12 |
+| polat_girilmeyen | 179 | %42.5 | -0.478 | -85.59 |
 | rastgele | 170 | %42.9 | -0.459 | -78.1 |
-| trend_naif | 174 | %39.1 | -0.485 | -84.36 |
+| trend_naif | 175 | %39.4 | -0.479 | -83.83 |
 
 Polat özsermaye: %0.0 · BTC al-tut: %-0.12
 
 ## Öğrenme (walk-forward)
 
-Örnek 158 (eğitim 110, doğrulama 48) · uygulanan katsayı 7 · doğrulamada tutmadığı için reddedilen 7
+Örnek 179 (eğitim 125, doğrulama 54) · uygulanan katsayı 13 · doğrulamada tutmadığı için reddedilen 6
 
-En çok işe yarayan okumalar: mfi_1H ×1.105, stoch_1H ×0.986, ema200_1D ×0.932, ema_1D ×0.915, yapi_1D ×0.875, stoch_5m ×0.839, stoch_15m ×0.827
-En az işe yarayan okumalar: stoch_15m ×0.827, stoch_5m ×0.839, yapi_1D ×0.875, ema_1D ×0.915, ema200_1D ×0.932, stoch_1H ×0.986, mfi_1H ×1.105
+En çok işe yarayan okumalar: supertrend_1H ×1.094, mfi_1H ×1.073, ustunde_poc ×1.063, supertrend_4H ×1.021, ema_4H ×1.018, long_short ×1.017, psar_4H ×1.002, psar_1H ×0.991, ema_1D ×0.948, ema200_1D ×0.941
+En az işe yarayan okumalar: stoch_5m ×0.793, stoch_15m ×0.88, yapi_1D ×0.927, ema200_1D ×0.941, ema_1D ×0.948, psar_1H ×0.991, psar_4H ×1.002, long_short ×1.017, ema_4H ×1.018, supertrend_4H ×1.021
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 3643, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 3657, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 528
+- emir defteri doğrulanmadı: 529
 - gösterge aileleri aynı yönde değil: 224
-- ders: 111
+- ders: 112
 - büyük zaman dilimi trendi ters: 81
 - puan +0.149 eşiğin (0.25) altında: 29
 - puan +0.146 eşiğin (0.25) altında: 24
@@ -42,13 +42,13 @@ Kapanmış işlem yok. Görülen kurulum: 3643, girilen: 0.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 3643, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 3657, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 528
+- emir defteri doğrulanmadı: 529
 - gösterge aileleri aynı yönde değil: 224
-- ders: 111
+- ders: 112
 - büyük zaman dilimi trendi ters: 81
 - puan +0.149 eşiğin (0.25) altında: 29
 - puan +0.146 eşiğin (0.25) altında: 24
@@ -59,13 +59,13 @@ Kapanmış işlem yok. Görülen kurulum: 3643, girilen: 0.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 3643, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 3657, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 528
+- emir defteri doğrulanmadı: 529
 - gösterge aileleri aynı yönde değil: 224
-- ders: 111
+- ders: 112
 - büyük zaman dilimi trendi ters: 81
 - puan +0.149 eşiğin (0.25) altında: 29
 - puan +0.146 eşiğin (0.25) altında: 24
