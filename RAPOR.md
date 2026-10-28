@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.305R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.308R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 637 | %47.9 | -0.305 | -194.09 |
+| polat_tum_sinyaller | 639 | %47.7 | -0.308 | -196.57 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
-| polat_girilmeyen | 635 | %47.9 | -0.304 | -192.89 |
-| rastgele | 649 | %43.1 | -0.414 | -268.5 |
-| trend_naif | 647 | %38.5 | -0.492 | -318.09 |
+| polat_girilmeyen | 637 | %47.7 | -0.307 | -195.37 |
+| rastgele | 651 | %43.2 | -0.414 | -269.4 |
+| trend_naif | 648 | %38.4 | -0.493 | -319.44 |
 
-Polat özsermaye: %-2.57 · BTC al-tut: %0.27
+Polat özsermaye: %-2.57 · BTC al-tut: %0.2
 
 ## Öğrenme (walk-forward)
 
@@ -57,10 +57,10 @@ En az işe yarayan okumalar: yapi_1D ×0.797, stoch_5m ×0.807, ema_1D ×0.861, 
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 1310
+- ders: 1311
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- gösterge aileleri aynı yönde değil: 489
+- gösterge aileleri aynı yönde değil: 493
 - üst üste 3 zarar: 391
 - büyük zaman dilimi trendi ters: 354
 - bu coinde zaten pozisyon var: 135
@@ -107,10 +107,10 @@ En az işe yarayan okumalar: yapi_1D ×0.797, stoch_5m ×0.807, ema_1D ×0.861, 
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 1310
+- ders: 1311
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- gösterge aileleri aynı yönde değil: 489
+- gösterge aileleri aynı yönde değil: 493
 - üst üste 3 zarar: 391
 - büyük zaman dilimi trendi ters: 354
 - bu coinde zaten pozisyon var: 135
@@ -157,10 +157,10 @@ En az işe yarayan okumalar: yapi_1D ×0.797, stoch_5m ×0.807, ema_1D ×0.861, 
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 1310
+- ders: 1311
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- gösterge aileleri aynı yönde değil: 489
+- gösterge aileleri aynı yönde değil: 493
 - üst üste 3 zarar: 391
 - büyük zaman dilimi trendi ters: 354
 - bu coinde zaten pozisyon var: 135
