@@ -25,51 +25,51 @@ En az işe yarayan okumalar: stoch_5m ×0.79, stoch_15m ×0.855
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2724, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2732, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 362
+- emir defteri doğrulanmadı: 363
 - gösterge aileleri aynı yönde değil: 190
 - büyük zaman dilimi trendi ters: 74
-- ders: 71
+- ders: 72
 - puan +0.149 eşiğin (0.25) altında: 23
 - puan +0.146 eşiğin (0.25) altında: 20
+- puan +0.172 eşiğin (0.25) altında: 17
 - puan +0.127 eşiğin (0.25) altında: 17
 - puan +0.207 eşiğin (0.25) altında: 17
-- puan +0.172 eşiğin (0.25) altında: 16
 - puan +0.180 eşiğin (0.25) altında: 16
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2724, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2732, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 362
+- emir defteri doğrulanmadı: 363
 - gösterge aileleri aynı yönde değil: 190
 - büyük zaman dilimi trendi ters: 74
-- ders: 71
+- ders: 72
 - puan +0.149 eşiğin (0.25) altında: 23
 - puan +0.146 eşiğin (0.25) altında: 20
+- puan +0.172 eşiğin (0.25) altında: 17
 - puan +0.127 eşiğin (0.25) altında: 17
 - puan +0.207 eşiğin (0.25) altında: 17
-- puan +0.172 eşiğin (0.25) altında: 16
 - puan +0.180 eşiğin (0.25) altında: 16
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2724, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2732, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 362
+- emir defteri doğrulanmadı: 363
 - gösterge aileleri aynı yönde değil: 190
 - büyük zaman dilimi trendi ters: 74
-- ders: 71
+- ders: 72
 - puan +0.149 eşiğin (0.25) altında: 23
 - puan +0.146 eşiğin (0.25) altında: 20
+- puan +0.172 eşiğin (0.25) altında: 17
 - puan +0.127 eşiğin (0.25) altında: 17
 - puan +0.207 eşiğin (0.25) altında: 17
-- puan +0.172 eşiğin (0.25) altında: 16
 - puan +0.180 eşiğin (0.25) altında: 16
