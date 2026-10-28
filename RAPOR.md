@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 13 | %46.2 | -0.514 | -6.68 |
 | trend_naif | 11 | %18.2 | -0.835 | -9.18 |
 
-Polat özsermaye: %0.0 · BTC al-tut: %-0.09
+Polat özsermaye: %0.0 · BTC al-tut: %-0.11
 
 ## Öğrenme (walk-forward)
 
@@ -23,11 +23,11 @@ Polat özsermaye: %0.0 · BTC al-tut: %-0.09
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 499, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 524, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 94
+- emir defteri doğrulanmadı: 101
 - gösterge aileleri aynı yönde değil: 48
 - büyük zaman dilimi trendi ters: 11
 - puan +0.176 eşiğin (0.25) altında: 7
@@ -35,16 +35,16 @@ Kapanmış işlem yok. Görülen kurulum: 499, girilen: 0.
 - puan +0.235 eşiğin (0.25) altında: 6
 - puan +0.207 eşiğin (0.25) altında: 6
 - puan +0.185 eşiğin (0.25) altında: 5
-- puan +0.214 eşiğin (0.25) altında: 5
-- puan +0.171 eşiğin (0.25) altında: 5
+- puan +0.204 eşiğin (0.25) altında: 5
+- puan +0.172 eşiğin (0.25) altında: 5
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 499, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 524, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 94
+- emir defteri doğrulanmadı: 101
 - gösterge aileleri aynı yönde değil: 48
 - büyük zaman dilimi trendi ters: 11
 - puan +0.176 eşiğin (0.25) altında: 7
@@ -52,16 +52,16 @@ Kapanmış işlem yok. Görülen kurulum: 499, girilen: 0.
 - puan +0.235 eşiğin (0.25) altında: 6
 - puan +0.207 eşiğin (0.25) altında: 6
 - puan +0.185 eşiğin (0.25) altında: 5
-- puan +0.214 eşiğin (0.25) altında: 5
-- puan +0.171 eşiğin (0.25) altında: 5
+- puan +0.204 eşiğin (0.25) altında: 5
+- puan +0.172 eşiğin (0.25) altında: 5
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 499, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 524, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 94
+- emir defteri doğrulanmadı: 101
 - gösterge aileleri aynı yönde değil: 48
 - büyük zaman dilimi trendi ters: 11
 - puan +0.176 eşiğin (0.25) altında: 7
@@ -69,5 +69,5 @@ Kapanmış işlem yok. Görülen kurulum: 499, girilen: 0.
 - puan +0.235 eşiğin (0.25) altında: 6
 - puan +0.207 eşiğin (0.25) altında: 6
 - puan +0.185 eşiğin (0.25) altında: 5
-- puan +0.214 eşiğin (0.25) altında: 5
-- puan +0.171 eşiğin (0.25) altında: 5
+- puan +0.204 eşiğin (0.25) altında: 5
+- puan +0.172 eşiğin (0.25) altında: 5
