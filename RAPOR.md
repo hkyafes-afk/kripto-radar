@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.372R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.359R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 119 | %47.9 | -0.372 | -44.3 |
+| polat_tum_sinyaller | 121 | %48.8 | -0.359 | -43.38 |
 | polat_girilen | 0 | %- | - | - |
-| polat_girilmeyen | 119 | %47.9 | -0.372 | -44.3 |
-| rastgele | 118 | %42.4 | -0.501 | -59.17 |
-| trend_naif | 115 | %40.9 | -0.479 | -55.12 |
+| polat_girilmeyen | 121 | %48.8 | -0.359 | -43.38 |
+| rastgele | 119 | %42.9 | -0.493 | -58.73 |
+| trend_naif | 117 | %41.9 | -0.463 | -54.21 |
 
-Polat özsermaye: %0.0 · BTC al-tut: %-0.13
+Polat özsermaye: %0.0 · BTC al-tut: %-0.11
 
 ## Öğrenme (walk-forward)
 
@@ -25,11 +25,11 @@ En az işe yarayan okumalar: stoch_5m ×0.79, stoch_15m ×0.855
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2869, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2878, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 381
+- emir defteri doğrulanmadı: 383
 - gösterge aileleri aynı yönde değil: 193
 - ders: 82
 - büyük zaman dilimi trendi ters: 74
@@ -42,11 +42,11 @@ Kapanmış işlem yok. Görülen kurulum: 2869, girilen: 0.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2869, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2878, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 381
+- emir defteri doğrulanmadı: 383
 - gösterge aileleri aynı yönde değil: 193
 - ders: 82
 - büyük zaman dilimi trendi ters: 74
@@ -59,11 +59,11 @@ Kapanmış işlem yok. Görülen kurulum: 2869, girilen: 0.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2869, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2878, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 381
+- emir defteri doğrulanmadı: 383
 - gösterge aileleri aynı yönde değil: 193
 - ders: 82
 - büyük zaman dilimi trendi ters: 74
