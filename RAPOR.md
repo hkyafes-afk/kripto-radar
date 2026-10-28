@@ -11,10 +11,10 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 212 | %39.6 | -0.544 | -115.28 |
 | polat_girilen | 0 | %- | - | - |
 | polat_girilmeyen | 212 | %39.6 | -0.544 | -115.28 |
-| rastgele | 220 | %41.4 | -0.515 | -113.34 |
+| rastgele | 221 | %41.2 | -0.522 | -115.26 |
 | trend_naif | 221 | %37.1 | -0.538 | -118.86 |
 
-Polat özsermaye: %0.0 · BTC al-tut: %0.25
+Polat özsermaye: %0.0 · BTC al-tut: %0.32
 
 ## Öğrenme (walk-forward)
 
@@ -25,51 +25,51 @@ En az işe yarayan okumalar: stoch_5m ×0.766, stoch_15m ×0.835, ema200_1D ×0.
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 4525, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 4538, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 235
-- ders: 209
+- ders: 210
 - büyük zaman dilimi trendi ters: 100
 - puan +0.149 eşiğin (0.25) altında: 32
 - puan +0.146 eşiğin (0.25) altında: 31
 - puan +0.167 eşiğin (0.25) altında: 31
 - puan +0.123 eşiğin (0.25) altında: 27
 - puan +0.161 eşiğin (0.25) altında: 26
-- puan +0.194 eşiğin (0.25) altında: 26
+- puan +0.187 eşiğin (0.25) altında: 26
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 4525, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 4538, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 235
-- ders: 209
+- ders: 210
 - büyük zaman dilimi trendi ters: 100
 - puan +0.149 eşiğin (0.25) altında: 32
 - puan +0.146 eşiğin (0.25) altında: 31
 - puan +0.167 eşiğin (0.25) altında: 31
 - puan +0.123 eşiğin (0.25) altında: 27
 - puan +0.161 eşiğin (0.25) altında: 26
-- puan +0.194 eşiğin (0.25) altında: 26
+- puan +0.187 eşiğin (0.25) altında: 26
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 4525, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 4538, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 235
-- ders: 209
+- ders: 210
 - büyük zaman dilimi trendi ters: 100
 - puan +0.149 eşiğin (0.25) altında: 32
 - puan +0.146 eşiğin (0.25) altında: 31
 - puan +0.167 eşiğin (0.25) altında: 31
 - puan +0.123 eşiğin (0.25) altında: 27
 - puan +0.161 eşiğin (0.25) altında: 26
-- puan +0.194 eşiğin (0.25) altında: 26
+- puan +0.187 eşiğin (0.25) altında: 26
