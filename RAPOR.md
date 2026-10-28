@@ -57,7 +57,7 @@ En az işe yarayan okumalar: yapi_1D ×0.836, ema_1D ×0.884, ema_4H ×0.884, ad
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 861
+- ders: 863
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 447
@@ -107,7 +107,7 @@ En az işe yarayan okumalar: yapi_1D ×0.836, ema_1D ×0.884, ema_4H ×0.884, ad
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 861
+- ders: 863
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 447
@@ -157,7 +157,7 @@ En az işe yarayan okumalar: yapi_1D ×0.836, ema_1D ×0.884, ema_4H ×0.884, ad
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 861
+- ders: 863
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 447
