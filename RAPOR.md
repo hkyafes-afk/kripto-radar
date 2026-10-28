@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.348R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.345R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 574 | %46.5 | -0.348 | -199.79 |
+| polat_tum_sinyaller | 575 | %46.6 | -0.345 | -198.4 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
-| polat_girilmeyen | 572 | %46.5 | -0.347 | -198.59 |
-| rastgele | 591 | %42.8 | -0.431 | -254.63 |
+| polat_girilmeyen | 573 | %46.6 | -0.344 | -197.2 |
+| rastgele | 592 | %42.9 | -0.428 | -253.23 |
 | trend_naif | 588 | %35.5 | -0.557 | -327.33 |
 
-Polat özsermaye: %-2.57 · BTC al-tut: %0.51
+Polat özsermaye: %-2.57 · BTC al-tut: %0.5
 
 ## Öğrenme (walk-forward)
 
@@ -57,12 +57,12 @@ En az işe yarayan okumalar: yapi_1D ×0.782, ema_1D ×0.842, ema_4H ×0.86, adx
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 966
+- ders: 967
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- gösterge aileleri aynı yönde değil: 465
+- gösterge aileleri aynı yönde değil: 469
 - büyük zaman dilimi trendi ters: 354
-- üst üste 3 zarar: 205
+- üst üste 3 zarar: 209
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.127 eşiğin (0.25) altında: 58
@@ -107,12 +107,12 @@ En az işe yarayan okumalar: yapi_1D ×0.782, ema_1D ×0.842, ema_4H ×0.86, adx
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 966
+- ders: 967
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- gösterge aileleri aynı yönde değil: 465
+- gösterge aileleri aynı yönde değil: 469
 - büyük zaman dilimi trendi ters: 354
-- üst üste 3 zarar: 205
+- üst üste 3 zarar: 209
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.127 eşiğin (0.25) altında: 58
@@ -157,12 +157,12 @@ En az işe yarayan okumalar: yapi_1D ×0.782, ema_1D ×0.842, ema_4H ×0.86, adx
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 966
+- ders: 967
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- gösterge aileleri aynı yönde değil: 465
+- gösterge aileleri aynı yönde değil: 469
 - büyük zaman dilimi trendi ters: 354
-- üst üste 3 zarar: 205
+- üst üste 3 zarar: 209
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.127 eşiğin (0.25) altında: 58
