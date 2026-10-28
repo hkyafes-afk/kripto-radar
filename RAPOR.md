@@ -11,10 +11,10 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 612 | %47.7 | -0.308 | -188.51 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
 | polat_girilmeyen | 610 | %47.7 | -0.307 | -187.31 |
-| rastgele | 627 | %42.6 | -0.425 | -266.27 |
+| rastgele | 629 | %42.4 | -0.427 | -268.65 |
 | trend_naif | 621 | %37.0 | -0.521 | -323.7 |
 
-Polat özsermaye: %-2.57 · BTC al-tut: %0.46
+Polat özsermaye: %-2.57 · BTC al-tut: %0.48
 
 ## Öğrenme (walk-forward)
 
@@ -57,12 +57,12 @@ En az işe yarayan okumalar: yapi_1D ×0.824, ema_4H ×0.865, ema_1D ×0.876, ob
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 1167
+- ders: 1176
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 486
 - büyük zaman dilimi trendi ters: 354
-- üst üste 3 zarar: 348
+- üst üste 3 zarar: 349
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.127 eşiğin (0.25) altında: 59
@@ -107,12 +107,12 @@ En az işe yarayan okumalar: yapi_1D ×0.824, ema_4H ×0.865, ema_1D ×0.876, ob
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 1167
+- ders: 1176
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 486
 - büyük zaman dilimi trendi ters: 354
-- üst üste 3 zarar: 348
+- üst üste 3 zarar: 349
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.127 eşiğin (0.25) altında: 59
@@ -157,12 +157,12 @@ En az işe yarayan okumalar: yapi_1D ×0.824, ema_4H ×0.865, ema_1D ×0.876, ob
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 1167
+- ders: 1176
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 486
 - büyük zaman dilimi trendi ters: 354
-- üst üste 3 zarar: 348
+- üst üste 3 zarar: 349
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.127 eşiğin (0.25) altında: 59
