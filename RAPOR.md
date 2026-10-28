@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.394R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.424R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 452 | %45.4 | -0.394 | -178.28 |
+| polat_tum_sinyaller | 470 | %43.6 | -0.424 | -199.3 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
-| polat_girilmeyen | 450 | %45.3 | -0.394 | -177.08 |
-| rastgele | 464 | %43.8 | -0.429 | -198.88 |
-| trend_naif | 461 | %38.2 | -0.509 | -234.76 |
+| polat_girilmeyen | 468 | %43.6 | -0.423 | -198.1 |
+| rastgele | 475 | %42.7 | -0.445 | -211.32 |
+| trend_naif | 480 | %36.7 | -0.535 | -256.68 |
 
-Polat özsermaye: %-2.35 · BTC al-tut: %-0.05
+Polat özsermaye: %-2.57 · BTC al-tut: %0.08
 
 ## Öğrenme (walk-forward)
 
@@ -25,7 +25,7 @@ En az işe yarayan okumalar: stoch_5m ×0.798, ema_1D ×0.873, yapi_1D ×0.874, 
 
 ## Son 1 gün
 
-İşlem 3 · kazanma %33.3 · ort. -0.783R · toplam -2.35R · net -1159.17$ · maks. düşüş -1326.33$ · kâr faktörü 0.13
+İşlem 4 · kazanma %25.0 · ort. -0.863R · toplam -3.45R · net -1703.98$ · maks. düşüş -1871.14$ · kâr faktörü 0.09
 
 **Kuruluma göre**
 
@@ -33,36 +33,37 @@ En az işe yarayan okumalar: stoch_5m ×0.798, ema_1D ×0.873, yapi_1D ×0.874, 
 |---|---|---|---|---|
 | geri_cekilme+supurme+trend_cizgisi_kirilim_1H | 1 | %0.0 | -1.363 | -668.26 |
 | yapi_bozulmasi_15m+geri_test_15m+trend_cizgisi_kirilim_1H | 2 | %50.0 | -0.494 | -490.91 |
+| yapi_bozulmasi_15m+geri_test_1H+formasyon_yukselen_takoz_1H | 1 | %0.0 | -1.103 | -544.81 |
 
 **Çıkış nedenine göre**
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
-| stop | 3 | %33.3 | -0.783 | -1159.17 |
+| stop | 4 | %25.0 | -0.863 | -1703.98 |
 
 **Seansa göre**
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
-| ABD | 3 | %33.3 | -0.783 | -1159.17 |
+| ABD | 4 | %25.0 | -0.863 | -1703.98 |
 
 **Teyit sayısına göre**
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
 | 5 | 1 | %100.0 | 0.337 | 167.16 |
-| 7 | 1 | %0.0 | -1.363 | -668.26 |
+| 7 | 2 | %0.0 | -1.233 | -1213.07 |
 | 8 | 1 | %0.0 | -1.324 | -658.07 |
 
 **Girilmeyen kurulumlar (engel)**
 
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- ders: 532
+- ders: 543
 - gösterge aileleri aynı yönde değil: 430
 - büyük zaman dilimi trendi ters: 195
 - bu coinde zaten pozisyon var: 135
-- yüksek etkili ABD verisi yakın (takvim sessizliği): 65
+- yüksek etkili ABD verisi yakın (takvim sessizliği): 66
 - puan +0.149 eşiğin (0.25) altında: 49
 - puan -0.128 eşiğin (0.25) altında: 45
 - puan -0.126 eşiğin (0.25) altında: 45
@@ -74,7 +75,7 @@ En az işe yarayan okumalar: stoch_5m ×0.798, ema_1D ×0.873, yapi_1D ×0.874, 
 
 ## Son 50 gün
 
-İşlem 3 · kazanma %33.3 · ort. -0.783R · toplam -2.35R · net -1159.17$ · maks. düşüş -1326.33$ · kâr faktörü 0.13
+İşlem 4 · kazanma %25.0 · ort. -0.863R · toplam -3.45R · net -1703.98$ · maks. düşüş -1871.14$ · kâr faktörü 0.09
 
 **Kuruluma göre**
 
@@ -82,36 +83,37 @@ En az işe yarayan okumalar: stoch_5m ×0.798, ema_1D ×0.873, yapi_1D ×0.874, 
 |---|---|---|---|---|
 | geri_cekilme+supurme+trend_cizgisi_kirilim_1H | 1 | %0.0 | -1.363 | -668.26 |
 | yapi_bozulmasi_15m+geri_test_15m+trend_cizgisi_kirilim_1H | 2 | %50.0 | -0.494 | -490.91 |
+| yapi_bozulmasi_15m+geri_test_1H+formasyon_yukselen_takoz_1H | 1 | %0.0 | -1.103 | -544.81 |
 
 **Çıkış nedenine göre**
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
-| stop | 3 | %33.3 | -0.783 | -1159.17 |
+| stop | 4 | %25.0 | -0.863 | -1703.98 |
 
 **Seansa göre**
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
-| ABD | 3 | %33.3 | -0.783 | -1159.17 |
+| ABD | 4 | %25.0 | -0.863 | -1703.98 |
 
 **Teyit sayısına göre**
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
 | 5 | 1 | %100.0 | 0.337 | 167.16 |
-| 7 | 1 | %0.0 | -1.363 | -668.26 |
+| 7 | 2 | %0.0 | -1.233 | -1213.07 |
 | 8 | 1 | %0.0 | -1.324 | -658.07 |
 
 **Girilmeyen kurulumlar (engel)**
 
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- ders: 532
+- ders: 543
 - gösterge aileleri aynı yönde değil: 430
 - büyük zaman dilimi trendi ters: 195
 - bu coinde zaten pozisyon var: 135
-- yüksek etkili ABD verisi yakın (takvim sessizliği): 65
+- yüksek etkili ABD verisi yakın (takvim sessizliği): 66
 - puan +0.149 eşiğin (0.25) altında: 49
 - puan -0.128 eşiğin (0.25) altında: 45
 - puan -0.126 eşiğin (0.25) altında: 45
@@ -123,7 +125,7 @@ En az işe yarayan okumalar: stoch_5m ×0.798, ema_1D ×0.873, yapi_1D ×0.874, 
 
 ## Son 500 gün
 
-İşlem 3 · kazanma %33.3 · ort. -0.783R · toplam -2.35R · net -1159.17$ · maks. düşüş -1326.33$ · kâr faktörü 0.13
+İşlem 4 · kazanma %25.0 · ort. -0.863R · toplam -3.45R · net -1703.98$ · maks. düşüş -1871.14$ · kâr faktörü 0.09
 
 **Kuruluma göre**
 
@@ -131,36 +133,37 @@ En az işe yarayan okumalar: stoch_5m ×0.798, ema_1D ×0.873, yapi_1D ×0.874, 
 |---|---|---|---|---|
 | geri_cekilme+supurme+trend_cizgisi_kirilim_1H | 1 | %0.0 | -1.363 | -668.26 |
 | yapi_bozulmasi_15m+geri_test_15m+trend_cizgisi_kirilim_1H | 2 | %50.0 | -0.494 | -490.91 |
+| yapi_bozulmasi_15m+geri_test_1H+formasyon_yukselen_takoz_1H | 1 | %0.0 | -1.103 | -544.81 |
 
 **Çıkış nedenine göre**
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
-| stop | 3 | %33.3 | -0.783 | -1159.17 |
+| stop | 4 | %25.0 | -0.863 | -1703.98 |
 
 **Seansa göre**
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
-| ABD | 3 | %33.3 | -0.783 | -1159.17 |
+| ABD | 4 | %25.0 | -0.863 | -1703.98 |
 
 **Teyit sayısına göre**
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
 | 5 | 1 | %100.0 | 0.337 | 167.16 |
-| 7 | 1 | %0.0 | -1.363 | -668.26 |
+| 7 | 2 | %0.0 | -1.233 | -1213.07 |
 | 8 | 1 | %0.0 | -1.324 | -658.07 |
 
 **Girilmeyen kurulumlar (engel)**
 
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- ders: 532
+- ders: 543
 - gösterge aileleri aynı yönde değil: 430
 - büyük zaman dilimi trendi ters: 195
 - bu coinde zaten pozisyon var: 135
-- yüksek etkili ABD verisi yakın (takvim sessizliği): 65
+- yüksek etkili ABD verisi yakın (takvim sessizliği): 66
 - puan +0.149 eşiğin (0.25) altında: 49
 - puan -0.128 eşiğin (0.25) altında: 45
 - puan -0.126 eşiğin (0.25) altında: 45

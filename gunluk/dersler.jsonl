@@ -19,3 +19,5 @@
 {"olay": "yol", "yol": "anlik_kirilim|short|akis+uyusmazlik|btc:yatay", "karar": "kacin", "n": 5, "ort_R": -0.988, "ts": 1793209301031}
 {"olay": "yol", "yol": "geri_test|short|akis+seviye|btc:yatay", "karar": "kacin", "n": 6, "ort_R": -0.483, "ts": 1793209745850}
 {"olay": "hata_ayari", "inst": "ETH-USDT-SWAP", "hatalar": ["kayma > 10 bp"], "degisen": {"kayma_cezasi": "ETH-USDT-SWAP"}, "ts": 1793209755014}
+{"olay": "yol", "yol": "geri_test|short|akis+uyusmazlik|btc:yatay", "karar": "kacin", "n": 5, "ort_R": -1.125, "ts": 1793210580115}
+{"olay": "yol", "yol": "yapi_bozulmasi|short|hacim+trend|btc:yatay", "karar": "kacin", "n": 5, "ort_R": -0.536, "ts": 1793210612416}
