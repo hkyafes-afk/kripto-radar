@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.424R; geçtiği kıyaslar: trend_naif → okumaların üstünlüğü kanıtlanmadı
+**Hüküm:** Polat net -0.427R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 529 | %43.7 | -0.424 | -224.42 |
+| polat_tum_sinyaller | 531 | %43.5 | -0.427 | -226.85 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
-| polat_girilmeyen | 527 | %43.6 | -0.424 | -223.22 |
-| rastgele | 542 | %43.7 | -0.423 | -229.3 |
-| trend_naif | 541 | %36.6 | -0.536 | -289.86 |
+| polat_girilmeyen | 529 | %43.5 | -0.427 | -225.65 |
+| rastgele | 546 | %43.4 | -0.429 | -234.31 |
+| trend_naif | 548 | %36.1 | -0.545 | -298.54 |
 
-Polat özsermaye: %-2.57 · BTC al-tut: %0.24
+Polat özsermaye: %-2.57 · BTC al-tut: %0.36
 
 ## Öğrenme (walk-forward)
 
@@ -57,11 +57,11 @@ En az işe yarayan okumalar: yapi_1D ×0.86, ema_4H ×0.891, ema_1D ×0.893, can
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 824
+- ders: 830
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 447
-- büyük zaman dilimi trendi ters: 243
+- büyük zaman dilimi trendi ters: 244
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.127 eşiğin (0.25) altında: 54
@@ -107,11 +107,11 @@ En az işe yarayan okumalar: yapi_1D ×0.86, ema_4H ×0.891, ema_1D ×0.893, can
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 824
+- ders: 830
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 447
-- büyük zaman dilimi trendi ters: 243
+- büyük zaman dilimi trendi ters: 244
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.127 eşiğin (0.25) altında: 54
@@ -157,11 +157,11 @@ En az işe yarayan okumalar: yapi_1D ×0.86, ema_4H ×0.891, ema_1D ×0.893, can
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 824
+- ders: 830
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 447
-- büyük zaman dilimi trendi ters: 243
+- büyük zaman dilimi trendi ters: 244
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.127 eşiğin (0.25) altında: 54
