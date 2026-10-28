@@ -16,7 +16,8 @@ OUT = {}
 def get(path, **params):
     q = urllib.parse.urlencode({k: v for k, v in params.items() if v is not None})
     try:
-        with urllib.request.urlopen(BASE + path + "?" + q, timeout=20) as r:
+        req = urllib.request.Request(BASE + path + "?" + q, headers={"User-Agent": "polat/2"})
+        with urllib.request.urlopen(req, timeout=20) as r:
             b = json.loads(r.read().decode())
             return {"code": b.get("code"), "msg": (b.get("msg") or "")[:120], "data": b.get("data") or []}
     except Exception as e:  # noqa: BLE001
