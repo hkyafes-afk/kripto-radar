@@ -23,51 +23,51 @@ Polat özsermaye: %0.0 · BTC al-tut: %-0.06
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 278, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 293, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 54
-- gösterge aileleri aynı yönde değil: 29
+- emir defteri doğrulanmadı: 56
+- gösterge aileleri aynı yönde değil: 30
 - büyük zaman dilimi trendi ters: 11
 - puan +0.137 eşiğin (0.25) altında: 5
 - puan +0.235 eşiğin (0.25) altında: 5
 - puan +0.177 eşiğin (0.25) altında: 4
 - puan +0.193 eşiğin (0.25) altında: 3
 - puan +0.185 eşiğin (0.25) altında: 3
+- puan +0.134 eşiğin (0.25) altında: 3
 - puan +0.204 eşiğin (0.25) altında: 3
-- puan +0.146 eşiğin (0.25) altında: 3
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 278, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 293, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 54
-- gösterge aileleri aynı yönde değil: 29
+- emir defteri doğrulanmadı: 56
+- gösterge aileleri aynı yönde değil: 30
 - büyük zaman dilimi trendi ters: 11
 - puan +0.137 eşiğin (0.25) altında: 5
 - puan +0.235 eşiğin (0.25) altında: 5
 - puan +0.177 eşiğin (0.25) altında: 4
 - puan +0.193 eşiğin (0.25) altında: 3
 - puan +0.185 eşiğin (0.25) altında: 3
+- puan +0.134 eşiğin (0.25) altında: 3
 - puan +0.204 eşiğin (0.25) altında: 3
-- puan +0.146 eşiğin (0.25) altında: 3
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 278, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 293, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 54
-- gösterge aileleri aynı yönde değil: 29
+- emir defteri doğrulanmadı: 56
+- gösterge aileleri aynı yönde değil: 30
 - büyük zaman dilimi trendi ters: 11
 - puan +0.137 eşiğin (0.25) altında: 5
 - puan +0.235 eşiğin (0.25) altında: 5
 - puan +0.177 eşiğin (0.25) altında: 4
 - puan +0.193 eşiğin (0.25) altında: 3
 - puan +0.185 eşiğin (0.25) altında: 3
+- puan +0.134 eşiğin (0.25) altında: 3
 - puan +0.204 eşiğin (0.25) altında: 3
-- puan +0.146 eşiğin (0.25) altında: 3
