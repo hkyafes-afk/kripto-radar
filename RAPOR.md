@@ -23,51 +23,51 @@ Polat özsermaye: %0.0 · BTC al-tut: %-0.05
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 660, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 676, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 132
+- emir defteri doğrulanmadı: 135
 - gösterge aileleri aynı yönde değil: 67
 - büyük zaman dilimi trendi ters: 11
 - puan +0.137 eşiğin (0.25) altında: 8
 - puan +0.176 eşiğin (0.25) altında: 8
+- puan +0.204 eşiğin (0.25) altında: 7
 - puan +0.193 eşiğin (0.25) altında: 6
 - puan +0.185 eşiğin (0.25) altında: 6
 - puan +0.235 eşiğin (0.25) altında: 6
 - puan +0.233 eşiğin (0.25) altında: 6
-- puan +0.186 eşiğin (0.25) altında: 6
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 660, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 676, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 132
+- emir defteri doğrulanmadı: 135
 - gösterge aileleri aynı yönde değil: 67
 - büyük zaman dilimi trendi ters: 11
 - puan +0.137 eşiğin (0.25) altında: 8
 - puan +0.176 eşiğin (0.25) altında: 8
+- puan +0.204 eşiğin (0.25) altında: 7
 - puan +0.193 eşiğin (0.25) altında: 6
 - puan +0.185 eşiğin (0.25) altında: 6
 - puan +0.235 eşiğin (0.25) altında: 6
 - puan +0.233 eşiğin (0.25) altında: 6
-- puan +0.186 eşiğin (0.25) altında: 6
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 660, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 676, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 132
+- emir defteri doğrulanmadı: 135
 - gösterge aileleri aynı yönde değil: 67
 - büyük zaman dilimi trendi ters: 11
 - puan +0.137 eşiğin (0.25) altında: 8
 - puan +0.176 eşiğin (0.25) altında: 8
+- puan +0.204 eşiğin (0.25) altında: 7
 - puan +0.193 eşiğin (0.25) altında: 6
 - puan +0.185 eşiğin (0.25) altında: 6
 - puan +0.235 eşiğin (0.25) altında: 6
 - puan +0.233 eşiğin (0.25) altında: 6
-- puan +0.186 eşiğin (0.25) altında: 6
