@@ -88,6 +88,10 @@ risk:
   kismi_kar_oran: 0.5        # ... pozisyonun yarısını kapat
   basabas: true              # kısmi kârdan sonra stop'u başabaşa (+ücretler) çek
   iz_suren_atr: 2.0          # kalan pozisyon için iz süren stop: en iyi fiyattan 2 ATR geride (0 = kapalı)
+  kar_kilidi:                 # v10.2 (kullanıcı kararı): tepe kâr 0,5R'yi geçince stop tepe kârın %60'ını korur.
+    aktif: true                #   5 yıllık testte benzer kurallar kazanma oranını artırıp ortalama R'yi biraz düşürdü;
+    baslangic_r: 0.5           #   demoda kâr korumak tercih edildi. Açık pozisyonlara da uygulanır (tepe bundan sonra
+    koru: 0.6                  #   görülen en iyi fiyattan ölçülür).
   gunluk_kayip_yuzde: 2.0    # % gün içinde bu kadar kayıpta o gün yeni işlem açma (UTC günü)
   max_dusus_yuzde: 10.0      # % zirveden bu kadar düşüşte botu durdur (/devam ile açılır)
   kayip_serisi: 4            # üst üste bu kadar kayıpta ...

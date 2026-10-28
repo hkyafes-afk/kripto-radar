@@ -392,18 +392,34 @@ def _breakeven(t: dict, cfg: dict):
     set_sl(t, be)
 
 
+def lock_profit(t: dict, cfg: dict) -> bool:
+    """v10.2 kâr kilidi (kullanıcı kararı, 28.10.2026): tepe kâr baslangic_r × ilk riski geçince stop, tepe kârın
+    `koru` oranını koruyacak seviyeye çekilir. Tepe, işlem açıkken görülen en iyi fiyattır (`hw`)."""
+    kc = risk_cfg(cfg).get("kar_kilidi") or {}
+    if not kc.get("aktif") or t.get("carry") or not t.get("sl_init"):
+        return False
+    sgn = 1 if t["side"] == "long" else -1
+    r0 = abs(t["entry"] - t["sl_init"])
+    peak = sgn * (t.get("hw", t["entry"]) - t["entry"])
+    if r0 <= 0 or peak < float(kc.get("baslangic_r", 0.5)) * r0:
+        return False
+    return set_sl(t, t["entry"] + sgn * float(kc.get("koru", 0.6)) * peak)
+
+
 def trail(t: dict, best_px: float, cfg: dict) -> bool:
-    """İz süren stop: en iyi fiyattan ATR × k geride. Stop sadece kâr yönüne hareket eder."""
-    if not t.get("trail"):
+    """Tepe fiyatı izler; kâr kilidi + (açıksa) iz süren stop: en iyi fiyattan ATR × k geride. Stop yalnız kâr yönüne."""
+    if t.get("carry"):
         return False
     sgn = 1 if t["side"] == "long" else -1
     if sgn * (best_px - t.get("hw", t["entry"])) > 0:
         t["hw"] = best_px
+    moved = lock_profit(t, cfg)
+    if not t.get("trail"):
+        return moved
     k = (t.get("pp") or {}).get("trail_atr", risk_cfg(cfg)["iz_suren_atr"])
     if k <= 0:
-        return False
-    new_sl = t["hw"] - sgn * k * t["atr"]
-    return set_sl(t, new_sl)
+        return moved
+    return set_sl(t, t["hw"] - sgn * k * t["atr"]) or moved
 
 
 # ── kapanış ────────────────────────────────────────────────────────────

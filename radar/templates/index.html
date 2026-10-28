@@ -831,7 +831,11 @@ function renderShadow(){
   const T = D.team || {}, op = D.ledger.open.filter(t=>t.shadow), cl = (D.ledger.shadow_closed||[]);
   const f2 = (x,d=2) => x==null ? "–" : (+x).toFixed(d).replace(".",",");
   const ms = Object.values(T).filter(m => m.benched || (m.shadow && (m.shadow.open || m.shadow.closed)));
-  let h = `<h2>Gölgedeki yöneticiler</h2>`;
+  const sum = a => a.reduce((x,y)=>x+(+y||0),0), opP = sum(op.map(t=>t.upnl_usd)), clP = sum(cl.map(t=>t.pnl_usd)), win = cl.filter(t=>(t.pnl_usd||0)>0).length;
+  let h = `<div class="kpis"><div class="kpi"><div class="l">Gölge toplam kâr/zarar</div><div class="v num ${cls(opP+clP)}">${money(opP+clP)}</div><div class="s">sanal; firma bakiyesine dokunmaz</div></div>
+    <div class="kpi"><div class="l">Açık gölge (anlık)</div><div class="v num ${cls(opP)}">${money(opP)}</div><div class="s">${op.length} işlem</div></div>
+    <div class="kpi"><div class="l">Kapanan gölge</div><div class="v num ${cls(clP)}">${money(clP)}</div><div class="s">${cl.length} işlem · kazanma ${cl.length?Math.round(100*win/cl.length):0}%</div></div></div>`;
+  h += `<h2>Gölgedeki yöneticiler</h2>`;
   h += ms.length ? `<div class="list">` + ms.map(m => { const sh = m.shadow || {};
       return `<div class="li"><div style="min-width:0"><div>${m.emoji} <b>${esc(m.name)}</b> ${m.benched?`<span class="badge b-amber">gölgede</span>`:`<span class="badge b-dim">sermayeli · bazı işlem türleri gölgede</span>`}</div>
       <div class="m">${sh.closed||0} gölge işlem kapandı · ortalama ${sh.avg_r!=null?(sh.avg_r>0?"+":"")+f2(sh.avg_r)+"R":"–"} · ${sh.open||0} açık${m.bench_why?" · sebep: "+esc(m.bench_why):""}</div></div></div>`; }).join("") + `</div>`

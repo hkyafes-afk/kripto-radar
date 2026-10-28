@@ -95,6 +95,20 @@ def test_desk_regime_gate_and_policy_version():
     assert t["politika"] == policy.VERSION == "v10.2"
 
 
+def test_profit_lock():
+    """v10.2 kâr kilidi: tepe kâr 0,5R'yi geçince stop tepe kârın %60'ına; altında dokunmaz; yalnız kâr yönüne."""
+    t = lg.build_trade(_idea(tf="4H"), 100.0, 10.0, 10.0, 1.0, CFG, NOW, 10_000)     # stop 96 → 1R = 4
+    assert not lg.trail(t, 101.5, CFG) and t["sl"] == 96.0, "tepe 0,375R: kilit yok"
+    assert lg.trail(t, 103.0, CFG) and abs(t["sl"] - 101.8) < 1e-9, "tepe 0,75R: stop 100 + 0,6×3"
+    assert not lg.trail(t, 102.0, CFG) and abs(t["sl"] - 101.8) < 1e-9, "fiyat geri gelince stop geri gitmez"
+    s = lg.build_trade(_idea(tf="4H", side="short", sl=104.0, tp=76.0), 100.0, 10.0, 10.0, 1.0, CFG, NOW, 10_000)
+    assert lg.trail(s, 97.0, CFG) and abs(s["sl"] - 98.2) < 1e-9, "short: 100 − 0,6×3"
+    off = copy.deepcopy(CFG)
+    off["risk"]["kar_kilidi"]["aktif"] = False
+    u = lg.build_trade(_idea(tf="4H"), 100.0, 10.0, 10.0, 1.0, off, NOW, 10_000)
+    assert not lg.trail(u, 103.0, off) and u["sl"] == 96.0
+
+
 def test_reentry():
     loss = {"mgr": "kaan", "inst": "X-USDT-SWAP", "side": "long", "exit_ts": NOW - 2 * DAY, "r": -1.0}
     assert "zararla" in policy.reentry_block([loss], _idea(), NOW, CFG)

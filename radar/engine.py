@@ -1161,13 +1161,12 @@ class Engine:
         """İz süren stop: canlı akıştaki en iyi fiyata göre stop'u kâr yönüne taşır."""
         moved = False
         for t in self.ledger["open"]:
-            if not t.get("trail"):
+            if t.get("carry"):
                 continue
-            h = self.hw.get(t["inst"])
-            if not h:
+            px = self.prices.get(t["inst"])        # v10.2: işlemin kendi tepesi (t["hw"]) anlık fiyattan izlenir;
+            if not px:                              # coin bazlı oturum tepesi girişten önceki fiyatları da içerebilir
                 continue
-            best = h[0] if t["side"] == "long" else h[1]
-            if lg.trail(t, best, self.cfg):
+            if lg.trail(t, px, self.cfg):
                 moved = True
                 self.stats_counter["trail_moves"] += 1
         if moved:
