@@ -4,14 +4,14 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** kanıt yetersiz: 84/100 sonuçlanmış sinyal. Bu sayıdan önce hiçbir sonuç anlamlı değildir.
+**Hüküm:** kanıt yetersiz: 85/100 sonuçlanmış sinyal. Bu sayıdan önce hiçbir sonuç anlamlı değildir.
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 84 | %51.2 | -0.314 | -26.35 |
+| polat_tum_sinyaller | 85 | %51.8 | -0.302 | -25.69 |
 | polat_girilen | 0 | %- | - | - |
-| polat_girilmeyen | 84 | %51.2 | -0.314 | -26.35 |
-| rastgele | 81 | %45.7 | -0.465 | -37.63 |
+| polat_girilmeyen | 85 | %51.8 | -0.302 | -25.69 |
+| rastgele | 82 | %46.3 | -0.451 | -36.97 |
 | trend_naif | 85 | %35.3 | -0.595 | -50.59 |
 
 Polat özsermaye: %0.0 · BTC al-tut: %0.01
@@ -23,12 +23,12 @@ Polat özsermaye: %0.0 · BTC al-tut: %0.01
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 1985, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 1993, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 314
-- gösterge aileleri aynı yönde değil: 139
+- gösterge aileleri aynı yönde değil: 140
 - büyük zaman dilimi trendi ters: 57
 - puan +0.149 eşiğin (0.25) altında: 18
 - puan +0.146 eşiğin (0.25) altında: 16
@@ -40,12 +40,12 @@ Kapanmış işlem yok. Görülen kurulum: 1985, girilen: 0.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 1985, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 1993, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 314
-- gösterge aileleri aynı yönde değil: 139
+- gösterge aileleri aynı yönde değil: 140
 - büyük zaman dilimi trendi ters: 57
 - puan +0.149 eşiğin (0.25) altında: 18
 - puan +0.146 eşiğin (0.25) altında: 16
@@ -57,12 +57,12 @@ Kapanmış işlem yok. Görülen kurulum: 1985, girilen: 0.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 1985, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 1993, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 314
-- gösterge aileleri aynı yönde değil: 139
+- gösterge aileleri aynı yönde değil: 140
 - büyük zaman dilimi trendi ters: 57
 - puan +0.149 eşiğin (0.25) altında: 18
 - puan +0.146 eşiğin (0.25) altında: 16
