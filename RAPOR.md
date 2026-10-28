@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.396R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.398R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 323 | %45.5 | -0.396 | -127.83 |
+| polat_tum_sinyaller | 324 | %45.4 | -0.398 | -129.02 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
-| polat_girilmeyen | 321 | %45.5 | -0.394 | -126.63 |
-| rastgele | 336 | %43.2 | -0.465 | -156.14 |
-| trend_naif | 333 | %38.1 | -0.513 | -170.81 |
+| polat_girilmeyen | 322 | %45.3 | -0.397 | -127.82 |
+| rastgele | 337 | %43.0 | -0.467 | -157.34 |
+| trend_naif | 335 | %37.9 | -0.517 | -173.07 |
 
-Polat özsermaye: %-1.46 · BTC al-tut: %-0.4
+Polat özsermaye: %-1.33 · BTC al-tut: %-0.49
 
 ## Öğrenme (walk-forward)
 
@@ -58,7 +58,7 @@ En az işe yarayan okumalar: adx_di_1D ×0.816, trix_1D ×0.835, yapi_1D ×0.841
 - ders: 379
 - gösterge aileleri aynı yönde değil: 323
 - büyük zaman dilimi trendi ters: 153
-- bu coinde zaten pozisyon var: 97
+- bu coinde zaten pozisyon var: 100
 - puan +0.149 eşiğin (0.25) altında: 44
 - puan +0.146 eşiğin (0.25) altında: 40
 - puan +0.167 eşiğin (0.25) altında: 38
@@ -104,7 +104,7 @@ En az işe yarayan okumalar: adx_di_1D ×0.816, trix_1D ×0.835, yapi_1D ×0.841
 - ders: 379
 - gösterge aileleri aynı yönde değil: 323
 - büyük zaman dilimi trendi ters: 153
-- bu coinde zaten pozisyon var: 97
+- bu coinde zaten pozisyon var: 100
 - puan +0.149 eşiğin (0.25) altında: 44
 - puan +0.146 eşiğin (0.25) altında: 40
 - puan +0.167 eşiğin (0.25) altında: 38
@@ -150,7 +150,7 @@ En az işe yarayan okumalar: adx_di_1D ×0.816, trix_1D ×0.835, yapi_1D ×0.841
 - ders: 379
 - gösterge aileleri aynı yönde değil: 323
 - büyük zaman dilimi trendi ters: 153
-- bu coinde zaten pozisyon var: 97
+- bu coinde zaten pozisyon var: 100
 - puan +0.149 eşiğin (0.25) altında: 44
 - puan +0.146 eşiğin (0.25) altında: 40
 - puan +0.167 eşiğin (0.25) altında: 38
