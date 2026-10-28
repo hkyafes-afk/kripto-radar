@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 525 | %43.8 | -0.422 | -221.48 |
 | trend_naif | 524 | %36.8 | -0.53 | -277.62 |
 
-Polat özsermaye: %-2.57 · BTC al-tut: %-0.01
+Polat özsermaye: %-2.57 · BTC al-tut: %0.03
 
 ## Öğrenme (walk-forward)
 
@@ -57,7 +57,7 @@ En az işe yarayan okumalar: yapi_1D ×0.879, ema_4H ×0.897, ema_1D ×0.911, ca
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 743
+- ders: 745
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 442
@@ -66,7 +66,7 @@ En az işe yarayan okumalar: yapi_1D ×0.879, ema_4H ×0.897, ema_1D ×0.911, ca
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.149 eşiğin (0.25) altında: 52
 - puan +0.127 eşiğin (0.25) altında: 51
-- puan +0.123 eşiğin (0.25) altında: 47
+- puan +0.123 eşiğin (0.25) altında: 48
 
 **Hata sınıfları**
 
@@ -107,7 +107,7 @@ En az işe yarayan okumalar: yapi_1D ×0.879, ema_4H ×0.897, ema_1D ×0.911, ca
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 743
+- ders: 745
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 442
@@ -116,7 +116,7 @@ En az işe yarayan okumalar: yapi_1D ×0.879, ema_4H ×0.897, ema_1D ×0.911, ca
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.149 eşiğin (0.25) altında: 52
 - puan +0.127 eşiğin (0.25) altında: 51
-- puan +0.123 eşiğin (0.25) altında: 47
+- puan +0.123 eşiğin (0.25) altında: 48
 
 **Hata sınıfları**
 
@@ -157,7 +157,7 @@ En az işe yarayan okumalar: yapi_1D ×0.879, ema_4H ×0.897, ema_1D ×0.911, ca
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 743
+- ders: 745
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 442
@@ -166,7 +166,7 @@ En az işe yarayan okumalar: yapi_1D ×0.879, ema_4H ×0.897, ema_1D ×0.911, ca
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.149 eşiğin (0.25) altında: 52
 - puan +0.127 eşiğin (0.25) altında: 51
-- puan +0.123 eşiğin (0.25) altında: 47
+- puan +0.123 eşiğin (0.25) altında: 48
 
 **Hata sınıfları**
 
