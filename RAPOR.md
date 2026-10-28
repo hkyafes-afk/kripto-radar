@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 621 | %48.1 | -0.299 | -185.61 |
+| polat_tum_sinyaller | 623 | %48.2 | -0.299 | -186.18 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
-| polat_girilmeyen | 619 | %48.1 | -0.298 | -184.4 |
-| rastgele | 635 | %42.7 | -0.422 | -268.09 |
-| trend_naif | 630 | %37.8 | -0.505 | -317.99 |
+| polat_girilmeyen | 621 | %48.1 | -0.298 | -184.98 |
+| rastgele | 636 | %42.8 | -0.42 | -267.34 |
+| trend_naif | 632 | %37.8 | -0.504 | -318.56 |
 
-Polat özsermaye: %-2.57 · BTC al-tut: %0.2
+Polat özsermaye: %-2.57 · BTC al-tut: %0.19
 
 ## Öğrenme (walk-forward)
 
@@ -57,11 +57,11 @@ En az işe yarayan okumalar: yapi_1D ×0.824, ema_4H ×0.865, ema_1D ×0.876, ob
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 1217
+- ders: 1220
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 487
-- üst üste 3 zarar: 355
+- üst üste 3 zarar: 356
 - büyük zaman dilimi trendi ters: 354
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
@@ -107,11 +107,11 @@ En az işe yarayan okumalar: yapi_1D ×0.824, ema_4H ×0.865, ema_1D ×0.876, ob
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 1217
+- ders: 1220
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 487
-- üst üste 3 zarar: 355
+- üst üste 3 zarar: 356
 - büyük zaman dilimi trendi ters: 354
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
@@ -157,11 +157,11 @@ En az işe yarayan okumalar: yapi_1D ×0.824, ema_4H ×0.865, ema_1D ×0.876, ob
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 1217
+- ders: 1220
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 487
-- üst üste 3 zarar: 355
+- üst üste 3 zarar: 356
 - büyük zaman dilimi trendi ters: 354
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120

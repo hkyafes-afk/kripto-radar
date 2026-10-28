@@ -27,3 +27,4 @@
 {"olay": "yol", "yol": "yapi_bozulmasi|long|akis+seviye|btc:yatay", "karar": null, "n": 17, "ort_R": -0.27, "ts": 1793217987122}
 {"olay": "yol", "yol": "geri_cekilme|long|akis+seviye|btc:yatay", "karar": "benimse", "n": 9, "ort_R": 0.456, "ts": 1793218404526}
 {"olay": "yol", "yol": "geri_cekilme|short|akis+formasyon|btc:yatay", "karar": "kacin", "n": 5, "ort_R": -1.072, "ts": 1793220771706}
+{"olay": "yol", "yol": "yapi_bozulmasi|long|akis+uyusmazlik|btc:yatay", "karar": "benimse", "n": 7, "ort_R": 0.433, "ts": 1793223010483}
