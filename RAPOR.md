@@ -11,10 +11,10 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 422 | %46.0 | -0.375 | -158.08 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
 | polat_girilmeyen | 420 | %46.0 | -0.374 | -156.88 |
-| rastgele | 436 | %43.8 | -0.424 | -184.68 |
-| trend_naif | 435 | %38.9 | -0.487 | -211.75 |
+| rastgele | 437 | %43.7 | -0.425 | -185.73 |
+| trend_naif | 436 | %38.8 | -0.488 | -212.81 |
 
-Polat özsermaye: %-1.5 · BTC al-tut: %-0.53
+Polat özsermaye: %-1.53 · BTC al-tut: %-0.5
 
 ## Öğrenme (walk-forward)
 
@@ -54,13 +54,13 @@ En az işe yarayan okumalar: stoch_5m ×0.781, ema_1D ×0.873, yapi_1D ×0.874, 
 
 **Girilmeyen kurulumlar (engel)**
 
-- günlük işlem tavanı (8): 612
+- günlük işlem tavanı (8): 616
 - emir defteri doğrulanmadı: 593
 - ders: 510
 - gösterge aileleri aynı yönde değil: 419
 - büyük zaman dilimi trendi ters: 185
 - bu coinde zaten pozisyon var: 135
-- puan +0.149 eşiğin (0.25) altında: 48
+- puan +0.149 eşiğin (0.25) altında: 49
 - puan -0.126 eşiğin (0.25) altında: 44
 - puan -0.129 eşiğin (0.25) altında: 43
 - puan -0.121 eşiğin (0.25) altında: 43
@@ -100,13 +100,13 @@ En az işe yarayan okumalar: stoch_5m ×0.781, ema_1D ×0.873, yapi_1D ×0.874, 
 
 **Girilmeyen kurulumlar (engel)**
 
-- günlük işlem tavanı (8): 612
+- günlük işlem tavanı (8): 616
 - emir defteri doğrulanmadı: 593
 - ders: 510
 - gösterge aileleri aynı yönde değil: 419
 - büyük zaman dilimi trendi ters: 185
 - bu coinde zaten pozisyon var: 135
-- puan +0.149 eşiğin (0.25) altında: 48
+- puan +0.149 eşiğin (0.25) altında: 49
 - puan -0.126 eşiğin (0.25) altında: 44
 - puan -0.129 eşiğin (0.25) altında: 43
 - puan -0.121 eşiğin (0.25) altında: 43
@@ -146,13 +146,13 @@ En az işe yarayan okumalar: stoch_5m ×0.781, ema_1D ×0.873, yapi_1D ×0.874, 
 
 **Girilmeyen kurulumlar (engel)**
 
-- günlük işlem tavanı (8): 612
+- günlük işlem tavanı (8): 616
 - emir defteri doğrulanmadı: 593
 - ders: 510
 - gösterge aileleri aynı yönde değil: 419
 - büyük zaman dilimi trendi ters: 185
 - bu coinde zaten pozisyon var: 135
-- puan +0.149 eşiğin (0.25) altında: 48
+- puan +0.149 eşiğin (0.25) altında: 49
 - puan -0.126 eşiğin (0.25) altında: 44
 - puan -0.129 eşiğin (0.25) altında: 43
 - puan -0.121 eşiğin (0.25) altında: 43
