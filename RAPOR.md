@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.426R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.448R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 288 | %44.4 | -0.426 | -122.54 |
+| polat_tum_sinyaller | 299 | %43.1 | -0.448 | -134.02 |
 | polat_girilen | 1 | %100.0 | 0.215 | 0.21 |
-| polat_girilmeyen | 287 | %44.3 | -0.428 | -122.76 |
-| rastgele | 301 | %42.2 | -0.488 | -147.02 |
-| trend_naif | 300 | %35.3 | -0.563 | -168.94 |
+| polat_girilmeyen | 298 | %43.0 | -0.45 | -134.24 |
+| rastgele | 307 | %41.4 | -0.505 | -155.03 |
+| trend_naif | 309 | %34.6 | -0.576 | -178.12 |
 
-Polat özsermaye: %-0.7 · BTC al-tut: %-0.33
+Polat özsermaye: %-0.7 · BTC al-tut: %-0.2
 
 ## Öğrenme (walk-forward)
 
@@ -54,12 +54,12 @@ En az işe yarayan okumalar: uyusmazlik_macd_1H ×0.846, yapi_1D ×0.88, adx_di_
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 327
-- gösterge aileleri aynı yönde değil: 307
+- ders: 328
+- gösterge aileleri aynı yönde değil: 308
 - büyük zaman dilimi trendi ters: 153
 - bu coinde zaten pozisyon var: 81
 - puan +0.149 eşiğin (0.25) altında: 44
-- puan +0.146 eşiğin (0.25) altında: 38
+- puan +0.146 eşiğin (0.25) altında: 39
 - puan +0.167 eşiğin (0.25) altında: 38
 - puan +0.207 eşiğin (0.25) altında: 36
 - puan +0.158 eşiğin (0.25) altında: 36
@@ -95,12 +95,12 @@ En az işe yarayan okumalar: uyusmazlik_macd_1H ×0.846, yapi_1D ×0.88, adx_di_
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 327
-- gösterge aileleri aynı yönde değil: 307
+- ders: 328
+- gösterge aileleri aynı yönde değil: 308
 - büyük zaman dilimi trendi ters: 153
 - bu coinde zaten pozisyon var: 81
 - puan +0.149 eşiğin (0.25) altında: 44
-- puan +0.146 eşiğin (0.25) altında: 38
+- puan +0.146 eşiğin (0.25) altında: 39
 - puan +0.167 eşiğin (0.25) altında: 38
 - puan +0.207 eşiğin (0.25) altında: 36
 - puan +0.158 eşiğin (0.25) altında: 36
@@ -136,12 +136,12 @@ En az işe yarayan okumalar: uyusmazlik_macd_1H ×0.846, yapi_1D ×0.88, adx_di_
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 327
-- gösterge aileleri aynı yönde değil: 307
+- ders: 328
+- gösterge aileleri aynı yönde değil: 308
 - büyük zaman dilimi trendi ters: 153
 - bu coinde zaten pozisyon var: 81
 - puan +0.149 eşiğin (0.25) altında: 44
-- puan +0.146 eşiğin (0.25) altında: 38
+- puan +0.146 eşiğin (0.25) altında: 39
 - puan +0.167 eşiğin (0.25) altında: 38
 - puan +0.207 eşiğin (0.25) altında: 36
 - puan +0.158 eşiğin (0.25) altında: 36
