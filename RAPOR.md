@@ -25,51 +25,51 @@ En az işe yarayan okumalar: stoch_5m ×0.793, stoch_15m ×0.88, yapi_1D ×0.927
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 3706, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 3721, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 533
-- gösterge aileleri aynı yönde değil: 224
-- ders: 123
+- emir defteri doğrulanmadı: 535
+- gösterge aileleri aynı yönde değil: 225
+- ders: 129
 - büyük zaman dilimi trendi ters: 81
 - puan +0.149 eşiğin (0.25) altında: 29
 - puan +0.167 eşiğin (0.25) altında: 26
 - puan +0.146 eşiğin (0.25) altında: 24
 - puan +0.198 eşiğin (0.25) altında: 21
 - puan +0.161 eşiğin (0.25) altında: 20
-- puan +0.148 eşiğin (0.25) altında: 20
+- puan +0.180 eşiğin (0.25) altında: 20
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 3706, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 3721, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 533
-- gösterge aileleri aynı yönde değil: 224
-- ders: 123
+- emir defteri doğrulanmadı: 535
+- gösterge aileleri aynı yönde değil: 225
+- ders: 129
 - büyük zaman dilimi trendi ters: 81
 - puan +0.149 eşiğin (0.25) altında: 29
 - puan +0.167 eşiğin (0.25) altında: 26
 - puan +0.146 eşiğin (0.25) altında: 24
 - puan +0.198 eşiğin (0.25) altında: 21
 - puan +0.161 eşiğin (0.25) altında: 20
-- puan +0.148 eşiğin (0.25) altında: 20
+- puan +0.180 eşiğin (0.25) altında: 20
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 3706, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 3721, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 533
-- gösterge aileleri aynı yönde değil: 224
-- ders: 123
+- emir defteri doğrulanmadı: 535
+- gösterge aileleri aynı yönde değil: 225
+- ders: 129
 - büyük zaman dilimi trendi ters: 81
 - puan +0.149 eşiğin (0.25) altında: 29
 - puan +0.167 eşiğin (0.25) altında: 26
 - puan +0.146 eşiğin (0.25) altında: 24
 - puan +0.198 eşiğin (0.25) altında: 21
 - puan +0.161 eşiğin (0.25) altında: 20
-- puan +0.148 eşiğin (0.25) altında: 20
+- puan +0.180 eşiğin (0.25) altında: 20
