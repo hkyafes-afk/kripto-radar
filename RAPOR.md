@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** kanıt yetersiz: 17/100 sonuçlanmış sinyal. Bu sayıdan önce hiçbir sonuç anlamlı değildir.
+**Hüküm:** kanıt yetersiz: 20/100 sonuçlanmış sinyal. Bu sayıdan önce hiçbir sonuç anlamlı değildir.
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 17 | %41.2 | -0.439 | -7.46 |
+| polat_tum_sinyaller | 20 | %45.0 | -0.39 | -7.79 |
 | polat_girilen | 0 | %- | - | - |
-| polat_girilmeyen | 17 | %41.2 | -0.439 | -7.46 |
-| rastgele | 18 | %38.9 | -0.568 | -10.23 |
-| trend_naif | 17 | %35.3 | -0.559 | -9.5 |
+| polat_girilmeyen | 20 | %45.0 | -0.39 | -7.79 |
+| rastgele | 20 | %40.0 | -0.56 | -11.2 |
+| trend_naif | 19 | %36.8 | -0.525 | -9.97 |
 
-Polat özsermaye: %0.0 · BTC al-tut: %-0.06
+Polat özsermaye: %0.0 · BTC al-tut: %-0.14
 
 ## Öğrenme (walk-forward)
 
@@ -23,13 +23,13 @@ Polat özsermaye: %0.0 · BTC al-tut: %-0.06
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 732, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 742, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 143
+- emir defteri doğrulanmadı: 144
 - gösterge aileleri aynı yönde değil: 67
-- büyük zaman dilimi trendi ters: 12
+- büyük zaman dilimi trendi ters: 13
 - puan +0.137 eşiğin (0.25) altında: 8
 - puan +0.176 eşiğin (0.25) altında: 8
 - puan +0.204 eşiğin (0.25) altında: 7
@@ -40,13 +40,13 @@ Kapanmış işlem yok. Görülen kurulum: 732, girilen: 0.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 732, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 742, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 143
+- emir defteri doğrulanmadı: 144
 - gösterge aileleri aynı yönde değil: 67
-- büyük zaman dilimi trendi ters: 12
+- büyük zaman dilimi trendi ters: 13
 - puan +0.137 eşiğin (0.25) altında: 8
 - puan +0.176 eşiğin (0.25) altında: 8
 - puan +0.204 eşiğin (0.25) altında: 7
@@ -57,13 +57,13 @@ Kapanmış işlem yok. Görülen kurulum: 732, girilen: 0.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 732, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 742, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 143
+- emir defteri doğrulanmadı: 144
 - gösterge aileleri aynı yönde değil: 67
-- büyük zaman dilimi trendi ters: 12
+- büyük zaman dilimi trendi ters: 13
 - puan +0.137 eşiğin (0.25) altında: 8
 - puan +0.176 eşiğin (0.25) altında: 8
 - puan +0.204 eşiğin (0.25) altında: 7
