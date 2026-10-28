@@ -1,0 +1,38 @@
+name: CoinAPI ölçüm
+
+# Elle çalıştırılır. CoinAPI'de her veri türünün kredi maliyetini küçük isteklerle ölçer (bütçe sınırlı);
+# raporu coinapi-veri dalına yazar. Anahtar: depo gizli değişkeni COINAPI_KEY.
+on:
+  workflow_dispatch:
+    inputs:
+      butce_kredi:
+        description: "Bu denemede harcanabilecek en fazla kredi"
+        default: "10"
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Ölçüm
+        env:
+          COINAPI_KEY: ${{ secrets.COINAPI_KEY }}
+          BUTCE_KREDI: ${{ github.event.inputs.butce_kredi }}
+        run: python scripts/coinapi_probe.py /tmp/coinapi_rapor.json
+      - name: Raporu dala yaz
+        if: always()
+        run: |
+          git config user.name "radar"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin coinapi-veri 2>/dev/null && git checkout -q coinapi-veri || git checkout -q --orphan coinapi-veri
+          git rm -rq --cached . 2>/dev/null || true
+          mv /tmp/coinapi_rapor.json coinapi_rapor.json 2>/dev/null || echo '{"hata":"rapor yok"}' > coinapi_rapor.json
+          git add coinapi_rapor.json
+          git commit -qm "CoinAPI ölçüm raporu" && git push -q origin HEAD:coinapi-veri
