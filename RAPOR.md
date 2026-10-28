@@ -11,10 +11,10 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 83 | %51.8 | -0.298 | -24.76 |
 | polat_girilen | 0 | %- | - | - |
 | polat_girilmeyen | 83 | %51.8 | -0.298 | -24.76 |
-| rastgele | 80 | %46.2 | -0.455 | -36.42 |
-| trend_naif | 82 | %36.6 | -0.567 | -46.52 |
+| rastgele | 81 | %45.7 | -0.465 | -37.63 |
+| trend_naif | 84 | %35.7 | -0.583 | -49.01 |
 
-Polat özsermaye: %0.0 · BTC al-tut: %0.1
+Polat özsermaye: %0.0 · BTC al-tut: %0.02
 
 ## Öğrenme (walk-forward)
 
@@ -23,12 +23,12 @@ Polat özsermaye: %0.0 · BTC al-tut: %0.1
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 1936, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 1948, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 311
-- gösterge aileleri aynı yönde değil: 133
+- emir defteri doğrulanmadı: 312
+- gösterge aileleri aynı yönde değil: 134
 - büyük zaman dilimi trendi ters: 57
 - puan +0.149 eşiğin (0.25) altında: 17
 - puan +0.146 eşiğin (0.25) altında: 16
@@ -40,12 +40,12 @@ Kapanmış işlem yok. Görülen kurulum: 1936, girilen: 0.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 1936, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 1948, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 311
-- gösterge aileleri aynı yönde değil: 133
+- emir defteri doğrulanmadı: 312
+- gösterge aileleri aynı yönde değil: 134
 - büyük zaman dilimi trendi ters: 57
 - puan +0.149 eşiğin (0.25) altında: 17
 - puan +0.146 eşiğin (0.25) altında: 16
@@ -57,12 +57,12 @@ Kapanmış işlem yok. Görülen kurulum: 1936, girilen: 0.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 1936, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 1948, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 311
-- gösterge aileleri aynı yönde değil: 133
+- emir defteri doğrulanmadı: 312
+- gösterge aileleri aynı yönde değil: 134
 - büyük zaman dilimi trendi ters: 57
 - puan +0.149 eşiğin (0.25) altında: 17
 - puan +0.146 eşiğin (0.25) altında: 16
