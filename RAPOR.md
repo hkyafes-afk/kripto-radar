@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.368R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.371R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 428 | %46.5 | -0.368 | -157.34 |
+| polat_tum_sinyaller | 431 | %46.4 | -0.371 | -159.73 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
-| polat_girilmeyen | 426 | %46.5 | -0.367 | -156.13 |
-| rastgele | 443 | %43.8 | -0.424 | -188.0 |
-| trend_naif | 440 | %39.1 | -0.485 | -213.38 |
+| polat_girilmeyen | 429 | %46.4 | -0.37 | -158.53 |
+| rastgele | 444 | %43.7 | -0.427 | -189.71 |
+| trend_naif | 442 | %38.9 | -0.49 | -216.38 |
 
-Polat özsermaye: %-1.65 · BTC al-tut: %-0.44
+Polat özsermaye: %-1.7 · BTC al-tut: %-0.43
 
 ## Öğrenme (walk-forward)
 
@@ -56,8 +56,8 @@ En az işe yarayan okumalar: stoch_5m ×0.781, ema_1D ×0.873, yapi_1D ×0.874, 
 
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- ders: 515
-- gösterge aileleri aynı yönde değil: 421
+- ders: 516
+- gösterge aileleri aynı yönde değil: 424
 - büyük zaman dilimi trendi ters: 195
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 49
@@ -102,8 +102,8 @@ En az işe yarayan okumalar: stoch_5m ×0.781, ema_1D ×0.873, yapi_1D ×0.874, 
 
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- ders: 515
-- gösterge aileleri aynı yönde değil: 421
+- ders: 516
+- gösterge aileleri aynı yönde değil: 424
 - büyük zaman dilimi trendi ters: 195
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 49
@@ -148,8 +148,8 @@ En az işe yarayan okumalar: stoch_5m ×0.781, ema_1D ×0.873, yapi_1D ×0.874, 
 
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- ders: 515
-- gösterge aileleri aynı yönde değil: 421
+- ders: 516
+- gösterge aileleri aynı yönde değil: 424
 - büyük zaman dilimi trendi ters: 195
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 49
