@@ -12,9 +12,9 @@ _Yatırım tavsiyesi değildir._
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
 | polat_girilmeyen | 527 | %43.6 | -0.424 | -223.22 |
 | rastgele | 541 | %43.8 | -0.422 | -228.12 |
-| trend_naif | 539 | %36.7 | -0.533 | -287.55 |
+| trend_naif | 540 | %36.7 | -0.535 | -288.67 |
 
-Polat özsermaye: %-2.57 · BTC al-tut: %0.21
+Polat özsermaye: %-2.57 · BTC al-tut: %0.22
 
 ## Öğrenme (walk-forward)
 
@@ -57,7 +57,7 @@ En az işe yarayan okumalar: yapi_1D ×0.86, ema_4H ×0.891, ema_1D ×0.893, can
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 820
+- ders: 822
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 447
@@ -66,7 +66,7 @@ En az işe yarayan okumalar: yapi_1D ×0.86, ema_4H ×0.891, ema_1D ×0.893, can
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.127 eşiğin (0.25) altında: 54
 - puan +0.149 eşiğin (0.25) altında: 53
-- puan +0.123 eşiğin (0.25) altında: 51
+- puan +0.123 eşiğin (0.25) altında: 52
 
 **Hata sınıfları**
 
@@ -107,7 +107,7 @@ En az işe yarayan okumalar: yapi_1D ×0.86, ema_4H ×0.891, ema_1D ×0.893, can
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 820
+- ders: 822
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 447
@@ -116,7 +116,7 @@ En az işe yarayan okumalar: yapi_1D ×0.86, ema_4H ×0.891, ema_1D ×0.893, can
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.127 eşiğin (0.25) altında: 54
 - puan +0.149 eşiğin (0.25) altında: 53
-- puan +0.123 eşiğin (0.25) altında: 51
+- puan +0.123 eşiğin (0.25) altında: 52
 
 **Hata sınıfları**
 
@@ -157,7 +157,7 @@ En az işe yarayan okumalar: yapi_1D ×0.86, ema_4H ×0.891, ema_1D ×0.893, can
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 820
+- ders: 822
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 447
@@ -166,7 +166,7 @@ En az işe yarayan okumalar: yapi_1D ×0.86, ema_4H ×0.891, ema_1D ×0.893, can
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.127 eşiğin (0.25) altında: 54
 - puan +0.149 eşiğin (0.25) altında: 53
-- puan +0.123 eşiğin (0.25) altında: 51
+- puan +0.123 eşiğin (0.25) altında: 52
 
 **Hata sınıfları**
 
