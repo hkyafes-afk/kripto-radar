@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 490 | %44.1 | -0.417 | -204.26 |
 | trend_naif | 487 | %37.6 | -0.518 | -252.38 |
 
-Polat özsermaye: %-2.57 · BTC al-tut: %-0.33
+Polat özsermaye: %-2.57 · BTC al-tut: %-0.32
 
 ## Öğrenme (walk-forward)
 
@@ -59,9 +59,9 @@ En az işe yarayan okumalar: stoch_5m ×0.822, yapi_1D ×0.852, ema_1D ×0.876, 
 
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- ders: 564
+- ders: 566
 - gösterge aileleri aynı yönde değil: 431
-- büyük zaman dilimi trendi ters: 195
+- büyük zaman dilimi trendi ters: 196
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 70
 - puan +0.149 eşiğin (0.25) altında: 49
@@ -109,9 +109,9 @@ En az işe yarayan okumalar: stoch_5m ×0.822, yapi_1D ×0.852, ema_1D ×0.876, 
 
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- ders: 564
+- ders: 566
 - gösterge aileleri aynı yönde değil: 431
-- büyük zaman dilimi trendi ters: 195
+- büyük zaman dilimi trendi ters: 196
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 70
 - puan +0.149 eşiğin (0.25) altında: 49
@@ -159,9 +159,9 @@ En az işe yarayan okumalar: stoch_5m ×0.822, yapi_1D ×0.852, ema_1D ×0.876, 
 
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- ders: 564
+- ders: 566
 - gösterge aileleri aynı yönde değil: 431
-- büyük zaman dilimi trendi ters: 195
+- büyük zaman dilimi trendi ters: 196
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 70
 - puan +0.149 eşiğin (0.25) altında: 49
