@@ -25,16 +25,16 @@ En az işe yarayan okumalar: stoch_5m ×0.83, stoch_15m ×0.858, ema200_1D ×0.9
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2503, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2511, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 342
-- gösterge aileleri aynı yönde değil: 172
+- gösterge aileleri aynı yönde değil: 173
 - büyük zaman dilimi trendi ters: 74
-- ders: 50
+- ders: 53
 - puan +0.149 eşiğin (0.25) altında: 23
-- puan +0.146 eşiğin (0.25) altında: 18
+- puan +0.146 eşiğin (0.25) altında: 19
 - puan +0.127 eşiğin (0.25) altında: 16
 - puan +0.207 eşiğin (0.25) altında: 16
 - puan +0.168 eşiğin (0.25) altında: 16
@@ -42,16 +42,16 @@ Kapanmış işlem yok. Görülen kurulum: 2503, girilen: 0.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2503, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2511, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 342
-- gösterge aileleri aynı yönde değil: 172
+- gösterge aileleri aynı yönde değil: 173
 - büyük zaman dilimi trendi ters: 74
-- ders: 50
+- ders: 53
 - puan +0.149 eşiğin (0.25) altında: 23
-- puan +0.146 eşiğin (0.25) altında: 18
+- puan +0.146 eşiğin (0.25) altında: 19
 - puan +0.127 eşiğin (0.25) altında: 16
 - puan +0.207 eşiğin (0.25) altında: 16
 - puan +0.168 eşiğin (0.25) altında: 16
@@ -59,16 +59,16 @@ Kapanmış işlem yok. Görülen kurulum: 2503, girilen: 0.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2503, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2511, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 342
-- gösterge aileleri aynı yönde değil: 172
+- gösterge aileleri aynı yönde değil: 173
 - büyük zaman dilimi trendi ters: 74
-- ders: 50
+- ders: 53
 - puan +0.149 eşiğin (0.25) altında: 23
-- puan +0.146 eşiğin (0.25) altında: 18
+- puan +0.146 eşiğin (0.25) altında: 19
 - puan +0.127 eşiğin (0.25) altında: 16
 - puan +0.207 eşiğin (0.25) altında: 16
 - puan +0.168 eşiğin (0.25) altında: 16
