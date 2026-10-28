@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 217 | %41.9 | -0.514 | -111.63 |
 | trend_naif | 218 | %37.2 | -0.547 | -119.15 |
 
-Polat özsermaye: %0.0 · BTC al-tut: %0.12
+Polat özsermaye: %0.0 · BTC al-tut: %0.16
 
 ## Öğrenme (walk-forward)
 
@@ -25,16 +25,16 @@ En az işe yarayan okumalar: stoch_5m ×0.766, stoch_15m ×0.835, ema200_1D ×0.
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 4197, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 4214, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 235
-- ders: 186
-- büyük zaman dilimi trendi ters: 92
+- ders: 187
+- büyük zaman dilimi trendi ters: 93
 - puan +0.149 eşiğin (0.25) altında: 31
-- puan +0.146 eşiğin (0.25) altında: 27
+- puan +0.146 eşiğin (0.25) altında: 28
 - puan +0.167 eşiğin (0.25) altında: 27
 - puan +0.161 eşiğin (0.25) altında: 23
 - puan +0.123 eşiğin (0.25) altında: 23
@@ -42,16 +42,16 @@ Kapanmış işlem yok. Görülen kurulum: 4197, girilen: 0.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 4197, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 4214, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 235
-- ders: 186
-- büyük zaman dilimi trendi ters: 92
+- ders: 187
+- büyük zaman dilimi trendi ters: 93
 - puan +0.149 eşiğin (0.25) altında: 31
-- puan +0.146 eşiğin (0.25) altında: 27
+- puan +0.146 eşiğin (0.25) altında: 28
 - puan +0.167 eşiğin (0.25) altında: 27
 - puan +0.161 eşiğin (0.25) altında: 23
 - puan +0.123 eşiğin (0.25) altında: 23
@@ -59,16 +59,16 @@ Kapanmış işlem yok. Görülen kurulum: 4197, girilen: 0.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 4197, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 4214, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 235
-- ders: 186
-- büyük zaman dilimi trendi ters: 92
+- ders: 187
+- büyük zaman dilimi trendi ters: 93
 - puan +0.149 eşiğin (0.25) altında: 31
-- puan +0.146 eşiğin (0.25) altında: 27
+- puan +0.146 eşiğin (0.25) altında: 28
 - puan +0.167 eşiğin (0.25) altında: 27
 - puan +0.161 eşiğin (0.25) altında: 23
 - puan +0.123 eşiğin (0.25) altında: 23
