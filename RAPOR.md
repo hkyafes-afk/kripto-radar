@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 109 | %44.0 | -0.472 | -51.47 |
 | trend_naif | 110 | %40.0 | -0.497 | -54.7 |
 
-Polat özsermaye: %0.0 · BTC al-tut: %-0.07
+Polat özsermaye: %0.0 · BTC al-tut: %-0.05
 
 ## Öğrenme (walk-forward)
 
@@ -25,7 +25,7 @@ En az işe yarayan okumalar: stoch_5m ×0.83, stoch_15m ×0.858, ema200_1D ×0.9
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2634, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2645, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
@@ -42,7 +42,7 @@ Kapanmış işlem yok. Görülen kurulum: 2634, girilen: 0.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2634, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2645, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
@@ -59,7 +59,7 @@ Kapanmış işlem yok. Görülen kurulum: 2634, girilen: 0.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2634, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2645, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
