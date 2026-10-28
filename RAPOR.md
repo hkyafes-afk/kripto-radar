@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.418R; geçtiği kıyaslar: trend_naif → okumaların üstünlüğü kanıtlanmadı
+**Hüküm:** Polat net -0.416R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 479 | %43.8 | -0.418 | -200.21 |
+| polat_tum_sinyaller | 480 | %44.0 | -0.416 | -199.68 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
-| polat_girilmeyen | 477 | %43.8 | -0.417 | -199.01 |
+| polat_girilmeyen | 478 | %43.9 | -0.415 | -198.48 |
 | rastgele | 492 | %44.1 | -0.417 | -204.92 |
 | trend_naif | 489 | %37.4 | -0.521 | -254.59 |
 
-Polat özsermaye: %-2.57 · BTC al-tut: %-0.28
+Polat özsermaye: %-2.57 · BTC al-tut: %-0.3
 
 ## Öğrenme (walk-forward)
 
@@ -59,9 +59,9 @@ En az işe yarayan okumalar: stoch_5m ×0.822, yapi_1D ×0.852, ema_1D ×0.876, 
 
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- ders: 570
+- ders: 574
 - gösterge aileleri aynı yönde değil: 435
-- büyük zaman dilimi trendi ters: 196
+- büyük zaman dilimi trendi ters: 198
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 70
 - puan +0.149 eşiğin (0.25) altında: 49
@@ -109,9 +109,9 @@ En az işe yarayan okumalar: stoch_5m ×0.822, yapi_1D ×0.852, ema_1D ×0.876, 
 
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- ders: 570
+- ders: 574
 - gösterge aileleri aynı yönde değil: 435
-- büyük zaman dilimi trendi ters: 196
+- büyük zaman dilimi trendi ters: 198
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 70
 - puan +0.149 eşiğin (0.25) altında: 49
@@ -159,9 +159,9 @@ En az işe yarayan okumalar: stoch_5m ×0.822, yapi_1D ×0.852, ema_1D ×0.876, 
 
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- ders: 570
+- ders: 574
 - gösterge aileleri aynı yönde değil: 435
-- büyük zaman dilimi trendi ters: 196
+- büyük zaman dilimi trendi ters: 198
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 70
 - puan +0.149 eşiğin (0.25) altında: 49
