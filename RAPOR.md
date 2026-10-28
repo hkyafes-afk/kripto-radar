@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.385R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.375R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 364 | %46.2 | -0.385 | -139.97 |
+| polat_tum_sinyaller | 365 | %46.3 | -0.375 | -136.84 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
-| polat_girilmeyen | 362 | %46.1 | -0.383 | -138.77 |
-| rastgele | 377 | %43.5 | -0.449 | -169.34 |
-| trend_naif | 379 | %39.1 | -0.495 | -187.62 |
+| polat_girilmeyen | 363 | %46.3 | -0.374 | -135.64 |
+| rastgele | 378 | %43.7 | -0.44 | -166.21 |
+| trend_naif | 380 | %39.2 | -0.486 | -184.49 |
 
-Polat özsermaye: %-1.74 · BTC al-tut: %-0.46
+Polat özsermaye: %-1.85 · BTC al-tut: %-0.41
 
 ## Öğrenme (walk-forward)
 
@@ -55,9 +55,9 @@ En az işe yarayan okumalar: yapi_1D ×0.747, adx_di_1D ×0.761, stoch_5m ×0.77
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 450
+- ders: 453
 - gösterge aileleri aynı yönde değil: 331
-- günlük işlem tavanı (8): 274
+- günlük işlem tavanı (8): 276
 - büyük zaman dilimi trendi ters: 165
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 47
@@ -101,9 +101,9 @@ En az işe yarayan okumalar: yapi_1D ×0.747, adx_di_1D ×0.761, stoch_5m ×0.77
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 450
+- ders: 453
 - gösterge aileleri aynı yönde değil: 331
-- günlük işlem tavanı (8): 274
+- günlük işlem tavanı (8): 276
 - büyük zaman dilimi trendi ters: 165
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 47
@@ -147,9 +147,9 @@ En az işe yarayan okumalar: yapi_1D ×0.747, adx_di_1D ×0.761, stoch_5m ×0.77
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 450
+- ders: 453
 - gösterge aileleri aynı yönde değil: 331
-- günlük işlem tavanı (8): 274
+- günlük işlem tavanı (8): 276
 - büyük zaman dilimi trendi ters: 165
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 47
