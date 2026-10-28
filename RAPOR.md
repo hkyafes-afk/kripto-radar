@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.495R; geçtiği kıyaslar: hiçbiri → okumaların üstünlüğü kanıtlanmadı
+**Hüküm:** Polat net -0.491R; geçtiği kıyaslar: hiçbiri → okumaların üstünlüğü kanıtlanmadı
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 184 | %41.8 | -0.495 | -91.15 |
+| polat_tum_sinyaller | 187 | %42.2 | -0.491 | -91.79 |
 | polat_girilen | 0 | %- | - | - |
-| polat_girilmeyen | 184 | %41.8 | -0.495 | -91.15 |
-| rastgele | 176 | %43.8 | -0.456 | -80.3 |
-| trend_naif | 181 | %39.8 | -0.473 | -85.66 |
+| polat_girilmeyen | 187 | %42.2 | -0.491 | -91.79 |
+| rastgele | 180 | %44.4 | -0.449 | -80.82 |
+| trend_naif | 185 | %40.5 | -0.463 | -85.59 |
 
-Polat özsermaye: %0.0 · BTC al-tut: %-0.11
+Polat özsermaye: %0.0 · BTC al-tut: %-0.06
 
 ## Öğrenme (walk-forward)
 
@@ -25,11 +25,11 @@ En az işe yarayan okumalar: stoch_5m ×0.793, stoch_15m ×0.88, yapi_1D ×0.927
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 3898, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 3910, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 551
+- emir defteri doğrulanmadı: 552
 - gösterge aileleri aynı yönde değil: 228
 - ders: 150
 - büyük zaman dilimi trendi ters: 81
@@ -42,11 +42,11 @@ Kapanmış işlem yok. Görülen kurulum: 3898, girilen: 0.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 3898, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 3910, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 551
+- emir defteri doğrulanmadı: 552
 - gösterge aileleri aynı yönde değil: 228
 - ders: 150
 - büyük zaman dilimi trendi ters: 81
@@ -59,11 +59,11 @@ Kapanmış işlem yok. Görülen kurulum: 3898, girilen: 0.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 3898, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 3910, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 551
+- emir defteri doğrulanmadı: 552
 - gösterge aileleri aynı yönde değil: 228
 - ders: 150
 - büyük zaman dilimi trendi ters: 81
