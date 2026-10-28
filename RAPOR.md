@@ -57,14 +57,14 @@ En az işe yarayan okumalar: yapi_1D ×0.836, ema_1D ×0.884, ema_4H ×0.884, ad
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 888
+- ders: 890
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 447
-- büyük zaman dilimi trendi ters: 304
+- büyük zaman dilimi trendi ters: 308
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
-- üst üste 3 zarar: 82
+- üst üste 3 zarar: 85
 - puan +0.127 eşiğin (0.25) altında: 54
 - puan +0.123 eşiğin (0.25) altında: 54
 
@@ -107,14 +107,14 @@ En az işe yarayan okumalar: yapi_1D ×0.836, ema_1D ×0.884, ema_4H ×0.884, ad
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 888
+- ders: 890
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 447
-- büyük zaman dilimi trendi ters: 304
+- büyük zaman dilimi trendi ters: 308
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
-- üst üste 3 zarar: 82
+- üst üste 3 zarar: 85
 - puan +0.127 eşiğin (0.25) altında: 54
 - puan +0.123 eşiğin (0.25) altında: 54
 
@@ -157,14 +157,14 @@ En az işe yarayan okumalar: yapi_1D ×0.836, ema_1D ×0.884, ema_4H ×0.884, ad
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 888
+- ders: 890
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 447
-- büyük zaman dilimi trendi ters: 304
+- büyük zaman dilimi trendi ters: 308
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
-- üst üste 3 zarar: 82
+- üst üste 3 zarar: 85
 - puan +0.127 eşiğin (0.25) altında: 54
 - puan +0.123 eşiğin (0.25) altında: 54
 
