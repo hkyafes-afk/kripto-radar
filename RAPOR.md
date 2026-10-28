@@ -25,15 +25,15 @@ En az işe yarayan okumalar: stoch_15m ×0.859, stoch_5m ×0.869
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2331, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2349, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 335
-- gösterge aileleri aynı yönde değil: 163
-- büyük zaman dilimi trendi ters: 65
-- ders: 26
-- puan +0.149 eşiğin (0.25) altında: 19
+- emir defteri doğrulanmadı: 337
+- gösterge aileleri aynı yönde değil: 164
+- büyük zaman dilimi trendi ters: 66
+- ders: 28
+- puan +0.149 eşiğin (0.25) altında: 20
 - puan +0.146 eşiğin (0.25) altında: 17
 - puan +0.127 eşiğin (0.25) altında: 16
 - puan +0.207 eşiğin (0.25) altında: 16
@@ -42,15 +42,15 @@ Kapanmış işlem yok. Görülen kurulum: 2331, girilen: 0.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2331, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2349, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 335
-- gösterge aileleri aynı yönde değil: 163
-- büyük zaman dilimi trendi ters: 65
-- ders: 26
-- puan +0.149 eşiğin (0.25) altında: 19
+- emir defteri doğrulanmadı: 337
+- gösterge aileleri aynı yönde değil: 164
+- büyük zaman dilimi trendi ters: 66
+- ders: 28
+- puan +0.149 eşiğin (0.25) altında: 20
 - puan +0.146 eşiğin (0.25) altında: 17
 - puan +0.127 eşiğin (0.25) altında: 16
 - puan +0.207 eşiğin (0.25) altında: 16
@@ -59,15 +59,15 @@ Kapanmış işlem yok. Görülen kurulum: 2331, girilen: 0.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2331, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2349, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 335
-- gösterge aileleri aynı yönde değil: 163
-- büyük zaman dilimi trendi ters: 65
-- ders: 26
-- puan +0.149 eşiğin (0.25) altında: 19
+- emir defteri doğrulanmadı: 337
+- gösterge aileleri aynı yönde değil: 164
+- büyük zaman dilimi trendi ters: 66
+- ders: 28
+- puan +0.149 eşiğin (0.25) altında: 20
 - puan +0.146 eşiğin (0.25) altında: 17
 - puan +0.127 eşiğin (0.25) altında: 16
 - puan +0.207 eşiğin (0.25) altında: 16
