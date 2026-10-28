@@ -112,3 +112,5 @@
 {"olay": "halef_cagrildi", "ok": false, "ts": 1793225645733}
 {"olay": "halef_cagrildi", "ok": false, "ts": 1793225708648}
 {"olay": "halef_cagrildi", "ok": false, "ts": 1793225771348}
+{"olay": "halef_cagrildi", "ok": false, "ts": 1793225834207}
+{"olay": "durdu", "neden": "süre doldu", "veri": {"mesaj": 38161732, "gecikme_ms_p50": 143, "gecikme_ms_p95": 181, "isleme_us_p50": 8.5, "isleme_us_p95": 193.5}, "ts": 1793225854315}
