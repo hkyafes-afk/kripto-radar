@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.383R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.386R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 336 | %46.4 | -0.383 | -128.77 |
+| polat_tum_sinyaller | 337 | %46.3 | -0.386 | -130.2 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
-| polat_girilmeyen | 334 | %46.4 | -0.382 | -127.57 |
-| rastgele | 352 | %42.9 | -0.471 | -165.91 |
-| trend_naif | 349 | %39.5 | -0.491 | -171.2 |
+| polat_girilmeyen | 335 | %46.3 | -0.385 | -129.0 |
+| rastgele | 353 | %42.8 | -0.474 | -167.34 |
+| trend_naif | 350 | %39.4 | -0.493 | -172.63 |
 
-Polat özsermaye: %-1.46 · BTC al-tut: %-0.55
+Polat özsermaye: %-1.45 · BTC al-tut: %-0.58
 
 ## Öğrenme (walk-forward)
 
@@ -59,7 +59,7 @@ En az işe yarayan okumalar: yapi_1D ×0.75, adx_di_1D ×0.766, ema_1D ×0.781, 
 - gösterge aileleri aynı yönde değil: 325
 - büyük zaman dilimi trendi ters: 154
 - bu coinde zaten pozisyon var: 135
-- günlük işlem tavanı (8): 64
+- günlük işlem tavanı (8): 72
 - puan +0.149 eşiğin (0.25) altında: 45
 - puan +0.146 eşiğin (0.25) altında: 40
 - puan +0.167 eşiğin (0.25) altında: 39
@@ -105,7 +105,7 @@ En az işe yarayan okumalar: yapi_1D ×0.75, adx_di_1D ×0.766, ema_1D ×0.781, 
 - gösterge aileleri aynı yönde değil: 325
 - büyük zaman dilimi trendi ters: 154
 - bu coinde zaten pozisyon var: 135
-- günlük işlem tavanı (8): 64
+- günlük işlem tavanı (8): 72
 - puan +0.149 eşiğin (0.25) altında: 45
 - puan +0.146 eşiğin (0.25) altında: 40
 - puan +0.167 eşiğin (0.25) altında: 39
@@ -151,7 +151,7 @@ En az işe yarayan okumalar: yapi_1D ×0.75, adx_di_1D ×0.766, ema_1D ×0.781, 
 - gösterge aileleri aynı yönde değil: 325
 - büyük zaman dilimi trendi ters: 154
 - bu coinde zaten pozisyon var: 135
-- günlük işlem tavanı (8): 64
+- günlük işlem tavanı (8): 72
 - puan +0.149 eşiğin (0.25) altında: 45
 - puan +0.146 eşiğin (0.25) altında: 40
 - puan +0.167 eşiğin (0.25) altında: 39
