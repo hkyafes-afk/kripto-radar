@@ -14,22 +14,22 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 27 | %44.4 | -0.479 | -12.94 |
 | trend_naif | 25 | %44.0 | -0.378 | -9.45 |
 
-Polat özsermaye: %0.0 · BTC al-tut: %-0.04
+Polat özsermaye: %0.0 · BTC al-tut: %-0.01
 
 ## Öğrenme (walk-forward)
 
-Örnek 15 (eğitim -, doğrulama -) · uygulanan katsayı 0 · doğrulamada tutmadığı için reddedilen 0
+Örnek 26 (eğitim -, doğrulama -) · uygulanan katsayı 0 · doğrulamada tutmadığı için reddedilen 0
 
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 962, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 980, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 158
-- gösterge aileleri aynı yönde değil: 78
-- büyük zaman dilimi trendi ters: 36
+- gösterge aileleri aynı yönde değil: 79
+- büyük zaman dilimi trendi ters: 40
 - puan +0.207 eşiğin (0.25) altında: 12
 - puan +0.137 eşiğin (0.25) altında: 9
 - puan +0.176 eşiğin (0.25) altında: 9
@@ -40,13 +40,13 @@ Kapanmış işlem yok. Görülen kurulum: 962, girilen: 0.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 962, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 980, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 158
-- gösterge aileleri aynı yönde değil: 78
-- büyük zaman dilimi trendi ters: 36
+- gösterge aileleri aynı yönde değil: 79
+- büyük zaman dilimi trendi ters: 40
 - puan +0.207 eşiğin (0.25) altında: 12
 - puan +0.137 eşiğin (0.25) altında: 9
 - puan +0.176 eşiğin (0.25) altında: 9
@@ -57,13 +57,13 @@ Kapanmış işlem yok. Görülen kurulum: 962, girilen: 0.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 962, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 980, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 158
-- gösterge aileleri aynı yönde değil: 78
-- büyük zaman dilimi trendi ters: 36
+- gösterge aileleri aynı yönde değil: 79
+- büyük zaman dilimi trendi ters: 40
 - puan +0.207 eşiğin (0.25) altında: 12
 - puan +0.137 eşiğin (0.25) altında: 9
 - puan +0.176 eşiğin (0.25) altında: 9
