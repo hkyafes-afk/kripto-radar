@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 264 | %41.7 | -0.503 | -132.78 |
 | trend_naif | 263 | %35.7 | -0.568 | -149.32 |
 
-Polat özsermaye: %-0.76 · BTC al-tut: %0.51
+Polat özsermaye: %-0.88 · BTC al-tut: %0.43
 
 ## Öğrenme (walk-forward)
 
@@ -25,15 +25,15 @@ En az işe yarayan okumalar: uyusmazlik_macd_1H ×0.875, yapi_1D ×0.889, adx_di
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 5899, girilen: 2.
+Kapanmış işlem yok. Görülen kurulum: 5921, girilen: 2.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
 - ders: 304
 - gösterge aileleri aynı yönde değil: 281
-- büyük zaman dilimi trendi ters: 143
-- bu coinde zaten pozisyon var: 53
+- büyük zaman dilimi trendi ters: 147
+- bu coinde zaten pozisyon var: 54
 - puan +0.149 eşiğin (0.25) altında: 44
 - puan +0.167 eşiğin (0.25) altında: 37
 - puan +0.146 eşiğin (0.25) altında: 36
@@ -42,15 +42,15 @@ Kapanmış işlem yok. Görülen kurulum: 5899, girilen: 2.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 5899, girilen: 2.
+Kapanmış işlem yok. Görülen kurulum: 5921, girilen: 2.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
 - ders: 304
 - gösterge aileleri aynı yönde değil: 281
-- büyük zaman dilimi trendi ters: 143
-- bu coinde zaten pozisyon var: 53
+- büyük zaman dilimi trendi ters: 147
+- bu coinde zaten pozisyon var: 54
 - puan +0.149 eşiğin (0.25) altında: 44
 - puan +0.167 eşiğin (0.25) altında: 37
 - puan +0.146 eşiğin (0.25) altında: 36
@@ -59,15 +59,15 @@ Kapanmış işlem yok. Görülen kurulum: 5899, girilen: 2.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 5899, girilen: 2.
+Kapanmış işlem yok. Görülen kurulum: 5921, girilen: 2.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
 - ders: 304
 - gösterge aileleri aynı yönde değil: 281
-- büyük zaman dilimi trendi ters: 143
-- bu coinde zaten pozisyon var: 53
+- büyük zaman dilimi trendi ters: 147
+- bu coinde zaten pozisyon var: 54
 - puan +0.149 eşiğin (0.25) altında: 44
 - puan +0.167 eşiğin (0.25) altında: 37
 - puan +0.146 eşiğin (0.25) altında: 36
