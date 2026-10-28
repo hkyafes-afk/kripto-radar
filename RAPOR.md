@@ -4,15 +4,15 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.439R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.444R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 151 | %44.4 | -0.439 | -66.27 |
+| polat_tum_sinyaller | 152 | %44.1 | -0.444 | -67.46 |
 | polat_girilen | 0 | %- | - | - |
-| polat_girilmeyen | 151 | %44.4 | -0.439 | -66.27 |
-| rastgele | 146 | %42.5 | -0.452 | -65.93 |
-| trend_naif | 153 | %39.9 | -0.46 | -70.34 |
+| polat_girilmeyen | 152 | %44.1 | -0.444 | -67.46 |
+| rastgele | 147 | %42.2 | -0.457 | -67.12 |
+| trend_naif | 154 | %39.6 | -0.464 | -71.53 |
 
 Polat özsermaye: %0.0 · BTC al-tut: %-0.12
 
@@ -25,12 +25,12 @@ En az işe yarayan okumalar: stoch_5m ×0.844, stoch_15m ×0.874, stoch_1H ×0.9
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 3299, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 3309, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 457
-- gösterge aileleri aynı yönde değil: 208
+- emir defteri doğrulanmadı: 458
+- gösterge aileleri aynı yönde değil: 211
 - ders: 98
 - büyük zaman dilimi trendi ters: 80
 - puan +0.149 eşiğin (0.25) altında: 29
@@ -42,12 +42,12 @@ Kapanmış işlem yok. Görülen kurulum: 3299, girilen: 0.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 3299, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 3309, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 457
-- gösterge aileleri aynı yönde değil: 208
+- emir defteri doğrulanmadı: 458
+- gösterge aileleri aynı yönde değil: 211
 - ders: 98
 - büyük zaman dilimi trendi ters: 80
 - puan +0.149 eşiğin (0.25) altında: 29
@@ -59,12 +59,12 @@ Kapanmış işlem yok. Görülen kurulum: 3299, girilen: 0.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 3299, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 3309, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 457
-- gösterge aileleri aynı yönde değil: 208
+- emir defteri doğrulanmadı: 458
+- gösterge aileleri aynı yönde değil: 211
 - ders: 98
 - büyük zaman dilimi trendi ters: 80
 - puan +0.149 eşiğin (0.25) altında: 29
