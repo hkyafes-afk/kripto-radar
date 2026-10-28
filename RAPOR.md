@@ -11,10 +11,10 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 100 | %49.0 | -0.343 | -34.3 |
 | polat_girilen | 0 | %- | - | - |
 | polat_girilmeyen | 100 | %49.0 | -0.343 | -34.3 |
-| rastgele | 97 | %45.4 | -0.459 | -44.53 |
+| rastgele | 98 | %44.9 | -0.465 | -45.57 |
 | trend_naif | 97 | %36.1 | -0.566 | -54.91 |
 
-Polat özsermaye: %0.0 · BTC al-tut: %-0.13
+Polat özsermaye: %0.0 · BTC al-tut: %-0.12
 
 ## Öğrenme (walk-forward)
 
@@ -25,11 +25,11 @@ En az işe yarayan okumalar: stoch_15m ×0.859, stoch_5m ×0.869
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2274, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2283, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 333
+- emir defteri doğrulanmadı: 334
 - gösterge aileleri aynı yönde değil: 162
 - büyük zaman dilimi trendi ters: 65
 - ders: 24
@@ -42,11 +42,11 @@ Kapanmış işlem yok. Görülen kurulum: 2274, girilen: 0.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2274, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2283, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 333
+- emir defteri doğrulanmadı: 334
 - gösterge aileleri aynı yönde değil: 162
 - büyük zaman dilimi trendi ters: 65
 - ders: 24
@@ -59,11 +59,11 @@ Kapanmış işlem yok. Görülen kurulum: 2274, girilen: 0.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2274, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2283, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 333
+- emir defteri doğrulanmadı: 334
 - gösterge aileleri aynı yönde değil: 162
 - büyük zaman dilimi trendi ters: 65
 - ders: 24
