@@ -125,7 +125,7 @@ class Polat:
             px = c.price() if c else p["entry"]
             sgn = 1 if p["side"] == "long" else -1
             pos.append({**{k: p.get(k) for k in ("inst", "side", "entry", "sl", "tp", "qty", "lev", "kurulum", "opened",
-                                                   "puan", "yol", "partial_done")},
+                                                   "puan", "yol", "partial_done", "r_dist")},
                         "fiyat": px, "pnl_usd": round((px - p["entry"]) * p["qty"] * sgn + p.get("realized", 0) - p.get("fees", 0)
                                                      - p.get("funding", 0), 2),
                         "r_simdi": round((px - p["entry"]) * sgn / p["r_dist"], 2) if p.get("r_dist") else None})

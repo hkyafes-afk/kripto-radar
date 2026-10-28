@@ -107,7 +107,7 @@ td{padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
   <h2>İzlenen coinler</h2>
   <div class="card" id="watch"></div>
 
-  <div class="foot">Sanal 100.000$ ile demo. Gerçek para yok. Yatırım tavsiyesi değildir. Veri: polat-veri dalındaki ozet.json, 30 sn'de bir yenilenir.</div>
+  <div class="foot">Sanal 100.000$ ile demo. Gerçek para yok. Yatırım tavsiyesi değildir. Fiyatlar ve açık kâr/zarar OKX'ten anlık; Polat'ın kararları ve pozisyonları 30 sn'de bir yenilenir.</div>
 </div>
 <script>
 (function(){
@@ -206,9 +206,44 @@ td{padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
     $("watch").innerHTML = (d.izlenen || []).map(function(i){ return '<span class="badge b-dim" style="margin:2px">' + esc(sym(i)) + "</span>"; }).join("") || '<div class="empty">–</div>';
   }
 
+  // ---- canlı fiyat: tarayıcı doğrudan OKX'in açık fiyat akışına bağlanır (anahtar gerekmez) ----
+  var last = null, live = {}, ws = null, subs = {}, dirty = false;
+  function want(d){ var s = {"BTC-USDT-SWAP": 1}; (d.pozisyonlar || []).forEach(function(p){ s[p.inst] = 1; }); return Object.keys(s); }
+  function liveView(d){
+    var x = JSON.parse(JSON.stringify(d)), delta = 0;
+    (x.pozisyonlar || []).forEach(function(p){
+      var px = live[p.inst]; if (!px || !p.fiyat) return;
+      var sg = p.side === "long" ? 1 : -1, ch = (px - p.fiyat) * (p.qty || 0) * sg;
+      p.pnl_usd = (p.pnl_usd || 0) + ch; delta += ch;
+      if (p.r_dist) p.r_simdi = (px - p.entry) * sg / p.r_dist;
+      p.fiyat = px;
+    });
+    x.ozsermaye = (x.ozsermaye || 0) + delta;
+    return x;
+  }
+  function connect(){
+    try { ws = new WebSocket("wss://ws.okx.com:8443/ws/v5/public"); } catch (e) { return; }
+    ws.onopen = function(){ subs = {}; sync(); setLive(true); };
+    ws.onmessage = function(ev){
+      if (ev.data === "pong") return;
+      var m = JSON.parse(ev.data);
+      (m.data || []).forEach(function(t){ if (t.instId && t.last) { live[t.instId] = parseFloat(t.last); dirty = true; } });
+    };
+    ws.onclose = function(){ setLive(false); setTimeout(connect, 3000); };
+  }
+  function sync(){
+    if (!ws || ws.readyState !== 1 || !last) return;
+    var add = want(last).filter(function(i){ return !subs[i]; });
+    if (add.length) { ws.send(JSON.stringify({op: "subscribe", args: add.map(function(i){ return {channel: "tickers", instId: i}; })})); add.forEach(function(i){ subs[i] = 1; }); }
+  }
+  function setLive(on){ var e = $("sub"); if (e) e.dataset.live = on ? "1" : ""; }
+  setInterval(function(){ if (dirty && last) { dirty = false; render(liveView(last)); var e = $("sub"); if (e && e.dataset.live) e.textContent = "🟢 canlı fiyat · " + e.textContent.replace(/^🟢 canlı fiyat · /, ""); } }, 1000);
+  setInterval(function(){ if (ws && ws.readyState === 1) ws.send("ping"); }, 20000);
+  connect();
+
   function load(){
     fetch(URL + "?t=" + Date.now(), {cache: "no-store"}).then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); })
-      .then(render).catch(function(e){ $("sub").textContent = "Polat verisi alınamadı (" + e.message + "). Polat henüz başlamamış olabilir."; });
+      .then(function(d){ last = d; sync(); render(Object.keys(live).length ? liveView(d) : d); }).catch(function(e){ $("sub").textContent = "Polat verisi alınamadı (" + e.message + "). Polat henüz başlamamış olabilir."; });
   }
   load();
   setInterval(load, 30000);
