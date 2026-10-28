@@ -4,14 +4,14 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.418R; geçtiği kıyaslar: trend_naif → okumaların üstünlüğü kanıtlanmadı
+**Hüküm:** Polat net -0.42R; geçtiği kıyaslar: trend_naif → okumaların üstünlüğü kanıtlanmadı
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 481 | %43.9 | -0.418 | -201.0 |
+| polat_tum_sinyaller | 482 | %43.8 | -0.42 | -202.3 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
-| polat_girilmeyen | 479 | %43.8 | -0.417 | -199.8 |
-| rastgele | 493 | %44.0 | -0.418 | -206.24 |
+| polat_girilmeyen | 480 | %43.8 | -0.419 | -201.1 |
+| rastgele | 494 | %43.9 | -0.42 | -207.54 |
 | trend_naif | 489 | %37.4 | -0.521 | -254.59 |
 
 Polat özsermaye: %-2.57 · BTC al-tut: %-0.38
@@ -59,9 +59,9 @@ En az işe yarayan okumalar: stoch_5m ×0.822, yapi_1D ×0.852, ema_1D ×0.876, 
 
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- ders: 576
-- gösterge aileleri aynı yönde değil: 437
-- büyük zaman dilimi trendi ters: 202
+- ders: 583
+- gösterge aileleri aynı yönde değil: 438
+- büyük zaman dilimi trendi ters: 205
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 70
 - puan +0.149 eşiğin (0.25) altında: 49
@@ -109,9 +109,9 @@ En az işe yarayan okumalar: stoch_5m ×0.822, yapi_1D ×0.852, ema_1D ×0.876, 
 
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- ders: 576
-- gösterge aileleri aynı yönde değil: 437
-- büyük zaman dilimi trendi ters: 202
+- ders: 583
+- gösterge aileleri aynı yönde değil: 438
+- büyük zaman dilimi trendi ters: 205
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 70
 - puan +0.149 eşiğin (0.25) altında: 49
@@ -159,9 +159,9 @@ En az işe yarayan okumalar: stoch_5m ×0.822, yapi_1D ×0.852, ema_1D ×0.876, 
 
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- ders: 576
-- gösterge aileleri aynı yönde değil: 437
-- büyük zaman dilimi trendi ters: 202
+- ders: 583
+- gösterge aileleri aynı yönde değil: 438
+- büyük zaman dilimi trendi ters: 205
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 70
 - puan +0.149 eşiğin (0.25) altında: 49
