@@ -14,3 +14,4 @@
 {"olay": "yol", "yol": "yapi_bozulmasi|long|akis+seviye|btc:yatay", "karar": "kacin", "n": 14, "ort_R": -0.375, "ts": 1793198347773}
 {"olay": "yol", "yol": "yapi_bozulmasi|short|seviye+uyusmazlik|btc:yatay", "karar": "kacin", "n": 11, "ort_R": -0.433, "ts": 1793199002702}
 {"olay": "yol", "yol": "yapi_bozulmasi|short|momentum+seviye|btc:yatay", "karar": "benimse", "n": 8, "ort_R": 0.431, "ts": 1793201574319}
+{"olay": "yol", "yol": "yapi_bozulmasi|short|akis+momentum|btc:yatay", "karar": "kacin", "n": 5, "ort_R": -1.032, "ts": 1793201939157}
