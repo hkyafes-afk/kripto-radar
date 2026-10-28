@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 81 | %45.7 | -0.465 | -37.63 |
 | trend_naif | 85 | %35.3 | -0.595 | -50.59 |
 
-Polat özsermaye: %0.0 · BTC al-tut: %0.02
+Polat özsermaye: %0.0 · BTC al-tut: %0.03
 
 ## Öğrenme (walk-forward)
 
@@ -23,51 +23,51 @@ Polat özsermaye: %0.0 · BTC al-tut: %0.02
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 1966, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 1976, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 314
-- gösterge aileleri aynı yönde değil: 136
+- gösterge aileleri aynı yönde değil: 138
 - büyük zaman dilimi trendi ters: 57
 - puan +0.149 eşiğin (0.25) altında: 18
 - puan +0.146 eşiğin (0.25) altında: 16
 - puan +0.207 eşiğin (0.25) altında: 16
 - puan +0.180 eşiğin (0.25) altında: 15
+- ders: 15
 - puan +0.137 eşiğin (0.25) altında: 14
 - puan +0.138 eşiğin (0.25) altında: 14
-- puan +0.150 eşiğin (0.25) altında: 14
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 1966, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 1976, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 314
-- gösterge aileleri aynı yönde değil: 136
+- gösterge aileleri aynı yönde değil: 138
 - büyük zaman dilimi trendi ters: 57
 - puan +0.149 eşiğin (0.25) altında: 18
 - puan +0.146 eşiğin (0.25) altında: 16
 - puan +0.207 eşiğin (0.25) altında: 16
 - puan +0.180 eşiğin (0.25) altında: 15
+- ders: 15
 - puan +0.137 eşiğin (0.25) altında: 14
 - puan +0.138 eşiğin (0.25) altında: 14
-- puan +0.150 eşiğin (0.25) altında: 14
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 1966, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 1976, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 314
-- gösterge aileleri aynı yönde değil: 136
+- gösterge aileleri aynı yönde değil: 138
 - büyük zaman dilimi trendi ters: 57
 - puan +0.149 eşiğin (0.25) altında: 18
 - puan +0.146 eşiğin (0.25) altında: 16
 - puan +0.207 eşiğin (0.25) altında: 16
 - puan +0.180 eşiğin (0.25) altında: 15
+- ders: 15
 - puan +0.137 eşiğin (0.25) altında: 14
 - puan +0.138 eşiğin (0.25) altında: 14
-- puan +0.150 eşiğin (0.25) altında: 14
