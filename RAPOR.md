@@ -11,10 +11,10 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 323 | %45.5 | -0.396 | -127.83 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
 | polat_girilmeyen | 321 | %45.5 | -0.394 | -126.63 |
-| rastgele | 335 | %43.0 | -0.466 | -156.25 |
+| rastgele | 336 | %43.2 | -0.465 | -156.14 |
 | trend_naif | 333 | %38.1 | -0.513 | -170.81 |
 
-Polat özsermaye: %-1.42 · BTC al-tut: %-0.41
+Polat özsermaye: %-1.52 · BTC al-tut: %-0.37
 
 ## Öğrenme (walk-forward)
 
@@ -55,10 +55,10 @@ En az işe yarayan okumalar: adx_di_1D ×0.816, trix_1D ×0.835, yapi_1D ×0.841
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 377
+- ders: 379
 - gösterge aileleri aynı yönde değil: 323
 - büyük zaman dilimi trendi ters: 153
-- bu coinde zaten pozisyon var: 96
+- bu coinde zaten pozisyon var: 97
 - puan +0.149 eşiğin (0.25) altında: 44
 - puan +0.146 eşiğin (0.25) altında: 40
 - puan +0.167 eşiğin (0.25) altında: 38
@@ -101,10 +101,10 @@ En az işe yarayan okumalar: adx_di_1D ×0.816, trix_1D ×0.835, yapi_1D ×0.841
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 377
+- ders: 379
 - gösterge aileleri aynı yönde değil: 323
 - büyük zaman dilimi trendi ters: 153
-- bu coinde zaten pozisyon var: 96
+- bu coinde zaten pozisyon var: 97
 - puan +0.149 eşiğin (0.25) altında: 44
 - puan +0.146 eşiğin (0.25) altında: 40
 - puan +0.167 eşiğin (0.25) altında: 38
@@ -147,10 +147,10 @@ En az işe yarayan okumalar: adx_di_1D ×0.816, trix_1D ×0.835, yapi_1D ×0.841
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 377
+- ders: 379
 - gösterge aileleri aynı yönde değil: 323
 - büyük zaman dilimi trendi ters: 153
-- bu coinde zaten pozisyon var: 96
+- bu coinde zaten pozisyon var: 97
 - puan +0.149 eşiğin (0.25) altında: 44
 - puan +0.146 eşiğin (0.25) altında: 40
 - puan +0.167 eşiğin (0.25) altında: 38
