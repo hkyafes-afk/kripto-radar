@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.394R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.398R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 351 | %46.2 | -0.394 | -138.17 |
+| polat_tum_sinyaller | 357 | %45.9 | -0.398 | -141.93 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
-| polat_girilmeyen | 349 | %46.1 | -0.392 | -136.97 |
-| rastgele | 367 | %43.1 | -0.468 | -171.63 |
-| trend_naif | 368 | %39.1 | -0.503 | -185.21 |
+| polat_girilmeyen | 355 | %45.9 | -0.396 | -140.73 |
+| rastgele | 372 | %43.3 | -0.462 | -171.99 |
+| trend_naif | 372 | %38.7 | -0.51 | -189.81 |
 
-Polat özsermaye: %-1.61 · BTC al-tut: %-0.53
+Polat özsermaye: %-1.7 · BTC al-tut: %-0.46
 
 ## Öğrenme (walk-forward)
 
@@ -55,14 +55,14 @@ En az işe yarayan okumalar: yapi_1D ×0.747, adx_di_1D ×0.761, stoch_5m ×0.77
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 417
+- ders: 423
 - gösterge aileleri aynı yönde değil: 326
-- günlük işlem tavanı (8): 253
+- günlük işlem tavanı (8): 254
 - büyük zaman dilimi trendi ters: 155
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 47
 - puan +0.146 eşiğin (0.25) altında: 41
-- puan +0.167 eşiğin (0.25) altında: 39
+- puan +0.167 eşiğin (0.25) altında: 40
 - puan +0.161 eşiğin (0.25) altında: 37
 
 **Hata sınıfları**
@@ -101,14 +101,14 @@ En az işe yarayan okumalar: yapi_1D ×0.747, adx_di_1D ×0.761, stoch_5m ×0.77
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 417
+- ders: 423
 - gösterge aileleri aynı yönde değil: 326
-- günlük işlem tavanı (8): 253
+- günlük işlem tavanı (8): 254
 - büyük zaman dilimi trendi ters: 155
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 47
 - puan +0.146 eşiğin (0.25) altında: 41
-- puan +0.167 eşiğin (0.25) altında: 39
+- puan +0.167 eşiğin (0.25) altında: 40
 - puan +0.161 eşiğin (0.25) altında: 37
 
 **Hata sınıfları**
@@ -147,14 +147,14 @@ En az işe yarayan okumalar: yapi_1D ×0.747, adx_di_1D ×0.761, stoch_5m ×0.77
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 417
+- ders: 423
 - gösterge aileleri aynı yönde değil: 326
-- günlük işlem tavanı (8): 253
+- günlük işlem tavanı (8): 254
 - büyük zaman dilimi trendi ters: 155
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 47
 - puan +0.146 eşiğin (0.25) altında: 41
-- puan +0.167 eşiğin (0.25) altında: 39
+- puan +0.167 eşiğin (0.25) altında: 40
 - puan +0.161 eşiğin (0.25) altında: 37
 
 **Hata sınıfları**
