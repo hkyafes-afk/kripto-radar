@@ -11,10 +11,10 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 445 | %45.4 | -0.39 | -173.64 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
 | polat_girilmeyen | 443 | %45.4 | -0.389 | -172.44 |
-| rastgele | 451 | %43.2 | -0.437 | -197.25 |
+| rastgele | 454 | %43.6 | -0.43 | -195.3 |
 | trend_naif | 454 | %38.1 | -0.507 | -230.0 |
 
-Polat özsermaye: %-2.29 · BTC al-tut: %-0.18
+Polat özsermaye: %-2.26 · BTC al-tut: %-0.19
 
 ## Öğrenme (walk-forward)
 
