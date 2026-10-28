@@ -11,10 +11,10 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 177 | %41.8 | -0.488 | -86.34 |
 | polat_girilen | 0 | %- | - | - |
 | polat_girilmeyen | 177 | %41.8 | -0.488 | -86.34 |
-| rastgele | 168 | %42.3 | -0.468 | -78.63 |
+| rastgele | 169 | %42.6 | -0.463 | -78.32 |
 | trend_naif | 173 | %38.7 | -0.489 | -84.58 |
 
-Polat özsermaye: %0.0 · BTC al-tut: %-0.13
+Polat özsermaye: %0.0 · BTC al-tut: %-0.12
 
 ## Öğrenme (walk-forward)
 
@@ -25,11 +25,11 @@ En az işe yarayan okumalar: stoch_15m ×0.827, stoch_5m ×0.839, yapi_1D ×0.87
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 3585, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 3594, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 518
+- emir defteri doğrulanmadı: 519
 - gösterge aileleri aynı yönde değil: 224
 - ders: 108
 - büyük zaman dilimi trendi ters: 81
@@ -37,16 +37,16 @@ Kapanmış işlem yok. Görülen kurulum: 3585, girilen: 0.
 - puan +0.146 eşiğin (0.25) altında: 24
 - puan +0.167 eşiğin (0.25) altında: 24
 - puan +0.198 eşiğin (0.25) altında: 21
+- puan +0.161 eşiğin (0.25) altında: 20
 - puan +0.148 eşiğin (0.25) altında: 20
-- puan +0.161 eşiğin (0.25) altında: 19
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 3585, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 3594, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 518
+- emir defteri doğrulanmadı: 519
 - gösterge aileleri aynı yönde değil: 224
 - ders: 108
 - büyük zaman dilimi trendi ters: 81
@@ -54,16 +54,16 @@ Kapanmış işlem yok. Görülen kurulum: 3585, girilen: 0.
 - puan +0.146 eşiğin (0.25) altında: 24
 - puan +0.167 eşiğin (0.25) altında: 24
 - puan +0.198 eşiğin (0.25) altında: 21
+- puan +0.161 eşiğin (0.25) altında: 20
 - puan +0.148 eşiğin (0.25) altında: 20
-- puan +0.161 eşiğin (0.25) altında: 19
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 3585, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 3594, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 518
+- emir defteri doğrulanmadı: 519
 - gösterge aileleri aynı yönde değil: 224
 - ders: 108
 - büyük zaman dilimi trendi ters: 81
@@ -71,5 +71,5 @@ Kapanmış işlem yok. Görülen kurulum: 3585, girilen: 0.
 - puan +0.146 eşiğin (0.25) altında: 24
 - puan +0.167 eşiğin (0.25) altında: 24
 - puan +0.198 eşiğin (0.25) altında: 21
+- puan +0.161 eşiğin (0.25) altında: 20
 - puan +0.148 eşiğin (0.25) altında: 20
-- puan +0.161 eşiğin (0.25) altında: 19
