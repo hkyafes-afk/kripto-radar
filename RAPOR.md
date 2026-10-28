@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.445R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.441R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 305 | %43.0 | -0.445 | -135.81 |
+| polat_tum_sinyaller | 307 | %43.3 | -0.441 | -135.26 |
 | polat_girilen | 1 | %100.0 | 0.215 | 0.21 |
-| polat_girilmeyen | 304 | %42.8 | -0.447 | -136.02 |
-| rastgele | 321 | %40.8 | -0.513 | -164.7 |
-| trend_naif | 315 | %34.9 | -0.574 | -180.89 |
+| polat_girilmeyen | 306 | %43.1 | -0.443 | -135.47 |
+| rastgele | 323 | %41.2 | -0.508 | -164.15 |
+| trend_naif | 317 | %35.3 | -0.569 | -180.34 |
 
-Polat özsermaye: %-0.53 · BTC al-tut: %-0.64
+Polat özsermaye: %-0.56 · BTC al-tut: %-0.68
 
 ## Öğrenme (walk-forward)
 
@@ -54,10 +54,10 @@ En az işe yarayan okumalar: adx_di_1D ×0.816, trix_1D ×0.835, yapi_1D ×0.841
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 359
-- gösterge aileleri aynı yönde değil: 322
+- ders: 363
+- gösterge aileleri aynı yönde değil: 323
 - büyük zaman dilimi trendi ters: 153
-- bu coinde zaten pozisyon var: 84
+- bu coinde zaten pozisyon var: 85
 - puan +0.149 eşiğin (0.25) altında: 44
 - puan +0.146 eşiğin (0.25) altında: 39
 - puan +0.167 eşiğin (0.25) altında: 38
@@ -95,10 +95,10 @@ En az işe yarayan okumalar: adx_di_1D ×0.816, trix_1D ×0.835, yapi_1D ×0.841
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 359
-- gösterge aileleri aynı yönde değil: 322
+- ders: 363
+- gösterge aileleri aynı yönde değil: 323
 - büyük zaman dilimi trendi ters: 153
-- bu coinde zaten pozisyon var: 84
+- bu coinde zaten pozisyon var: 85
 - puan +0.149 eşiğin (0.25) altında: 44
 - puan +0.146 eşiğin (0.25) altında: 39
 - puan +0.167 eşiğin (0.25) altında: 38
@@ -136,10 +136,10 @@ En az işe yarayan okumalar: adx_di_1D ×0.816, trix_1D ×0.835, yapi_1D ×0.841
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 359
-- gösterge aileleri aynı yönde değil: 322
+- ders: 363
+- gösterge aileleri aynı yönde değil: 323
 - büyük zaman dilimi trendi ters: 153
-- bu coinde zaten pozisyon var: 84
+- bu coinde zaten pozisyon var: 85
 - puan +0.149 eşiğin (0.25) altında: 44
 - puan +0.146 eşiğin (0.25) altında: 39
 - puan +0.167 eşiğin (0.25) altında: 38
