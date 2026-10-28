@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.299R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.3R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 631 | %48.2 | -0.299 | -188.54 |
+| polat_tum_sinyaller | 632 | %48.1 | -0.3 | -189.81 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
-| polat_girilmeyen | 629 | %48.2 | -0.298 | -187.34 |
+| polat_girilmeyen | 630 | %48.1 | -0.299 | -188.61 |
 | rastgele | 643 | %43.1 | -0.415 | -266.56 |
 | trend_naif | 640 | %38.3 | -0.495 | -316.55 |
 
-Polat özsermaye: %-2.57 · BTC al-tut: %0.33
+Polat özsermaye: %-2.57 · BTC al-tut: %0.36
 
 ## Öğrenme (walk-forward)
 
@@ -57,11 +57,11 @@ En az işe yarayan okumalar: yapi_1D ×0.797, stoch_5m ×0.807, ema_1D ×0.861, 
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 1249
+- ders: 1251
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 487
-- üst üste 3 zarar: 365
+- üst üste 3 zarar: 366
 - büyük zaman dilimi trendi ters: 354
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
@@ -107,11 +107,11 @@ En az işe yarayan okumalar: yapi_1D ×0.797, stoch_5m ×0.807, ema_1D ×0.861, 
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 1249
+- ders: 1251
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 487
-- üst üste 3 zarar: 365
+- üst üste 3 zarar: 366
 - büyük zaman dilimi trendi ters: 354
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
@@ -157,11 +157,11 @@ En az işe yarayan okumalar: yapi_1D ×0.797, stoch_5m ×0.807, ema_1D ×0.861, 
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 1249
+- ders: 1251
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 487
-- üst üste 3 zarar: 365
+- üst üste 3 zarar: 366
 - büyük zaman dilimi trendi ters: 354
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
