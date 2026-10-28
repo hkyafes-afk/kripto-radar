@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 266 | %42.1 | -0.492 | -130.96 |
 | trend_naif | 265 | %35.8 | -0.566 | -149.99 |
 
-Polat özsermaye: %-0.82 · BTC al-tut: %0.46
+Polat özsermaye: %-0.79 · BTC al-tut: %0.47
 
 ## Öğrenme (walk-forward)
 
@@ -25,7 +25,7 @@ En az işe yarayan okumalar: uyusmazlik_macd_1H ×0.875, yapi_1D ×0.889, adx_di
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 5967, girilen: 2.
+Kapanmış işlem yok. Görülen kurulum: 5985, girilen: 2.
 
 **Girilmeyen kurulumlar (engel)**
 
@@ -35,14 +35,14 @@ Kapanmış işlem yok. Görülen kurulum: 5967, girilen: 2.
 - büyük zaman dilimi trendi ters: 148
 - bu coinde zaten pozisyon var: 54
 - puan +0.149 eşiğin (0.25) altında: 44
-- puan +0.146 eşiğin (0.25) altında: 37
+- puan +0.146 eşiğin (0.25) altında: 38
 - puan +0.167 eşiğin (0.25) altında: 37
 - puan +0.158 eşiğin (0.25) altında: 35
 - puan +0.161 eşiğin (0.25) altında: 34
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 5967, girilen: 2.
+Kapanmış işlem yok. Görülen kurulum: 5985, girilen: 2.
 
 **Girilmeyen kurulumlar (engel)**
 
@@ -52,14 +52,14 @@ Kapanmış işlem yok. Görülen kurulum: 5967, girilen: 2.
 - büyük zaman dilimi trendi ters: 148
 - bu coinde zaten pozisyon var: 54
 - puan +0.149 eşiğin (0.25) altında: 44
-- puan +0.146 eşiğin (0.25) altında: 37
+- puan +0.146 eşiğin (0.25) altında: 38
 - puan +0.167 eşiğin (0.25) altında: 37
 - puan +0.158 eşiğin (0.25) altında: 35
 - puan +0.161 eşiğin (0.25) altında: 34
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 5967, girilen: 2.
+Kapanmış işlem yok. Görülen kurulum: 5985, girilen: 2.
 
 **Girilmeyen kurulumlar (engel)**
 
@@ -69,7 +69,7 @@ Kapanmış işlem yok. Görülen kurulum: 5967, girilen: 2.
 - büyük zaman dilimi trendi ters: 148
 - bu coinde zaten pozisyon var: 54
 - puan +0.149 eşiğin (0.25) altında: 44
-- puan +0.146 eşiğin (0.25) altında: 37
+- puan +0.146 eşiğin (0.25) altında: 38
 - puan +0.167 eşiğin (0.25) altında: 37
 - puan +0.158 eşiğin (0.25) altında: 35
 - puan +0.161 eşiğin (0.25) altında: 34
