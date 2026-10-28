@@ -63,3 +63,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: bash scripts/polat_veri.sh push "çökme sonrası kayıt"
+
+      # Elle durdurulursa nöbeti hemen bırak (yoksa yeni koşu nabız eskiyene kadar 3 dk bekler).
+      - name: Durdurulunca nöbeti bırak
+        if: cancelled()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 -c "import json,os,time;p='polat_veri/lease.json';l=json.load(open(p)) if os.path.exists(p) else {};l.update(released=True,hb=time.time());json.dump(l,open(p,'w'))"
+          bash scripts/polat_veri.sh push "iptal: nöbet bırakıldı"
