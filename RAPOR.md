@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 437 | %43.7 | -0.425 | -185.73 |
 | trend_naif | 436 | %38.8 | -0.488 | -212.81 |
 
-Polat özsermaye: %-1.53 · BTC al-tut: %-0.5
+Polat özsermaye: %-1.57 · BTC al-tut: %-0.45
 
 ## Öğrenme (walk-forward)
 
@@ -54,15 +54,15 @@ En az işe yarayan okumalar: stoch_5m ×0.781, ema_1D ×0.873, yapi_1D ×0.874, 
 
 **Girilmeyen kurulumlar (engel)**
 
-- günlük işlem tavanı (8): 616
+- günlük işlem tavanı (8): 619
 - emir defteri doğrulanmadı: 593
 - ders: 510
 - gösterge aileleri aynı yönde değil: 419
 - büyük zaman dilimi trendi ters: 185
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 49
+- puan -0.129 eşiğin (0.25) altında: 44
 - puan -0.126 eşiğin (0.25) altında: 44
-- puan -0.129 eşiğin (0.25) altında: 43
 - puan -0.121 eşiğin (0.25) altında: 43
 
 **Hata sınıfları**
@@ -100,15 +100,15 @@ En az işe yarayan okumalar: stoch_5m ×0.781, ema_1D ×0.873, yapi_1D ×0.874, 
 
 **Girilmeyen kurulumlar (engel)**
 
-- günlük işlem tavanı (8): 616
+- günlük işlem tavanı (8): 619
 - emir defteri doğrulanmadı: 593
 - ders: 510
 - gösterge aileleri aynı yönde değil: 419
 - büyük zaman dilimi trendi ters: 185
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 49
+- puan -0.129 eşiğin (0.25) altında: 44
 - puan -0.126 eşiğin (0.25) altında: 44
-- puan -0.129 eşiğin (0.25) altında: 43
 - puan -0.121 eşiğin (0.25) altında: 43
 
 **Hata sınıfları**
@@ -146,15 +146,15 @@ En az işe yarayan okumalar: stoch_5m ×0.781, ema_1D ×0.873, yapi_1D ×0.874, 
 
 **Girilmeyen kurulumlar (engel)**
 
-- günlük işlem tavanı (8): 616
+- günlük işlem tavanı (8): 619
 - emir defteri doğrulanmadı: 593
 - ders: 510
 - gösterge aileleri aynı yönde değil: 419
 - büyük zaman dilimi trendi ters: 185
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 49
+- puan -0.129 eşiğin (0.25) altında: 44
 - puan -0.126 eşiğin (0.25) altında: 44
-- puan -0.129 eşiğin (0.25) altında: 43
 - puan -0.121 eşiğin (0.25) altında: 43
 
 **Hata sınıfları**
