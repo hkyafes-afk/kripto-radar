@@ -23,51 +23,51 @@ Polat özsermaye: %0.0 · BTC al-tut: %-0.09
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 885, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 895, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 153
-- gösterge aileleri aynı yönde değil: 69
-- büyük zaman dilimi trendi ters: 33
+- emir defteri doğrulanmadı: 154
+- gösterge aileleri aynı yönde değil: 70
+- büyük zaman dilimi trendi ters: 34
 - puan +0.207 eşiğin (0.25) altında: 11
 - puan +0.137 eşiğin (0.25) altında: 9
 - puan +0.176 eşiğin (0.25) altında: 9
 - puan +0.185 eşiğin (0.25) altında: 8
+- puan +0.186 eşiğin (0.25) altında: 8
 - puan +0.150 eşiğin (0.25) altında: 8
 - puan +0.204 eşiğin (0.25) altında: 7
-- puan +0.146 eşiğin (0.25) altında: 7
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 885, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 895, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 153
-- gösterge aileleri aynı yönde değil: 69
-- büyük zaman dilimi trendi ters: 33
+- emir defteri doğrulanmadı: 154
+- gösterge aileleri aynı yönde değil: 70
+- büyük zaman dilimi trendi ters: 34
 - puan +0.207 eşiğin (0.25) altında: 11
 - puan +0.137 eşiğin (0.25) altında: 9
 - puan +0.176 eşiğin (0.25) altında: 9
 - puan +0.185 eşiğin (0.25) altında: 8
+- puan +0.186 eşiğin (0.25) altında: 8
 - puan +0.150 eşiğin (0.25) altında: 8
 - puan +0.204 eşiğin (0.25) altında: 7
-- puan +0.146 eşiğin (0.25) altında: 7
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 885, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 895, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 153
-- gösterge aileleri aynı yönde değil: 69
-- büyük zaman dilimi trendi ters: 33
+- emir defteri doğrulanmadı: 154
+- gösterge aileleri aynı yönde değil: 70
+- büyük zaman dilimi trendi ters: 34
 - puan +0.207 eşiğin (0.25) altında: 11
 - puan +0.137 eşiğin (0.25) altında: 9
 - puan +0.176 eşiğin (0.25) altında: 9
 - puan +0.185 eşiğin (0.25) altında: 8
+- puan +0.186 eşiğin (0.25) altında: 8
 - puan +0.150 eşiğin (0.25) altında: 8
 - puan +0.204 eşiğin (0.25) altında: 7
-- puan +0.146 eşiğin (0.25) altında: 7
