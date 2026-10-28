@@ -138,9 +138,9 @@ td{padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
   function render(d){
     var eq = d.ozsermaye, cap = d.sermaye || 100000, ret = (eq / cap - 1) * 100;
     $("sub").textContent = (d.bekleme ? "halef ısınıyor · " : "") + "güncellendi " + ago(d.zaman) + " · sürüm " + d.surum + " · mod " + d.mod;
-    var stale = Date.now() - d.zaman > 5 * 60 * 1000;
+    var stale = Date.now() - d.zaman > 12 * 60 * 1000;   // GitHub dosya önbelleği ~5 dk geciktirir; fiyatlar ise OKX'ten anlık
     var w = $("warn");
-    if (stale) { w.style.display = "block"; w.textContent = "Veri 5 dakikadan eski: Polat çalışmıyor olabilir ya da devirde."; }
+    if (stale) { w.style.display = "block"; w.textContent = "Polat verisi 12 dakikadan eski: Polat çalışmıyor olabilir ya da devirde."; }
     else if (d.risk && d.risk.halted) { w.style.display = "block"; w.textContent = "⛔ Durduruldu: " + d.risk.halt_reason; }
     else { w.style.display = "none"; }
     var pw = (d.pencereler || {})["1_gun"] || {};
