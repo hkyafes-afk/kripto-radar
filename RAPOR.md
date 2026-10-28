@@ -4,15 +4,15 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.435R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.426R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 287 | %44.3 | -0.435 | -124.79 |
+| polat_tum_sinyaller | 288 | %44.4 | -0.426 | -122.54 |
 | polat_girilen | 1 | %100.0 | 0.215 | 0.21 |
-| polat_girilmeyen | 286 | %44.1 | -0.437 | -125.0 |
+| polat_girilmeyen | 287 | %44.3 | -0.428 | -122.76 |
 | rastgele | 300 | %42.0 | -0.495 | -148.62 |
-| trend_naif | 299 | %35.1 | -0.573 | -171.18 |
+| trend_naif | 300 | %35.3 | -0.563 | -168.94 |
 
 Polat özsermaye: %-0.7 · BTC al-tut: %-0.38
 
