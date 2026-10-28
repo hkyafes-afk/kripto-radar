@@ -13,3 +13,4 @@
 {"olay": "hata_ayari", "inst": "SOL-USDT-SWAP", "hatalar": ["ilk 15 dk'da stop (giriş zamanlaması)"], "degisen": {"min_stop_atr": 0.582}, "ts": 1793195825584}
 {"olay": "yol", "yol": "yapi_bozulmasi|long|akis+seviye|btc:yatay", "karar": "kacin", "n": 14, "ort_R": -0.375, "ts": 1793198347773}
 {"olay": "yol", "yol": "yapi_bozulmasi|short|seviye+uyusmazlik|btc:yatay", "karar": "kacin", "n": 11, "ort_R": -0.433, "ts": 1793199002702}
+{"olay": "yol", "yol": "yapi_bozulmasi|short|momentum+seviye|btc:yatay", "karar": "benimse", "n": 8, "ort_R": 0.431, "ts": 1793201574319}
