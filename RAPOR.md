@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.394R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.396R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 349 | %46.1 | -0.394 | -137.36 |
+| polat_tum_sinyaller | 350 | %46.0 | -0.396 | -138.56 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
-| polat_girilmeyen | 347 | %46.1 | -0.392 | -136.16 |
+| polat_girilmeyen | 348 | %46.0 | -0.395 | -137.36 |
 | rastgele | 364 | %42.9 | -0.475 | -172.77 |
-| trend_naif | 364 | %39.6 | -0.495 | -180.33 |
+| trend_naif | 367 | %39.2 | -0.501 | -184.0 |
 
-Polat özsermaye: %-1.45 · BTC al-tut: %-0.62
+Polat özsermaye: %-1.46 · BTC al-tut: %-0.63
 
 ## Öğrenme (walk-forward)
 
@@ -55,9 +55,9 @@ En az işe yarayan okumalar: yapi_1D ×0.747, adx_di_1D ×0.761, stoch_5m ×0.77
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 400
+- ders: 403
 - gösterge aileleri aynı yönde değil: 325
-- günlük işlem tavanı (8): 228
+- günlük işlem tavanı (8): 231
 - büyük zaman dilimi trendi ters: 155
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 46
@@ -101,9 +101,9 @@ En az işe yarayan okumalar: yapi_1D ×0.747, adx_di_1D ×0.761, stoch_5m ×0.77
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 400
+- ders: 403
 - gösterge aileleri aynı yönde değil: 325
-- günlük işlem tavanı (8): 228
+- günlük işlem tavanı (8): 231
 - büyük zaman dilimi trendi ters: 155
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 46
@@ -147,9 +147,9 @@ En az işe yarayan okumalar: yapi_1D ×0.747, adx_di_1D ×0.761, stoch_5m ×0.77
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 400
+- ders: 403
 - gösterge aileleri aynı yönde değil: 325
-- günlük işlem tavanı (8): 228
+- günlük işlem tavanı (8): 231
 - büyük zaman dilimi trendi ters: 155
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 46
