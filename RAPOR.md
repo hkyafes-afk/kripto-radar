@@ -4,24 +4,24 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.391R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.388R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 341 | %46.0 | -0.391 | -133.28 |
+| polat_tum_sinyaller | 342 | %46.2 | -0.388 | -132.81 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
-| polat_girilmeyen | 339 | %46.0 | -0.39 | -132.07 |
+| polat_girilmeyen | 340 | %46.2 | -0.387 | -131.61 |
 | rastgele | 356 | %42.7 | -0.474 | -168.78 |
-| trend_naif | 355 | %39.2 | -0.498 | -176.73 |
+| trend_naif | 356 | %39.3 | -0.495 | -176.27 |
 
-Polat özsermaye: %-1.56 · BTC al-tut: %-0.53
+Polat özsermaye: %-1.66 · BTC al-tut: %-0.5
 
 ## Öğrenme (walk-forward)
 
-Örnek 332 (eğitim 232, doğrulama 100) · uygulanan katsayı 24 · doğrulamada tutmadığı için reddedilen 24
+Örnek 342 (eğitim 239, doğrulama 103) · uygulanan katsayı 27 · doğrulamada tutmadığı için reddedilen 22
 
-En çok işe yarayan okumalar: demand_1H ×1.276, cci_1H ×1.255, ustunde_dun_kapanis ×1.177, ustunde_gun_acilis ×1.171, pvi_15m ×1.113, oi_fiyat ×1.105, psar_1H ×1.104, likidasyon_miknatisi ×1.059, cci_15m ×1.029, momentum_15m ×1.029
-En az işe yarayan okumalar: yapi_1D ×0.75, adx_di_1D ×0.766, ema_1D ×0.781, stoch_5m ×0.787, supertrend_1D ×0.803, long_short ×0.871, ema200_4H ×0.877, psar_1D ×0.877, stoch_1H ×0.912, macd_hist_5m ×0.923
+En çok işe yarayan okumalar: demand_1H ×1.283, cci_1H ×1.256, ustunde_dun_kapanis ×1.154, ustunde_gun_acilis ×1.148, pvi_15m ×1.111, oi_fiyat ×1.107, psar_1H ×1.098, momentum_5m ×1.037, momentum_15m ×1.016, cci_15m ×1.014
+En az işe yarayan okumalar: yapi_1D ×0.747, adx_di_1D ×0.761, stoch_5m ×0.777, ema_1D ×0.777, supertrend_1D ×0.799, long_short ×0.857, canli_mum_1H ×0.858, ema200_4H ×0.871, psar_1D ×0.88, stoch_1H ×0.898
 
 ## Son 1 gün
 
@@ -57,7 +57,7 @@ En az işe yarayan okumalar: yapi_1D ×0.75, adx_di_1D ×0.766, ema_1D ×0.781, 
 - emir defteri doğrulanmadı: 593
 - ders: 391
 - gösterge aileleri aynı yönde değil: 325
-- günlük işlem tavanı (8): 211
+- günlük işlem tavanı (8): 219
 - büyük zaman dilimi trendi ters: 154
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 45
@@ -103,7 +103,7 @@ En az işe yarayan okumalar: yapi_1D ×0.75, adx_di_1D ×0.766, ema_1D ×0.781, 
 - emir defteri doğrulanmadı: 593
 - ders: 391
 - gösterge aileleri aynı yönde değil: 325
-- günlük işlem tavanı (8): 211
+- günlük işlem tavanı (8): 219
 - büyük zaman dilimi trendi ters: 154
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 45
@@ -149,7 +149,7 @@ En az işe yarayan okumalar: yapi_1D ×0.75, adx_di_1D ×0.766, ema_1D ×0.781, 
 - emir defteri doğrulanmadı: 593
 - ders: 391
 - gösterge aileleri aynı yönde değil: 325
-- günlük işlem tavanı (8): 211
+- günlük işlem tavanı (8): 219
 - büyük zaman dilimi trendi ters: 154
 - bu coinde zaten pozisyon var: 135
 - puan +0.149 eşiğin (0.25) altında: 45
