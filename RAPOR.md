@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.42R; geçtiği kıyaslar: trend_naif → okumaların üstünlüğü kanıtlanmadı
+**Hüküm:** Polat net -0.421R; geçtiği kıyaslar: trend_naif → okumaların üstünlüğü kanıtlanmadı
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 486 | %43.8 | -0.42 | -203.94 |
+| polat_tum_sinyaller | 488 | %43.9 | -0.421 | -205.38 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
-| polat_girilmeyen | 484 | %43.8 | -0.419 | -202.73 |
-| rastgele | 497 | %44.1 | -0.419 | -208.11 |
-| trend_naif | 495 | %37.4 | -0.523 | -259.1 |
+| polat_girilmeyen | 486 | %43.8 | -0.42 | -204.18 |
+| rastgele | 498 | %44.2 | -0.418 | -207.93 |
+| trend_naif | 496 | %37.3 | -0.526 | -260.73 |
 
-Polat özsermaye: %-2.57 · BTC al-tut: %-0.18
+Polat özsermaye: %-2.57 · BTC al-tut: %-0.23
 
 ## Öğrenme (walk-forward)
 
@@ -57,10 +57,10 @@ En az işe yarayan okumalar: stoch_5m ×0.822, yapi_1D ×0.852, ema_1D ×0.876, 
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 649
+- ders: 654
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- gösterge aileleri aynı yönde değil: 439
+- gösterge aileleri aynı yönde değil: 440
 - büyük zaman dilimi trendi ters: 220
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 73
@@ -107,10 +107,10 @@ En az işe yarayan okumalar: stoch_5m ×0.822, yapi_1D ×0.852, ema_1D ×0.876, 
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 649
+- ders: 654
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- gösterge aileleri aynı yönde değil: 439
+- gösterge aileleri aynı yönde değil: 440
 - büyük zaman dilimi trendi ters: 220
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 73
@@ -157,10 +157,10 @@ En az işe yarayan okumalar: stoch_5m ×0.822, yapi_1D ×0.852, ema_1D ×0.876, 
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 649
+- ders: 654
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- gösterge aileleri aynı yönde değil: 439
+- gösterge aileleri aynı yönde değil: 440
 - büyük zaman dilimi trendi ters: 220
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 73
