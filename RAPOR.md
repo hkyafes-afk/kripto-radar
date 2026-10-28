@@ -11,10 +11,10 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 420 | %46.2 | -0.371 | -155.73 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
 | polat_girilmeyen | 418 | %46.2 | -0.37 | -154.53 |
-| rastgele | 431 | %44.3 | -0.418 | -180.08 |
-| trend_naif | 428 | %39.5 | -0.479 | -204.93 |
+| rastgele | 432 | %44.2 | -0.417 | -180.11 |
+| trend_naif | 429 | %39.4 | -0.478 | -204.96 |
 
-Polat özsermaye: %-1.84 · BTC al-tut: %-0.36
+Polat özsermaye: %-1.71 · BTC al-tut: %-0.45
 
 ## Öğrenme (walk-forward)
 
@@ -55,12 +55,12 @@ En az işe yarayan okumalar: stoch_5m ×0.769, adx_di_1D ×0.779, yapi_1D ×0.78
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- günlük işlem tavanı (8): 547
-- ders: 493
+- günlük işlem tavanı (8): 548
+- ders: 494
 - gösterge aileleri aynı yönde değil: 402
 - büyük zaman dilimi trendi ters: 183
 - bu coinde zaten pozisyon var: 135
-- puan +0.149 eşiğin (0.25) altında: 47
+- puan +0.149 eşiğin (0.25) altında: 48
 - puan +0.146 eşiğin (0.25) altında: 42
 - puan -0.129 eşiğin (0.25) altında: 42
 - puan -0.126 eşiğin (0.25) altında: 42
@@ -101,12 +101,12 @@ En az işe yarayan okumalar: stoch_5m ×0.769, adx_di_1D ×0.779, yapi_1D ×0.78
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- günlük işlem tavanı (8): 547
-- ders: 493
+- günlük işlem tavanı (8): 548
+- ders: 494
 - gösterge aileleri aynı yönde değil: 402
 - büyük zaman dilimi trendi ters: 183
 - bu coinde zaten pozisyon var: 135
-- puan +0.149 eşiğin (0.25) altında: 47
+- puan +0.149 eşiğin (0.25) altında: 48
 - puan +0.146 eşiğin (0.25) altında: 42
 - puan -0.129 eşiğin (0.25) altında: 42
 - puan -0.126 eşiğin (0.25) altında: 42
@@ -147,12 +147,12 @@ En az işe yarayan okumalar: stoch_5m ×0.769, adx_di_1D ×0.779, yapi_1D ×0.78
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- günlük işlem tavanı (8): 547
-- ders: 493
+- günlük işlem tavanı (8): 548
+- ders: 494
 - gösterge aileleri aynı yönde değil: 402
 - büyük zaman dilimi trendi ters: 183
 - bu coinde zaten pozisyon var: 135
-- puan +0.149 eşiğin (0.25) altında: 47
+- puan +0.149 eşiğin (0.25) altında: 48
 - puan +0.146 eşiğin (0.25) altında: 42
 - puan -0.129 eşiğin (0.25) altında: 42
 - puan -0.126 eşiğin (0.25) altında: 42
