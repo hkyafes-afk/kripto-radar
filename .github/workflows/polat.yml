@@ -1,0 +1,59 @@
+name: Polat
+
+# Polat: Kripto Radar'dan bağımsız tek ajan (sanal 100.000$). Yatırım tavsiyesi değildir.
+# Süreklilik: concurrency kuyruğu. Çalışan döngü ~340 dk sürer; zamanlanmış tetik bu sırada "bekleyen" olarak
+# kuyruğa girer ve önceki biter bitmez başlar (arada ~1 dk; o aradaki stop/hedefler 1 dk mumlarla kontrol edilir).
+# Döngü çökerse bir sonraki zamanlanmış tetik devralır.
+on:
+  schedule:
+    - cron: "7,27,47 * * * *"
+  workflow_dispatch:
+    inputs:
+      devam:
+        description: "Risk durdurmasını kaldır (zirveden −%15 sonrası, kullanıcı onayı)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: polat
+  cancel-in-progress: false
+
+jobs:
+  polat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Kütüphaneler
+        run: pip install -r polat/requirements.txt
+
+      - name: Önceki durum
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bash scripts/polat_veri.sh pull
+
+      - name: Risk durdurmasını kaldır (onaylı)
+        if: github.event.inputs.devam == 'true'
+        run: python -m polat devam --kok polat_veri
+
+      - name: Polat
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python -m polat calis --kok polat_veri --sure 20400 --git-push-dk 15
+
+      - name: Son durumu kaydet
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bash scripts/polat_veri.sh push "döngü sonu"

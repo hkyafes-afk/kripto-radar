@@ -1,0 +1,88 @@
+# Polat — bağımsız tek ajan. Kripto Radar'ın koduna, defterine ve kurallarına bağlı değildir.
+# Bütün sayılar burada; kod değişmeden ayar yapılabilir. Gerçek para yok. Yatırım tavsiyesi değildir.
+
+sermaye_usd: 100000
+
+yurutme:
+  # sanal   → Polat'ın kendi defteri, OKX gibi davranır (gerçek emir defterinden dolum, OKX ücretleri,
+  #           borsa tarafı stop-market reduce-only, funding kesimi, izole marj, likidasyon)
+  # okx_demo→ OKX demo hesabı (x-simulated-trading). Anahtar GitHub Secrets'ta olmalı:
+  #           POLAT_OKX_KEY / POLAT_OKX_SECRET / POLAT_OKX_PASSPHRASE. Anahtar: yalnızca işlem yetkisi,
+  #           çekim KAPALI, IP kilitli.
+  # okx_canli→ kod bunu bilerek reddeder; gerçek para kullanıcının ayrıca açık onayını ister.
+  mod: sanal
+  ucret_taker: 0.0005        # OKX vadeli VIP0
+  ucret_maker: 0.0002
+  bakim_marji: 0.005         # likidasyon hesabı için (OKX kademeli; muhafazakâr tek oran)
+
+veri:
+  ws_public: ["wss://ws.okx.com:8443/ws/v5/public", "wss://wsaws.okx.com:8443/ws/v5/public"]
+  ws_business: ["wss://ws.okx.com:8443/ws/v5/business", "wss://wsaws.okx.com:8443/ws/v5/business"]
+  rest: ["https://www.okx.com", "https://aws.okx.com"]
+  zaman_dilimleri: ["5m", "15m", "1H", "4H", "1D"]
+  gecmis_mum: 300            # açılışta her zaman dilimi için
+  defter_kanali: books       # books = 400 kademe artımlı (100 ms, checksum'lı); books5 daha hafif
+  long_short_dk: 5           # OKX bu veriyi 5 dk aralıkla verir
+  dominans_dk: 5             # CoinGecko global
+  stablecoin_dk: 30          # DefiLlama
+  takvim_saat: 6             # ForexFactory haftalık takvim
+
+secici:
+  izlenen: 30                # derin okuma (defter + tape + tüm mumlar) yapılan coin sayısı
+  cikis_sirasi: 40           # histerezis: listedeki coin ancak bu sıranın dışına düşünce çıkar
+  min_hacim_usd: 20000000    # 24 saat
+  max_spread_bp: 8
+  yenileme_dk: 5
+  agirlik_hacim: 0.5         # 24 saatlik hacim sırası
+  agirlik_ivme: 0.5          # son 1 saat hacmi / önceki 24 saatin saatlik ortalaması
+  sabit: ["BTC-USDT-SWAP", "ETH-USDT-SWAP"]   # piyasa referansı, hep izlenir
+
+risk:
+  islem_riski: 0.005         # her işlemde özsermayenin %0,5'i (stop'a kadar kayıp). Sabit: tutarlılık.
+  max_acik_pozisyon: 5
+  max_acik_risk: 0.025       # açık pozisyonların toplam stop riski
+  max_ayni_yon: 3
+  max_kaldirac: 10
+  likidasyon_tamponu: 2.0    # likidasyon fiyatı stop'tan en az 2 stop mesafesi ötede olmalı
+  max_stop_yuzde: 6.0        # yapıya konan stop bundan uzaksa işlem yok
+  min_stop_atr: 0.5          # stop 15dk ATR'nin yarısından yakınsa gürültüde çıkar → yok
+  gunluk_zarar_durdur: 0.02  # gün içi −%2 → o gün yeni işlem yok (UTC gün)
+  haftalik_zarar_durdur: 0.05
+  ust_uste_zarar: 3          # 3 zarar üst üste → 12 saat ara
+  ara_saat: 12
+  gunluk_max_islem: 8        # overtrade sınırı
+  intikam_yasagi_saat: 4     # stop olan coinde aynı yöne 4 saat giriş yok
+  zirveden_dusus_yarim: 0.10 # özsermaye zirvesinden −%10 → risk yarıya
+  zirveden_dusus_dur: 0.15   # −%15 → Polat durur, kullanıcı onayı olmadan yeni işlem açmaz
+  max_spread_bp: 8
+  min_derinlik_kat: 10       # ilk 5 kademe derinlik ≥ emir büyüklüğünün 10 katı
+
+cikis:
+  hedef_yuzde: 12.5          # %12,5 kâr kuralı: fiyat hareketi
+  kismi_r: 2.0               # 2R'de yarısı satılır (Minervini)
+  kismi_oran: 0.5
+  basabas_r: 1.0             # 1R'de stop giriş + ücrete
+  geri_verme: 0.5            # kâr tepeden en fazla %50 geri verilir (merdivenden inme sınırı)
+  geri_verme_baslangic_r: 1.0
+  iz_yapi: 15m               # iz stop ayrıca bu zaman diliminin son dibine/tepesine taşınır
+  max_sure_saat: 72          # plan süresi; gerekçe bitti ise çık
+
+kurulum:
+  aktif: ["kirilim", "geri_cekilme", "supurme"]
+  hacim_kirilim_kat: 1.5
+  climax_kat: 3.0
+  min_teyit: 3               # zorunlu koşullara ek olarak en az 3 bağımsız teyit
+  fonlama_kalabalik_long: 30 # yıllık %; üstünde long yok
+  fonlama_kalabalik_short: -20
+  takvim_sessizlik_dk: 30    # yüksek etkili ABD verisinden önce/sonra giriş yok
+  duvar_kat: 5               # kademe büyüklüğü, ilk 20 kademenin ortalamasının 5 katı → duvar
+  duvar_kalici_sn: 30        # duvar ancak 30 sn yerinde kalırsa gerçek sayılır
+
+devir:
+  calisma_dk: 340            # GitHub'da bir döngü
+  halef_once_dk: 8           # halef bu kadar önce çağrılır, ısınır, nöbeti devralır
+  kayit_sn: 30               # durum dosyası aralığı
+
+bildirim:
+  telegram: true
+  etiket: "🎯 Polat"

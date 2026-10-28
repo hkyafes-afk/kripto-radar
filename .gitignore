@@ -4,3 +4,4 @@ __pycache__/
 site/
 .pytest_cache/
 .halef_gonderildi
+polat_veri/
