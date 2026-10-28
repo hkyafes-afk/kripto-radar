@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 105 | %44.8 | -0.454 | -47.67 |
 | trend_naif | 107 | %40.2 | -0.492 | -52.65 |
 
-Polat özsermaye: %0.0 · BTC al-tut: %-0.1
+Polat özsermaye: %0.0 · BTC al-tut: %-0.08
 
 ## Öğrenme (walk-forward)
 
@@ -25,16 +25,16 @@ En az işe yarayan okumalar: stoch_5m ×0.83, stoch_15m ×0.858, ema200_1D ×0.9
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2438, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2455, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 339
-- gösterge aileleri aynı yönde değil: 167
+- gösterge aileleri aynı yönde değil: 168
 - büyük zaman dilimi trendi ters: 71
-- ders: 42
+- ders: 43
 - puan +0.149 eşiğin (0.25) altında: 22
-- puan +0.146 eşiğin (0.25) altında: 17
+- puan +0.146 eşiğin (0.25) altında: 18
 - puan +0.127 eşiğin (0.25) altında: 16
 - puan +0.207 eşiğin (0.25) altında: 16
 - puan +0.168 eşiğin (0.25) altında: 16
@@ -42,16 +42,16 @@ Kapanmış işlem yok. Görülen kurulum: 2438, girilen: 0.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2438, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2455, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 339
-- gösterge aileleri aynı yönde değil: 167
+- gösterge aileleri aynı yönde değil: 168
 - büyük zaman dilimi trendi ters: 71
-- ders: 42
+- ders: 43
 - puan +0.149 eşiğin (0.25) altında: 22
-- puan +0.146 eşiğin (0.25) altında: 17
+- puan +0.146 eşiğin (0.25) altında: 18
 - puan +0.127 eşiğin (0.25) altında: 16
 - puan +0.207 eşiğin (0.25) altında: 16
 - puan +0.168 eşiğin (0.25) altında: 16
@@ -59,16 +59,16 @@ Kapanmış işlem yok. Görülen kurulum: 2438, girilen: 0.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2438, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2455, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 339
-- gösterge aileleri aynı yönde değil: 167
+- gösterge aileleri aynı yönde değil: 168
 - büyük zaman dilimi trendi ters: 71
-- ders: 42
+- ders: 43
 - puan +0.149 eşiğin (0.25) altında: 22
-- puan +0.146 eşiğin (0.25) altında: 17
+- puan +0.146 eşiğin (0.25) altında: 18
 - puan +0.127 eşiğin (0.25) altında: 16
 - puan +0.207 eşiğin (0.25) altında: 16
 - puan +0.168 eşiğin (0.25) altında: 16
