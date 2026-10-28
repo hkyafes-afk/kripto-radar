@@ -12,9 +12,9 @@ _Yatırım tavsiyesi değildir._
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
 | polat_girilmeyen | 509 | %43.4 | -0.426 | -216.61 |
 | rastgele | 522 | %43.7 | -0.425 | -222.05 |
-| trend_naif | 520 | %36.5 | -0.536 | -278.6 |
+| trend_naif | 521 | %36.7 | -0.534 | -278.28 |
 
-Polat özsermaye: %-2.57 · BTC al-tut: %-0.01
+Polat özsermaye: %-2.57 · BTC al-tut: %0.13
 
 ## Öğrenme (walk-forward)
 
@@ -57,13 +57,13 @@ En az işe yarayan okumalar: yapi_1D ×0.879, ema_4H ×0.897, ema_1D ×0.911, ca
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 691
+- ders: 696
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 442
 - büyük zaman dilimi trendi ters: 222
 - bu coinde zaten pozisyon var: 135
-- yüksek etkili ABD verisi yakın (takvim sessizliği): 91
+- yüksek etkili ABD verisi yakın (takvim sessizliği): 96
 - puan +0.149 eşiğin (0.25) altında: 50
 - puan -0.129 eşiğin (0.25) altında: 47
 - puan -0.128 eşiğin (0.25) altında: 46
@@ -107,13 +107,13 @@ En az işe yarayan okumalar: yapi_1D ×0.879, ema_4H ×0.897, ema_1D ×0.911, ca
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 691
+- ders: 696
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 442
 - büyük zaman dilimi trendi ters: 222
 - bu coinde zaten pozisyon var: 135
-- yüksek etkili ABD verisi yakın (takvim sessizliği): 91
+- yüksek etkili ABD verisi yakın (takvim sessizliği): 96
 - puan +0.149 eşiğin (0.25) altında: 50
 - puan -0.129 eşiğin (0.25) altında: 47
 - puan -0.128 eşiğin (0.25) altında: 46
@@ -157,13 +157,13 @@ En az işe yarayan okumalar: yapi_1D ×0.879, ema_4H ×0.897, ema_1D ×0.911, ca
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 691
+- ders: 696
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 442
 - büyük zaman dilimi trendi ters: 222
 - bu coinde zaten pozisyon var: 135
-- yüksek etkili ABD verisi yakın (takvim sessizliği): 91
+- yüksek etkili ABD verisi yakın (takvim sessizliği): 96
 - puan +0.149 eşiğin (0.25) altında: 50
 - puan -0.129 eşiğin (0.25) altında: 47
 - puan -0.128 eşiğin (0.25) altında: 46
