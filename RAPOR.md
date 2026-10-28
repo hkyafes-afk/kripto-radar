@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 59 | %40.7 | -0.555 | -32.77 |
 | trend_naif | 60 | %31.7 | -0.651 | -39.03 |
 
-Polat özsermaye: %0.0 · BTC al-tut: %0.15
+Polat özsermaye: %0.0 · BTC al-tut: %0.12
 
 ## Öğrenme (walk-forward)
 
@@ -23,51 +23,51 @@ Polat özsermaye: %0.0 · BTC al-tut: %0.15
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 1462, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 1477, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 244
-- gösterge aileleri aynı yönde değil: 110
+- emir defteri doğrulanmadı: 247
+- gösterge aileleri aynı yönde değil: 113
 - büyük zaman dilimi trendi ters: 57
 - puan +0.146 eşiğin (0.25) altında: 15
 - puan +0.207 eşiğin (0.25) altında: 14
 - puan +0.149 eşiğin (0.25) altında: 14
 - puan +0.137 eşiğin (0.25) altında: 13
+- puan +0.168 eşiğin (0.25) altında: 13
 - puan +0.138 eşiğin (0.25) altında: 12
 - puan +0.171 eşiğin (0.25) altında: 12
-- puan +0.168 eşiğin (0.25) altında: 12
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 1462, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 1477, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 244
-- gösterge aileleri aynı yönde değil: 110
+- emir defteri doğrulanmadı: 247
+- gösterge aileleri aynı yönde değil: 113
 - büyük zaman dilimi trendi ters: 57
 - puan +0.146 eşiğin (0.25) altında: 15
 - puan +0.207 eşiğin (0.25) altında: 14
 - puan +0.149 eşiğin (0.25) altında: 14
 - puan +0.137 eşiğin (0.25) altında: 13
+- puan +0.168 eşiğin (0.25) altında: 13
 - puan +0.138 eşiğin (0.25) altında: 12
 - puan +0.171 eşiğin (0.25) altında: 12
-- puan +0.168 eşiğin (0.25) altında: 12
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 1462, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 1477, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 244
-- gösterge aileleri aynı yönde değil: 110
+- emir defteri doğrulanmadı: 247
+- gösterge aileleri aynı yönde değil: 113
 - büyük zaman dilimi trendi ters: 57
 - puan +0.146 eşiğin (0.25) altında: 15
 - puan +0.207 eşiğin (0.25) altında: 14
 - puan +0.149 eşiğin (0.25) altında: 14
 - puan +0.137 eşiğin (0.25) altında: 13
+- puan +0.168 eşiğin (0.25) altında: 13
 - puan +0.138 eşiğin (0.25) altında: 12
 - puan +0.171 eşiğin (0.25) altında: 12
-- puan +0.168 eşiğin (0.25) altında: 12
