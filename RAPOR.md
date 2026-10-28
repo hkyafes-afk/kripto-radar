@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** kanıt yetersiz: 72/100 sonuçlanmış sinyal. Bu sayıdan önce hiçbir sonuç anlamlı değildir.
+**Hüküm:** kanıt yetersiz: 75/100 sonuçlanmış sinyal. Bu sayıdan önce hiçbir sonuç anlamlı değildir.
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 72 | %51.4 | -0.309 | -22.24 |
+| polat_tum_sinyaller | 75 | %53.3 | -0.279 | -20.92 |
 | polat_girilen | 0 | %- | - | - |
-| polat_girilmeyen | 72 | %51.4 | -0.309 | -22.24 |
-| rastgele | 69 | %40.6 | -0.563 | -38.81 |
-| trend_naif | 71 | %31.0 | -0.674 | -47.88 |
+| polat_girilmeyen | 75 | %53.3 | -0.279 | -20.92 |
+| rastgele | 70 | %41.4 | -0.549 | -38.42 |
+| trend_naif | 73 | %32.9 | -0.643 | -46.95 |
 
-Polat özsermaye: %0.0 · BTC al-tut: %-0.01
+Polat özsermaye: %0.0 · BTC al-tut: %-0.02
 
 ## Öğrenme (walk-forward)
 
@@ -23,11 +23,11 @@ Polat özsermaye: %0.0 · BTC al-tut: %-0.01
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 1738, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 1747, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 276
+- emir defteri doğrulanmadı: 280
 - gösterge aileleri aynı yönde değil: 129
 - büyük zaman dilimi trendi ters: 57
 - puan +0.149 eşiğin (0.25) altında: 17
@@ -40,11 +40,11 @@ Kapanmış işlem yok. Görülen kurulum: 1738, girilen: 0.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 1738, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 1747, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 276
+- emir defteri doğrulanmadı: 280
 - gösterge aileleri aynı yönde değil: 129
 - büyük zaman dilimi trendi ters: 57
 - puan +0.149 eşiğin (0.25) altında: 17
@@ -57,11 +57,11 @@ Kapanmış işlem yok. Görülen kurulum: 1738, girilen: 0.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 1738, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 1747, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 276
+- emir defteri doğrulanmadı: 280
 - gösterge aileleri aynı yönde değil: 129
 - büyük zaman dilimi trendi ters: 57
 - puan +0.149 eşiğin (0.25) altında: 17
