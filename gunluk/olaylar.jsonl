@@ -85,3 +85,4 @@
 {"olay": "ogrenme", "durum": "güncellendi", "uygulanan": 15, "reddedilen": 39, "ts": 1793204305617}
 {"olay": "halef_cagrildi", "ok": true, "ts": 1793204471142}
 {"olay": "durdu", "neden": "süre doldu", "veri": {"mesaj": 36392319, "gecikme_ms_p50": 161, "gecikme_ms_p95": 219, "isleme_us_p50": 11.7, "isleme_us_p95": 131.3}, "ts": 1793204907213}
+{"olay": "devraldi", "bosluk_sn": 33.134, "pozisyon": 2, "ts": 1793204940337}
