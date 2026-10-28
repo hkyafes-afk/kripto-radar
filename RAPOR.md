@@ -11,10 +11,10 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 260 | %43.5 | -0.459 | -119.41 |
 | polat_girilen | 0 | %- | - | - |
 | polat_girilmeyen | 260 | %43.5 | -0.459 | -119.41 |
-| rastgele | 274 | %42.3 | -0.496 | -135.84 |
-| trend_naif | 269 | %35.7 | -0.571 | -153.47 |
+| rastgele | 276 | %42.0 | -0.502 | -138.49 |
+| trend_naif | 270 | %35.6 | -0.574 | -155.01 |
 
-Polat özsermaye: %-0.5 · BTC al-tut: %0.61
+Polat özsermaye: %-0.51 · BTC al-tut: %0.62
 
 ## Öğrenme (walk-forward)
 
@@ -25,51 +25,51 @@ En az işe yarayan okumalar: uyusmazlik_macd_1H ×0.875, yapi_1D ×0.889, adx_di
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 6092, girilen: 2.
+Kapanmış işlem yok. Görülen kurulum: 6117, girilen: 2.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 308
-- gösterge aileleri aynı yönde değil: 286
-- büyük zaman dilimi trendi ters: 152
-- bu coinde zaten pozisyon var: 61
+- ders: 309
+- gösterge aileleri aynı yönde değil: 289
+- büyük zaman dilimi trendi ters: 153
+- bu coinde zaten pozisyon var: 62
 - puan +0.149 eşiğin (0.25) altında: 44
 - puan +0.146 eşiğin (0.25) altında: 38
-- puan +0.167 eşiğin (0.25) altında: 37
+- puan +0.167 eşiğin (0.25) altında: 38
+- puan +0.207 eşiğin (0.25) altında: 36
 - puan +0.161 eşiğin (0.25) altında: 35
-- puan +0.207 eşiğin (0.25) altında: 35
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 6092, girilen: 2.
+Kapanmış işlem yok. Görülen kurulum: 6117, girilen: 2.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 308
-- gösterge aileleri aynı yönde değil: 286
-- büyük zaman dilimi trendi ters: 152
-- bu coinde zaten pozisyon var: 61
+- ders: 309
+- gösterge aileleri aynı yönde değil: 289
+- büyük zaman dilimi trendi ters: 153
+- bu coinde zaten pozisyon var: 62
 - puan +0.149 eşiğin (0.25) altında: 44
 - puan +0.146 eşiğin (0.25) altında: 38
-- puan +0.167 eşiğin (0.25) altında: 37
+- puan +0.167 eşiğin (0.25) altında: 38
+- puan +0.207 eşiğin (0.25) altında: 36
 - puan +0.161 eşiğin (0.25) altında: 35
-- puan +0.207 eşiğin (0.25) altında: 35
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 6092, girilen: 2.
+Kapanmış işlem yok. Görülen kurulum: 6117, girilen: 2.
 
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 308
-- gösterge aileleri aynı yönde değil: 286
-- büyük zaman dilimi trendi ters: 152
-- bu coinde zaten pozisyon var: 61
+- ders: 309
+- gösterge aileleri aynı yönde değil: 289
+- büyük zaman dilimi trendi ters: 153
+- bu coinde zaten pozisyon var: 62
 - puan +0.149 eşiğin (0.25) altında: 44
 - puan +0.146 eşiğin (0.25) altında: 38
-- puan +0.167 eşiğin (0.25) altında: 37
+- puan +0.167 eşiğin (0.25) altında: 38
+- puan +0.207 eşiğin (0.25) altında: 36
 - puan +0.161 eşiğin (0.25) altında: 35
-- puan +0.207 eşiğin (0.25) altında: 35
