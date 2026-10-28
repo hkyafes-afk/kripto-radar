@@ -1,0 +1,33 @@
+name: Polat defter teşhisi
+
+# Elle tetiklenir. Gerçek OKX 'books' akışını Polat'ın OrderBook sınıfıyla 45 sn kontrol eder.
+# Yalnızca halka açık veri; emir yok; çalışan Polat koşusuna dokunmaz. Rapor polat-teshis dalına yazılır.
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  teshis:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install -r polat/requirements.txt
+      - name: Teşhis
+        run: python scripts/polat_defter_teshis.py
+      - name: Raporu dala yaz
+        if: always()
+        run: |
+          git config user.name "polat-teshis"
+          git config user.email "polat-teshis@users.noreply.github.com"
+          cp defter_teshis.json /tmp/r.json 2>/dev/null || echo '{"hata":"rapor üretilmedi"}' > /tmp/r.json
+          git fetch -q origin polat-teshis 2>/dev/null && git checkout -q -B polat-teshis origin/polat-teshis || git checkout -q --orphan polat-teshis
+          git rm -rq --cached . 2>/dev/null || true
+          cp /tmp/r.json defter_teshis.json
+          git add defter_teshis.json && git commit -q -m "defter teşhisi ${GITHUB_RUN_ID}" || true
+          git push -q origin HEAD:polat-teshis
