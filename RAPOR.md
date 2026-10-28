@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.394R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.392R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 330 | %45.8 | -0.394 | -129.99 |
+| polat_tum_sinyaller | 331 | %45.9 | -0.392 | -129.59 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
-| polat_girilmeyen | 328 | %45.7 | -0.393 | -128.79 |
-| rastgele | 345 | %43.5 | -0.46 | -158.66 |
-| trend_naif | 341 | %39.0 | -0.499 | -170.33 |
+| polat_girilmeyen | 329 | %45.9 | -0.39 | -128.39 |
+| rastgele | 346 | %43.6 | -0.457 | -158.26 |
+| trend_naif | 342 | %39.2 | -0.497 | -169.93 |
 
-Polat özsermaye: %-1.27 · BTC al-tut: %-0.54
+Polat özsermaye: %-1.42 · BTC al-tut: %-0.43
 
 ## Öğrenme (walk-forward)
 
@@ -55,10 +55,10 @@ En az işe yarayan okumalar: adx_di_1D ×0.816, trix_1D ×0.835, yapi_1D ×0.841
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 387
+- ders: 389
 - gösterge aileleri aynı yönde değil: 324
 - büyük zaman dilimi trendi ters: 153
-- bu coinde zaten pozisyon var: 111
+- bu coinde zaten pozisyon var: 113
 - puan +0.149 eşiğin (0.25) altında: 45
 - puan +0.146 eşiğin (0.25) altında: 40
 - puan +0.167 eşiğin (0.25) altında: 39
@@ -101,10 +101,10 @@ En az işe yarayan okumalar: adx_di_1D ×0.816, trix_1D ×0.835, yapi_1D ×0.841
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 387
+- ders: 389
 - gösterge aileleri aynı yönde değil: 324
 - büyük zaman dilimi trendi ters: 153
-- bu coinde zaten pozisyon var: 111
+- bu coinde zaten pozisyon var: 113
 - puan +0.149 eşiğin (0.25) altında: 45
 - puan +0.146 eşiğin (0.25) altında: 40
 - puan +0.167 eşiğin (0.25) altında: 39
@@ -147,10 +147,10 @@ En az işe yarayan okumalar: adx_di_1D ×0.816, trix_1D ×0.835, yapi_1D ×0.841
 **Girilmeyen kurulumlar (engel)**
 
 - emir defteri doğrulanmadı: 593
-- ders: 387
+- ders: 389
 - gösterge aileleri aynı yönde değil: 324
 - büyük zaman dilimi trendi ters: 153
-- bu coinde zaten pozisyon var: 111
+- bu coinde zaten pozisyon var: 113
 - puan +0.149 eşiğin (0.25) altında: 45
 - puan +0.146 eşiğin (0.25) altında: 40
 - puan +0.167 eşiğin (0.25) altında: 39
