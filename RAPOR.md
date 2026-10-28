@@ -23,16 +23,16 @@ Polat özsermaye: %0.0 · BTC al-tut: %-0.02
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2042, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2053, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 319
-- gösterge aileleri aynı yönde değil: 147
+- emir defteri doğrulanmadı: 320
+- gösterge aileleri aynı yönde değil: 148
 - büyük zaman dilimi trendi ters: 57
 - ders: 19
 - puan +0.149 eşiğin (0.25) altında: 18
-- puan +0.146 eşiğin (0.25) altında: 16
+- puan +0.146 eşiğin (0.25) altında: 17
 - puan +0.207 eşiğin (0.25) altında: 16
 - puan +0.180 eşiğin (0.25) altında: 15
 - puan +0.137 eşiğin (0.25) altında: 14
@@ -40,16 +40,16 @@ Kapanmış işlem yok. Görülen kurulum: 2042, girilen: 0.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2042, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2053, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 319
-- gösterge aileleri aynı yönde değil: 147
+- emir defteri doğrulanmadı: 320
+- gösterge aileleri aynı yönde değil: 148
 - büyük zaman dilimi trendi ters: 57
 - ders: 19
 - puan +0.149 eşiğin (0.25) altında: 18
-- puan +0.146 eşiğin (0.25) altında: 16
+- puan +0.146 eşiğin (0.25) altında: 17
 - puan +0.207 eşiğin (0.25) altında: 16
 - puan +0.180 eşiğin (0.25) altında: 15
 - puan +0.137 eşiğin (0.25) altında: 14
@@ -57,16 +57,16 @@ Kapanmış işlem yok. Görülen kurulum: 2042, girilen: 0.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2042, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2053, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 319
-- gösterge aileleri aynı yönde değil: 147
+- emir defteri doğrulanmadı: 320
+- gösterge aileleri aynı yönde değil: 148
 - büyük zaman dilimi trendi ters: 57
 - ders: 19
 - puan +0.149 eşiğin (0.25) altında: 18
-- puan +0.146 eşiğin (0.25) altında: 16
+- puan +0.146 eşiğin (0.25) altında: 17
 - puan +0.207 eşiğin (0.25) altında: 16
 - puan +0.180 eşiğin (0.25) altında: 15
 - puan +0.137 eşiğin (0.25) altında: 14
