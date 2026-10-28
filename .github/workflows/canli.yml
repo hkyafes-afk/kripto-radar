@@ -1,0 +1,99 @@
+name: Canlı döngü
+
+# 7/24 çalışma: her döngü ~5,5 saat sürer ve bitmeden halefini kendisi başlatır (devir=1).
+# Halef ısınıp bekler, nöbet bırakıldığı an en güncel durumla devralır (birkaç saniye).
+# Zamanlanmış tetik bekçidir: nöbetteki döngü sağlıklıysa hemen kapanır; nabız durmuşsa devralır.
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+    inputs:
+      devir:
+        description: "Önceki döngüden devir (otomatik)"
+        default: "0"
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Nöbet kontrolü
+        id: nobet
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEVIR: ${{ github.event.inputs.devir || '0' }}
+        run: |
+          d=$(mktemp -d)
+          if git clone -q --depth 1 --branch kalp "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "$d" 2>/dev/null && [ -f "$d/lease.json" ]; then
+            live=$(python3 -c "import json,time;l=json.load(open('$d/lease.json'));print(1 if (not l.get('released') and time.time()-l.get('hb',0)/1000<180) else 0)")
+          else
+            live=0
+          fi
+          echo "Nöbette sağlıklı döngü: $live, devir: $DEVIR"
+          echo "START_TS=$(date +%s)" >> "$GITHUB_ENV"
+          if [ "$live" = "1" ] && [ "$DEVIR" != "1" ]; then echo "calis=0" >> "$GITHUB_OUTPUT"; else echo "calis=1" >> "$GITHUB_OUTPUT"; fi
+
+      - uses: actions/setup-python@v6
+        if: steps.nobet.outputs.calis == '1'
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Kütüphaneleri kur
+        if: steps.nobet.outputs.calis == '1'
+        run: pip install -r requirements.txt
+
+      - name: Önceki durumu al (dashboard)
+        if: steps.nobet.outputs.calis == '1'
+        run: bash scripts/site.sh pull
+
+      - name: Canlı döngü
+        if: steps.nobet.outputs.calis == '1'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          CALLMEBOT_PHONE: ${{ secrets.CALLMEBOT_PHONE }}
+          CALLMEBOT_APIKEY: ${{ secrets.CALLMEBOT_APIKEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEVIR: ${{ github.event.inputs.devir || '0' }}
+        run: python -m radar live --site site
+
+      - name: Son durumu yayınla
+        if: always() && steps.nobet.outputs.calis == '1'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -f site/.nobet_yok ]; then echo "Nöbet alınmadı, yayın atlandı."; exit 0; fi
+          bash scripts/site.sh push "döngü sonu"
+
+      # Süreç sert çökerse (bellek, sinyal vb.) Python'un kendi kurtarması çalışamaz; zinciri burası sürdürür.
+      # Halef nabız 3 dk eskiyince en son yedekle devralır. Açılışta çökme döngüsüne girmemek için ≥10 dk çalışmış olmalı.
+      - name: Çökme kurtarma
+        if: failure() && steps.nobet.outputs.calis == '1'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -f .halef_gonderildi ] || [ -f site/.nobet_yok ]; then echo "Halef zaten çağrıldı / nöbet bizde değil."; exit 0; fi
+          ran=$(( $(date +%s) - ${START_TS:-$(date +%s)} ))
+          if [ "$ran" -lt 600 ]; then echo "::warning::Döngü ${ran} sn içinde çöktü; döngüsel çökmeye karşı yeniden başlatma bekçiye bırakıldı."; exit 0; fi
+          gh workflow run canli.yml -R "$GITHUB_REPOSITORY" --ref "$GITHUB_REF_NAME" -f devir=1
+          echo "::notice::Döngü çöktü (${ran} sn sonra); yeni döngü başlatıldı."
+
+      - name: Haftalık karneyi kaydet
+        if: always() && steps.nobet.outputs.calis == '1'
+        run: |
+          if [ -f data/KARNE.md ]; then
+            git config user.name "kripto-radar"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add data/KARNE.md
+            if ! git diff --cached --quiet; then
+              git commit -qm "📒 haftalık karne"
+              git pull -q --rebase && git push -q
+            fi
+          fi

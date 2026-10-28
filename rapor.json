@@ -1,0 +1,18 @@
+{
+  "public-lead-traders": {
+    "http": null,
+    "error": "<HTTPError 403: 'Forbidden'>"
+  },
+  "public-stats": {
+    "atlandı": "lider listesi boş"
+  },
+  "public-current-subpositions": {
+    "atlandı": "lider listesi boş"
+  },
+  "public-subpositions-history": {
+    "atlandı": "lider listesi boş"
+  },
+  "public-pnl": {
+    "atlandı": "lider listesi boş"
+  }
+}

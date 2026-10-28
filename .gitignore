@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.venv/
+site/
+.pytest_cache/
+.halef_gonderildi
+polat_veri/
