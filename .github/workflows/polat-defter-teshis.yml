@@ -25,7 +25,7 @@ jobs:
         run: |
           git config user.name "polat-teshis"
           git config user.email "polat-teshis@users.noreply.github.com"
-          cp defter_teshis.json /tmp/r.json 2>/dev/null || echo '{"hata":"rapor üretilmedi"}' > /tmp/r.json
+          mv defter_teshis.json /tmp/r.json 2>/dev/null || echo '{"hata":"rapor üretilmedi"}' > /tmp/r.json
           git fetch -q origin polat-teshis 2>/dev/null && git checkout -q -B polat-teshis origin/polat-teshis || git checkout -q --orphan polat-teshis
           git rm -rq --cached . 2>/dev/null || true
           cp /tmp/r.json defter_teshis.json
