@@ -1,26 +1,25 @@
 {
   "candles_BTC-USDT-SWAP_1H": {
-    "son_yanit": "<HTTPError 403: 'Forbidden'>",
-    "sayfa": 0,
-    "kayit": 0,
-    "en_eski": null
+    "sayfa": 400,
+    "kayit": 40000,
+    "en_eski": "2022-04-05 14:00"
   },
   "candles_BTC-USDT-SWAP_4H": {
-    "son_yanit": "<HTTPError 403: 'Forbidden'>",
-    "sayfa": 0,
-    "kayit": 0,
-    "en_eski": null
+    "son_yanit": "boş",
+    "sayfa": 151,
+    "kayit": 15049,
+    "en_eski": "2019-12-16 04:00"
   },
   "candles_BTC-USDT-SWAP_1Dutc": {
-    "son_yanit": "<HTTPError 403: 'Forbidden'>",
-    "sayfa": 0,
-    "kayit": 0,
-    "en_eski": null
+    "son_yanit": "boş",
+    "sayfa": 25,
+    "kayit": 2493,
+    "en_eski": "2020-01-01 00:00"
   },
   "funding_BTC-USDT-SWAP": {
-    "son_yanit": "<HTTPError 403: 'Forbidden'>",
-    "sayfa": 0,
-    "kayit": 0,
-    "en_eski": null
+    "son_yanit": "boş",
+    "sayfa": 3,
+    "kayit": 278,
+    "en_eski": "2026-07-27 16:00"
   }
 }
