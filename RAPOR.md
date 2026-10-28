@@ -4,15 +4,15 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** kanıt yetersiz: 79/100 sonuçlanmış sinyal. Bu sayıdan önce hiçbir sonuç anlamlı değildir.
+**Hüküm:** kanıt yetersiz: 80/100 sonuçlanmış sinyal. Bu sayıdan önce hiçbir sonuç anlamlı değildir.
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 79 | %53.2 | -0.285 | -22.48 |
+| polat_tum_sinyaller | 80 | %52.5 | -0.294 | -23.51 |
 | polat_girilen | 0 | %- | - | - |
-| polat_girilmeyen | 79 | %53.2 | -0.285 | -22.48 |
+| polat_girilmeyen | 80 | %52.5 | -0.294 | -23.51 |
 | rastgele | 72 | %43.1 | -0.515 | -37.06 |
-| trend_naif | 77 | %35.1 | -0.599 | -46.09 |
+| trend_naif | 78 | %34.6 | -0.604 | -47.12 |
 
 Polat özsermaye: %0.0 · BTC al-tut: %-0.06
 
@@ -23,11 +23,11 @@ Polat özsermaye: %0.0 · BTC al-tut: %-0.06
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 1892, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 1897, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 302
+- emir defteri doğrulanmadı: 304
 - gösterge aileleri aynı yönde değil: 130
 - büyük zaman dilimi trendi ters: 57
 - puan +0.149 eşiğin (0.25) altında: 17
@@ -40,11 +40,11 @@ Kapanmış işlem yok. Görülen kurulum: 1892, girilen: 0.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 1892, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 1897, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 302
+- emir defteri doğrulanmadı: 304
 - gösterge aileleri aynı yönde değil: 130
 - büyük zaman dilimi trendi ters: 57
 - puan +0.149 eşiğin (0.25) altında: 17
@@ -57,11 +57,11 @@ Kapanmış işlem yok. Görülen kurulum: 1892, girilen: 0.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 1892, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 1897, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 302
+- emir defteri doğrulanmadı: 304
 - gösterge aileleri aynı yönde değil: 130
 - büyük zaman dilimi trendi ters: 57
 - puan +0.149 eşiğin (0.25) altında: 17
