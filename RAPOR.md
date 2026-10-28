@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** kanıt yetersiz: 89/100 sonuçlanmış sinyal. Bu sayıdan önce hiçbir sonuç anlamlı değildir.
+**Hüküm:** kanıt yetersiz: 91/100 sonuçlanmış sinyal. Bu sayıdan önce hiçbir sonuç anlamlı değildir.
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 89 | %50.6 | -0.321 | -28.56 |
+| polat_tum_sinyaller | 91 | %50.5 | -0.321 | -29.26 |
 | polat_girilen | 0 | %- | - | - |
-| polat_girilmeyen | 89 | %50.6 | -0.321 | -28.56 |
-| rastgele | 87 | %44.8 | -0.471 | -40.98 |
-| trend_naif | 90 | %34.4 | -0.607 | -54.6 |
+| polat_girilmeyen | 91 | %50.5 | -0.321 | -29.26 |
+| rastgele | 89 | %44.9 | -0.468 | -41.68 |
+| trend_naif | 92 | %34.8 | -0.601 | -55.3 |
 
-Polat özsermaye: %0.0 · BTC al-tut: %-0.06
+Polat özsermaye: %0.0 · BTC al-tut: %-0.07
 
 ## Öğrenme (walk-forward)
 
@@ -25,7 +25,7 @@ En az işe yarayan okumalar: stoch_15m ×0.859, stoch_5m ×0.869
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2132, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2143, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
@@ -37,12 +37,12 @@ Kapanmış işlem yok. Görülen kurulum: 2132, girilen: 0.
 - puan +0.146 eşiğin (0.25) altında: 17
 - puan +0.207 eşiğin (0.25) altında: 16
 - puan +0.180 eşiğin (0.25) altında: 15
+- puan +0.127 eşiğin (0.25) altında: 15
 - puan +0.137 eşiğin (0.25) altında: 14
-- puan +0.127 eşiğin (0.25) altında: 14
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2132, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2143, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
@@ -54,12 +54,12 @@ Kapanmış işlem yok. Görülen kurulum: 2132, girilen: 0.
 - puan +0.146 eşiğin (0.25) altında: 17
 - puan +0.207 eşiğin (0.25) altında: 16
 - puan +0.180 eşiğin (0.25) altında: 15
+- puan +0.127 eşiğin (0.25) altında: 15
 - puan +0.137 eşiğin (0.25) altında: 14
-- puan +0.127 eşiğin (0.25) altında: 14
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 2132, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 2143, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
@@ -71,5 +71,5 @@ Kapanmış işlem yok. Görülen kurulum: 2132, girilen: 0.
 - puan +0.146 eşiğin (0.25) altında: 17
 - puan +0.207 eşiğin (0.25) altında: 16
 - puan +0.180 eşiğin (0.25) altında: 15
+- puan +0.127 eşiğin (0.25) altında: 15
 - puan +0.137 eşiğin (0.25) altında: 14
-- puan +0.127 eşiğin (0.25) altında: 14
