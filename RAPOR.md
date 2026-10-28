@@ -25,13 +25,13 @@ En az işe yarayan okumalar: stoch_5m ×0.793, stoch_15m ×0.88, yapi_1D ×0.927
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 3669, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 3677, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 530
+- emir defteri doğrulanmadı: 531
 - gösterge aileleri aynı yönde değil: 224
-- ders: 114
+- ders: 116
 - büyük zaman dilimi trendi ters: 81
 - puan +0.149 eşiğin (0.25) altında: 29
 - puan +0.167 eşiğin (0.25) altında: 25
@@ -42,13 +42,13 @@ Kapanmış işlem yok. Görülen kurulum: 3669, girilen: 0.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 3669, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 3677, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 530
+- emir defteri doğrulanmadı: 531
 - gösterge aileleri aynı yönde değil: 224
-- ders: 114
+- ders: 116
 - büyük zaman dilimi trendi ters: 81
 - puan +0.149 eşiğin (0.25) altında: 29
 - puan +0.167 eşiğin (0.25) altında: 25
@@ -59,13 +59,13 @@ Kapanmış işlem yok. Görülen kurulum: 3669, girilen: 0.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 3669, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 3677, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 530
+- emir defteri doğrulanmadı: 531
 - gösterge aileleri aynı yönde değil: 224
-- ders: 114
+- ders: 116
 - büyük zaman dilimi trendi ters: 81
 - puan +0.149 eşiğin (0.25) altında: 29
 - puan +0.167 eşiğin (0.25) altında: 25
