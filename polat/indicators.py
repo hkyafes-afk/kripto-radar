@@ -11,6 +11,11 @@ from __future__ import annotations
 import numpy as np
 from numpy.lib.stride_tricks import sliding_window_view
 
+try:
+    from scipy.signal import lfilter as _lfilter
+except ImportError:  # pragma: no cover
+    _lfilter = None
+
 K_PIV = 3
 
 
@@ -26,19 +31,34 @@ def sma(x: np.ndarray, n: int) -> np.ndarray:
     return out
 
 
+def _recur(x: np.ndarray, start: int, seed: float, a: float, out: np.ndarray):
+    """y[i] = y[i−1] + a·(x[i] − y[i−1]) — C hızında (scipy lfilter), yoksa düz döngü."""
+    seg = x[start:]
+    if not len(seg):
+        return out
+    if _lfilter is not None:
+        y, _ = _lfilter([a], [1.0, -(1.0 - a)], seg, zi=[(1.0 - a) * seed])
+        out[start:] = y
+    else:  # pragma: no cover
+        v = seed
+        for k, xv in enumerate(seg):
+            v += a * (xv - v)
+            out[start + k] = v
+    return out
+
+
 def ema(x: np.ndarray, n: int) -> np.ndarray:
     out = _nan(len(x))
-    v = np.where(np.isnan(x), 0, x)
-    first = np.argmax(~np.isnan(x)) if np.any(~np.isnan(x)) else len(x)
+    valid = ~np.isnan(x)
+    if not valid.any():
+        return out
+    first = int(np.argmax(valid))
     if len(x) - first < n:
         return out
-    a = 2 / (n + 1)
+    v = np.where(valid, x, 0.0)
     s = v[first:first + n].mean()
     out[first + n - 1] = s
-    for i in range(first + n, len(x)):
-        s += a * (v[i] - s)
-        out[i] = s
-    return out
+    return _recur(v, first + n, s, 2 / (n + 1), out)
 
 
 def wilder(x: np.ndarray, n: int) -> np.ndarray:
@@ -47,10 +67,7 @@ def wilder(x: np.ndarray, n: int) -> np.ndarray:
         return out
     s = np.nanmean(x[:n])
     out[n - 1] = s
-    for i in range(n, len(x)):
-        s = (s * (n - 1) + x[i]) / n
-        out[i] = s
-    return out
+    return _recur(np.nan_to_num(np.asarray(x, dtype=float)), n, s, 1.0 / n, out)
 
 
 def true_range(h, l, c):
@@ -146,16 +163,29 @@ def pvi(c, v):
     return out
 
 
-def demand_index(h, l, c, v, n=10):
-    """Sibbet Demand Index'in basitleştirilmiş hali: alım baskısı / satım baskısı (hacim ve fiyat değişimiyle).
-    > 0 alıcı baskın, < 0 satıcı baskın."""
-    d = np.diff(c, prepend=c[0]) / np.where(c == 0, np.nan, c)
-    rng = (h - l) / np.where(c == 0, np.nan, c)
-    k = np.where(rng > 0, abs(d) / np.where(rng == 0, np.nan, rng), 0)
-    bp = np.where(d >= 0, v, v * (1 - np.nan_to_num(k)))
-    sp = np.where(d < 0, v, v * (1 - np.nan_to_num(k)))
-    b, s = ema(bp, n), ema(sp, n)
-    return np.where(b > s, 1 - s / b, b / s - 1)
+def demand_index(h, l, c, v, n=19):
+    """James Sibbet Demand Index — MetaStock dönüşümü (wabbit, MetaStock forumu, 2006):
+      wCl = (H+L+2C)/4; AvgTR = SMA(HHV(H,2) − LLV(L,2), n); VolRatio = V / SMA(V, n)
+      WtCRatio = (wCl − wCl[−1]) / min(wCl, wCl[−1]); Const = (3·wCl / AvgTR) · |WtCRatio|
+      BuyPr = VolRatio (WtCRatio ≥ 0) yoksa VolRatio / e^Const; SellPr = VolRatio (WtCRatio ≤ 0) yoksa VolRatio / e^Const
+      BuyPres = EMA(BuyPr, n); SellPres = EMA(SellPr, n); ratio = min/max
+      DI = (BuyPres > SellPres ? 2 − ratio : ratio) − 1, ×100  → −100…+100"""
+    w = (h + l + 2 * c) / 4
+    hh2 = np.maximum(h, np.roll(h, 1))
+    ll2 = np.minimum(l, np.roll(l, 1))
+    hh2[0], ll2[0] = h[0], l[0]
+    avg_tr = sma(hh2 - ll2, n)
+    vr = v / sma(v, n)
+    pw = np.roll(w, 1)
+    pw[0] = w[0]
+    wcr = (w - pw) / np.minimum(w, pw)
+    const = np.where(avg_tr > 0, (w * 3) / np.where(avg_tr > 0, avg_tr, 1), 0) * np.abs(wcr)
+    damp = vr / np.exp(np.minimum(np.nan_to_num(const), 50))
+    bp = np.where(wcr >= 0, vr, damp)
+    sp = np.where(wcr <= 0, vr, damp)
+    bpr, spr = ema(bp, n), ema(sp, n)
+    ratio = np.minimum(bpr, spr) / np.maximum(bpr, spr)
+    return (np.where(bpr > spr, 2 - ratio, ratio) - 1) * 100
 
 
 def ultimate(h, l, c, a=7, b=14, d=28):
@@ -226,14 +256,15 @@ def supertrend(h, l, c, n=10, mult=3.0):
 
 
 def pivots(x_hi, x_lo, k=K_PIV):
-    """(tepe indeksleri, dip indeksleri), k mum sonra kesinleşen."""
-    hi, lo = [], []
-    for i in range(k, len(x_hi) - k):
-        if x_hi[i] == max(x_hi[i - k:i + k + 1]) and x_hi[i] > max(x_hi[i - k:i]):
-            hi.append(i)
-        if x_lo[i] == min(x_lo[i - k:i + k + 1]) and x_lo[i] < min(x_lo[i - k:i]):
-            lo.append(i)
-    return hi, lo
+    """(tepe indeksleri, dip indeksleri), k mum sonra kesinleşen (vektörel)."""
+    n = len(x_hi)
+    if n < 2 * k + 1:
+        return [], []
+    wh, wl = sliding_window_view(x_hi, 2 * k + 1), sliding_window_view(x_lo, 2 * k + 1)
+    mh, ml = wh[:, k], wl[:, k]
+    hi = np.nonzero((mh == wh.max(axis=1)) & (mh > wh[:, :k].max(axis=1)))[0] + k
+    lo = np.nonzero((ml == wl.min(axis=1)) & (ml < wl[:, :k].min(axis=1)))[0] + k
+    return hi.tolist(), lo.tolist()
 
 
 def divergence(c, h, l, ind, hi, lo, lookback=60):
@@ -304,7 +335,7 @@ def compute(bars: list) -> dict:
     pv = pvi(c, v)
     pe = ema(pv, 50)
     out["pvi_ustunde"] = int(pv[-1] > pe[-1]) * 2 - 1 if not np.isnan(pe[-1]) else 0
-    out["demand"] = _f(demand_index(h, l, c, v)[-1])
+    out["demand"] = _f(demand_index(h, l, c, v)[-1])     # −100…+100
     out["ultimate"] = _f(ultimate(h, l, c)[-1])
     t, ts = trix(c)
     out.update(trix=_f(t[-1]), trix_sig=_f(ts[-1]))

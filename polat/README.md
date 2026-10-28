@@ -75,7 +75,7 @@ Polat, kendisine verilen her okumayı hesaplar ve her okuma kararda oy kullanır
 
 **Ne zaman bakıyor:** Her 1 dakikalık kapanışta tam değerlendirme yapılır. Fiyat önemli bir seviyeyi geçtiği an, mum kapanışı beklenmeden ayrıca bakılır (en sık 10 saniyede bir).
 
-Ölçülen süre: bir coinin ilk tam değerlendirmesi ~80 ms sürüyor; sonrakiler önbellek sayesinde daha kısa. 30 coin aynı anda yaklaşık 3 saniyede sırayla değerlendiriliyor. Her değerlendirmeden sonra olay döngüsüne söz veriliyor; bu yüzden stop ve hedef kontrolleri en fazla ~80 ms gecikiyor.
+Ölçülen süre: önbellekli bir değerlendirme ~3 ms, 1 dk göstergeleri ~4 ms. Bu ölçüm v2.1 içindir; ayrıntı aşağıdaki "kesinleşenler" tablosunda.
 
 ## Öğrenme ve dürüst ölçüm (`learn.py`)
 
@@ -85,6 +85,25 @@ Polat, kendisine verilen her okumayı hesaplar ve her okuma kararda oy kullanır
 - **Walk-forward:** Örneklerin ilk %70'i eğitim, son %30'u doğrulama için kullanılır. Bir okumanın katsayısı ancak iki dönemde de etkisi aynı yöndeyse ve yeterli örnek varsa değişir (eğitimde ≥30, doğrulamada ≥10). Değişim, örnek sayısına göre küçültülerek uygulanır. Doğrulamada tutmayan okumalar raporda "reddedilen" olarak sayılır.
 - **Kanıt eşiği:** 100 sonuçlanmış sinyale kadar raporda "kanıt yetersiz" yazar.
 - **Sınır:** Bütün okumalarıyla geriye dönük bir test yapılamaz, çünkü geçmiş emir defteri, tape ve likidasyon verisi ücretsiz olarak yok. Polat'ın gerçek örneklem dışı testi, canlı veriyle yaptığı sanal işlemlerdir.
+
+## Bu sürümde kesinleşenler (v2.1)
+
+| Konu | Nasıl çözüldü |
+|---|---|
+| VWAP ilk dakikalar | Günlük VWAP 1 dk mumlardan, ilk dakikada oluşur. Gün içi hacim 24 saatin %5'ine ulaşana ya da 30 dk geçene kadar kayan 24 saatlik VWAP kullanılır. Haftalık VWAP ve 4S dip/tepeden başlayan VWAP da var. |
+| Demand Index | Sibbet'in formülü (MetaStock dönüşümü, wabbit 2006), −100…+100 |
+| Likidasyon kümeleri | Tahmindir (kimin nerede likide olacağını yalnızca borsa bilir). Fiyatın sonradan ulaştığı kümeler silinir. Kaldıraç dağılımı OKX'in gerçek likidasyon akışıyla kalibre edilir; isabet oranı panoda görünür. |
+| Çift sayım | Aynı şeyi ölçen okumalar önce alt grupta ortalanır (trend göstergeleri, osilatörler, hacim akışı, uyuşmazlıklar, ortalama fiyatlar, mumlar, CVD, BTC). |
+| Gevşek formasyonlar | Üç dokunuşun çizgiye oturması (≤0,5 ATR), ≥2 ATR boy, taze kırılım (son 3 mum, ≥0,25 ATR) şartı. Eski kırılım oy vermez. Rastgele veride Wolfe %32 → %2. |
+| İyimser dolum | Stop-market: tetikten sonraki 250 ms'nin en kötü fiyatı ile defter dolumunun kötüsü. Hedef: yalnızca 1 tick ötesinde işlem görünce dolar. |
+| Gölge sinyaller | Gerçek işlem gibi yönetilir: 1R başabaş, 2R yarısı, %50 geri verme, yapısal iz stop, süre. Maliyetler düşülür. |
+| Her sonuçtan ders | Her kapanan işlem ve gölge sinyal okumaların katsayısını hemen günceller. Yol defteri: zarar ettiren yoldan dönülür, kâr ettiren yol benimsenir (en az 5 sonuç, küçültülmüş ortalama). Hata sınıfları sınırlı ayar üretir (en dar stop, başabaş seviyesi, coin bazlı kayma cezası). Hatasız işlemler ayarı yavaşça başlangıca çeker. Hepsi `gunluk/dersler.jsonl` dosyasına yazılır. |
+| Öğrenme koruması | A/B: öğrenilmiş puanla seçilenler, öğrenilmemiş puanla seçilenlerden 0,10R'den fazla kötüyse çevrimiçi dersler geri alınır. Toplu katsayılar walk-forward ile ayrıca doğrulanır. |
+| Açılış | Kalıcı HTTPS bağlantı havuzu. Uç nokta başına OKX hız kovası (sınırın %80'i). 429/50011'de kademeli tekrar. En hızlı sunucu ölçülüp öne alınır. Önce açık pozisyonlu coinler ve BTC/ETH yüklenir. Halef ısınırken yükler, devralmayı beklemez. |
+| Gecikme | Değerlendirme zaman dilimi ve formasyon parçalarına bölünür, aralarda olay döngüsüne söz verilir. EMA/Wilder C hızında (scipy), salınım noktaları vektörel. Günlük yazımı ayrı iş parçacığında. Ölçüm (30 coin aynı anda): en uzun bloklanma ~10 ms, zamanın %99'unda < 0,05 ms. |
+| Devir | Nöbet (lease) + sıcak halef. Halef 8 dk önce çağrılır, ısınır, selef bıraktığı an devralır. Yerel testte bırakma → devralma 0,16 sn; GitHub'da git gidiş-dönüşüyle birkaç saniye. Aradaki stop/hedefler 1 dk mumlarla kontrol edilir. |
+| Telegram | `POLAT_TELEGRAM_CHAT_ID` secret'ı tanımlanırsa Polat mesajları ayrı sohbete gider. |
+| Pano | Ana sitede `polat.html` (ana panodaki "🎯 Polat" düğmesi). Veri `polat-veri` dalındaki `ozet.json` dosyasından gelir, 30 sn'de bir yenilenir. Polat her dakika yayınlar. |
 
 ## Kurallar (senin ilkelerin)
 

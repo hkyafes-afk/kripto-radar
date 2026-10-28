@@ -13,7 +13,9 @@ import asyncio
 import base64
 import hashlib
 import hmac
+import http.client
 import json
+import os
 import time
 import urllib.parse
 import urllib.request
@@ -180,58 +182,139 @@ class Feed:
         await self.conns["defter"].subscribe(a)
 
 
+# OKX genel uç nokta sınırları (istek / 2 sn). Her uç noktaya kendi kovası; %80'inde tutulur.
+RATE = {"/api/v5/market/candles": 40, "/api/v5/market/history-candles": 20, "/api/v5/market/tickers": 20,
+        "/api/v5/public/instruments": 20, "/api/v5/public/time": 10, "/api/v5/rubik/": 5, "_": 10}
+
+
+class _Bucket:
+    def __init__(self, per2s: int):
+        self.gap = 2.0 / max(1, int(per2s * 0.8))
+        self.next = 0.0
+
+    async def take(self):
+        loop = asyncio.get_running_loop()
+        t = loop.time()
+        wait = self.next - t
+        self.next = max(t, self.next) + self.gap
+        if wait > 0:
+            await asyncio.sleep(wait)
+
+
 class Rest:
-    """Basit REST istemcisi (urllib, iş parçacığında). İmzalı istekler gelecekteki OKX adaptörü içindir."""
+    """REST istemcisi:
+      * kalıcı HTTPS bağlantı havuzu (her istekte yeniden TLS el sıkışması yok → istek başına ~100–300 ms kazanç)
+      * uç nokta başına OKX hız sınırı kovası; 429 / 50011 gelirse kademeli bekleyip yeniden dener
+      * açılışta en hızlı sunucuyu ölçer ve önce onu kullanır
+    İmzalı istekler gelecekteki OKX demo adaptörü içindir."""
 
     def __init__(self, cfg: dict, key: str = "", secret: str = "", passphrase: str = "", demo: bool = True):
-        self.bases = cfg["veri"]["rest"]
+        self.bases = list(cfg["veri"]["rest"])
         self.key, self.secret, self.passphrase, self.demo = key, secret, passphrase, demo
         self.sem = asyncio.Semaphore(8)
         self.calls = 0
-        self.min_gap = 1 / 15.0                  # genel tavan: saniyede 15 istek (mum uç noktası 20/sn)
-        self._next = 0.0
+        self.retries = 0
+        self.buckets: dict[str, _Bucket] = {}
+        self.pool: dict[str, list] = {}
+        self.rtt: dict[str, float] = {}
+        self.proxy = bool(os.environ.get("HTTPS_PROXY") or os.environ.get("https_proxy"))
+
+    def _bucket(self, path: str) -> _Bucket:
+        key = next((k for k in RATE if k != "_" and path.startswith(k)), "_")
+        b = self.buckets.get(key)
+        if b is None:
+            b = self.buckets[key] = _Bucket(RATE[key])
+        return b
+
+    def _conn(self, base: str):
+        lst = self.pool.setdefault(base, [])
+        if lst:
+            return lst.pop()
+        host = urllib.parse.urlparse(base).hostname
+        return http.client.HTTPSConnection(host, timeout=10)
+
+    def _release(self, base, conn):
+        lst = self.pool.setdefault(base, [])
+        if len(lst) < 8:
+            lst.append(conn)
+        else:
+            conn.close()
+
+    def _once(self, base, method, path_q, data, headers):
+        if self.proxy:                              # vekil sunucu arkasında (geliştirme ortamı) urllib kullan
+            req = urllib.request.Request(base + path_q, data=data.encode() if data else None, headers=headers, method=method)
+            with urllib.request.urlopen(req, timeout=10) as r:
+                return r.status, r.read()
+        conn = self._conn(base)
+        try:
+            conn.request(method, path_q, body=data.encode() if data else None, headers=headers)
+            r = conn.getresponse()
+            body = r.read()
+            self._release(base, conn)
+            return r.status, body
+        except Exception:
+            conn.close()
+            raise
 
     def _req(self, method: str, path: str, params: dict | None, body: dict | None, signed: bool):
         q = ("?" + urllib.parse.urlencode(params)) if params else ""
         data = json.dumps(body, separators=(",", ":")) if body is not None else ""
         last = None
         for base in self.bases:
-            headers = {"User-Agent": "polat/1", "Content-Type": "application/json"}
+            headers = {"User-Agent": "polat/2", "Content-Type": "application/json", "Connection": "keep-alive"}
             if signed:
-                ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.") + f"{datetime.now(timezone.utc).microsecond // 1000:03d}Z"
+                now = datetime.now(timezone.utc)
+                ts = now.strftime("%Y-%m-%dT%H:%M:%S.") + f"{now.microsecond // 1000:03d}Z"
                 headers.update(sign_headers(self.key, self.secret, self.passphrase, ts, method, path + q, data))
                 if self.demo:
                     headers["x-simulated-trading"] = "1"
-            req = urllib.request.Request(base + path + q, data=data.encode() if data else None,
-                                         headers=headers, method=method)
-            try:
-                with urllib.request.urlopen(req, timeout=10) as r:
-                    js = json.loads(r.read())
-                self.calls += 1
-                if str(js.get("code", "0")) not in ("0", ""):
-                    raise RuntimeError(f"OKX {js.get('code')}: {js.get('msg')}")
-                return js.get("data", js)
-            except Exception as e:  # noqa: BLE001
-                last = e
-        raise last
-
-    async def _pace(self):
-        loop = asyncio.get_running_loop()
-        t = loop.time()
-        wait = self._next - t
-        self._next = max(t, self._next) + self.min_gap
-        if wait > 0:
-            await asyncio.sleep(wait)
+            for attempt in range(3):
+                try:
+                    status, raw = self._once(base, method, path + q, data, headers)
+                    js = json.loads(raw)
+                    code = str(js.get("code", "0"))
+                    if status == 429 or code == "50011":          # hız sınırı: bekle, tekrar dene
+                        self.retries += 1
+                        time.sleep(0.5 * (attempt + 1))
+                        continue
+                    self.calls += 1
+                    if code not in ("0", ""):
+                        raise RuntimeError(f"OKX {code}: {js.get('msg')}")
+                    return js.get("data", js)
+                except RuntimeError:
+                    raise
+                except Exception as e:  # noqa: BLE001
+                    last = e
+                    self.retries += 1
+                    break                                         # bu sunucu sorunlu → sıradakini dene
+        raise last or RuntimeError("OKX: hız sınırı aşıldı")
 
     async def get(self, path: str, params: dict | None = None, signed: bool = False):
+        await self._bucket(path).take()
         async with self.sem:
-            await self._pace()
             return await asyncio.to_thread(self._req, "GET", path, params, None, signed)
 
     async def post(self, path: str, body: dict, signed: bool = True):
+        await self._bucket(path).take()
         async with self.sem:
-            await self._pace()
             return await asyncio.to_thread(self._req, "POST", path, None, body, signed)
+
+    async def pick_fastest(self) -> dict:
+        """Her sunucuya 3 kez /public/time: medyan gidiş-dönüş süresi en düşük olan öne alınır."""
+        res = {}
+        for base in list(self.bases):
+            ts = []
+            for _ in range(3):
+                t0 = time.perf_counter()
+                try:
+                    await asyncio.to_thread(self._once, base, "GET", "/api/v5/public/time", "", {"User-Agent": "polat/2"})
+                    ts.append((time.perf_counter() - t0) * 1000)
+                except Exception:  # noqa: BLE001
+                    ts.append(9e9)
+            res[base] = sorted(ts)[1]
+        self.rtt = res
+        self.bases.sort(key=lambda b: res[b])
+        return res
 
     # --- yardımcılar -------------------------------------------------------------------------
     async def instruments(self) -> dict[str, dict]:

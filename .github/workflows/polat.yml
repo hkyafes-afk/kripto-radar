@@ -1,14 +1,17 @@
 name: Polat
 
 # Polat: Kripto Radar'dan bağımsız tek ajan (sanal 100.000$). Yatırım tavsiyesi değildir.
-# Süreklilik: concurrency kuyruğu. Çalışan döngü ~340 dk sürer; zamanlanmış tetik bu sırada "bekleyen" olarak
-# kuyruğa girer ve önceki biter bitmez başlar (arada ~1 dk; o aradaki stop/hedefler 1 dk mumlarla kontrol edilir).
-# Döngü çökerse bir sonraki zamanlanmış tetik devralır.
+# Süreklilik (polat/lease.py): nöbetçi her dakika nabız yazar; bitişten 8 dk önce halefi çağırır (devir=1).
+# Halef ısınır (veri, abonelikler, göstergeler) ama işlem yapmaz; nöbetçi bırakınca birkaç saniye içinde devralır.
+# Zamanlanmış tetik bekçidir: nabız tazeyse hemen çıkar, nabız durmuşsa (çökme) devralır.
 on:
   schedule:
     - cron: "7,27,47 * * * *"
   workflow_dispatch:
     inputs:
+      devir:
+        description: "Önceki döngüden devir (otomatik)"
+        default: "0"
       devam:
         description: "Risk durdurmasını kaldır (zirveden −%15 sonrası, kullanıcı onayı)"
         type: boolean
@@ -16,15 +19,17 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
+# Bekçiler kendi aralarında sıraya girer; devir koşuları birbirini beklemez (halef selefle aynı anda ısınır).
 concurrency:
-  group: polat
+  group: ${{ github.event_name == 'schedule' && 'polat-bekci' || format('polat-{0}', github.run_id) }}
   cancel-in-progress: false
 
 jobs:
   polat:
     runs-on: ubuntu-latest
-    timeout-minutes: 350
+    timeout-minutes: 360
     steps:
       - uses: actions/checkout@v5
 
@@ -48,12 +53,13 @@ jobs:
       - name: Polat
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_CHAT_ID: ${{ secrets.POLAT_TELEGRAM_CHAT_ID || secrets.TELEGRAM_CHAT_ID }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python -m polat calis --kok polat_veri --sure 20400 --git-push-dk 15
+          DEVIR: ${{ github.event.inputs.devir || '0' }}
+        run: python -m polat calis --kok polat_veri --sure 20400 --git-push-dk 1
 
       - name: Son durumu kaydet
-        if: always()
+        if: failure()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: bash scripts/polat_veri.sh push "döngü sonu"
+        run: bash scripts/polat_veri.sh push "çökme sonrası kayıt"

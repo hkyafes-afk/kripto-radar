@@ -17,7 +17,9 @@ Ağırlık öğrenme (walk-forward, örneklem dışı):
 from __future__ import annotations
 
 import json
+import math
 import random
+import time
 import uuid
 from pathlib import Path
 
@@ -36,10 +38,19 @@ class Learner:
         self.resolved_file = self.root / "gunluk" / "golge.jsonl"
         self.weights_file = self.root / "ogrenme.json"
         self.bench: dict = {"btc_baslangic": None, "baslangic_ts": None}
+        self.online: dict[str, float] = {}
+        self.paths: dict[str, dict] = {}
+        self.ab = {"ogrenilmis": [], "temel": []}
+        self.adjust: dict = {}
+        self.risk = None
+        self.lessons_file = self.root / "gunluk" / "dersler.jsonl"
         if self.weights_file.exists():
             js = json.loads(self.weights_file.read_text(encoding="utf-8"))
             self.mult, self.cat_mult, self.meta = js.get("carpan", {}), js.get("kategori_carpan", {}), js.get("meta", self.meta)
             self.bench = js.get("kiyas", self.bench)
+            self.online, self.paths = js.get("cevrimici", {}), js.get("yollar", {})
+            self.ab = js.get("ab", self.ab)
+            self.adjust = js.get("ayar", {})
 
     # --- durum ------------------------------------------------------------------------------
     def to_state(self):
@@ -53,7 +64,9 @@ class Learner:
     def save_weights(self):
         self.weights_file.parent.mkdir(parents=True, exist_ok=True)
         self.weights_file.write_text(json.dumps({"carpan": self.mult, "kategori_carpan": self.cat_mult, "meta": self.meta,
-                                                 "kiyas": self.bench}, ensure_ascii=False, indent=1), encoding="utf-8")
+                                                 "kiyas": self.bench, "cevrimici": self.online, "yollar": self.paths,
+                                                 "ab": self.ab, "ayar": self.adjust}, ensure_ascii=False, indent=1),
+                                     encoding="utf-8")
 
     # --- maliyet ----------------------------------------------------------------------------
     def cost_r(self, entry: float, r_dist: float, spread_bp: float | None, funding: float | None, hours: float, d: int) -> float:
@@ -80,40 +93,61 @@ class Learner:
                 "funding": c.funding, "mfe": 0.0}
         tp_pct = self.cfg["cikis"]["hedef_yuzde"] / 100
         def mk(tip, dd, extra):
-            return {**base, "id": uuid.uuid4().hex[:10], "tip": tip, "d": dd, "sl": entry - dd * r,
-                    "tp": entry * (1 + dd * tp_pct), **extra}
-        self.active.append(mk("polat", d, {"S": dec["S"], "oylar": dec["oylar"], "kategoriler": dec["kategoriler"],
-                                           "tetik": dec.get("tetik_yonde"), "taken": taken, "engel": dec.get("engel")}))
+            sl_ = entry - dd * r
+            return {**base, "id": uuid.uuid4().hex[:10], "tip": tip, "d": dd, "sl": sl_,
+                    "tp": entry * (1 + dd * tp_pct), "kalan": 1.0, "R_kismi": 0.0,
+                    "p": {"side": "long" if dd > 0 else "short", "entry": entry, "sl": sl_, "r_dist": r, "opened": now_ms},
+                    **extra}
+        self.active.append(mk("polat", d, {"S": dec["S"], "S_temel": dec.get("S_temel"), "oylar": dec["oylar"],
+                                           "kategoriler": dec["kategoriler"], "tetik": dec.get("tetik_yonde"),
+                                           "taken": taken, "engel": dec.get("engel"), "yol": dec.get("yol")}))
         self.active.append(mk("rastgele", self.rng.choice((1, -1)), {}))
         if trend_dir:
             self.active.append(mk("trend_naif", trend_dir, {}))
 
-    def on_price(self, inst: str, px: float, ts: int) -> list[dict]:
+    def on_price(self, inst: str, px: float, ts: int, swing=None) -> list[dict]:
+        """Gölge sinyaller GERÇEK İŞLEM GİBİ yönetilir: aynı risk motoru (1R başabaş, 2R yarısı, %50 geri verme sınırı,
+        yapısal iz stop, plan süresi). Sonuç R'si maliyetler düşülerek yazılır."""
         done = []
-        ufuk = self.L["golge_ufuk_saat"] * 3_600_000
+        ufuk = self.cfg["cikis"]["max_sure_saat"] * 3_600_000
         keep = []
         for x in self.active:
             if x["inst"] != inst:
                 keep.append(x)
                 continue
             d = x["d"]
-            x["mfe"] = max(x["mfe"], (px - x["entry"]) * d / x["r"])
+            r = x["r"]
+            pp = x.setdefault("p", {"side": "long" if d > 0 else "short", "entry": x["entry"], "sl": x["sl"],
+                                     "r_dist": r, "opened": x["ts"]})
+            x["mfe"] = max(x["mfe"], (px - x["entry"]) * d / r)
+            if self.risk is not None:
+                sw = swing(pp["side"], pp["opened"]) if swing else None
+                for act in self.risk.manage(pp, px, ts, sw):
+                    if act[0] == "kismi" and x["kalan"] > 0.5:
+                        part = act[1] * x["kalan"]
+                        x["R_kismi"] += part * (px - x["entry"]) * d / r
+                        x["kalan"] -= part
+                    elif act[0] == "stop":
+                        pp["sl"] = act[1]
+            sl = pp["sl"]
             hours = (ts - x["ts"]) / 3.6e6
-            gross = None
             why = None
-            if (px - x["sl"]) * d <= 0:
-                gross, why = -1.0, "stop"
+            exit_px = None
+            if (px - sl) * d <= 0:
+                exit_px, why = sl, ("iz stop" if (sl - x["entry"]) * d > 0 else "stop")
             elif (px - x["tp"]) * d >= 0:
-                gross, why = (x["tp"] - x["entry"]) * d / x["r"], "hedef"
+                exit_px, why = x["tp"], "hedef"
             elif ts - x["ts"] >= ufuk:
-                gross, why = (px - x["entry"]) * d / x["r"], "ufuk"
-            if gross is None:
+                exit_px, why = px, "sure"
+            if why is None:
                 keep.append(x)
                 continue
-            x["R"] = round(gross - self.cost_r(x["entry"], x["r"], x["spread_bp"], x["funding"], hours, d), 4)
+            gross = x["R_kismi"] + x["kalan"] * (exit_px - x["entry"]) * d / r
+            x["R"] = round(gross - self.cost_r(x["entry"], r, x["spread_bp"], x["funding"], hours, d), 4)
             x["R_brut"] = round(gross, 4)
             x["sonuc"] = why
             x["kapanis_ts"] = ts
+            x.pop("p", None)
             done.append(x)
         self.active = keep
         if done:
@@ -121,7 +155,73 @@ class Learner:
             with self.resolved_file.open("a", encoding="utf-8") as f:
                 for x in done:
                     f.write(json.dumps(x, ensure_ascii=False) + "\n")
+            for x in done:
+                if x["tip"] == "polat":
+                    self.learn_from(x, real=False)
         return done
+
+    # --- her sonuçtan ders --------------------------------------------------------------------
+    def learn_from(self, x: dict, real: bool):
+        """Tek bir sonuçtan (gerçek işlem ya da gölge sinyal) hemen ders çıkar:
+          1. çevrimiçi katsayı: kazanan işlemde yönle aynı oyu veren okumanın katsayısı artar, kaybedende azalır
+          2. yol defteri: bu yol (tetik ailesi + yön + baskın kategoriler + BTC rejimi) sonuçları biriktirir;
+             zarar ettiren yoldan dönülür (kaçın), kâr ettiren yol benimsenir (eşik indirimi)
+          3. A/B koruması: öğrenilmiş puanla seçilenler, öğrenilmemiş puanla seçilenlerden kötüyse ders geri alınır"""
+        L = self.L
+        R = max(-3.0, min(3.0, x["R"]))
+        eta = L["ders_hizi"] * (2 if real else 1)
+        lo, hi = L["carpan_alt"], L["carpan_ust"]
+        for f, v in (x.get("oylar") or {}).items():
+            a = v * x["d"]
+            if abs(a) < 0.3:
+                continue
+            cur = self.online.get(f, 1.0)
+            self.online[f] = round(max(lo, min(hi, cur * math.exp(eta * R * (1 if a > 0 else -1)))), 4)
+        path = x.get("yol")
+        if path:
+            e = self.paths.setdefault(path, {"n": 0, "sumR": 0.0, "gercek": 0})
+            e["n"] += 1
+            e["sumR"] = round(e["sumR"] + x["R"], 4)
+            e["gercek"] += int(real)
+            score = e["sumR"] / (e["n"] + L["yol_kuculme"])
+            prev = e.get("karar")
+            e["karar"] = ("kacin" if score <= -L["yol_esik"] else "benimse" if score >= L["yol_esik"] else None) \
+                if e["n"] >= L["yol_min"] else None
+            if e["karar"] != prev:
+                self._lesson({"olay": "yol", "yol": path, "karar": e["karar"], "n": e["n"], "ort_R": round(e["sumR"] / e["n"], 3)})
+        # A/B: bu sinyal, öğrenilmiş ve temel puanla ayrı ayrı "girilir" miydi?
+        esik = self.cfg["karar"]["esik"]
+        if x.get("S") is not None and abs(x["S"]) >= esik:
+            self.ab["ogrenilmis"].append(x["R"])
+        if x.get("S_temel") is not None and abs(x["S_temel"]) >= esik:
+            self.ab["temel"].append(x["R"])
+        for k in self.ab:
+            self.ab[k] = self.ab[k][-L["ab_pencere"]:]
+        a, b = self.ab["ogrenilmis"], self.ab["temel"]
+        if len(a) >= L["ab_min"] and len(b) >= L["ab_min"]:
+            ma, mb = sum(a) / len(a), sum(b) / len(b)
+            if ma < mb - L["ab_tolerans"]:
+                self._lesson({"olay": "geri_alindi", "ogrenilmis_ort_R": round(ma, 3), "temel_ort_R": round(mb, 3),
+                              "neden": "öğrenilmiş katsayılar temel halden kötü sonuç verdi"})
+                self.online = {}
+                self.ab = {"ogrenilmis": [], "temel": []}
+        self.save_weights()
+
+    def path_rule(self, path: str | None) -> str | None:
+        e = self.paths.get(path or "")
+        return e.get("karar") if e else None
+
+    def _lesson(self, rec: dict):
+        rec["ts"] = int(time.time() * 1000)
+        self.lessons_file.parent.mkdir(parents=True, exist_ok=True)
+        with self.lessons_file.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+
+    def combined_mult(self) -> dict:
+        """Karar için katsayı: walk-forward katsayısı × çevrimiçi katsayı."""
+        keys = set(self.mult) | set(self.online)
+        lo, hi = self.L["carpan_alt"], self.L["carpan_ust"]
+        return {k: max(lo, min(hi, self.mult.get(k, 1.0) * self.online.get(k, 1.0))) for k in keys}
 
     def resolved(self) -> list[dict]:
         if not self.resolved_file.exists():

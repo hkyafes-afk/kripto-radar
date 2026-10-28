@@ -10,6 +10,8 @@ Rapor: son 1 / 50 / 500 gün; kuruluma, çıkış nedenine, seansa, teyit sayıs
 from __future__ import annotations
 
 import json
+import queue
+import threading
 import time
 from collections import defaultdict
 from pathlib import Path
@@ -18,17 +20,39 @@ DISCLAIMER = "Yatırım tavsiyesi değildir."
 
 
 class Journal:
+    """Yazma ayrı bir iş parçacığında yapılır (JSON'a çevirme + diske yazma karar döngüsünü bekletmez).
+    Okumadan önce kuyruk boşaltılır, böylece okunan her zaman günceldir."""
+
     def __init__(self, root: Path):
         self.root = Path(root)
         self.root.mkdir(parents=True, exist_ok=True)
         self.files = {k: self.root / f"{k}.jsonl" for k in ("kararlar", "islemler", "olaylar")}
+        self.q: queue.Queue = queue.Queue()
+        self._lock = threading.Lock()
+        self._t = threading.Thread(target=self._run, daemon=True, name="gunluk")
+        self._t.start()
+
+    def _run(self):
+        while True:
+            kind, rec = self.q.get()
+            try:
+                line = json.dumps(rec, ensure_ascii=False, default=_default) + "\n"
+                with self._lock, self.files[kind].open("a", encoding="utf-8") as f:
+                    f.write(line)
+            except Exception:  # noqa: BLE001
+                pass
+            finally:
+                self.q.task_done()
 
     def write(self, kind: str, rec: dict):
         rec.setdefault("ts", int(time.time() * 1000))
-        with self.files[kind].open("a", encoding="utf-8") as f:
-            f.write(json.dumps(rec, ensure_ascii=False, default=_default) + "\n")
+        self.q.put((kind, rec))
+
+    def flush(self):
+        self.q.join()
 
     def read(self, kind: str) -> list[dict]:
+        self.flush()
         p = self.files[kind]
         if not p.exists():
             return []

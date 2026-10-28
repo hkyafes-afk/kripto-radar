@@ -42,6 +42,27 @@ def _sgn(x):
     return 0 if x is None or x == 0 else (1 if x > 0 else -1)
 
 
+_GROUPS = (
+    # aynı şeyi ölçen okumalar önce kendi aralarında ortalanır, sonra kategoriye tek ses olarak girer (çift sayım yok)
+    (("ema_", "ema200_", "adx_di_", "psar_", "supertrend_", "trix_"), "trend_gosterge"),
+    (("rsi_", "stoch_", "cci_", "willr_", "ultimate_", "momentum_"), "osilator"),
+    (("obv_egim_", "mfi_", "pvi_", "demand_"), "hacim_akisi"),
+    (("uyusmazlik_",), "uyusmazlik"),
+    (("ustunde_", "vwap"), "ortalama_fiyat"),
+    (("mum_",), "mum"),
+    (("cvd_",), "cvd"),
+    (("btc_",), "btc"),
+)
+
+
+def _group(name: str) -> str:
+    tf = name.rsplit("_", 1)[-1] if name.rsplit("_", 1)[-1] in TF_W else ""
+    for prefixes, g in _GROUPS:
+        if name.startswith(prefixes):
+            return f"{g}_{tf}" if tf else g
+    return name
+
+
 class Votes:
     def __init__(self, mult: dict | None = None):
         self.v: dict[str, tuple[str, float, float]] = {}     # ad → (kategori, oy, ağırlık)
@@ -53,11 +74,21 @@ class Votes:
         self.v[name] = (cat, _clip(float(vote)), w * self.mult.get(name, 1.0))
 
     def cats(self) -> dict[str, float]:
+        """İki kademeli ortalama: alt grup (aynı şeyi ölçen okumalar) → kategori."""
+        groups: dict[tuple, list] = {}
+        for name, (cat, vote, w) in self.v.items():
+            g = groups.setdefault((cat, _group(name)), [0.0, 0.0, 0])
+            g[0] += vote * w
+            g[1] += w
+            g[2] += 1
         acc: dict[str, list] = {}
-        for cat, vote, w in self.v.values():
+        for (cat, _), (num, den, n) in groups.items():
+            if not den:
+                continue
             a = acc.setdefault(cat, [0.0, 0.0])
-            a[0] += vote * w
-            a[1] += w
+            gw = den / n                                   # grubun ağırlığı: üyelerin ortalama ağırlığı
+            a[0] += (num / den) * gw
+            a[1] += gw
         return {c: (a[0] / a[1] if a[1] else 0.0) for c, a in acc.items()}
 
     def score(self, cat_mult: dict | None = None) -> float:
@@ -86,12 +117,27 @@ def full_read(m, c, now_ms: int) -> dict:
     rd["ext"] = ext
     rd["formasyon"] = pat
     h1 = c.series.get("1H")
-    rd["likidasyon_kumesi"] = patterns.liquidation_map(list(c.oi_h1), list(h1.bars)[-120:] if h1 else [], c.price())
+    lw = {int(k): v for k, v in m.liq_calib["lev"].items()}
+    key = (h1.n if h1 else 0, len(c.oi_h1), c.oi_h1[-1][0] if c.oi_h1 else 0, m.liq_calib["olay"],
+           round(c.price(), 8))
+    if getattr(c, "_liq_key", None) != key[:4] or not c.liq_map or abs(c.price() / (c.liq_map.get("_px") or c.price()) - 1) > 0.002:
+        c.liq_map = patterns.liquidation_map(list(c.oi_h1), list(h1.bars)[-120:] if h1 else [], c.price(), lev_w=lw)
+        c.liq_map["_px"] = c.price()
+        c._liq_key = key[:4]
+    rd["likidasyon_kumesi"] = dict(c.liq_map)
+    cal = m.liq_calib
+    rd["likidasyon_kumesi"]["isabet_orani"] = round(cal["isabet"] / cal["olay"], 3) if cal["olay"] else None
     s15 = c.series.get("15m")
     atr15 = (ext.get("15m") or {}).get("atr")
-    rd["stop_kumeleri"] = patterns.stop_pools(list(s15.bars), atr15) if s15 and atr15 else []
+    if s15 and atr15:
+        if getattr(c, "_sp_key", None) != s15.n:
+            c._sp, c._sp_key = patterns.stop_pools(list(s15.bars), atr15), s15.n
+        rd["stop_kumeleri"] = c._sp
+    else:
+        rd["stop_kumeleri"] = []
     rd["yuvarlak"] = patterns.round_levels(c.price())
     rd["tape_hizi"] = tape_speed(c, now_ms)
+    rd["canli_mum"] = {tf: live_candle(c.series.get(tf), now_ms, tf) for tf in ("5m", "15m", "1H")}
     rd["piyasa"] = dict(m.global_)
     return rd
 
@@ -160,6 +206,9 @@ def votes(m, c, rd: dict, btc_rd: dict | None, mult: dict | None = None) -> Vote
     named = {x["ad"]: x["px"] for x in rd.get("seviyeler") or []}
     if named.get("vwap"):
         V.add("seviye", "vwap", _clip((px - named["vwap"]) / atr1), 1.0)
+    for nm, w in (("vwap_hafta", 0.7), ("avwap_dip", 0.6), ("avwap_tepe", 0.6)):
+        if named.get(nm):
+            V.add("seviye", nm, _clip((px - named[nm]) / atr1), w)
     for nm, w in (("gun_acilis", 0.6), ("hafta_acilis", 0.6), ("dun_kapanis", 0.5), ("gecen_hafta_kapanis", 0.5), ("poc", 0.7)):
         if named.get(nm):
             V.add("seviye", f"ustunde_{nm}", _sgn(px - named[nm]) * 0.6, w)
@@ -167,6 +216,8 @@ def votes(m, c, rd: dict, btc_rd: dict | None, mult: dict | None = None) -> Vote
     # ---------------- formasyon
     for tf in ("4H", "1H", "15m"):
         for p in (rd["formasyon"].get(tf) or {}).get("grafik", []) + (rd["formasyon"].get(tf) or {}).get("harmonik", []):
+            if p["durum"] == "gecti":
+                continue                                     # kırılımı eskide kaldı: artık haber değil
             V.add("formasyon", f"{p['ad']}_{tf}", p["yon"] * p.get("guven", 0.3) * (1.5 if p["durum"] == "tamam" else 1), TF_W[tf])
     trend_dir = _sgn((V.cats().get("trend") or 0))
     near = (sup and (px - sup["px"]) <= 0.5 * atr1) or (res and (res["px"] - px) <= 0.5 * atr1)
@@ -176,6 +227,18 @@ def votes(m, c, rd: dict, btc_rd: dict | None, mult: dict | None = None) -> Vote
                 continue
             ctx = (2.0 if near else 0.5) * (1.3 if p["yon"] == trend_dir else 0.7)
             V.add("formasyon", f"mum_{p['ad']}_{tf}", p["yon"] * 0.5 * ctx, TF_W[tf])
+
+    # canlı mum: güven = geçen süre; hacim temposu yüksekse güçlenir
+    for tf, w in (("15m", 0.8), ("1H", 1.0)):
+        lc = (rd.get("canli_mum") or {}).get(tf)
+        if not lc:
+            continue
+        shape = {"guclu_yukari": 1, "yutan_yukari": 1, "pin_alt": 0.7, "guclu_asagi": -1, "yutan_asagi": -1,
+                 "pin_ust": -0.7}.get(lc["tip"], 0.3 * lc["yon"])
+        boost = 1.3 if (lc["hacim_tempo"] or 0) >= 1.5 else 1.0
+        V.add("formasyon", f"canli_mum_{tf}", shape * lc["gecen"] * boost, w)
+        if lc["hacim_tempo"] is not None:
+            V.add("hacim", f"canli_hacim_tempo_{tf}", lc["yon"] * _clip((lc["hacim_tempo"] - 1) / 2, 0, 1) * lc["gecen"], w * 0.8)
 
     # ---------------- momentum (15dk ve 1S; 5dk hafif)
     for tf in ("1H", "15m", "5m"):
@@ -221,7 +284,7 @@ def votes(m, c, rd: dict, btc_rd: dict | None, mult: dict | None = None) -> Vote
         if e.get("pvi_ustunde") is not None:
             V.add("hacim", f"pvi_{tf}", e["pvi_ustunde"] * 0.4, w * 0.5)
         if e.get("demand") is not None:
-            V.add("hacim", f"demand_{tf}", _clip(e["demand"] * 3), w * 0.7)
+            V.add("hacim", f"demand_{tf}", _clip(e["demand"] / 40), w * 0.7)
     hv = rd.get("hacim_15m") or {}
     if hv.get("climax"):
         s15 = c.series["15m"].bars[-1]
@@ -294,6 +357,27 @@ def votes(m, c, rd: dict, btc_rd: dict | None, mult: dict | None = None) -> Vote
     return V
 
 
+# ------------------------------------------------------------------------------------------------ canlı (oluşmakta olan) mum
+TF_MS_ = {"1m": 60_000, "5m": 300_000, "15m": 900_000, "1H": 3_600_000, "4H": 14_400_000}
+
+
+def live_candle(s, now_ms: int, tf: str) -> dict | None:
+    """Oluşmakta olan mumun okuması. Canlı mum kapanana kadar değişebilir (iğne gövdeye dönebilir), bu yüzden
+    güveni mumun ne kadarının geçtiğiyle orantılıdır ve mumun %60'ı geçmeden tetik sayılmaz.
+    Hacim, geçen süreye göre mum sonuna yansıtılır (hacim temposu)."""
+    if not s or not s.live or not s.ind.get("vol_avg"):
+        return None
+    b = s.live
+    el = max(0.0, min(1.0, (now_ms - b[0]) / TF_MS_[tf]))
+    if el < 0.05:
+        return None
+    cd = brain.candle(b, s.bars[-1] if s.bars else None)
+    pace = (b[6] / el) / s.ind["vol_avg"] if el else None
+    return {"gecen": round(el, 2), "tip": cd["tip"], "kapanis_konumu": cd["kapanis_konumu"],
+            "alt_fitil": cd["alt_fitil"], "ust_fitil": cd["ust_fitil"], "hacim_tempo": round(pace, 2) if pace else None,
+            "yon": _sgn(b[4] - b[1])}
+
+
 # ------------------------------------------------------------------------------------------------ tetikler
 def triggers(m, c, rd: dict) -> list[tuple[str, int]]:
     """(ad, yön) zamanlama olayları. Kapanmış 15dk/5dk mumlar + anlık (canlı 1dk mum, tape)."""
@@ -349,6 +433,18 @@ def triggers(m, c, rd: dict) -> list[tuple[str, int]]:
     tr = rd["turev"]
     if tr.get("liq_patlama"):
         out.append(("likidasyon_tukenmesi", 1 if tr["liq_patlama"] == "long" else -1))
+    # canlı 15dk mum: mumun ≥%60'ı geçti, seviyede ret şekli ve hacim temposu ≥1,5
+    lc = (rd.get("canli_mum") or {}).get("15m")
+    if lc and lc["gecen"] >= 0.6 and (lc["hacim_tempo"] or 0) >= 1.5:
+        lb = s15.live
+        for L in lv:
+            p = L["px"]
+            if lc["tip"] == "pin_alt" and lb[3] <= p + 0.2 * atr and lb[4] > p:
+                out.append(("canli_ret_15m", 1))
+                break
+            if lc["tip"] == "pin_ust" and lb[2] >= p - 0.2 * atr and lb[4] < p:
+                out.append(("canli_ret_15m", -1))
+                break
     # anlık kırılım: canlı 1dk mumda önemli seviye geçildi, hacim 2 kat, CVD aynı yönde
     s1 = c.series.get("1m")
     if s1 and s1.live and s1.ind.get("vol_avg"):
@@ -405,31 +501,58 @@ def structural_stop(c, rd: dict, d: int, entry: float, min_atr: float) -> tuple[
 
 
 # ------------------------------------------------------------------------------------------------ karar
-def decide(m, c, rd: dict, btc_rd: dict | None, mult: dict | None, cat_mult: dict | None, cfg: dict) -> dict:
+_LEVEL_TOKENS = {"dun", "gecen", "gun", "hafta", "4s", "poc", "vah", "val", "vwap", "yuvarlak", "trend", "avwap"}
+
+
+def path_key(trig_name: str, d: int, cats: dict, btc_rd: dict | None) -> str:
+    """Yol: tetik ailesi + yön + en güçlü iki kategori + BTC 4S rejimi (ders defterinin anahtarı)."""
+    toks = []
+    for t in trig_name.split("_"):
+        if t in TF_W or t in _LEVEL_TOKENS:
+            break
+        toks.append(t)
+    fam = "_".join(toks[:3]) or trig_name
+    top = sorted((k for k, v in cats.items() if v * d > 0 and k != "tetik"), key=lambda k: -abs(cats[k]))[:2]
+    btc = ((btc_rd or {}).get("yapi_4H") or {}).get("yon", "?")
+    return f"{fam}|{'long' if d > 0 else 'short'}|{'+'.join(sorted(top))}|btc:{btc}"
+
+
+def decide(m, c, rd: dict, btc_rd: dict | None, mult: dict | None, cat_mult: dict | None, cfg: dict,
+           path_rule=None) -> dict:
     K = cfg["karar"]
     V = votes(m, c, rd, btc_rd, mult)
     cats = V.cats()
     S = V.score(cat_mult)
+    S_base = votes(m, c, rd, btc_rd, None).score(None) if (mult or cat_mult) else S
     d = _sgn(S)
     trig = triggers(m, c, rd)
     for nm, td in trig:
         V.add("tetik", f"tetik_{nm}", td, 1.0)
     esik = K["esik"] + (K["gece_ek_esik"] if rd["seans"] == "gece" or _weekend(rd["ts"]) else 0.0)
-    out = {"S": round(S, 4), "yon": d, "kategoriler": {k: round(v, 3) for k, v in cats.items()},
+    out = {"S": round(S, 4), "S_temel": round(S_base, 4), "yon": d, "kategoriler": {k: round(v, 3) for k, v in cats.items()},
            "oylar": {n: round(v[1], 3) for n, v in V.v.items()}, "tetikler": trig, "esik": esik, "engel": None}
     if d == 0:
         out["engel"] = "yön yok"
         return out
-    if abs(S) < esik:
+    yonde = [nm for nm, td in trig if td == d]
+    out["yol"] = path_key(yonde[0], d, cats, btc_rd) if yonde else None
+    rule = path_rule(out["yol"]) if (path_rule and out["yol"]) else None
+    out["ders"] = rule
+    if rule == "benimse":
+        esik = max(0.0, esik - cfg["ogrenme"]["yol_benimse_indirim"])
+        out["esik"] = esik
+    if rule == "kacin":
+        out["engel"] = f"ders: bu yol ({out['yol']}) geçmişte zarar ettirdi"
+    elif abs(S) < esik:
         out["engel"] = f"puan {S:+.3f} eşiğin ({esik}) altında"
     elif cats.get("trend", 0) * d < -K["trend_tolerans"]:
         out["engel"] = "büyük zaman dilimi trendi ters"
     elif any(cats.get(f, 0) * d <= 0 for f in K["aileler"]):
         bad = [f for f in K["aileler"] if cats.get(f, 0) * d <= 0]
         out["engel"] = "gösterge aileleri aynı yönde değil: " + ", ".join(bad)
-    elif not any(td == d for _, td in trig):
+    elif not yonde:
         out["engel"] = "tetik yok (zamanlama)"
-    out["tetik_yonde"] = [nm for nm, td in trig if td == d]
+    out["tetik_yonde"] = yonde
     return out
 
 

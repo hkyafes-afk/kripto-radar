@@ -12,11 +12,13 @@ import json
 import os
 import signal
 import subprocess
+import time
 from pathlib import Path
 
 import yaml
 
 from .agent import Polat
+from .lease import Lease
 from .okx import Rest
 
 HERE = Path(__file__).resolve().parent
@@ -36,7 +38,15 @@ def make_rest(cfg: dict) -> Rest:
                 os.environ.get("POLAT_OKX_PASSPHRASE", ""), demo=True)
 
 
-async def run(cfg: dict, root: Path, seconds: float | None, push_min: float):
+async def run(cfg: dict, root: Path, seconds: float | None, push_min: float, devir: bool = False):
+    script = HERE.parent / "scripts" / "polat_veri.sh"
+    lease = Lease(root, script)
+    on_gh = bool(os.environ.get("GITHUB_ACTIONS"))
+    if on_gh and not devir:
+        cur = await asyncio.to_thread(lease.remote)
+        if lease.healthy(cur):
+            print(f"Nöbette sağlıklı Polat var ({cur.get('owner')}); bekçi çıkıyor.")
+            return
     agent = Polat(cfg, root, make_rest(cfg))
     loop = asyncio.get_running_loop()
     stop_ev = asyncio.Event()
@@ -45,27 +55,50 @@ async def run(cfg: dict, root: Path, seconds: float | None, push_min: float):
             loop.add_signal_handler(sig, stop_ev.set)
         except NotImplementedError:  # pragma: no cover
             pass
+    if devir and on_gh:
+        await agent.start(standby=True)
+        t0 = time.time()
+        while time.time() - t0 < 15 * 60:                      # selefin bırakmasını bekle (en çok 15 dk)
+            cur = await asyncio.to_thread(lease.remote)
+            if not lease.healthy(cur):
+                break
+            await asyncio.sleep(2)
+        await asyncio.to_thread(lease.sync_from_remote)
+        info = await agent.activate()
+        print(f"Devralındı: boşluk {info.get('bosluk_sn')} sn")
+    else:
+        await agent.start()
+    lease.write()
+    await asyncio.to_thread(lease.push, "nöbet alındı")
+    dur = seconds or 0
+    handoff_at = (dur - cfg["devir"]["halef_once_dk"] * 60) if (on_gh and dur) else None
+    started = time.time()
 
-    async def pusher():
+    async def heartbeat():
+        sent = False
         while True:
-            await asyncio.sleep(push_min * 60)
+            await asyncio.sleep(push_min * 60 if push_min > 0 else 60)
             agent.save()
             agent.write_report()
-            await asyncio.to_thread(subprocess.run, ["bash", str(HERE.parent / "scripts" / "polat_veri.sh"), "push", "ara kayıt"])
+            lease.write()
+            await asyncio.to_thread(lease.push, "nabız")
+            if handoff_at and not sent and time.time() - started >= handoff_at:
+                sent = await asyncio.to_thread(lease.dispatch_successor)
+                agent.journal.write("olaylar", {"olay": "halef_cagrildi", "ok": sent})
 
-    await agent.start()
-    extra = [asyncio.create_task(pusher())] if push_min > 0 else []
+    hb = asyncio.create_task(heartbeat())
     try:
-        if seconds:
-            await asyncio.wait_for(stop_ev.wait(), timeout=seconds)
+        if dur:
+            await asyncio.wait_for(stop_ev.wait(), timeout=dur)
         else:
             await stop_ev.wait()
     except asyncio.TimeoutError:
         pass
-    for t in extra:
-        t.cancel()
+    hb.cancel()
     await agent.stop("süre doldu" if not stop_ev.is_set() else "sinyal")
     agent.write_report()
+    lease.write(released=True)
+    await asyncio.to_thread(lease.push, "nöbet bırakıldı")
     print(json.dumps(agent.status(), ensure_ascii=False, default=str)[:2000])
 
 
@@ -76,6 +109,7 @@ def main():
     a.add_argument("--kok", default="polat_veri")
     a.add_argument("--sure", type=float, default=None)
     a.add_argument("--git-push-dk", type=float, default=0)
+    a.add_argument("--devir", action="store_true")
     b = sub.add_parser("rapor")
     b.add_argument("--kok", default="polat_veri")
     d = sub.add_parser("devam")
@@ -84,7 +118,7 @@ def main():
     cfg = load_cfg()
     root = Path(args.kok)
     if args.cmd == "calis":
-        asyncio.run(run(cfg, root, args.sure, args.git_push_dk))
+        asyncio.run(run(cfg, root, args.sure, args.git_push_dk, devir=args.devir or os.environ.get("DEVIR") == "1"))
     elif args.cmd == "devam":
         f = root / "durum.json"
         st = json.loads(f.read_text(encoding="utf-8"))

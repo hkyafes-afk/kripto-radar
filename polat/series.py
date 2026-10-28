@@ -189,14 +189,21 @@ class Series:
             self._ext_n = self.n
         return self._ext
 
-    def patterns(self) -> dict:
+    PARTS = ("grafik", "harmonik", "mum", "cizgi")
+
+    def pattern_part(self, name: str):
+        """Formasyonları parça parça hesapla (her parça arasında olay döngüsüne söz verilebilsin)."""
         if self._pat_n != self.n:
+            self._pat, self._pat_n = {}, self.n
+        if name not in self._pat:
             from . import patterns as P
-            bars = list(self.bars)
-            atr = self.ext().get("atr")
-            self._pat = {"grafik": P.chart_patterns(bars, atr), "harmonik": P.harmonics(bars, atr),
-                         "mum": P.candle_patterns(bars, atr), "cizgi": P.trendlines(bars, atr)}
-            self._pat_n = self.n
+            fn = {"grafik": P.chart_patterns, "harmonik": P.harmonics, "mum": P.candle_patterns, "cizgi": P.trendlines}[name]
+            self._pat[name] = fn(list(self.bars), self.ext().get("atr"))
+        return self._pat[name]
+
+    def patterns(self) -> dict:
+        for k in self.PARTS:
+            self.pattern_part(k)
         return self._pat
 
     # --- yardımcılar ------------------------------------------------------------------------

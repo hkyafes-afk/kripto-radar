@@ -28,6 +28,15 @@ def _fit(idx, px):
     return m, b
 
 
+def _state(c, level, d, atr, k=3):
+    """Kırılım tazeliği: "tamam" yalnızca fiyat seviyeyi son k mum içinde ≥0,25 ATR farkla geçtiyse.
+    Daha önce geçildiyse "gecti" (artık oy vermez — eski haber), geçilmediyse "olusuyor"."""
+    beyond = (c - level) * d > 0.25 * atr
+    if not beyond[-1]:
+        return "olusuyor"
+    return "tamam" if not beyond[-k - 1:-1].all() else "gecti"
+
+
 # ------------------------------------------------------------------------------------------------ grafik formasyonları
 def chart_patterns(bars: list, atr: float) -> list[dict]:
     if len(bars) < 40 or not atr:
@@ -43,21 +52,21 @@ def chart_patterns(bars: list, atr: float) -> list[dict]:
     if len(hi) >= 2:
         a, b = hi[-2], hi[-1]
         mids = [i for i in lo if a < i < b]
-        if abs(h[a] - h[b]) <= tol and mids and b - a >= 5:
+        if abs(h[a] - h[b]) <= tol and mids and b - a >= 10 and b >= n - 25:
             neck = l[min(mids, key=lambda i: l[i])]
-            if h[a] - neck >= 1.5 * atr:
-                done = c[-1] < neck
-                out.append({"ad": "cift_tepe", "yon": -1, "durum": "tamam" if done else "olusuyor", "seviye": neck,
-                            "hedef": neck - (h[b] - neck), "guven": 0.7 if done else 0.3})
+            if h[a] - neck >= 2 * atr:
+                stt = _state(c, neck, -1, atr)
+                out.append({"ad": "cift_tepe", "yon": -1, "durum": stt, "seviye": neck,
+                            "hedef": neck - (h[b] - neck), "guven": 0.7 if stt == "tamam" else 0.3})
     if len(lo) >= 2:
         a, b = lo[-2], lo[-1]
         mids = [i for i in hi if a < i < b]
-        if abs(l[a] - l[b]) <= tol and mids and b - a >= 5:
+        if abs(l[a] - l[b]) <= tol and mids and b - a >= 10 and b >= n - 25:
             neck = h[max(mids, key=lambda i: h[i])]
-            if neck - l[a] >= 1.5 * atr:
-                done = c[-1] > neck
-                out.append({"ad": "cift_dip", "yon": 1, "durum": "tamam" if done else "olusuyor", "seviye": neck,
-                            "hedef": neck + (neck - l[b]), "guven": 0.7 if done else 0.3})
+            if neck - l[a] >= 2 * atr:
+                stt = _state(c, neck, 1, atr)
+                out.append({"ad": "cift_dip", "yon": 1, "durum": stt, "seviye": neck,
+                            "hedef": neck + (neck - l[b]), "guven": 0.7 if stt == "tamam" else 0.3})
 
     # Omuz-baş-omuz (OBO) / ters OBO (TOBO)
     if len(hi) >= 3:
@@ -68,9 +77,10 @@ def chart_patterns(bars: list, atr: float) -> list[dict]:
             if t1 and t2:
                 i1, i2 = min(t1, key=lambda i: l[i]), min(t2, key=lambda i: l[i])
                 neck = _line(i1, l[i1], i2, l[i2], last)
-                done = c[-1] < neck
-                out.append({"ad": "obo", "yon": -1, "durum": "tamam" if done else "olusuyor", "seviye": neck,
-                            "hedef": neck - (h[hd] - neck), "guven": 0.75 if done else 0.3})
+                stt = _state(c, neck, -1, atr)
+                if s2 >= n - 30:
+                    out.append({"ad": "obo", "yon": -1, "durum": stt, "seviye": neck,
+                                "hedef": neck - (h[hd] - neck), "guven": 0.75 if stt == "tamam" else 0.3})
     if len(lo) >= 3:
         s1, hd, s2 = lo[-3], lo[-2], lo[-1]
         if l[hd] < l[s1] - atr and l[hd] < l[s2] - atr and abs(l[s1] - l[s2]) <= 1.5 * tol:
@@ -79,16 +89,22 @@ def chart_patterns(bars: list, atr: float) -> list[dict]:
             if t1 and t2:
                 i1, i2 = max(t1, key=lambda i: h[i]), max(t2, key=lambda i: h[i])
                 neck = _line(i1, h[i1], i2, h[i2], last)
-                done = c[-1] > neck
-                out.append({"ad": "tobo", "yon": 1, "durum": "tamam" if done else "olusuyor", "seviye": neck,
-                            "hedef": neck + (neck - l[hd]), "guven": 0.75 if done else 0.3})
+                stt = _state(c, neck, 1, atr)
+                if s2 >= n - 30:
+                    out.append({"ad": "tobo", "yon": 1, "durum": stt, "seviye": neck,
+                                "hedef": neck + (neck - l[hd]), "guven": 0.75 if stt == "tamam" else 0.3})
 
     # Üçgenler, takoz, kanal, elmas: son 3 tepe ve son 3 dibin eğimleri (ATR/mum biriminde)
     H3 = [i for i in hi if i >= n - 80][-3:]
     L3 = [i for i in lo if i >= n - 80][-3:]
-    if len(H3) >= 2 and len(L3) >= 2:
+    fit_ok = len(H3) == 3 and len(L3) == 3 and max(H3[-1], L3[-1]) >= n - 20
+    if fit_ok:
         mh, bh = _fit(H3, [h[i] for i in H3])
         ml, bl = _fit(L3, [l[i] for i in L3])
+        res_h = max(abs(h[i] - (mh * i + bh)) for i in H3)
+        res_l = max(abs(l[i] - (ml * i + bl)) for i in L3)
+        fit_ok = res_h <= 0.5 * atr and res_l <= 0.5 * atr      # üç dokunuş da çizgiye oturmalı
+    if fit_ok:
         sh, sl = mh / atr, ml / atr
         up_line, lo_line = mh * last + bh, ml * last + bl
         width_now = up_line - lo_line
@@ -109,12 +125,14 @@ def chart_patterns(bars: list, atr: float) -> list[dict]:
             name, yon = "alcalan_takoz", 1
         elif sh * sl > 0 and abs(sh - sl) < 0.5 * max(abs(sh), abs(sl)) and width_now > 1.5 * atr:
             name, yon = ("yukselen_kanal" if sh > 0 else "alcalan_kanal"), (1 if sh > 0 else -1)
-        if name and width_now > 0:
-            done = brk != 0 and (yon == 0 or brk == yon) if "kanal" not in name else False
+        if name and width_now > 0 and max(width_then, width_now) >= 2 * atr:
             d = brk if name == "simetrik_ucgen" else yon
             if d:
+                lvl_ = up_line if d > 0 else lo_line
+                stt = "olusuyor" if "kanal" in name else _state(c, lvl_, d, atr)
+                done = stt == "tamam"
                 pos = (c[-1] - lo_line) / width_now if width_now else 0.5
-                out.append({"ad": name, "yon": d, "durum": "tamam" if done else "olusuyor",
+                out.append({"ad": name, "yon": d, "durum": stt,
                             "seviye": up_line if d > 0 else lo_line,
                             "hedef": (up_line if d > 0 else lo_line) + d * max(width_then, width_now),
                             "guven": 0.65 if done else 0.25, "kanal_konumu": round(pos, 2)})
@@ -126,8 +144,9 @@ def chart_patterns(bars: list, atr: float) -> list[dict]:
             if mhb / atr > flat and mlb / atr < -flat and sh < -flat and sl > flat:
                 prior = 1 if c[max(0, Hb[0] - 20)] < c[Hb[0]] else -1
                 d = -prior
-                done = brk == d
-                out.append({"ad": "elmas", "yon": d, "durum": "tamam" if done else "olusuyor",
+                stt = _state(c, up_line if d > 0 else lo_line, d, atr)
+                done = stt == "tamam"
+                out.append({"ad": "elmas", "yon": d, "durum": stt,
                             "seviye": up_line if d > 0 else lo_line, "hedef": None, "guven": 0.6 if done else 0.2})
 
     # Bayrak / flama: güçlü direk + dar, karşı eğimli konsolidasyon + direk yönünde kırılım
@@ -139,14 +158,15 @@ def chart_patterns(bars: list, atr: float) -> list[dict]:
             if p_start < 0:
                 break
             move = c[p_end] - c[p_start]
-            if abs(move) < 3 * atr:
+            if abs(move) < 4 * atr:
                 continue
             ch, cl = h[p_end + 1:seg_end].max(initial=-math.inf), l[p_end + 1:seg_end].min(initial=math.inf)
             if ch - cl > 0.5 * abs(move):
                 continue
             d = 1 if move > 0 else -1
-            done = (c[-1] > ch) if d > 0 else (c[-1] < cl)
-            out.append({"ad": "bayrak" if cons >= 8 else "flama", "yon": d, "durum": "tamam" if done else "olusuyor",
+            stt = _state(c, ch if d > 0 else cl, d, atr)
+            done = stt == "tamam"
+            out.append({"ad": "bayrak" if cons >= 8 else "flama", "yon": d, "durum": stt,
                         "seviye": ch if d > 0 else cl, "hedef": (ch if d > 0 else cl) + move, "guven": 0.65 if done else 0.25})
             break
         else:
@@ -158,11 +178,14 @@ def chart_patterns(bars: list, atr: float) -> list[dict]:
         w = c[-60:]
         left = w[:10].max()
         bot_i = int(np.argmin(w))
-        if 20 <= bot_i <= 40 and left - w[bot_i] > 3 * atr:
+        mid = w[15:45]
+        round_ = len(mid) and (mid < w[bot_i] + 0.35 * (left - w[bot_i])).mean() >= 0.3   # V değil U: dipte zaman geçirmiş
+        if 20 <= bot_i <= 40 and left - w[bot_i] > 4 * atr and round_:
             right = w[-10:].max()
             if right >= left - atr:
-                done = c[-1] > left
-                out.append({"ad": "fincan", "yon": 1, "durum": "tamam" if done else "olusuyor", "seviye": left,
+                stt = _state(c, left, 1, atr)
+                done = stt == "tamam"
+                out.append({"ad": "fincan", "yon": 1, "durum": stt, "seviye": left,
                             "hedef": left + (left - w[bot_i]), "guven": 0.6 if done else 0.2})
     return out
 
@@ -192,7 +215,7 @@ def harmonics(bars: list, atr: float) -> list[dict]:
     X, A, B, C, D = px[-5:]
     xa, ab, bc, cd = abs(A[1] - X[1]), abs(B[1] - A[1]), abs(C[1] - B[1]), abs(D[1] - C[1])
     ad_ = abs(A[1] - D[1])
-    if xa and ab and bc:
+    if xa >= 3 * atr and ab and bc:
         r_ab, r_bc, r_ad = ab / xa, bc / ab, ad_ / xa
         d = 1 if D[2] == -1 else -1                     # D dipse boğa formasyonu
         turned = (c[-1] - D[1]) * d > 0.3 * atr
@@ -210,10 +233,16 @@ def harmonics(bars: list, atr: float) -> list[dict]:
         p1, p2, p3, p4, p5 = px[-5:]
         if p1[2] == p5[2] == p3[2]:
             s = -p5[2]                                  # 5 dip ise boğa
+            t = p1[2]                                   # −1: dipler (boğa), +1: tepeler (ayı)
             l13 = _line(p1[0], p1[1], p3[0], p3[1], p5[0])
-            beyond = (p5[1] - l13) * p5[2] > 0
+            beyond = (p5[1] - l13) * t > 0.1 * atr
+            rule3 = (p3[1] - p1[1]) * t > 0             # 3, 1'in ötesinde
+            rule4 = (p4[1] - p1[1]) * (-t) > 0 and (p2[1] - p4[1]) * (-t) > 0   # 4, 1 ile 2 arasında
+            amp = min(abs(p2[1] - p1[1]), abs(p3[1] - p2[1]), abs(p4[1] - p3[1]), abs(p5[1] - p4[1])) >= 1.5 * atr
+            span1, span2 = p3[0] - p1[0], p5[0] - p3[0]
+            sym = span1 > 0 and 0.5 <= span2 / span1 <= 2.0
             conv = abs(p4[1] - p3[1]) < abs(p2[1] - p1[1])
-            if beyond and conv and recent:
+            if beyond and rule3 and rule4 and amp and sym and conv and recent:
                 tgt = _line(p1[0], p1[1], p4[0], p4[1], lst + 10)
                 out.append({"ad": "wolfe", "yon": s, "durum": "tamam" if turned else "olusuyor", "seviye": p5[1],
                             "hedef": tgt, "guven": 0.5 if turned else 0.2})
@@ -331,33 +360,46 @@ def stop_pools(bars: list, atr: float) -> list[dict]:
     return out
 
 
-def liquidation_map(oi_h1: list, bars_h1: list, px: float, levs=(10, 25, 50, 100)) -> dict:
-    """Tahmini likidasyon kümeleri: 1S mumlarda OI arttıysa, o mumun yönüne göre açılan pozisyonların
-    farklı kaldıraçlardaki likidasyon fiyatına eklenir; fiyat o seviyeye ulaştıysa küme silinir.
-    Gerçek likidasyon haritası değildir; OI ve fiyattan çıkarılan yaklaşık bir tahmindir."""
+def liquidation_map(oi_h1: list, bars_h1: list, px: float, levs=(10, 25, 50, 100), lev_w: dict | None = None) -> dict:
+    """Tahmini likidasyon kümeleri. Kimin hangi fiyatta likide olacağını yalnızca borsa bilir; bu bir TAHMİNDİR:
+    1S mumlarda OI arttıysa, o mumun yönüne göre açılan pozisyonların kaldıraç dağılımına göre likidasyon fiyatına
+    eklenir. Kaldıraç dağılımı (lev_w) OKX'in gerçek likidasyon akışıyla sürekli kalibre edilir (agent.on_liq).
+    Fiyatın o mumdan SONRA ulaştığı kümeler silinir."""
+    out = {"ust": None, "alt": None, "kumeler": []}
     if len(oi_h1) < 3 or not bars_h1 or px <= 0:
-        return {"ust": None, "alt": None}
-    by_ts = {b[0]: b for b in bars_h1}
-    clusters: dict[float, float] = {}
+        return out
+    w = lev_w or {L: 1 / len(levs) for L in levs}
+    tot = sum(w.get(L, 0) for L in levs) or 1
+    idx = {b[0]: i for i, b in enumerate(bars_h1)}
+    clusters: dict[float, list] = {}
     for (t0, oi0), (t1, oi1) in zip(oi_h1[:-1], oi_h1[1:]):
         d = oi1 - oi0
-        b = by_ts.get(t1) or by_ts.get(t0)
-        if d <= 0 or not b:
+        i = idx.get(t1, idx.get(t0))
+        if d <= 0 or i is None:
             continue
+        b = bars_h1[i]
         entry = b[4]
-        usd = d * entry
         side_long = b[4] >= b[1]
+        later = bars_h1[i + 1:]
+        hi_after = max((x[2] for x in later), default=-math.inf)
+        lo_after = min((x[3] for x in later), default=math.inf)
         for L in levs:
             lp = entry * (1 - 1 / L) if side_long else entry * (1 + 1 / L)
+            if (side_long and lo_after <= lp) or (not side_long and hi_after >= lp):
+                continue                                  # o seviyeye sonradan gelindi: küme tükendi
             key = round(lp / px, 3)
-            clusters[key] = clusters.get(key, 0) + usd / len(levs)
-    hi_after = max(b[2] for b in bars_h1[-48:])
-    lo_after = min(b[3] for b in bars_h1[-48:])
-    above = {k: v for k, v in clusters.items() if k * px > px and k * px > hi_after}
-    below = {k: v for k, v in clusters.items() if k * px < px and k * px < lo_after}
-    def top(d):
-        if not d:
+            e = clusters.setdefault(key, [0.0, {}])
+            e[0] += d * entry * w.get(L, 0) / tot
+            e[1][L] = e[1].get(L, 0) + 1
+    above = {k: v for k, v in clusters.items() if k > 1}
+    below = {k: v for k, v in clusters.items() if k < 1}
+
+    def top(dd):
+        if not dd:
             return None
-        k = max(d, key=lambda x: d[x] / max(abs(x - 1), 0.002))
-        return {"px": k * px, "usd": round(d[k]), "uzaklik_yuzde": round((k - 1) * 100, 2)}
-    return {"ust": top(above), "alt": top(below)}
+        k = max(dd, key=lambda x: dd[x][0] / max(abs(x - 1), 0.002))
+        return {"px": k * px, "usd": round(dd[k][0]), "uzaklik_yuzde": round((k - 1) * 100, 2)}
+    out["ust"], out["alt"] = top(above), top(below)
+    out["kumeler"] = sorted(((k * px, round(v[0]), max(v[1], key=v[1].get)) for k, v in clusters.items()),
+                            key=lambda x: -x[1])[:40]
+    return out

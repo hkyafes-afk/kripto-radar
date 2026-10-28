@@ -78,11 +78,15 @@ class Polat:
         self.stopping = False
         self.counters = {"degerlendirme": 0, "sinyal": 0, "giris": 0, "karar_ms_max": 0.0, "engel": {}}
         self.learner = Learner(cfg, self.root)
+        self.learner.risk = self.risk
+        self._apply_adjust()
         self.eval_q: asyncio.Queue | None = None
         self.queued: set[str] = set()
         self.last_eval: dict[str, float] = {}
         self.key_levels: dict[str, list[float]] = {}
         self.dom_hist: list[tuple[int, float]] = []
+        self.recent_closes: list[dict] = [x for x in self.journal.read("islemler") if x.get("olay") == "kapanis"][-50:]
+        self.last_report: dict = {}
 
     # ===================================================================================== durum
     @property
@@ -90,8 +94,12 @@ class Polat:
         return self.root / "durum.json"
 
     def save(self):
+        if getattr(self, "standby", False):
+            return                                   # halef ısınırken selefin durum dosyasına dokunmaz
+        self.journal.flush()
         st = {"version": VERSION, "saved": now_ms(), "broker": self.broker.to_state(), "risk": self.risk.to_state(),
-              "deep": sorted(self.deep), "learner": self.learner.to_state()}
+              "deep": sorted(self.deep), "learner": self.learner.to_state(),
+              "liq_calib": self.market.liq_calib if self.market else None}
         tmp = self.state_file.with_suffix(".tmp")
         tmp.write_text(json.dumps(st, ensure_ascii=False, default=str), encoding="utf-8")
         tmp.replace(self.state_file)
@@ -111,22 +119,54 @@ class Polat:
         m = self.market
         coins = m.coins if m else {}
         eq = self.broker.equity(coins)
+        pos = []
+        for p in self.broker.positions.values():
+            c = coins.get(p["inst"])
+            px = c.price() if c else p["entry"]
+            sgn = 1 if p["side"] == "long" else -1
+            pos.append({**{k: p.get(k) for k in ("inst", "side", "entry", "sl", "tp", "qty", "lev", "kurulum", "opened",
+                                                   "puan", "yol", "partial_done")},
+                        "fiyat": px, "pnl_usd": round((px - p["entry"]) * p["qty"] * sgn + p.get("realized", 0) - p.get("fees", 0)
+                                                     - p.get("funding", 0), 2),
+                        "r_simdi": round((px - p["entry"]) * sgn / p["r_dist"], 2) if p.get("r_dist") else None})
+        rep = self.last_report or {}
         return {"surum": VERSION, "zaman": now_ms(), "baslangic": self.started, "mod": self.cfg["yurutme"]["mod"],
-                "ozsermaye": round(eq, 2), "nakit": round(self.broker.cash, 2),
-                "pozisyonlar": [{k: p.get(k) for k in ("inst", "side", "entry", "sl", "tp", "qty", "lev", "kurulum", "opened")}
-                                for p in self.broker.positions.values()],
+                "sermaye": self.cfg["sermaye_usd"], "ozsermaye": round(eq, 2), "nakit": round(self.broker.cash, 2),
+                "pozisyonlar": pos, "son_islemler": [{k: x.get(k) for k in ("inst", "yon", "kurulum", "neden", "giris", "cikis",
+                                                                         "r", "pnl_net", "sure_saat", "hatalar", "ts")}
+                                                    for x in self.recent_closes[-30:]][::-1],
                 "izlenen": sorted(self.deep), "risk": self.risk.to_state(), "veri": m.stats() if m else {},
                 "baglanti": self.feed.stats if self.feed else {}, "sayac": self.counters,
-                "global": m.global_ if m else {}, "uyari": DISCLAIMER}
+                "rest": {"istek": getattr(self.rest, "calls", 0), "tekrar": getattr(self.rest, "retries", 0),
+                         "rtt_ms": {k: round(v, 1) for k, v in (getattr(self.rest, "rtt", {}) or {}).items()}},
+                "likidasyon_kalibrasyon": m.liq_calib if m else None, "global": m.global_ if m else {},
+                "kiyas": rep.get("kiyas"), "ogrenme": rep.get("ogrenme"),
+                "pencereler": {k: v.get("genel") for k, v in (rep.get("pencereler") or {}).items()},
+                "yollar": sorted(({"yol": k, **v} for k, v in self.learner.paths.items() if v.get("karar")),
+                                 key=lambda x: -abs(x["sumR"]))[:20],
+                "ayar": self.learner.adjust, "bekleme": getattr(self, "standby", False), "uyari": DISCLAIMER}
 
     # ===================================================================================== başlangıç
-    async def start(self, run_seconds: float | None = None):
+    async def start(self, run_seconds: float | None = None, standby: bool = False):
+        """standby=True: halef olarak ısın (veri, abonelikler, göstergeler hazır) ama işlem yapma; activate() ile devral."""
+        self.standby = standby
+        try:
+            rtt = await self.rest.pick_fastest()
+            if rtt and "aws" in self.rest.bases[0]:                 # en hızlı AWS uç noktasıysa WS'de de onu öne al
+                for k in ("ws_public", "ws_business"):
+                    self.cfg["veri"][k] = sorted(self.cfg["veri"][k], key=lambda u: 0 if "wsaws" in u else 1)
+            self.journal.write("olaylar", {"olay": "sunucu_secimi", "rtt_ms": {k: round(v, 1) for k, v in rtt.items()}})
+        except Exception:  # noqa: BLE001
+            pass
         meta = await self.rest.instruments()
         self.market = m = Market(self.cfg, meta)
         m.on_close = self._on_close
         m.on_trade = self._on_trade
         m.on_book_bad = self._on_book_bad
-        st = self.load()
+        m.on_liq = self._on_liq
+        st = None if standby else self.load()
+        if st and st.get("liq_calib"):
+            m.liq_calib = st["liq_calib"]
         self.eval_q = asyncio.Queue()
         for t in await self.rest.tickers():
             if t["instId"] in meta:
@@ -139,16 +179,20 @@ class Polat:
         self.feed.start()
         await self.feed.market_wide(list(meta))
         keep = {p["inst"] for p in self.broker.positions.values()}
-        prev = set(st["deep"]) if st else set()
+        prev = set(st["deep"]) if st else self._peek_deep()
         await self._select(initial=prev | keep)
         if st:
             await self._reconcile_gap(st["saved"])
+        if standby:
+            loops = [self._loop_select(), self._bootstrap_h1_all(list(meta)), self._loop_eval(), self._loop_extras()]
+            self.tasks = [asyncio.create_task(x) for x in loops]
+            return
         self.journal.write("olaylar", {"olay": "basladi", "surum": VERSION, "mod": self.cfg["yurutme"]["mod"],
                                        "ozsermaye": self.broker.equity(m.coins), "izlenen": sorted(self.deep)})
         await self.notify.send(f"Başladı · özsermaye {self.broker.equity(m.coins):,.0f}$ · izlenen {len(self.deep)} coin"
                                f" · açık pozisyon {len(self.broker.positions)}")
         loops = [self._loop_select(), self._loop_second(), self._loop_save(), self._loop_ls(), self._loop_extras(),
-                 self._bootstrap_h1_all(list(meta)), self._loop_eval(), self._loop_learn()]
+                 self._bootstrap_h1_all(list(meta)), self._loop_eval(), self._loop_learn(), self._loop_fast()]
         self.tasks = [asyncio.create_task(x) for x in loops]
         if run_seconds:
             await asyncio.sleep(run_seconds)
@@ -164,8 +208,39 @@ class Polat:
             await self.feed.stop()
         self.save()
         self.journal.write("olaylar", {"olay": "durdu", "neden": reason, "veri": self.market.stats() if self.market else {}})
+        self.journal.flush()
 
     # ===================================================================================== seçici
+    def _peek_deep(self) -> set[str]:
+        try:
+            return set(json.loads(self.state_file.read_text(encoding="utf-8")).get("deep", []))
+        except Exception:  # noqa: BLE001
+            return set()
+
+    async def activate(self) -> dict:
+        """Halef devralıyor: selefin son durumunu yükle, aradaki birkaç saniyeyi 1 dk mumlarla kapat, işleme başla."""
+        st = self.load()
+        if st and st.get("liq_calib"):
+            self.market.liq_calib = st["liq_calib"]
+        self.learner.__init__(self.cfg, self.root)                 # ağırlıklar/yollar diskten yeniden
+        self.learner.risk = self.risk
+        self._apply_adjust()
+        for p in self.broker.positions.values():
+            if p["inst"] not in self.deep:
+                await self._watch(p["inst"])
+                self.deep.add(p["inst"])
+        if st:
+            await self._reconcile_gap(st["saved"])
+        self.standby = False
+        for t in self.tasks:
+            t.cancel()
+        self.tasks = [asyncio.create_task(x) for x in (
+            self._loop_select(), self._loop_second(), self._loop_save(), self._loop_ls(), self._loop_extras(),
+            self._loop_eval(), self._loop_learn(), self._loop_fast())]
+        gap = (now_ms() - st["saved"]) / 1000 if st else None
+        self.journal.write("olaylar", {"olay": "devraldi", "bosluk_sn": gap, "pozisyon": len(self.broker.positions)})
+        return {"bosluk_sn": gap}
+
     async def _select(self, initial: set[str] | None = None):
         m = self.market
         ranked = selector.rank(m.coins, m.h1_all, self.cfg)
@@ -178,7 +253,10 @@ class Polat:
         for inst in rem:
             await self.feed.unwatch(inst)
             m.coins[inst].deep = False
-        await asyncio.gather(*(self._watch(inst) for inst in add))
+        # öncelik: açık pozisyonlu coinler → BTC/ETH → diğerleri (her coin verisi gelir gelmez değerlendirmeye girer)
+        first = [x for x in add if x in keep or x in set(self.cfg["secici"].get("sabit", []))]
+        await asyncio.gather(*(self._watch(inst) for inst in first))
+        await asyncio.gather(*(self._watch(inst) for inst in add if inst not in first))
         self.deep = chosen
         if add or rem:
             self.journal.write("olaylar", {"olay": "secici", "girdi": sorted(add), "cikti": sorted(rem),
@@ -239,6 +317,21 @@ class Polat:
             await asyncio.sleep(0.06)
 
     # ===================================================================================== olaylar
+    def _on_liq(self, c, side: str, usd: float, px: float):
+        """Gerçek likidasyon geldi: tahmini kümelerden birine (±%0,5) düştü mü? Düştüyse o kaldıracın ağırlığı artar.
+        Ayrıca likidasyon patlaması anlık değerlendirme tetikler."""
+        cal = self.market.liq_calib
+        lm = c.liq_map
+        if lm and lm.get("kumeler") and px:
+            cal["olay"] += 1
+            best = min(lm["kumeler"], key=lambda k: abs(k[0] - px))
+            if abs(best[0] / px - 1) <= 0.005:
+                cal["isabet"] += 1
+                key = str(best[2])
+                cal["lev"][key] = cal["lev"].get(key, 1.0) + 1.0
+        if c.deep:
+            self._enqueue(c.inst, anlik=True)
+
     def _on_book_bad(self, c):
         _spawn(self.feed.resync_book(c.inst))
 
@@ -264,13 +357,32 @@ class Polat:
             inst = await self.eval_q.get()
             self.queued.discard(inst)
             c = self.market.coins.get(inst)
-            if c and c.deep and c.series["15m"].n >= 60:
+            if c and c.deep and c.series["15m"].n >= 60 and not getattr(self, "standby", False):
                 self.last_eval[inst] = time.monotonic()
                 try:
+                    # ağır hesapları parçala: her zaman dilimi ayrı adım, aralarda olay döngüsüne söz ver
+                    for tf, srs in c.series.items():
+                        if srs.n >= 60:
+                            srs.ext()
+                            await asyncio.sleep(0)
+                            if tf in ("4H", "1H", "15m", "5m"):
+                                for part in srs.PARTS:
+                                    srs.pattern_part(part)
+                                    await asyncio.sleep(0)
                     self.evaluate(c)
                 except Exception as e:  # noqa: BLE001
                     self.journal.write("olaylar", {"olay": "degerlendirme_hata", "inst": inst, "hata": repr(e)[:300]})
             await asyncio.sleep(0)
+
+    async def _loop_fast(self):
+        """50 ms: dolum penceresi dolan stop-market emirlerini kapat (işlem akışı dursa bile)."""
+        while True:
+            await asyncio.sleep(0.05)
+            if self.broker.pending:
+                for ev in self.broker.flush(self.market.coins, now_ms()):
+                    c = self.market.coins.get(ev["inst"])
+                    if c:
+                        self._closed(c, ev)
 
     async def _loop_learn(self):
         while True:
@@ -279,8 +391,10 @@ class Polat:
             self.journal.write("olaylar", {"olay": "ogrenme", **res})
 
     def _on_trade(self, c, px: float, ts: int):
+        if getattr(self, "standby", False):
+            return
         if self.learner.active:
-            self.learner.on_price(c.inst, px, ts)
+            self.learner.on_price(c.inst, px, ts, swing=lambda side, opened: self._swing(c, side, opened))
         kl = self.key_levels.get(c.inst)
         if kl and c.deep:
             prev = getattr(c, "_prev_px", None)
@@ -300,6 +414,46 @@ class Polat:
                 continue
             self.last_manage[p["id"]] = t
             self._manage(c, p, px, ts)
+
+    def _swing(self, c, side: str, opened: int):
+        s15 = c.series.get("15m")
+        if not s15:
+            return None
+        piv = s15.pivots_lo if side == "long" else s15.pivots_hi
+        return piv[-1][1] if piv and piv[-1][0] >= opened else None
+
+    def _apply_adjust(self):
+        """Hatalardan çıkan ayarlar (sınırlı aralıkta) çalışan yapılandırmaya uygulanır."""
+        a = self.learner.adjust
+        if "min_stop_atr" in a:
+            self.cfg["risk"]["min_stop_atr"] = a["min_stop_atr"]
+        if "basabas_r" in a:
+            self.cfg["cikis"]["basabas_r"] = a["basabas_r"]
+
+    def _post_mortem(self, rec: dict):
+        """Gerçek işlemden ders: hata sınıfına göre sınırlı ayar (her biri dersler.jsonl'e yazılır).
+        Kazançlı işlemde yol benimsenir; ayarlar zamanla başlangıç değerine geri yaklaşır (aşırı tepki yok)."""
+        a = self.learner.adjust
+        base = {"min_stop_atr": 0.5, "basabas_r": 1.0}
+        errs = rec.get("hatalar") or []
+        changed = {}
+        if any("ilk 15 dk" in e for e in errs):
+            a["min_stop_atr"] = round(min(1.2, a.get("min_stop_atr", base["min_stop_atr"]) + 0.05), 3)
+            changed["min_stop_atr"] = a["min_stop_atr"]
+        if any("1R+ kârdayken" in e for e in errs):
+            a["basabas_r"] = round(max(0.7, a.get("basabas_r", base["basabas_r"]) - 0.05), 3)
+            changed["basabas_r"] = a["basabas_r"]
+        if any("kayma" in e for e in errs) and rec.get("inst"):
+            a.setdefault("kayma_cezasi", {})[rec["inst"]] = a.get("kayma_cezasi", {}).get(rec["inst"], 0) + 1
+            changed["kayma_cezasi"] = rec["inst"]
+        if not errs:
+            for k, v0 in base.items():                    # hatasız işlemler ayarı yavaşça başlangıca çeker
+                if k in a:
+                    a[k] = round(a[k] + (v0 - a[k]) * 0.2, 3)
+        if changed:
+            self.learner._lesson({"olay": "hata_ayari", "inst": rec.get("inst"), "hatalar": errs, "degisen": changed})
+        self._apply_adjust()
+        self.learner.save_weights()
 
     def _manage(self, c, p: dict, px: float, ts: int):
         s15 = c.series.get("15m")
@@ -336,6 +490,8 @@ class Polat:
     async def _loop_second(self):
         while True:
             await asyncio.sleep(1)
+            if getattr(self, "standby", False):
+                continue
             n = now_ms()
             for p in list(self.broker.positions.values()):
                 c = self.market.coins.get(p["inst"])
@@ -368,7 +524,8 @@ class Polat:
         now = now_ms()
         rd = karar.full_read(m, c, now)
         self.key_levels[c.inst] = [x["px"] for x in rd.get("seviyeler") or []] + list(rd.get("yuvarlak") or [])
-        dec = karar.decide(m, c, rd, self.btc_rd, self.learner.mult, self.learner.cat_mult, self.cfg)
+        dec = karar.decide(m, c, rd, self.btc_rd, self.learner.combined_mult(), self.learner.cat_mult, self.cfg,
+                           path_rule=self.learner.path_rule)
         d = dec["yon"]
         L = d > 0
         r, k = self.cfg["risk"], self.cfg["kurulum"]
@@ -391,7 +548,8 @@ class Polat:
         if not engel:
             lv = c.book.levels("asks" if L else "bids", 5, c.ct)
             depth = sum(p * q for p, q in lv)
-            if depth < r["min_derinlik_kat"] * sz["notional"]:
+            pen = 1 + 0.5 * self.learner.adjust.get("kayma_cezasi", {}).get(c.inst, 0)
+            if depth < r["min_derinlik_kat"] * pen * sz["notional"]:
                 engel = f"derinlik yetersiz (ilk 5 kademe {depth:,.0f}$ < {r['min_derinlik_kat']} × {sz['notional']:,.0f}$)"
         tp = entry * (1 + (1 if L else -1) * self.cfg["cikis"]["hedef_yuzde"] / 100) if entry else None
         plan = {"giris": entry, "stop": sl, "stop_neden": sl_why, "hedef": tp, "stop_yuzde": round(dist_pct, 3),
@@ -405,7 +563,8 @@ class Polat:
             tag = {"kurulum": "+".join(dec["tetik_yonde"][:3]), "sl0": sl, "r_dist": abs(entry - sl),
                    "risk_usd": sz["risk_usd"], "risk_usd_now": sz["risk_usd"], "gerekce": dec["tetik_yonde"],
                    "teyit": _top_votes(dec, d), "teyit_sayisi": sum(1 for v in dec["kategoriler"].values() if v * d > 0),
-                   "puan": dec["S"], "kategoriler": dec["kategoriler"], "seans": rd["seans"],
+                   "puan": dec["S"], "puan_temel": dec.get("S_temel"), "yol": dec.get("yol"), "oylar": dec["oylar"],
+                   "kategoriler": dec["kategoriler"], "seans": rd["seans"],
                    "btc_rejim": (self.btc_rd or {}).get("yapi_4H", {}).get("yon"), "okuma_giris": _compact(rd)}
             res = self.broker.open(c, side, sz["qty"], sz["lev"], sl, tp, now, tag)
             if not res["ok"]:
@@ -510,7 +669,11 @@ class Polat:
         except Exception:  # noqa: BLE001
             rec["okuma_cikis"] = None
         self.journal.write("islemler", rec)
+        self.recent_closes = (self.recent_closes + [rec])[-50:]
         self.risk.on_close(ev["ts"], p.get("inst", ""), p.get("side", ""), net, reason)
+        self.learner.learn_from({"R": R, "d": 1 if p.get("side") == "long" else -1, "oylar": p.get("oylar") or {},
+                                 "yol": p.get("yol"), "S": p.get("puan"), "S_temel": p.get("puan_temel")}, real=True)
+        self._post_mortem(rec)
         self.last_manage.pop(pid, None)
         self.last_logged_sl.pop(pid, None)
         icon = "✅" if net > 0 else "❌"
@@ -620,6 +783,7 @@ class Polat:
                           "en_zayif": sorted(self.learner.mult.items(), key=lambda x: x[1])[:15],
                           "kategori": self.learner.cat_mult}
         (self.root / "RAPOR.md").write_text(report_md(rep), encoding="utf-8")
+        self.last_report = rep
         return rep
 
 

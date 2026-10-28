@@ -99,6 +99,7 @@ class Coin:
         self.ls_ts = 0
         self.walls: dict[tuple, list] = {}            # (taraf, fiyat) → [ilk_görülme, son_görülme, baz]
         self.deep = False
+        self.liq_map = None
 
     # --- yardımcılar ------------------------------------------------------------------------
     def spread_bp(self) -> float | None:
@@ -127,6 +128,8 @@ class Market:
         self.on_trade = None                           # geri çağrı: (coin, px, ts) — her işlem (stop/hedef)
         self.on_book_bad = None
         self.on_liq = None
+        # likidasyon tahmini kalibrasyonu: gerçek likidasyonların hangi kaldıraç kümesine düştüğü
+        self.liq_calib = {"olay": 0, "isabet": 0, "lev": {"10": 1.0, "25": 1.0, "50": 1.0, "100": 1.0}}
         self.global_ = {"btc_dom": None, "btc_dom_ts": 0, "stable_usd": None, "stable_chg24": None,
                         "stable_ts": 0, "events": []}
 
@@ -186,7 +189,7 @@ class Market:
                         usd = float(x.get("sz") or 0) * c.ct * px
                         c.liqs.append((int(x.get("ts") or recv_ms), side, usd))
                         if self.on_liq:
-                            self.on_liq(c, side, usd)
+                            self.on_liq(c, side, usd, px)
         finally:
             self.proc.append((time.perf_counter() - t0) * 1e6)
 

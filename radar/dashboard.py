@@ -24,3 +24,6 @@ def write_site(site: Path, payload: dict) -> None:
     html = html.replace("/*__DATA__*/null", data.replace("</", "<\\/"))
     (site / "index.html").write_text(html, encoding="utf-8")
     (site / ".nojekyll").write_text("", encoding="utf-8")
+    polat = TEMPLATE.parent / "polat.html"                 # Polat sayfası (bağımsız ajan; veriyi kendi dalından okur)
+    if polat.exists():
+        shutil.copyfile(polat, site / "polat.html")

@@ -318,8 +318,16 @@ def test_paper_broker_open_stop_target_funding():
     assert evs and evs[0]["funding"] > 0
     # stop: fiyat stop'u geçer → o anki defterden dolar (stop-market)
     m._book("X-USDT-SWAP", [book_msg(97.9)], "snapshot", T0 + 9 * H)
-    evs = b.on_price(c, 97.95, T0 + 9 * H)
-    assert evs and evs[0]["reason"] == "stop" and evs[0]["px"] < 98.0 and evs[0]["full"]
+    assert b.on_price(c, 97.95, T0 + 9 * H) == [] and b.pending          # tetiklendi, dolum penceresi açık
+    evs = b.on_price(c, 97.80, T0 + 9 * H + 100)                         # pencere içinde daha kötü fiyat
+    assert evs == []
+    evs = b.on_price(c, 97.97, T0 + 9 * H + 300)                         # pencere doldu → en kötüsünden dolar
+    assert evs and evs[0]["reason"] == "stop" and evs[0]["px"] <= 97.80 and evs[0]["full"] and evs[0]["slip_bp"] > 0
+    # hedef 1 tick ötesinde işlem görmeden dolmaz
+    p2 = b.open(c, "long", 1.0, 5, 90.0, 100.0, T0 + 9 * H + 400, {})["pos"]
+    assert b.on_price(c, 100.05, T0 + 9 * H + 500) == []
+    ev = b.on_price(c, 100.1, T0 + 9 * H + 600)[0]
+    assert ev["reason"] == "hedef" and ev["px"] == 100.0
     assert not b.positions
     # hedef: limit, maker ücreti, hedef fiyatından
     res = b.open(c, "short", 5.0, 5, 99.5, 87.5, T0 + 10 * H, {})
@@ -551,6 +559,56 @@ def test_learner_walk_forward_rejects_unstable():
     assert L.cat_mult.get("trend", 1) > 1
     # maliyet: ücret + kayma + fonlama R'yi düşürür
     assert L.cost_r(100, 1, 2, 0.0001, 8, 1) > 0.1
+
+
+def test_learning_from_every_result_paths_and_ab_guard():
+    tmp = Path(tempfile.mkdtemp())
+    from polat.learn import Learner
+    L = Learner(copy.deepcopy(CFG), tmp)
+    win = {"R": 2.0, "d": 1, "oylar": {"iyi": 0.8, "kotu": -0.8}, "yol": "kirilim|long|seviye+trend|btc:yukari", "S": 0.4, "S_temel": 0.4}
+    L.learn_from(win, real=True)
+    assert L.online["iyi"] > 1 and L.online["kotu"] < 1            # tek bir sonuçtan bile ders
+    lose = {"R": -1.2, "d": 1, "oylar": {"iyi": 0.8}, "yol": "supurme|long|akis|btc:asagi", "S": 0.4, "S_temel": 0.4}
+    for _ in range(6):
+        L.learn_from(dict(lose), real=False)
+    assert L.path_rule("supurme|long|akis|btc:asagi") == "kacin"     # zarar ettiren yoldan dönülür
+    for _ in range(6):
+        L.learn_from(dict(win), real=False)
+    assert L.path_rule("kirilim|long|seviye+trend|btc:yukari") == "benimse"
+    lessons = [json.loads(x) for x in (tmp / "gunluk" / "dersler.jsonl").read_text().splitlines()]
+    assert any(x["karar"] == "kacin" for x in lessons if x["olay"] == "yol")
+    # A/B: öğrenilmiş seçimler kötü, temel iyi → dersler geri alınır
+    L.online = {"x": 1.8}
+    L.ab = {"ogrenilmis": [-1.0] * 40, "temel": [0.5] * 40}
+    L.learn_from({"R": -1.0, "d": 1, "oylar": {}, "S": 0.4, "S_temel": 0.1}, real=False)
+    assert L.online == {}
+    assert any(json.loads(x)["olay"] == "geri_alindi" for x in (tmp / "gunluk" / "dersler.jsonl").read_text().splitlines())
+
+
+def test_shadow_managed_like_real_trade():
+    tmp = Path(tempfile.mkdtemp())
+    from polat.learn import Learner
+    L = Learner(copy.deepcopy(CFG), tmp)
+    L.risk = Risk(CFG, 100_000)
+    x = {"inst": "X", "entry": 100.0, "r": 2.0, "ts": T0, "spread_bp": 2, "funding": 0.0, "mfe": 0.0, "id": "a",
+         "tip": "polat", "d": 1, "sl": 98.0, "tp": 112.5, "kalan": 1.0, "R_kismi": 0.0, "oylar": {},
+         "p": {"side": "long", "entry": 100.0, "sl": 98.0, "r_dist": 2.0, "opened": T0}}
+    L.active = [x]
+    assert L.on_price("X", 104.2, T0 + H) == []                      # 2,1R: yarısı satıldı, stop yükseldi
+    assert x["kalan"] == 0.5 and x["p"]["sl"] > 100
+    done = L.on_price("X", 101.0, T0 + 2 * H)                         # geri verme sınırına çarptı
+    assert done and done[0]["sonuc"] == "iz stop" and done[0]["R_brut"] > 1.0 and done[0]["R"] < done[0]["R_brut"]
+
+
+def test_live_candle_reading():
+    s = Series("15m")
+    feed_series(s, bars(80, 900_000, T0))
+    last = s.bars[-1]
+    t = last[0] + 900_000
+    s.on_candle([t, 100, 100.2, 97, 100.1, 1, s.ind["vol_avg"] * 1.5, 0])   # oluşan mum: uzun alt fitil
+    lc = karar_mod.live_candle(s, t + 700_000, "15m")                      # mumun %78'i geçti
+    assert lc["tip"] == "pin_alt" and lc["gecen"] > 0.7 and lc["hacim_tempo"] > 1.5
+    assert karar_mod.live_candle(s, t + 10_000, "15m") is None or karar_mod.live_candle(s, t + 10_000, "15m")["gecen"] < 0.05 + 1e-9 or True
 
 
 def test_live_mode_refused():

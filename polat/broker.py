@@ -43,14 +43,17 @@ class PaperBroker:
         self.taker, self.maker, self.mmr = y["ucret_taker"], y["ucret_maker"], y["bakim_marji"]
         self.cash = equity
         self.positions: dict[str, dict] = {}
+        self.pending: dict[str, dict] = {}     # tetiklenmiş stop-market emirleri (dolum penceresi)
+        self.stop_window_ms = y.get("stop_dolum_penceresi_ms", 250)
 
     # --- durum -----------------------------------------------------------------------------
     def to_state(self) -> dict:
-        return {"cash": self.cash, "positions": self.positions}
+        return {"cash": self.cash, "positions": self.positions, "pending": self.pending}
 
     def load_state(self, st: dict):
         self.cash = st["cash"]
         self.positions = st["positions"]
+        self.pending = st.get("pending", {})
 
     def equity(self, coins: dict[str, Coin]) -> float:
         e = self.cash
@@ -117,15 +120,17 @@ class PaperBroker:
             self.positions[pid]["tp"] = tp
 
     def close(self, c: Coin, pid: str, frac: float, ts: int, reason: str, px_hint: float | None = None,
-              maker: bool = False) -> dict | None:
+              maker: bool = False, exact: bool = False) -> dict | None:
         p = self.positions.get(pid)
         if not p:
             return None
         qty = p["qty"] if frac >= 0.999 else round_contracts(p["qty"] * frac, c.meta) * c.ct
         if qty <= 0:
             return None
-        if maker and px_hint is not None:
-            px, slip = px_hint, 0.0
+        if (maker or exact) and px_hint is not None:
+            px = px_hint
+            ref = (c.bid + c.ask) / 2 if c.bid and c.ask else px_hint
+            slip = 0.0 if maker else abs(px / ref - 1) * 1e4
         else:
             px, got, slip = self._fill_market(c, p["side"] == "short", qty)
             if px is None:                     # derinlik yetmezse ipucu fiyatına 10 bp kötü
@@ -148,26 +153,63 @@ class PaperBroker:
 
     # --- olaylar ---------------------------------------------------------------------------
     def on_price(self, c: Coin, px: float, ts: int) -> list[dict]:
-        """Her işlem fiyatında: likidasyon, stop, hedef kontrolü (yalnızca bu coinin pozisyonları)."""
+        """Her işlem fiyatında: likidasyon (mark fiyatıyla), stop, hedef.
+        Gerçekçilik:
+          * stop-market tetiklenince hemen o anki defterden değil, sonraki stop_dolum_penceresi_ms (250 ms) içinde
+            görülen EN KÖTÜ fiyat ile defter dolumunun kötüsünden dolar (hızlı düşüşte zincirleme kayma)
+          * hedef (reduce-only limit) ancak fiyat hedefin en az 1 tick ÖTESİNDE işlem görünce dolar (sıradaki emirler önce dolar)"""
         evs = []
+        tick = c.meta.get("tickSz", 0.0) or 0.0
         for pid, p in list(self.positions.items()):
             if p["inst"] != c.inst:
                 continue
             L = p["side"] == "long"
+            pend = self.pending.get(pid)
+            if pend:
+                pend["worst"] = min(pend["worst"], px) if L else max(pend["worst"], px)
+                if ts - pend["ts"] >= self.stop_window_ms:
+                    evs += self._finish_stop(c, pid, ts)
+                continue
             mk = c.mark or px
             if (L and mk <= p["liq"]) or (not L and mk >= p["liq"]):
                 ev = self._liquidate(pid, ts)
                 evs.append(ev)
                 continue
             if p["sl"] and ((L and px <= p["sl"]) or (not L and px >= p["sl"])):
-                ev = self.close(c, pid, 1.0, ts, "stop", px_hint=p["sl"])
-                if ev:
-                    evs.append(ev)
+                bpx, got, _ = self._fill_market(c, not L, p["qty"])
+                self.pending[pid] = {"ts": ts, "book": bpx if bpx else px, "worst": px, "trigger": p["sl"]}
                 continue
-            if p.get("tp") and ((L and px > p["tp"]) or (not L and px < p["tp"])):
+            if p.get("tp") and ((L and px >= p["tp"] + tick and px > p["tp"]) or (not L and px <= p["tp"] - tick and px < p["tp"])):
                 ev = self.close(c, pid, 1.0, ts, "hedef", px_hint=p["tp"], maker=True)
                 if ev:
                     evs.append(ev)
+        return evs
+
+    def _finish_stop(self, c: Coin, pid: str, ts: int) -> list[dict]:
+        pend = self.pending.pop(pid, None)
+        p = self.positions.get(pid)
+        if not pend or not p:
+            return []
+        L = p["side"] == "long"
+        fill = min(pend["book"], pend["worst"]) if L else max(pend["book"], pend["worst"])
+        ev = self.close(c, pid, 1.0, ts, "stop", px_hint=fill, exact=True)
+        if ev:
+            ev["tetik"] = pend["trigger"]
+            ev["slip_bp"] = round(abs(fill / pend["trigger"] - 1) * 1e4, 2)
+            return [ev]
+        return []
+
+    def flush(self, coins: dict, now_ms: int) -> list[dict]:
+        """İşlem gelmese de dolum penceresi dolan stopları kapat (ajan 50 ms'de bir çağırır)."""
+        evs = []
+        for pid, pend in list(self.pending.items()):
+            if now_ms - pend["ts"] >= self.stop_window_ms:
+                p = self.positions.get(pid)
+                c = coins.get(p["inst"]) if p else None
+                if c:
+                    evs += self._finish_stop(c, pid, now_ms)
+                else:
+                    self.pending.pop(pid, None)
         return evs
 
     def _liquidate(self, pid: str, ts: int) -> dict:

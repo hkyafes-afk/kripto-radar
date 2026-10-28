@@ -85,6 +85,14 @@ ogrenme:
   guncelleme_dk: 30
   carpan_alt: 0.25
   carpan_ust: 2.0
+  ders_hizi: 0.03            # her sonuçtan sonra katsayı değişimi (gerçek işlemde 2 katı)
+  yol_min: 5                 # bir yol (tetik + yön + baskın kategoriler + BTC rejimi) en az bu kadar sonuçtan sonra hüküm alır
+  yol_esik: 0.25             # küçültülmüş ortalama R ≤ −0,25 → kaçın; ≥ +0,25 → benimse
+  yol_kuculme: 5             # ortalama = toplam R / (n + 5): az örnekte aşırı hüküm verme
+  yol_benimse_indirim: 0.05  # benimsenen yolda eşik bu kadar düşer
+  ab_min: 30                 # A/B koruması için en az örnek
+  ab_pencere: 100
+  ab_tolerans: 0.10          # öğrenilmiş seçimler temelden 0,10R'den fazla kötüyse dersler geri alınır
 
 kurulum:
   aktif: ["kirilim", "geri_cekilme", "supurme"]   # karar.py'de tetik olarak kullanılır (sınır değil)

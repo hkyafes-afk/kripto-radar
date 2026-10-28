@@ -11,6 +11,8 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
+import numpy as np
+
 from .market import Coin, Market
 from .series import Series
 
@@ -136,12 +138,63 @@ def vwap(bars: list, since_ms: int) -> float | None:
     return pv / v if v else None
 
 
+def vwap_set(c: Coin, now_ms: int) -> list[dict]:
+    """VWAP düzeneği (günün ilk dakikalarında boşluk olmasın):
+      vwap_gun   → UTC gün başından, 1 dk mumlarla (ilk dakikadan itibaren var) + oluşmakta olan mum
+      vwap_24s   → kayan 24 saat (5 dk mumlar), her an tanımlı
+      vwap       → karar için kullanılan: gün içi hacim 24 saatlik hacmin %5'ine ulaşana ya da 30 dk geçene kadar
+                   vwap_24s, sonra vwap_gun ("vwap_kaynak" hangisi olduğunu yazar)
+      vwap_hafta → hafta başından (15 dk mumlar)
+      avwap_dip / avwap_tepe → son 4S salınım dibinden / tepesinden başlatılan (anchored) VWAP"""
+    out = []
+    m1, m5, m15, h4 = (c.series.get(k) for k in ("1m", "5m", "15m", "4H"))
+    if not now_ms:
+        return out
+    day0 = now_ms - now_ms % 86_400_000
+    src1 = (list(m1.bars) + ([m1.live] if m1.live else [])) if m1 and m1.bars else []
+    if src1 and src1[0][0] > day0 and m5:          # 1 dk geçmişi gün başını kapsamıyorsa 5 dk ile tamamla
+        src1 = [b for b in m5.bars if day0 <= b[0] < src1[0][0]] + src1
+    elif not src1 and m5:
+        src1 = list(m5.bars) + ([m5.live] if m5.live else [])
+    vg = vwap(src1, day0) if src1 else None
+    day_vol = sum(b[5] for b in src1 if b[0] >= day0)
+    v24 = None
+    vol24 = 0.0
+    if m5 and m5.bars:
+        last = list(m5.bars)[-288:] + ([m5.live] if m5.live else [])
+        v24 = vwap(last, 0)
+        vol24 = sum(b[5] for b in last)
+    if vg:
+        out.append({"ad": "vwap_gun", "px": vg})
+    if v24:
+        out.append({"ad": "vwap_24s", "px": v24})
+    use_day = vg is not None and (now_ms - day0 >= 30 * 60_000 or (vol24 and day_vol >= 0.05 * vol24))
+    chosen = vg if use_day else (v24 or vg)
+    if chosen:
+        out.append({"ad": "vwap", "px": chosen, "kaynak": "gun" if use_day else "24s"})
+    if m15 and m15.bars:
+        wk0 = day0 - datetime.fromtimestamp(day0 / 1000, timezone.utc).weekday() * 86_400_000
+        vw = vwap(list(m15.bars) + ([m15.live] if m15.live else []), wk0)
+        if vw:
+            out.append({"ad": "vwap_hafta", "px": vw})
+        if h4 and h4.pivots_lo:
+            a = vwap(list(m15.bars), h4.pivots_lo[-1][0])
+            if a:
+                out.append({"ad": "avwap_dip", "px": a})
+        if h4 and h4.pivots_hi:
+            a = vwap(list(m15.bars), h4.pivots_hi[-1][0])
+            if a:
+                out.append({"ad": "avwap_tepe", "px": a})
+    return out
+
+
 def levels(c: Coin) -> list[dict]:
     """Önemli seviyeler: önceki gün/hafta Y/D/K, gün ve hafta açılışı, günlük VWAP, 4S salınımları,
     hacim profili (POC/VAH/VAL, son 7 gün 1S), her biri test sayısıyla."""
     out = []
     d1, h4, h1, m5 = (c.series.get(k) for k in ("1D", "4H", "1H", "5m"))
-    now_ms = (m5.bars[-1][0] + 300_000) if m5 and m5.bars else 0
+    m1 = c.series.get("1m")
+    now_ms = (m1.bars[-1][0] + 60_000) if m1 and m1.bars else ((m5.bars[-1][0] + 300_000) if m5 and m5.bars else 0)
     if d1 and len(d1.bars) >= 2:
         pd_ = d1.bars[-1]
         out += [{"ad": "dun_yuksek", "px": pd_[2]}, {"ad": "dun_dusuk", "px": pd_[3]}, {"ad": "dun_kapanis", "px": pd_[4]}]
@@ -162,27 +215,30 @@ def levels(c: Coin) -> list[dict]:
                     {"ad": "gecen_hafta_kapanis", "px": pw[3]}]
         if cur_week in weeks:
             out.append({"ad": "hafta_acilis", "px": weeks[cur_week][0]})
-    if m5 and m5.bars:
-        day0 = now_ms - now_ms % 86_400_000
-        vw = vwap(list(m5.bars) + ([m5.live] if m5.live else []), day0)
-        if vw:
-            out.append({"ad": "vwap", "px": vw})
+    out += vwap_set(c, now_ms)
     if h4:
         for p in list(h4.pivots_hi)[-4:]:
             out.append({"ad": "4s_tepe", "px": p[1]})
         for p in list(h4.pivots_lo)[-4:]:
             out.append({"ad": "4s_dip", "px": p[1]})
     if h1 and len(h1.bars) >= 50:
-        vp = volume_profile(list(h1.bars)[-168:])
+        ck = getattr(c, "_vp_cache", None)
+        if not ck or ck[0] != h1.n:
+            c._vp_cache = ck = (h1.n, volume_profile(list(h1.bars)[-168:]))   # 1S kapanışında bir kez
+        vp = ck[1]
         if vp:
             out += [{"ad": "poc", "px": vp["poc"]}, {"ad": "vah", "px": vp["vah"]}, {"ad": "val", "px": vp["val"]}]
     # test sayısı: son 200 1S mumda seviyeye 0,25 ATR yaklaşıp dönen mum sayısı
     if h1 and h1.ind.get("atr"):
         tol = 0.25 * h1.ind["atr"]
-        bars = list(h1.bars)[-200:]
+        ck = getattr(c, "_h1_arr", None)
+        if not ck or ck[0] != h1.n:
+            a = np.array([b[2:5] for b in list(h1.bars)[-200:]], dtype=float)
+            c._h1_arr = ck = (h1.n, a[:, 0], a[:, 1], a[:, 2])
+        _, H, Lw, C = ck
         for lv in out:
             p = lv["px"]
-            lv["test"] = sum(1 for b in bars if (abs(b[2] - p) <= tol and b[4] < p) or (abs(b[3] - p) <= tol and b[4] > p))
+            lv["test"] = int(np.count_nonzero(((np.abs(H - p) <= tol) & (C < p)) | ((np.abs(Lw - p) <= tol) & (C > p))))
     return out
 
 
