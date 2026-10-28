@@ -4,32 +4,32 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.465R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.471R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 158 | %43.0 | -0.465 | -73.53 |
+| polat_tum_sinyaller | 159 | %42.8 | -0.471 | -74.92 |
 | polat_girilen | 0 | %- | - | - |
-| polat_girilmeyen | 158 | %43.0 | -0.465 | -73.53 |
-| rastgele | 151 | %41.7 | -0.467 | -70.58 |
-| trend_naif | 159 | %39.0 | -0.481 | -76.41 |
+| polat_girilmeyen | 159 | %42.8 | -0.471 | -74.92 |
+| rastgele | 152 | %41.4 | -0.474 | -71.98 |
+| trend_naif | 160 | %38.8 | -0.486 | -77.81 |
 
-Polat özsermaye: %0.0 · BTC al-tut: %-0.18
+Polat özsermaye: %0.0 · BTC al-tut: %-0.17
 
 ## Öğrenme (walk-forward)
 
-Örnek 140 (eğitim 98, doğrulama 42) · uygulanan katsayı 8 · doğrulamada tutmadığı için reddedilen 4
+Örnek 158 (eğitim 110, doğrulama 48) · uygulanan katsayı 7 · doğrulamada tutmadığı için reddedilen 7
 
-En çok işe yarayan okumalar: mfi_1H ×1.118, supertrend_4H ×1.006, ema200_1D ×0.978, ema_1D ×0.976, stoch_1H ×0.967, psar_1H ×0.967, stoch_15m ×0.874, stoch_5m ×0.844
-En az işe yarayan okumalar: stoch_5m ×0.844, stoch_15m ×0.874, stoch_1H ×0.967, psar_1H ×0.967, ema_1D ×0.976, ema200_1D ×0.978, supertrend_4H ×1.006, mfi_1H ×1.118
+En çok işe yarayan okumalar: mfi_1H ×1.105, stoch_1H ×0.986, ema200_1D ×0.932, ema_1D ×0.915, yapi_1D ×0.875, stoch_5m ×0.839, stoch_15m ×0.827
+En az işe yarayan okumalar: stoch_15m ×0.827, stoch_5m ×0.839, yapi_1D ×0.875, ema_1D ×0.915, ema200_1D ×0.932, stoch_1H ×0.986, mfi_1H ×1.105
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 3346, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 3354, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 469
+- emir defteri doğrulanmadı: 472
 - gösterge aileleri aynı yönde değil: 214
 - ders: 98
 - büyük zaman dilimi trendi ters: 80
@@ -42,11 +42,11 @@ Kapanmış işlem yok. Görülen kurulum: 3346, girilen: 0.
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 3346, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 3354, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 469
+- emir defteri doğrulanmadı: 472
 - gösterge aileleri aynı yönde değil: 214
 - ders: 98
 - büyük zaman dilimi trendi ters: 80
@@ -59,11 +59,11 @@ Kapanmış işlem yok. Görülen kurulum: 3346, girilen: 0.
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 3346, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 3354, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 469
+- emir defteri doğrulanmadı: 472
 - gösterge aileleri aynı yönde değil: 214
 - ders: 98
 - büyük zaman dilimi trendi ters: 80
