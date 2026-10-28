@@ -25,51 +25,51 @@ En az işe yarayan okumalar: stoch_5m ×0.844, stoch_15m ×0.874, stoch_1H ×0.9
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 3084, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 3110, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 412
-- gösterge aileleri aynı yönde değil: 200
-- ders: 94
+- emir defteri doğrulanmadı: 417
+- gösterge aileleri aynı yönde değil: 201
+- ders: 95
 - büyük zaman dilimi trendi ters: 80
 - puan +0.149 eşiğin (0.25) altında: 27
 - puan +0.146 eşiğin (0.25) altında: 21
 - puan +0.198 eşiğin (0.25) altında: 20
 - puan +0.167 eşiğin (0.25) altında: 19
+- puan +0.161 eşiğin (0.25) altında: 18
 - puan +0.180 eşiğin (0.25) altında: 18
-- puan +0.211 eşiğin (0.25) altında: 18
 
 ## Son 50 gün
 
-Kapanmış işlem yok. Görülen kurulum: 3084, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 3110, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 412
-- gösterge aileleri aynı yönde değil: 200
-- ders: 94
+- emir defteri doğrulanmadı: 417
+- gösterge aileleri aynı yönde değil: 201
+- ders: 95
 - büyük zaman dilimi trendi ters: 80
 - puan +0.149 eşiğin (0.25) altında: 27
 - puan +0.146 eşiğin (0.25) altında: 21
 - puan +0.198 eşiğin (0.25) altında: 20
 - puan +0.167 eşiğin (0.25) altında: 19
+- puan +0.161 eşiğin (0.25) altında: 18
 - puan +0.180 eşiğin (0.25) altında: 18
-- puan +0.211 eşiğin (0.25) altında: 18
 
 ## Son 500 gün
 
-Kapanmış işlem yok. Görülen kurulum: 3084, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 3110, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- emir defteri doğrulanmadı: 412
-- gösterge aileleri aynı yönde değil: 200
-- ders: 94
+- emir defteri doğrulanmadı: 417
+- gösterge aileleri aynı yönde değil: 201
+- ders: 95
 - büyük zaman dilimi trendi ters: 80
 - puan +0.149 eşiğin (0.25) altında: 27
 - puan +0.146 eşiğin (0.25) altında: 21
 - puan +0.198 eşiğin (0.25) altında: 20
 - puan +0.167 eşiğin (0.25) altında: 19
+- puan +0.161 eşiğin (0.25) altında: 18
 - puan +0.180 eşiğin (0.25) altında: 18
-- puan +0.211 eşiğin (0.25) altında: 18
