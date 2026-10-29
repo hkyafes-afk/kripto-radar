@@ -172,3 +172,4 @@
 {"olay": "ogrenme", "durum": "güncellendi", "uygulanan": 71, "reddedilen": 23, "ts": 1793293521082}
 {"olay": "halef_cagrildi", "ok": true, "sonuc": "HTTP 204", "ts": 1793294149716}
 {"olay": "durdu", "neden": "süre doldu", "veri": {"mesaj": 41519933, "gecikme_ms_p50": 87, "gecikme_ms_p95": 150, "isleme_us_p50": 18.0, "isleme_us_p95": 232.4}, "ts": 1793295031452}
+{"olay": "devraldi", "bosluk_sn": 6.289, "pozisyon": 1, "ts": 1793295037732}
