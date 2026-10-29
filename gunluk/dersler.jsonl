@@ -45,3 +45,4 @@
 {"olay": "yol", "yol": "yapi_bozulmasi|short|seviye+uyusmazlik|btc:yukari", "karar": "kacin", "n": 15, "ort_R": -0.341, "ts": 1793249252948}
 {"olay": "yol", "yol": "yapi_bozulmasi|short|akis+uyusmazlik|btc:yukari", "karar": "benimse", "n": 5, "ort_R": 1.297, "ts": 1793249548091}
 {"olay": "yol", "yol": "yapi_bozulmasi|short|akis+momentum|btc:yukari", "karar": "benimse", "n": 7, "ort_R": 0.477, "ts": 1793250267145}
+{"olay": "yol", "yol": "anlik_kirilim|short|seviye+uyusmazlik|btc:yatay", "karar": "kacin", "n": 5, "ort_R": -0.593, "ts": 1793250443296}
