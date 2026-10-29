@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 1430 | %46.5 | -0.301 | -429.86 |
+| polat_tum_sinyaller | 1431 | %46.5 | -0.301 | -431.09 |
 | polat_girilen | 8 | %50.0 | -0.596 | -4.77 |
-| polat_girilmeyen | 1422 | %46.5 | -0.299 | -425.09 |
-| rastgele | 1435 | %43.6 | -0.361 | -518.43 |
+| polat_girilmeyen | 1423 | %46.5 | -0.3 | -426.33 |
+| rastgele | 1438 | %43.5 | -0.363 | -522.26 |
 | trend_naif | 1431 | %38.7 | -0.469 | -670.58 |
 
-Polat özsermaye: %-4.4 · BTC al-tut: %-0.22
+Polat özsermaye: %-4.4 · BTC al-tut: %-0.29
 
 ## Öğrenme (walk-forward)
 
@@ -65,9 +65,9 @@ En az işe yarayan okumalar: momentum_1H ×0.53, obv_egim_1H ×0.536, psar_1H ×
 
 - ders: 5234
 - üst üste 3 zarar: 2345
-- günlük işlem tavanı (8): 1657
-- büyük zaman dilimi trendi ters: 1487
-- gösterge aileleri aynı yönde değil: 1422
+- günlük işlem tavanı (8): 1669
+- büyük zaman dilimi trendi ters: 1488
+- gösterge aileleri aynı yönde değil: 1423
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
@@ -120,9 +120,9 @@ En az işe yarayan okumalar: momentum_1H ×0.53, obv_egim_1H ×0.536, psar_1H ×
 
 - ders: 5234
 - üst üste 3 zarar: 2345
-- günlük işlem tavanı (8): 1657
-- büyük zaman dilimi trendi ters: 1487
-- gösterge aileleri aynı yönde değil: 1422
+- günlük işlem tavanı (8): 1669
+- büyük zaman dilimi trendi ters: 1488
+- gösterge aileleri aynı yönde değil: 1423
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
@@ -180,9 +180,9 @@ En az işe yarayan okumalar: momentum_1H ×0.53, obv_egim_1H ×0.536, psar_1H ×
 
 - ders: 5234
 - üst üste 3 zarar: 2345
-- günlük işlem tavanı (8): 1657
-- büyük zaman dilimi trendi ters: 1487
-- gösterge aileleri aynı yönde değil: 1422
+- günlük işlem tavanı (8): 1669
+- büyük zaman dilimi trendi ters: 1488
+- gösterge aileleri aynı yönde değil: 1423
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
