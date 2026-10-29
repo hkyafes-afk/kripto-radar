@@ -29,7 +29,7 @@ import urllib.request
 import xml.etree.ElementTree as ET
 import zipfile
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 S3 = "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision"
@@ -119,11 +119,20 @@ def write_gz(path: Path, header: list[str], rows: list[tuple]):
 def one_symbol(sym: str, out: Path) -> dict:
     info = {"sembol": sym, "atlanan": []}
     keys = []
-    for base in (f"data/futures/um/monthly/klines/{sym}/1d/", f"data/futures/um/daily/klines/{sym}/1d/"):
+    try:
+        keys = [k for k in s3_list(f"data/futures/um/monthly/klines/{sym}/1d/", None)[1] if k.endswith(".zip")]
+    except Exception as e:
+        info["atlanan"].append(f"aylık: {e}")
+    # Günlük dosyalar yalnızca aylık arşivi henüz çıkmamış aylar için (yoksa coin başına binlerce istek olur)
+    have = {k[-11:-4] for k in keys}                                   # ...-YYYY-MM.zip
+    now = datetime.now(timezone.utc)
+    recent = {now.strftime("%Y-%m"), (now.replace(day=1) - timedelta(days=1)).strftime("%Y-%m")} - have
+    for ym in sorted(recent):
         try:
-            keys += [k for k in s3_list(base, None)[1] if k.endswith(".zip")]
+            keys += [k for k in s3_list(f"data/futures/um/daily/klines/{sym}/1d/{sym}-1d-{ym}", None)[1]
+                     if k.endswith(".zip")]
         except Exception as e:
-            info["atlanan"].append(f"{base}: {e}")
+            info["atlanan"].append(f"günlük {ym}: {e}")
     bars: dict[int, tuple] = {}
     for k in sorted(keys):                  # aylık önce, günlük sonra (aynı gün varsa günlük kazanır: daha yeni)
         try:
@@ -170,6 +179,7 @@ def main(argv=None) -> int:
     if a.limit:
         syms = [s for s in syms if s in ("BTCUSDT", "ETHUSDT")] + [s for s in syms if s not in ("BTCUSDT", "ETHUSDT")][: max(0, a.limit - 2)]
     print(f"{len(syms)} USDT-M sembol (batanlar dahil)", flush=True)
+    sys.stdout.reconfigure(line_buffering=True)
     res = []
     with ThreadPoolExecutor(a.workers) as ex:
         for i, info in enumerate(ex.map(lambda s: one_symbol(s, out), syms), 1):

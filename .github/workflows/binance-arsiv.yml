@@ -37,7 +37,7 @@ jobs:
               printf '# Binance Vision arşivi\n\nUSDT-M günlük mum + funding, batan coinler dahil. Kaynak: data.binance.vision (MIT). Üreten: tools/binance_arsiv.py\n' > README.md
           fi
       - name: İndir
-        run: python tools/binance_arsiv.py --out bv --limit ${{ github.event.inputs.limit || '0' }}
+        run: python -u tools/binance_arsiv.py --out bv --limit ${{ github.event.inputs.limit || '0' }}
       - name: Kaydet
         run: |
           cd bv
