@@ -153,3 +153,4 @@
 {"olay": "ogrenme", "durum": "güncellendi", "uygulanan": 53, "reddedilen": 35, "ts": 1793272180526}
 {"olay": "ogrenme", "durum": "güncellendi", "uygulanan": 58, "reddedilen": 31, "ts": 1793273980674}
 {"olay": "halef_cagrildi", "ok": true, "sonuc": "HTTP 204", "ts": 1793274607024}
+{"olay": "durdu", "neden": "süre doldu", "veri": {"mesaj": 35505389, "gecikme_ms_p50": 154, "gecikme_ms_p95": 202, "isleme_us_p50": 13.6, "isleme_us_p95": 236.2}, "ts": 1793275506767}
