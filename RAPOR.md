@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 673 | %42.6 | -0.426 | -286.76 |
 | trend_naif | 677 | %38.3 | -0.499 | -338.11 |
 
-Polat özsermaye: %-2.57 · BTC al-tut: %-0.12
+Polat özsermaye: %-2.57 · BTC al-tut: %-0.14
 
 ## Öğrenme (walk-forward)
 
@@ -60,13 +60,13 @@ En az işe yarayan okumalar: yapi_1D ×0.796, stoch_5m ×0.818, ema_1D ×0.856, 
 - ders: 1347
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- gösterge aileleri aynı yönde değil: 538
-- üst üste 3 zarar: 451
+- gösterge aileleri aynı yönde değil: 540
+- üst üste 3 zarar: 459
 - büyük zaman dilimi trendi ters: 380
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.123 eşiğin (0.25) altında: 61
-- puan +0.127 eşiğin (0.25) altında: 60
+- puan +0.127 eşiğin (0.25) altında: 61
 
 **Hata sınıfları**
 
@@ -110,13 +110,13 @@ En az işe yarayan okumalar: yapi_1D ×0.796, stoch_5m ×0.818, ema_1D ×0.856, 
 - ders: 1347
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- gösterge aileleri aynı yönde değil: 538
-- üst üste 3 zarar: 451
+- gösterge aileleri aynı yönde değil: 540
+- üst üste 3 zarar: 459
 - büyük zaman dilimi trendi ters: 380
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.123 eşiğin (0.25) altında: 61
-- puan +0.127 eşiğin (0.25) altında: 60
+- puan +0.127 eşiğin (0.25) altında: 61
 
 **Hata sınıfları**
 
@@ -160,13 +160,13 @@ En az işe yarayan okumalar: yapi_1D ×0.796, stoch_5m ×0.818, ema_1D ×0.856, 
 - ders: 1347
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- gösterge aileleri aynı yönde değil: 538
-- üst üste 3 zarar: 451
+- gösterge aileleri aynı yönde değil: 540
+- üst üste 3 zarar: 459
 - büyük zaman dilimi trendi ters: 380
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.123 eşiğin (0.25) altında: 61
-- puan +0.127 eşiğin (0.25) altında: 60
+- puan +0.127 eşiğin (0.25) altında: 61
 
 **Hata sınıfları**
 
