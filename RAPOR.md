@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 1398 | %43.6 | -0.36 | -503.65 |
 | trend_naif | 1390 | %38.6 | -0.471 | -654.68 |
 
-Polat özsermaye: %-4.13 · BTC al-tut: %0.3
+Polat özsermaye: %-4.17 · BTC al-tut: %0.25
 
 ## Öğrenme (walk-forward)
 
@@ -66,14 +66,14 @@ En az işe yarayan okumalar: momentum_1H ×0.542, obv_egim_1H ×0.555, psar_1H �
 
 - ders: 5220
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 1466
-- günlük işlem tavanı (8): 1356
-- gösterge aileleri aynı yönde değil: 1308
+- büyük zaman dilimi trendi ters: 1467
+- günlük işlem tavanı (8): 1387
+- gösterge aileleri aynı yönde değil: 1323
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
-- puan +0.127 eşiğin (0.25) altında: 103
+- puan +0.123 eşiğin (0.25) altında: 104
 
 **Hata sınıfları**
 
@@ -124,14 +124,14 @@ En az işe yarayan okumalar: momentum_1H ×0.542, obv_egim_1H ×0.555, psar_1H �
 
 - ders: 5220
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 1466
-- günlük işlem tavanı (8): 1356
-- gösterge aileleri aynı yönde değil: 1308
+- büyük zaman dilimi trendi ters: 1467
+- günlük işlem tavanı (8): 1387
+- gösterge aileleri aynı yönde değil: 1323
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
-- puan +0.127 eşiğin (0.25) altında: 103
+- puan +0.123 eşiğin (0.25) altında: 104
 
 **Hata sınıfları**
 
@@ -183,14 +183,14 @@ En az işe yarayan okumalar: momentum_1H ×0.542, obv_egim_1H ×0.555, psar_1H �
 
 - ders: 5220
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 1466
-- günlük işlem tavanı (8): 1356
-- gösterge aileleri aynı yönde değil: 1308
+- büyük zaman dilimi trendi ters: 1467
+- günlük işlem tavanı (8): 1387
+- gösterge aileleri aynı yönde değil: 1323
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
-- puan +0.127 eşiğin (0.25) altında: 103
+- puan +0.123 eşiğin (0.25) altında: 104
 
 **Hata sınıfları**
 
