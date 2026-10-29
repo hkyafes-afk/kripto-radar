@@ -1,0 +1,41 @@
+name: Binance metrikleri
+
+# OI, long/short ve taker oranı (günlük, son 30 günün hacmine göre ilk N coin). tools/binance_metrik.py
+# Ana arşiv iş akışından bağımsız: kendi dalına (binance-metrik) yazar, çakışma olmaz.
+on:
+  workflow_dispatch:
+    inputs:
+      top:
+        description: "Kaç coin (hacme göre)"
+        default: "100"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: binance-metrik
+  cancel-in-progress: false
+
+jobs:
+  metrik:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Klines dalını çek (evren için)
+        run: |
+          git fetch -q origin binance-veri:binance-veri 2>/dev/null || { echo "binance-veri yok, önce arşiv iş akışını çalıştır"; exit 1; }
+          git worktree add -q bv binance-veri
+      - name: İndir
+        run: python -u tools/binance_metrik.py --veri bv/ --out bvm --top ${{ github.event.inputs.top || '100' }}
+      - name: Kaydet
+        run: |
+          git config --global user.name "kripto-radar"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch -q origin binance-metrik:binance-metrik 2>/dev/null && git worktree add -q mv binance-metrik || { git worktree add -q --detach mv; cd mv && git checkout -q --orphan binance-metrik && git rm -rqf . ; cd ..; }
+          cp -r bvm/. mv/
+          cd mv && git add -A && git commit -qm "📈 binance metrik $(date -u +%Y-%m-%d)" || exit 0
+          for i in 1 2 3; do git push -q origin binance-metrik && break; git pull -q --rebase origin binance-metrik || true; sleep 3; done
