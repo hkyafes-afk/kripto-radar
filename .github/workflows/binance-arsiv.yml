@@ -1,0 +1,46 @@
+name: Binance arşivi
+
+# Genişletilmiş test verisi: Binance Vision'dan USDT-M günlük mum + funding, batan coinler dahil (tools/binance_arsiv.py).
+# Sonuç `binance-veri` dalında. Elle tetiklenir; ayda bir yenilemek yeterli.
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "Deneme için ilk N sembol (0 = hepsi)"
+        default: "0"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: binance-arsiv
+  cancel-in-progress: false
+
+jobs:
+  arsiv:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: binance-veri dalını hazırla
+        run: |
+          git config --global user.name "kripto-radar"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git fetch -q origin binance-veri:binance-veri 2>/dev/null; then
+            git worktree add -q bv binance-veri
+          else
+            git worktree add -q --detach bv
+            cd bv && git checkout -q --orphan binance-veri && git rm -rqf . && \
+              printf '# Binance Vision arşivi\n\nUSDT-M günlük mum + funding, batan coinler dahil. Kaynak: data.binance.vision (MIT). Üreten: tools/binance_arsiv.py\n' > README.md
+          fi
+      - name: İndir
+        run: python tools/binance_arsiv.py --out bv --limit ${{ github.event.inputs.limit || '0' }}
+      - name: Kaydet
+        run: |
+          cd bv
+          git add -A
+          git commit -qm "🗄 binance arşivi $(date -u +%Y-%m-%d)" || exit 0
+          for i in 1 2 3; do git push -q origin binance-veri && break; git pull -q --rebase origin binance-veri || true; sleep 3; done
