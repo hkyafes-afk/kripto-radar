@@ -31,9 +31,9 @@ from . import bt2, learn, quant, team
 from .config import ROOT, load_config
 
 FAMILY = {"cikis_iz": "çıkış", "cikis_iz_tp1": "çıkış", "cikis_hedef": "çıkış",
-          "retest": "giriş", "adx25": "giriş", "ttm": "giriş", "fitil_stop": "stop"}
+          "retest": "giriş", "adx25": "giriş", "adx15": "giriş", "adx18": "giriş", "adx_up": "giriş", "ttm": "giriş", "fitil_stop": "stop"}
 TRIALS = {
-    "kemal": [[], ["adx25"]],
+    "kemal": [[], ["adx25"], ["adx15"], ["adx18"], ["adx_up"]],
     "kaan": [[], ["cikis_iz"], ["cikis_iz_tp1"], ["cikis_hedef"], ["retest"], ["fitil_stop"]],
     "selin": [[], ["cikis_iz"], ["cikis_iz_tp1"], ["cikis_hedef"], ["ttm"]],
     "murat": [[], ["cikis_iz"], ["cikis_iz_tp1"], ["cikis_hedef"]],

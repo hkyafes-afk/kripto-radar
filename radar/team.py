@@ -697,6 +697,9 @@ VARIANT_TEXT = {
     "cikis_iz_tp1": "kısmi kâr yok; ilk hedefe varınca stop başabaşa çekilir ve iz sürmeye başlar",
     "cikis_hedef": "tek hedef: ilk hedefte pozisyonun tamamı kapanır",
     "adx25": "trend gücü filtresi: ADX 25'in altındaysa girmez",
+    "adx15": "ölü piyasa filtresi: ADX 15'in altındaysa girmez",
+    "adx18": "ölü piyasa filtresi: ADX 18'in altındaysa girmez",
+    "adx_up": "trend gücü yükseliyor: bugünkü ADX dünkünden büyük değilse girmez",
     "retest": "kırılımdan sonra kırılan seviyeye geri çekilmeyi bekler (5 gün), limit emirle girer",
     "fitil_stop": "stop kırılım mumunun fitilinin hemen ötesinde (dar stop)",
     "ttm": "sıkışma tanımı TTM: Bollinger bantları Keltner kanalının içinde",
@@ -721,6 +724,14 @@ def apply_variant(idea: dict | None, ctx: dict, cfg: dict | None) -> dict | None
     notes = []
     if "adx25" in V and not ((ctx.get("adx") or 0) >= 25):
         return None
+    if "adx15" in V and not ((ctx.get("adx") or 0) >= 15):
+        return None
+    if "adx18" in V and not ((ctx.get("adx") or 0) >= 18):
+        return None
+    if "adx_up" in V:
+        a, ap = ctx.get("adx"), ctx.get("adx_prev")
+        if not (a is not None and ap is not None and a == a and ap == ap and a > ap):
+            return None
     if "fitil_stop" in V:
         raw = (ctx["low"] - 0.1 * atr) if sgn > 0 else (ctx["high"] + 0.1 * atr)
         idea["sl"] = _clamp_stop(px, raw, atr, idea["side"], 0.5, 2.5)

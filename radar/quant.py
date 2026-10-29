@@ -73,6 +73,8 @@ def ctx_at(F: pd.DataFrame, i: int = -1) -> dict:
     prev = F.iloc[i - 1] if (i - 1) >= -len(F) and len(F) > 1 else row
     ctx["above50_prev"] = bool(_f(prev["close"]) > _f(prev["sma50"]) and _f(prev["sma20"]) > _f(prev["sma100"]))
     ctx["below50_prev"] = bool(_f(prev["close"]) < _f(prev["sma50"]) and _f(prev["sma20"]) < _f(prev["sma100"]))
+    if "adx" in F.columns:
+        ctx["adx_prev"] = _f(prev["adx"]) if (i - 1) >= -len(F) and len(F) > 1 else None
     ctx["ll3"] = float(F["low"].iloc[i - 2:i + 1 if i != -1 else None].min()) if len(F) >= 3 else ctx["low"]
     ctx["hh3"] = float(F["high"].iloc[i - 2:i + 1 if i != -1 else None].max()) if len(F) >= 3 else ctx["high"]
     return ctx
