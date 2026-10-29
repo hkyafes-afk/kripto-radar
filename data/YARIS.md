@@ -1,6 +1,6 @@
-# v9 Faz 1 — 5 yıllık varyant yarışı (2026-10-29 20:38 UTC)
+# v9 Faz 1 — 5 yıllık varyant yarışı (2026-10-29 21:00 UTC)
 
-30 coin · 2021-10-30 → bugün · eğitim/doğrulama ayrımı 2025-04-30 · 20 deneme (Deflated Sharpe bütün denemelere göre) · 471 sn
+27 coin · 2021-10-30 → bugün · eğitim/doğrulama ayrımı 2025-04-30 · 20 deneme (Deflated Sharpe bütün denemelere göre) · 286 sn
 
 Benimseme: doğrulamada ≥ +0,02R iyi, eğitimde kötü değil, bileşik büyüme düşmüyor, MAR ≥ %90 taban, yeterli işlem.
 
@@ -8,11 +8,11 @@ Benimseme: doğrulamada ≥ +0,02R iyi, eğitimde kötü değil, bileşik büyü
 
 | Varyant | İşlem | Ort. R | Eğitim R | Doğrulama R | Yıllık % | Maks. düşüş % | MAR | DSR |
 |---|---|---|---|---|---|---|---|---|
-| taban (mevcut) | 189 | 0.249 | 0.279 | 0.194 | 8.44 | -13.67 | 0.62 | 0.576 |
-| adx25 | 108 | 0.077 | -0.018 | 0.234 | 1.65 | -16.48 | 0.1 | 0.205 |
-| adx15 | 178 | 0.211 | 0.246 | 0.149 | 6.53 | -13.91 | 0.47 | 0.465 |
-| adx18 | 163 | 0.144 | 0.167 | 0.102 | 4.27 | -14.29 | 0.3 | 0.338 |
-| adx_up | 165 | 0.277 | 0.286 | 0.26 | 7.69 | -13.87 | 0.55 | 0.539 |
+| taban (mevcut) | 166 | 0.289 | 0.321 | 0.229 | 8.48 | -12.7 | 0.67 | 0.638 |
+| adx25 | 99 | 0.107 | 0.042 | 0.213 | 2.05 | -14.83 | 0.14 | 0.252 |
+| adx15 | 157 | 0.264 | 0.307 | 0.189 | 7.15 | -12.74 | 0.56 | 0.56 |
+| adx18 | 146 | 0.2 | 0.235 | 0.135 | 5.32 | -12.77 | 0.42 | 0.452 |
+| adx_up | 146 | 0.327 | 0.339 | 0.303 | 8.19 | -13.41 | 0.61 | 0.637 |
 
 **Karar:** hiçbir varyant dört şartı birden geçmedi → mevcut kural korunur
 
@@ -20,50 +20,50 @@ Benimseme: doğrulamada ≥ +0,02R iyi, eğitimde kötü değil, bileşik büyü
 
 | Varyant | İşlem | Ort. R | Eğitim R | Doğrulama R | Yıllık % | Maks. düşüş % | MAR | DSR |
 |---|---|---|---|---|---|---|---|---|
-| taban (mevcut) | 106 | 0.697 | 0.883 | 0.445 | 12.59 | -10.3 | 1.22 | 0.941 |
-| cikis_iz | 110 | 0.419 | 0.48 | 0.335 | 7.35 | -7.27 | 1.01 | 0.818 |
-| cikis_iz_tp1 | 106 | 0.786 | 1.005 | 0.489 | 14.43 | -10.65 | 1.35 | 0.955 |
-| cikis_hedef | 110 | 0.654 | 0.804 | 0.446 | 12.37 | -9.63 | 1.28 | 0.949 |
-| retest | 80 | 0.433 | 0.661 | 0.093 | 5.87 | -12.91 | 0.45 | 0.575 |
-| fitil_stop | 116 | 0.664 | 0.865 | 0.408 | 12.59 | -13.05 | 0.96 | 0.878 |
+| taban (mevcut) | 95 | 0.741 | 0.933 | 0.477 | 12.28 | -8.54 | 1.44 | 0.969 |
+| cikis_iz | 99 | 0.47 | 0.535 | 0.378 | 7.97 | -7.76 | 1.03 | 0.895 |
+| cikis_iz_tp1 | 95 | 0.845 | 1.071 | 0.535 | 14.19 | -9.09 | 1.56 | 0.978 |
+| cikis_hedef | 99 | 0.681 | 0.839 | 0.458 | 11.93 | -8.5 | 1.4 | 0.972 |
+| retest | 69 | 0.409 | 0.668 | 0.005 | 4.74 | -11.02 | 0.43 | 0.535 |
+| fitil_stop | 104 | 0.748 | 0.968 | 0.459 | 12.67 | -9.73 | 1.3 | 0.929 |
 
-**Karar:** cikis_iz_tp1: doğrulama +0.489R (taban +0.445R), yıllık %14.43 (taban %12.59), MAR 1.35 (taban 1.22)
+**Karar:** cikis_iz_tp1: doğrulama +0.535R (taban +0.477R), yıllık %14.19 (taban %12.28), MAR 1.56 (taban 1.44)
 
 ## selin
 
 | Varyant | İşlem | Ort. R | Eğitim R | Doğrulama R | Yıllık % | Maks. düşüş % | MAR | DSR |
 |---|---|---|---|---|---|---|---|---|
-| taban (mevcut) | 71 | 0.578 | 0.52 | 0.653 | 10.18 | -14.04 | 0.73 | 0.751 |
-| cikis_iz | 74 | 0.511 | 0.502 | 0.522 | 10.05 | -15.65 | 0.64 | 0.81 |
-| cikis_iz_tp1 | 72 | 0.754 | 0.668 | 0.867 | 14.99 | -14.35 | 1.04 | 0.854 |
-| cikis_hedef | 74 | 0.536 | 0.51 | 0.572 | 14.04 | -13.89 | 1.01 | 0.895 |
-| ttm | 64 | 0.505 | 0.387 | 0.691 | 10.51 | -14.04 | 0.75 | 0.753 |
+| taban (mevcut) | 61 | 0.59 | 0.524 | 0.673 | 11.65 | -14.35 | 0.81 | 0.845 |
+| cikis_iz | 64 | 0.496 | 0.505 | 0.486 | 8.46 | -11.43 | 0.74 | 0.788 |
+| cikis_iz_tp1 | 62 | 0.771 | 0.676 | 0.893 | 14.89 | -14.44 | 1.03 | 0.887 |
+| cikis_hedef | 63 | 0.562 | 0.53 | 0.605 | 12.08 | -14.26 | 0.85 | 0.863 |
+| ttm | 53 | 0.483 | 0.325 | 0.723 | 9.03 | -14.35 | 0.63 | 0.701 |
 
-**Karar:** cikis_iz_tp1: doğrulama +0.867R (taban +0.653R), yıllık %14.99 (taban %10.18), MAR 1.04 (taban 0.73)
+**Karar:** cikis_iz_tp1: doğrulama +0.893R (taban +0.673R), yıllık %14.89 (taban %11.65), MAR 1.03 (taban 0.81)
 
 ## murat
 
 | Varyant | İşlem | Ort. R | Eğitim R | Doğrulama R | Yıllık % | Maks. düşüş % | MAR | DSR |
 |---|---|---|---|---|---|---|---|---|
-| taban (mevcut) | 115 | 0.126 | 0.081 | 0.241 | 1.31 | -4.77 | 0.27 | 0.335 |
-| cikis_iz | 125 | 0.342 | 0.293 | 0.453 | 4.11 | -5.99 | 0.69 | 0.687 |
-| cikis_iz_tp1 | 117 | 0.252 | 0.193 | 0.391 | 2.74 | -6.66 | 0.41 | 0.482 |
-| cikis_hedef | 114 | 0.141 | 0.098 | 0.261 | 1.47 | -4.66 | 0.32 | 0.408 |
+| taban (mevcut) | 102 | 0.156 | 0.138 | 0.201 | 1.49 | -4.59 | 0.32 | 0.413 |
+| cikis_iz | 113 | 0.399 | 0.372 | 0.461 | 4.37 | -5.69 | 0.77 | 0.758 |
+| cikis_iz_tp1 | 104 | 0.312 | 0.275 | 0.394 | 3.06 | -6.63 | 0.46 | 0.581 |
+| cikis_hedef | 101 | 0.178 | 0.158 | 0.233 | 1.68 | -4.46 | 0.38 | 0.514 |
 
-**Karar:** cikis_iz: doğrulama +0.453R (taban +0.241R), yıllık %4.11 (taban %1.31), MAR 0.69 (taban 0.27)
+**Karar:** cikis_iz: doğrulama +0.461R (taban +0.201R), yıllık %4.37 (taban %1.49), MAR 0.77 (taban 0.32)
 
 ## Firma geneli kurallar (taban işlemleriyle, tek havuz)
 
 | Kural | Yıllık % | Maks. düşüş % | MAR | İşlem | Eğitim R | Doğrulama R |
 |---|---|---|---|---|---|---|
-| taban (ayıda long yarım, sınıf kuralı yok) | 12.58 | -23.34 | 0.54 | 380 | 0.273 | 0.2 |
-| ayıda long YASAK | 12.58 | -23.34 | 0.54 | 380 | 0.273 | 0.2 |
-| Genel Müdür kanıt sınıfı açık (B yarım, C gölge) | 11.22 | -23.12 | 0.49 | 386 | 0.283 | 0.216 |
-| ayıda long yasak + kanıt sınıfı | 11.22 | -23.12 | 0.49 | 386 | 0.283 | 0.216 |
-| sadece C gölge (B tam boyut) | 12.17 | -22.4 | 0.54 | 375 | 0.254 | 0.207 |
-| B tam, C yarım | 12.41 | -23.26 | 0.53 | 381 | 0.269 | 0.201 |
-| ayıda long yasak + sadece C gölge | 12.17 | -22.4 | 0.54 | 375 | 0.254 | 0.207 |
+| taban (ayıda long yarım, sınıf kuralı yok) | 15.55 | -20.5 | 0.76 | 349 | 0.349 | 0.213 |
+| ayıda long YASAK | 15.55 | -20.5 | 0.76 | 349 | 0.349 | 0.213 |
+| Genel Müdür kanıt sınıfı açık (B yarım, C gölge) | 13.92 | -22.54 | 0.62 | 353 | 0.357 | 0.224 |
+| ayıda long yasak + kanıt sınıfı | 13.92 | -22.54 | 0.62 | 353 | 0.357 | 0.224 |
+| sadece C gölge (B tam boyut) | 15.26 | -21.47 | 0.71 | 344 | 0.333 | 0.22 |
+| B tam, C yarım | 15.33 | -20.81 | 0.74 | 350 | 0.35 | 0.213 |
+| ayıda long yasak + sadece C gölge | 15.26 | -21.47 | 0.71 | 344 | 0.333 | 0.22 |
 
-Kanıt sınıfına göre işlemler: A 403 (ort. 0.316R), B 70 (ort. 0.629R), C 8 (ort. 0.632R)
+Kanıt sınıfına göre işlemler: A 347 (ort. 0.355R), B 69 (ort. 0.61R), C 8 (ort. 0.632R)
 
 Uyarı: coin evreni bugün hâlâ işlem gören coinler (batanlar yok) → sonuçlar iyimser tarafta.
