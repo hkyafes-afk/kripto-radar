@@ -64,7 +64,7 @@ Bileşik puan = düşük oynaklık + yaş + düşük funding + 20g zirveye yakı
 
 ## 4. Kendi işlemlerimizden
 
-- Polat (gün içi, emir defteri ve dakikalık veri): 1.553 sinyalde maliyet sonrası **−0,27R**. Gün içi teknik sinyaller
+- Polat (gün içi, emir defteri ve dakikalık veri): 1.549 sinyalde maliyet sonrası ortalama **−0,27R**. Gün içi teknik sinyaller
   maliyetten sonra para kaybettirdi; araştırmadaki "günlük al-sat maliyeti karşılamaz" bulgusuyla tutarlı.
 - Kripto Radar canlı/gölge: 3 günlük örnek, karar için yetersiz. Kapanan işlemlerde zirvedeki kârın küçük kısmı cebe giriyor.
 
