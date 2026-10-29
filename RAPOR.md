@@ -11,10 +11,10 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 1469 | %46.9 | -0.297 | -436.0 |
 | polat_girilen | 8 | %50.0 | -0.596 | -4.77 |
 | polat_girilmeyen | 1461 | %46.9 | -0.295 | -431.23 |
-| rastgele | 1472 | %43.9 | -0.361 | -532.11 |
+| rastgele | 1475 | %44.0 | -0.36 | -531.18 |
 | trend_naif | 1472 | %39.0 | -0.465 | -684.85 |
 
-Polat özsermaye: %-4.4 · BTC al-tut: %-0.14
+Polat özsermaye: %-4.4 · BTC al-tut: %-0.22
 
 ## Öğrenme (walk-forward)
 
@@ -66,13 +66,13 @@ En az işe yarayan okumalar: momentum_1H ×0.515, obv_egim_1H ×0.515, psar_1H �
 - ders: 5250
 - üst üste 3 zarar: 2345
 - günlük işlem tavanı (8): 1992
-- gösterge aileleri aynı yönde değil: 1530
+- gösterge aileleri aynı yönde değil: 1531
 - büyük zaman dilimi trendi ters: 1524
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
-- puan +0.123 eşiğin (0.25) altında: 110
+- puan +0.123 eşiğin (0.25) altında: 111
 
 ## Son 50 gün
 
@@ -121,13 +121,13 @@ En az işe yarayan okumalar: momentum_1H ×0.515, obv_egim_1H ×0.515, psar_1H �
 - ders: 5250
 - üst üste 3 zarar: 2345
 - günlük işlem tavanı (8): 1992
-- gösterge aileleri aynı yönde değil: 1530
+- gösterge aileleri aynı yönde değil: 1531
 - büyük zaman dilimi trendi ters: 1524
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
-- puan +0.123 eşiğin (0.25) altında: 110
+- puan +0.123 eşiğin (0.25) altında: 111
 
 **Hata sınıfları**
 
@@ -181,13 +181,13 @@ En az işe yarayan okumalar: momentum_1H ×0.515, obv_egim_1H ×0.515, psar_1H �
 - ders: 5250
 - üst üste 3 zarar: 2345
 - günlük işlem tavanı (8): 1992
-- gösterge aileleri aynı yönde değil: 1530
+- gösterge aileleri aynı yönde değil: 1531
 - büyük zaman dilimi trendi ters: 1524
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
-- puan +0.123 eşiğin (0.25) altında: 110
+- puan +0.123 eşiğin (0.25) altında: 111
 
 **Hata sınıfları**
 
