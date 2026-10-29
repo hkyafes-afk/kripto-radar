@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.308R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.307R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 1415 | %46.1 | -0.308 | -435.84 |
+| polat_tum_sinyaller | 1422 | %46.2 | -0.307 | -437.23 |
 | polat_girilen | 8 | %50.0 | -0.596 | -4.77 |
-| polat_girilmeyen | 1407 | %46.1 | -0.306 | -431.08 |
-| rastgele | 1423 | %43.4 | -0.365 | -519.94 |
-| trend_naif | 1416 | %38.3 | -0.477 | -675.86 |
+| polat_girilmeyen | 1414 | %46.2 | -0.306 | -432.46 |
+| rastgele | 1429 | %43.4 | -0.367 | -524.94 |
+| trend_naif | 1422 | %38.3 | -0.478 | -679.09 |
 
-Polat özsermaye: %-4.4 · BTC al-tut: %-0.3
+Polat özsermaye: %-4.4 · BTC al-tut: %-0.37
 
 ## Öğrenme (walk-forward)
 
@@ -25,14 +25,13 @@ En az işe yarayan okumalar: momentum_1H ×0.534, obv_egim_1H ×0.543, psar_1H �
 
 ## Son 1 gün
 
-İşlem 10 · kazanma %40.0 · ort. -0.627R · toplam -6.27R · net -3043.35$ · maks. düşüş -3043.35$ · kâr faktörü 0.14
+İşlem 9 · kazanma %44.4 · ort. -0.545R · toplam -4.91R · net -2375.09$ · maks. düşüş -2375.09$ · kâr faktörü 0.18
 
 **Kuruluma göre**
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
 | geri_cekilme+geri_test_1H+macd_kesisim_15m | 1 | %100.0 | 0.201 | 96.95 |
-| geri_cekilme+supurme+trend_cizgisi_kirilim_1H | 1 | %0.0 | -1.363 | -668.26 |
 | geri_test_1H | 2 | %100.0 | 0.256 | 245.01 |
 | geri_test_1H+formasyon_cift_tepe_1H+obv_kirilim_15m | 1 | %0.0 | -1.223 | -591.29 |
 | supurme+yapi_bozulmasi_15m+uyusmazlik_donus_mfi | 1 | %100.0 | 0.347 | 167.6 |
@@ -45,13 +44,13 @@ En az işe yarayan okumalar: momentum_1H ×0.534, obv_egim_1H ×0.543, psar_1H �
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
-| stop | 10 | %40.0 | -0.627 | -3043.35 |
+| stop | 9 | %44.4 | -0.545 | -2375.09 |
 
 **Seansa göre**
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
-| ABD | 6 | %33.3 | -0.708 | -2075.31 |
+| ABD | 5 | %40.0 | -0.577 | -1407.05 |
 | Asya | 2 | %100.0 | 0.256 | 245.01 |
 | Avrupa | 2 | %0.0 | -1.267 | -1213.05 |
 
@@ -59,7 +58,7 @@ En az işe yarayan okumalar: momentum_1H ×0.534, obv_egim_1H ×0.543, psar_1H �
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
-| 7 | 5 | %40.0 | -0.632 | -1549.64 |
+| 7 | 4 | %50.0 | -0.45 | -881.38 |
 | 8 | 3 | %66.7 | -0.192 | -280.66 |
 | 9 | 2 | %0.0 | -1.267 | -1213.05 |
 
@@ -67,18 +66,14 @@ En az işe yarayan okumalar: momentum_1H ×0.534, obv_egim_1H ×0.543, psar_1H �
 
 - ders: 5224
 - üst üste 3 zarar: 2345
-- günlük işlem tavanı (8): 1511
-- büyük zaman dilimi trendi ters: 1469
-- gösterge aileleri aynı yönde değil: 1404
+- günlük işlem tavanı (8): 1576
+- büyük zaman dilimi trendi ters: 1480
+- gösterge aileleri aynı yönde değil: 1409
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
 - puan +0.123 eşiğin (0.25) altında: 108
-
-**Hata sınıfları**
-
-- kayma > 10 bp: 1
 
 ## Son 50 gün
 
@@ -126,9 +121,9 @@ En az işe yarayan okumalar: momentum_1H ×0.534, obv_egim_1H ×0.543, psar_1H �
 
 - ders: 5224
 - üst üste 3 zarar: 2345
-- günlük işlem tavanı (8): 1511
-- büyük zaman dilimi trendi ters: 1469
-- gösterge aileleri aynı yönde değil: 1404
+- günlük işlem tavanı (8): 1576
+- büyük zaman dilimi trendi ters: 1480
+- gösterge aileleri aynı yönde değil: 1409
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
@@ -186,9 +181,9 @@ En az işe yarayan okumalar: momentum_1H ×0.534, obv_egim_1H ×0.543, psar_1H �
 
 - ders: 5224
 - üst üste 3 zarar: 2345
-- günlük işlem tavanı (8): 1511
-- büyük zaman dilimi trendi ters: 1469
-- gösterge aileleri aynı yönde değil: 1404
+- günlük işlem tavanı (8): 1576
+- büyük zaman dilimi trendi ters: 1480
+- gösterge aileleri aynı yönde değil: 1409
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
