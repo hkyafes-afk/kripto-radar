@@ -49,3 +49,4 @@
 {"olay": "yol", "yol": "geri_test|short|seviye+trend|btc:yatay", "karar": "kacin", "n": 11, "ort_R": -0.403, "ts": 1793250702983}
 {"olay": "geri_alindi", "ogrenilmis_ort_R": -0.433, "temel_ort_R": -0.324, "neden": "öğrenilmiş katsayılar temel halden kötü sonuç verdi", "ts": 1793255403619}
 {"olay": "yol", "yol": "geri_test|short|akis+seviye|btc:yatay", "karar": null, "n": 8, "ort_R": -0.333, "ts": 1793256812517}
+{"olay": "yol", "yol": "geri_test|short|piyasa+seviye|btc:yatay", "karar": "kacin", "n": 7, "ort_R": -0.443, "ts": 1793261511514}
