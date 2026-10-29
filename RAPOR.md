@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 1459 | %47.1 | -0.292 | -426.54 |
+| polat_tum_sinyaller | 1460 | %47.1 | -0.292 | -426.19 |
 | polat_girilen | 8 | %50.0 | -0.596 | -4.77 |
-| polat_girilmeyen | 1451 | %47.1 | -0.291 | -421.77 |
+| polat_girilmeyen | 1452 | %47.1 | -0.29 | -421.42 |
 | rastgele | 1465 | %44.0 | -0.359 | -526.58 |
-| trend_naif | 1460 | %39.2 | -0.461 | -673.05 |
+| trend_naif | 1461 | %39.2 | -0.46 | -672.7 |
 
-Polat özsermaye: %-4.4 · BTC al-tut: %-0.3
+Polat özsermaye: %-4.4 · BTC al-tut: %-0.24
 
 ## Öğrenme (walk-forward)
 
@@ -63,11 +63,11 @@ En az işe yarayan okumalar: momentum_1H ×0.518, obv_egim_1H ×0.519, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 5245
+- ders: 5246
 - üst üste 3 zarar: 2345
-- günlük işlem tavanı (8): 1953
+- günlük işlem tavanı (8): 1975
 - büyük zaman dilimi trendi ters: 1523
-- gösterge aileleri aynı yönde değil: 1508
+- gösterge aileleri aynı yönde değil: 1517
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
@@ -118,11 +118,11 @@ En az işe yarayan okumalar: momentum_1H ×0.518, obv_egim_1H ×0.519, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 5245
+- ders: 5246
 - üst üste 3 zarar: 2345
-- günlük işlem tavanı (8): 1953
+- günlük işlem tavanı (8): 1975
 - büyük zaman dilimi trendi ters: 1523
-- gösterge aileleri aynı yönde değil: 1508
+- gösterge aileleri aynı yönde değil: 1517
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
@@ -178,11 +178,11 @@ En az işe yarayan okumalar: momentum_1H ×0.518, obv_egim_1H ×0.519, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 5245
+- ders: 5246
 - üst üste 3 zarar: 2345
-- günlük işlem tavanı (8): 1953
+- günlük işlem tavanı (8): 1975
 - büyük zaman dilimi trendi ters: 1523
-- gösterge aileleri aynı yönde değil: 1508
+- gösterge aileleri aynı yönde değil: 1517
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
