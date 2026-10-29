@@ -60,8 +60,8 @@ En az işe yarayan okumalar: yapi_1D ×0.796, stoch_5m ×0.818, ema_1D ×0.856, 
 - ders: 1347
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- gösterge aileleri aynı yönde değil: 516
-- üst üste 3 zarar: 396
+- gösterge aileleri aynı yönde değil: 519
+- üst üste 3 zarar: 397
 - büyük zaman dilimi trendi ters: 354
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
@@ -110,8 +110,8 @@ En az işe yarayan okumalar: yapi_1D ×0.796, stoch_5m ×0.818, ema_1D ×0.856, 
 - ders: 1347
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- gösterge aileleri aynı yönde değil: 516
-- üst üste 3 zarar: 396
+- gösterge aileleri aynı yönde değil: 519
+- üst üste 3 zarar: 397
 - büyük zaman dilimi trendi ters: 354
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
@@ -160,8 +160,8 @@ En az işe yarayan okumalar: yapi_1D ×0.796, stoch_5m ×0.818, ema_1D ×0.856, 
 - ders: 1347
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- gösterge aileleri aynı yönde değil: 516
-- üst üste 3 zarar: 396
+- gösterge aileleri aynı yönde değil: 519
+- üst üste 3 zarar: 397
 - büyük zaman dilimi trendi ters: 354
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
