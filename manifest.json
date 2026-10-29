@@ -1,12 +1,12 @@
 {
- "olusturuldu": "2026-10-29 21:45 UTC",
+ "olusturuldu": "2026-10-29 22:05 UTC",
  "kaynak": "data.binance.vision (MIT)",
- "sembol": 5,
- "veri_olan": 5,
- "batan": 0,
+ "sembol": 895,
+ "veri_olan": 895,
+ "batan": 31,
  "en_yeni_gun": "2026-10-27",
  "atlanan_dosya": 0,
- "sure_sn": 97,
+ "sure_sn": 1168,
  "semboller": [
   {
    "sembol": "0GUSDT",
@@ -36,6 +36,1491 @@
    "batti": false
   },
   {
+   "sembol": "1000BONKUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-11-22",
+   "son_gun": "2026-10-27",
+   "gun": 1071,
+   "funding": 6259,
+   "batti": false
+  },
+  {
+   "sembol": "1000BTTCUSDT",
+   "atlanan": [],
+   "ilk_gun": "2022-01-26",
+   "son_gun": "2022-04-11",
+   "gun": 76,
+   "funding": 235,
+   "batti": true
+  },
+  {
+   "sembol": "1000CATUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-10-21",
+   "son_gun": "2026-10-27",
+   "gun": 737,
+   "funding": 4255,
+   "batti": false
+  },
+  {
+   "sembol": "1000CHEEMSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-11-25",
+   "son_gun": "2026-10-27",
+   "gun": 702,
+   "funding": 4046,
+   "batti": false
+  },
+  {
+   "sembol": "1000FLOKIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-05-06",
+   "son_gun": "2026-10-27",
+   "gun": 1271,
+   "funding": 3730,
+   "batti": false
+  },
+  {
+   "sembol": "1000LUNCUSDT",
+   "atlanan": [],
+   "ilk_gun": "2022-09-09",
+   "son_gun": "2026-10-27",
+   "gun": 1510,
+   "funding": 4447,
+   "batti": false
+  },
+  {
+   "sembol": "1000PEPEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-05-05",
+   "son_gun": "2026-10-27",
+   "gun": 1272,
+   "funding": 3733,
+   "batti": false
+  },
+  {
+   "sembol": "1000RATSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-12-15",
+   "son_gun": "2026-10-27",
+   "gun": 1048,
+   "funding": 6121,
+   "batti": false
+  },
+  {
+   "sembol": "1000SATSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-12-12",
+   "son_gun": "2026-10-27",
+   "gun": 1051,
+   "funding": 6139,
+   "batti": false
+  },
+  {
+   "sembol": "1000SHIBUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-05-10",
+   "son_gun": "2026-10-27",
+   "gun": 1997,
+   "funding": 5908,
+   "batti": false
+  },
+  {
+   "sembol": "1000WHYUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-11-25",
+   "son_gun": "2026-10-27",
+   "gun": 702,
+   "funding": 2862,
+   "batti": false
+  },
+  {
+   "sembol": "1000XECUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-09-17",
+   "son_gun": "2026-10-27",
+   "gun": 1867,
+   "funding": 5930,
+   "batti": false
+  },
+  {
+   "sembol": "1000XUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-11-13",
+   "son_gun": "2026-10-27",
+   "gun": 714,
+   "funding": 2195,
+   "batti": false
+  },
+  {
+   "sembol": "1INCHUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-12-25",
+   "son_gun": "2026-10-27",
+   "gun": 2133,
+   "funding": 6316,
+   "batti": false
+  },
+  {
+   "sembol": "1MBABYDOGEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-09-16",
+   "son_gun": "2026-10-27",
+   "gun": 772,
+   "funding": 4466,
+   "batti": false
+  },
+  {
+   "sembol": "2ZUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-10-02",
+   "son_gun": "2026-10-27",
+   "gun": 391,
+   "funding": 2181,
+   "batti": false
+  },
+  {
+   "sembol": "42USDT",
+   "atlanan": [],
+   "ilk_gun": "2025-10-27",
+   "son_gun": "2026-10-27",
+   "gun": 366,
+   "funding": 570,
+   "batti": false
+  },
+  {
+   "sembol": "4USDT",
+   "atlanan": [],
+   "ilk_gun": "2025-10-08",
+   "son_gun": "2026-10-27",
+   "gun": 385,
+   "funding": 2144,
+   "batti": false
+  },
+  {
+   "sembol": "A2ZUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-07-30",
+   "son_gun": "2026-10-27",
+   "gun": 455,
+   "funding": 1423,
+   "batti": false
+  },
+  {
+   "sembol": "AAOIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-08",
+   "son_gun": "2026-10-27",
+   "gun": 142,
+   "funding": 344,
+   "batti": false
+  },
+  {
+   "sembol": "AAPLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-04-06",
+   "son_gun": "2026-10-27",
+   "gun": 205,
+   "funding": 569,
+   "batti": false
+  },
+  {
+   "sembol": "AAVEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-10-16",
+   "son_gun": "2026-10-27",
+   "gun": 2203,
+   "funding": 6527,
+   "batti": false
+  },
+  {
+   "sembol": "ACEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-12-18",
+   "son_gun": "2026-10-27",
+   "gun": 1045,
+   "funding": 6361,
+   "batti": false
+  },
+  {
+   "sembol": "ACHUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-02-22",
+   "son_gun": "2026-10-27",
+   "gun": 1344,
+   "funding": 3950,
+   "batti": false
+  },
+  {
+   "sembol": "ACNUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-29",
+   "son_gun": "2026-10-27",
+   "gun": 29,
+   "funding": 5,
+   "batti": false
+  },
+  {
+   "sembol": "ACTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-11-11",
+   "son_gun": "2026-10-27",
+   "gun": 716,
+   "funding": 4129,
+   "batti": false
+  },
+  {
+   "sembol": "ACUUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-01-21",
+   "son_gun": "2026-10-27",
+   "gun": 280,
+   "funding": 1513,
+   "batti": false
+  },
+  {
+   "sembol": "ACXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-12-06",
+   "son_gun": "2026-10-27",
+   "gun": 691,
+   "funding": 3652,
+   "batti": false
+  },
+  {
+   "sembol": "ADAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-01-31",
+   "son_gun": "2026-10-27",
+   "gun": 2462,
+   "funding": 7339,
+   "batti": false
+  },
+  {
+   "sembol": "ADBEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-11",
+   "son_gun": "2026-10-27",
+   "gun": 139,
+   "funding": 335,
+   "batti": false
+  },
+  {
+   "sembol": "AERGOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-09-10",
+   "son_gun": "2026-06-30",
+   "gun": 659,
+   "funding": 4002,
+   "batti": true
+  },
+  {
+   "sembol": "AEROUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-12-04",
+   "son_gun": "2026-10-27",
+   "gun": 693,
+   "funding": 3991,
+   "batti": false
+  },
+  {
+   "sembol": "AEVOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-03-13",
+   "son_gun": "2026-10-27",
+   "gun": 959,
+   "funding": 5587,
+   "batti": false
+  },
+  {
+   "sembol": "AGIXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-02-16",
+   "son_gun": "2026-10-27",
+   "gun": 1350,
+   "funding": 2565,
+   "batti": false
+  },
+  {
+   "sembol": "AGLDUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-07-29",
+   "son_gun": "2026-10-27",
+   "gun": 1187,
+   "funding": 3481,
+   "batti": false
+  },
+  {
+   "sembol": "AGPUUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-18",
+   "son_gun": "2026-10-27",
+   "gun": 40,
+   "funding": 38,
+   "batti": false
+  },
+  {
+   "sembol": "AGTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-05-20",
+   "son_gun": "2026-10-27",
+   "gun": 526,
+   "funding": 2990,
+   "batti": false
+  },
+  {
+   "sembol": "AI16ZUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-01-02",
+   "son_gun": "2026-10-27",
+   "gun": 664,
+   "funding": 1847,
+   "batti": false
+  },
+  {
+   "sembol": "AIAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-18",
+   "son_gun": "2026-10-27",
+   "gun": 405,
+   "funding": 3037,
+   "batti": false
+  },
+  {
+   "sembol": "AIGENSYNUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-04-29",
+   "son_gun": "2026-10-27",
+   "gun": 182,
+   "funding": 925,
+   "batti": false
+  },
+  {
+   "sembol": "AINUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-07-10",
+   "son_gun": "2026-10-27",
+   "gun": 475,
+   "funding": 2684,
+   "batti": false
+  },
+  {
+   "sembol": "AIOTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-04-30",
+   "son_gun": "2026-10-27",
+   "gun": 546,
+   "funding": 3109,
+   "batti": false
+  },
+  {
+   "sembol": "AIOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-08-13",
+   "son_gun": "2026-10-27",
+   "gun": 441,
+   "funding": 2480,
+   "batti": false
+  },
+  {
+   "sembol": "AIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-01-08",
+   "son_gun": "2026-10-27",
+   "gun": 1024,
+   "funding": 5045,
+   "batti": false
+  },
+  {
+   "sembol": "AIXBTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-12-20",
+   "son_gun": "2026-10-27",
+   "gun": 677,
+   "funding": 3894,
+   "batti": false
+  },
+  {
+   "sembol": "AKEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-26",
+   "son_gun": "2026-10-27",
+   "gun": 397,
+   "funding": 2243,
+   "batti": false
+  },
+  {
+   "sembol": "AKROUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-01-19",
+   "son_gun": "2022-05-27",
+   "gun": 494,
+   "funding": 1480,
+   "batti": true
+  },
+  {
+   "sembol": "AKTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-11-18",
+   "son_gun": "2026-10-27",
+   "gun": 709,
+   "funding": 4088,
+   "batti": false
+  },
+  {
+   "sembol": "ALABUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-22",
+   "son_gun": "2026-10-27",
+   "gun": 128,
+   "funding": 301,
+   "batti": false
+  },
+  {
+   "sembol": "ALCHUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-01-07",
+   "son_gun": "2026-10-27",
+   "gun": 659,
+   "funding": 3788,
+   "batti": false
+  },
+  {
+   "sembol": "ALGOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-06-16",
+   "son_gun": "2026-10-27",
+   "gun": 2325,
+   "funding": 6939,
+   "batti": false
+  },
+  {
+   "sembol": "ALICEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-03-16",
+   "son_gun": "2026-10-27",
+   "gun": 2052,
+   "funding": 6780,
+   "batti": false
+  },
+  {
+   "sembol": "ALLOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-11-11",
+   "son_gun": "2026-10-27",
+   "gun": 351,
+   "funding": 1940,
+   "batti": false
+  },
+  {
+   "sembol": "ALLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-08-06",
+   "son_gun": "2026-10-27",
+   "gun": 448,
+   "funding": 1261,
+   "batti": false
+  },
+  {
+   "sembol": "ALPACAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-08-22",
+   "son_gun": "2026-10-27",
+   "gun": 797,
+   "funding": 2801,
+   "batti": false
+  },
+  {
+   "sembol": "ALPHAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-11-23",
+   "son_gun": "2026-10-27",
+   "gun": 2165,
+   "funding": 5296,
+   "batti": false
+  },
+  {
+   "sembol": "ALPINEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-05-06",
+   "son_gun": "2026-10-27",
+   "gun": 540,
+   "funding": 3074,
+   "batti": false
+  },
+  {
+   "sembol": "ALTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-01-25",
+   "son_gun": "2026-10-27",
+   "gun": 1007,
+   "funding": 5875,
+   "batti": false
+  },
+  {
+   "sembol": "AMATUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-08",
+   "son_gun": "2026-10-27",
+   "gun": 142,
+   "funding": 349,
+   "batti": false
+  },
+  {
+   "sembol": "AMBUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-03-30",
+   "son_gun": "2026-10-27",
+   "gun": 1308,
+   "funding": 4285,
+   "batti": false
+  },
+  {
+   "sembol": "AMCUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-18",
+   "son_gun": "2026-10-27",
+   "gun": 40,
+   "funding": 38,
+   "batti": false
+  },
+  {
+   "sembol": "AMDUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-06",
+   "son_gun": "2026-10-27",
+   "gun": 175,
+   "funding": 443,
+   "batti": false
+  },
+  {
+   "sembol": "AMZNUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-02-09",
+   "son_gun": "2026-10-27",
+   "gun": 261,
+   "funding": 709,
+   "batti": false
+  },
+  {
+   "sembol": "ANCUSDT",
+   "atlanan": [],
+   "ilk_gun": "2022-03-08",
+   "son_gun": "2022-05-13",
+   "gun": 67,
+   "funding": 198,
+   "batti": true
+  },
+  {
+   "sembol": "ANETUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-18",
+   "son_gun": "2026-10-27",
+   "gun": 40,
+   "funding": 38,
+   "batti": false
+  },
+  {
+   "sembol": "ANIMEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-01-23",
+   "son_gun": "2026-10-27",
+   "gun": 643,
+   "funding": 3970,
+   "batti": false
+  },
+  {
+   "sembol": "ANKRUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-01-26",
+   "son_gun": "2026-10-27",
+   "gun": 2101,
+   "funding": 6844,
+   "batti": false
+  },
+  {
+   "sembol": "ANTHROPICUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-02",
+   "son_gun": "2026-10-27",
+   "gun": 148,
+   "funding": 362,
+   "batti": false
+  },
+  {
+   "sembol": "ANTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-12-27",
+   "son_gun": "2024-05-28",
+   "gun": 884,
+   "funding": 2805,
+   "batti": true
+  },
+  {
+   "sembol": "APEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2022-03-17",
+   "son_gun": "2026-10-27",
+   "gun": 1686,
+   "funding": 4975,
+   "batti": false
+  },
+  {
+   "sembol": "API3USDT",
+   "atlanan": [],
+   "ilk_gun": "2022-02-22",
+   "son_gun": "2026-10-27",
+   "gun": 1709,
+   "funding": 8889,
+   "batti": false
+  },
+  {
+   "sembol": "APLDUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-18",
+   "son_gun": "2026-10-27",
+   "gun": 40,
+   "funding": 38,
+   "batti": false
+  },
+  {
+   "sembol": "APPUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-10",
+   "son_gun": "2026-10-27",
+   "gun": 110,
+   "funding": 248,
+   "batti": false
+  },
+  {
+   "sembol": "APRUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-10-23",
+   "son_gun": "2026-10-27",
+   "gun": 370,
+   "funding": 2055,
+   "batti": false
+  },
+  {
+   "sembol": "APTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2022-10-19",
+   "son_gun": "2026-10-27",
+   "gun": 1470,
+   "funding": 4330,
+   "batti": false
+  },
+  {
+   "sembol": "ARBUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-03-23",
+   "son_gun": "2026-10-27",
+   "gun": 1315,
+   "funding": 3863,
+   "batti": false
+  },
+  {
+   "sembol": "ARCUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-01-17",
+   "son_gun": "2026-10-27",
+   "gun": 649,
+   "funding": 3727,
+   "batti": false
+  },
+  {
+   "sembol": "ARIAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-03",
+   "son_gun": "2026-10-27",
+   "gun": 420,
+   "funding": 2469,
+   "batti": false
+  },
+  {
+   "sembol": "ARKMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-07-28",
+   "son_gun": "2026-10-27",
+   "gun": 1188,
+   "funding": 3484,
+   "batti": false
+  },
+  {
+   "sembol": "ARKUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-09-19",
+   "son_gun": "2026-10-27",
+   "gun": 1135,
+   "funding": 5158,
+   "batti": false
+  },
+  {
+   "sembol": "ARMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-26",
+   "son_gun": "2026-10-27",
+   "gun": 155,
+   "funding": 382,
+   "batti": false
+  },
+  {
+   "sembol": "ARPAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-10-19",
+   "son_gun": "2026-10-27",
+   "gun": 1835,
+   "funding": 5423,
+   "batti": false
+  },
+  {
+   "sembol": "ARUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-09-28",
+   "son_gun": "2026-10-27",
+   "gun": 1856,
+   "funding": 5489,
+   "batti": false
+  },
+  {
+   "sembol": "ARXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-23",
+   "son_gun": "2026-10-27",
+   "gun": 127,
+   "funding": 598,
+   "batti": false
+  },
+  {
+   "sembol": "ASMLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-11",
+   "son_gun": "2026-10-27",
+   "gun": 139,
+   "funding": 335,
+   "batti": false
+  },
+  {
+   "sembol": "ASRUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-05-06",
+   "son_gun": "2026-10-27",
+   "gun": 540,
+   "funding": 3074,
+   "batti": false
+  },
+  {
+   "sembol": "ASTERUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-19",
+   "son_gun": "2026-10-27",
+   "gun": 404,
+   "funding": 2258,
+   "batti": false
+  },
+  {
+   "sembol": "ASTRUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-02-14",
+   "son_gun": "2026-10-27",
+   "gun": 1352,
+   "funding": 3977,
+   "batti": false
+  },
+  {
+   "sembol": "ASTSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-01",
+   "son_gun": "2026-10-27",
+   "gun": 149,
+   "funding": 365,
+   "batti": false
+  },
+  {
+   "sembol": "ATAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-08-31",
+   "son_gun": "2026-10-27",
+   "gun": 1884,
+   "funding": 5170,
+   "batti": false
+  },
+  {
+   "sembol": "ATHUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-04-02",
+   "son_gun": "2026-10-27",
+   "gun": 574,
+   "funding": 3277,
+   "batti": false
+  },
+  {
+   "sembol": "ATOMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-02-07",
+   "son_gun": "2026-10-27",
+   "gun": 2455,
+   "funding": 7285,
+   "batti": false
+  },
+  {
+   "sembol": "ATUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-10-29",
+   "son_gun": "2026-10-27",
+   "gun": 364,
+   "funding": 2018,
+   "batti": false
+  },
+  {
+   "sembol": "AUCTIONUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-12-15",
+   "son_gun": "2026-10-27",
+   "gun": 1048,
+   "funding": 6183,
+   "batti": false
+  },
+  {
+   "sembol": "AUDIOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-08-19",
+   "son_gun": "2024-05-28",
+   "gun": 1014,
+   "funding": 3195,
+   "batti": true
+  },
+  {
+   "sembol": "AUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-05-28",
+   "son_gun": "2026-10-27",
+   "gun": 518,
+   "funding": 2943,
+   "batti": false
+  },
+  {
+   "sembol": "AVAAIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-01-17",
+   "son_gun": "2026-10-27",
+   "gun": 649,
+   "funding": 3727,
+   "batti": false
+  },
+  {
+   "sembol": "AVAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-12-13",
+   "son_gun": "2026-10-27",
+   "gun": 684,
+   "funding": 3937,
+   "batti": false
+  },
+  {
+   "sembol": "AVAXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-09-23",
+   "son_gun": "2026-10-27",
+   "gun": 2226,
+   "funding": 6598,
+   "batti": false
+  },
+  {
+   "sembol": "AVGOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-04-20",
+   "son_gun": "2026-10-27",
+   "gun": 191,
+   "funding": 514,
+   "batti": false
+  },
+  {
+   "sembol": "AVNTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-09",
+   "son_gun": "2026-10-27",
+   "gun": 414,
+   "funding": 2317,
+   "batti": false
+  },
+  {
+   "sembol": "AWEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-05-21",
+   "son_gun": "2026-10-27",
+   "gun": 525,
+   "funding": 2985,
+   "batti": false
+  },
+  {
+   "sembol": "AXLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-03-01",
+   "son_gun": "2026-10-27",
+   "gun": 971,
+   "funding": 6349,
+   "batti": false
+  },
+  {
+   "sembol": "AXSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-11-20",
+   "son_gun": "2026-10-27",
+   "gun": 2168,
+   "funding": 7346,
+   "batti": false
+  },
+  {
+   "sembol": "AXTIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-08",
+   "son_gun": "2026-10-27",
+   "gun": 142,
+   "funding": 344,
+   "batti": false
+  },
+  {
+   "sembol": "AZTECUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-02-11",
+   "son_gun": "2026-10-27",
+   "gun": 259,
+   "funding": 1507,
+   "batti": false
+  },
+  {
+   "sembol": "B2USDT",
+   "atlanan": [],
+   "ilk_gun": "2025-05-06",
+   "son_gun": "2026-10-27",
+   "gun": 540,
+   "funding": 3073,
+   "batti": false
+  },
+  {
+   "sembol": "B3USDT",
+   "atlanan": [],
+   "ilk_gun": "2025-02-13",
+   "son_gun": "2026-10-27",
+   "gun": 622,
+   "funding": 2658,
+   "batti": false
+  },
+  {
+   "sembol": "BABAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-04-20",
+   "son_gun": "2026-10-27",
+   "gun": 191,
+   "funding": 509,
+   "batti": false
+  },
+  {
+   "sembol": "BABYUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-04-05",
+   "son_gun": "2026-10-27",
+   "gun": 571,
+   "funding": 3307,
+   "batti": false
+  },
+  {
+   "sembol": "BADGERUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-11-09",
+   "son_gun": "2026-10-27",
+   "gun": 1084,
+   "funding": 3528,
+   "batti": false
+  },
+  {
+   "sembol": "BAKEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-05-19",
+   "son_gun": "2026-10-27",
+   "gun": 1988,
+   "funding": 4795,
+   "batti": false
+  },
+  {
+   "sembol": "BALUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-09-01",
+   "son_gun": "2026-10-27",
+   "gun": 2248,
+   "funding": 5257,
+   "batti": false
+  },
+  {
+   "sembol": "BANANAS31USDT",
+   "atlanan": [],
+   "ilk_gun": "2025-03-22",
+   "son_gun": "2026-10-27",
+   "gun": 585,
+   "funding": 3350,
+   "batti": false
+  },
+  {
+   "sembol": "BANANAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-08-15",
+   "son_gun": "2026-10-27",
+   "gun": 804,
+   "funding": 4815,
+   "batti": false
+  },
+  {
+   "sembol": "BANDUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-07-29",
+   "son_gun": "2026-10-27",
+   "gun": 2282,
+   "funding": 6764,
+   "batti": false
+  },
+  {
+   "sembol": "BANKUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-04-18",
+   "son_gun": "2026-10-27",
+   "gun": 558,
+   "funding": 3283,
+   "batti": false
+  },
+  {
+   "sembol": "BANUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-11-18",
+   "son_gun": "2026-10-27",
+   "gun": 709,
+   "funding": 4108,
+   "batti": false
+  },
+  {
+   "sembol": "BARDUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-18",
+   "son_gun": "2026-10-27",
+   "gun": 405,
+   "funding": 2916,
+   "batti": false
+  },
+  {
+   "sembol": "BASEDUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-03-30",
+   "son_gun": "2026-10-27",
+   "gun": 212,
+   "funding": 1106,
+   "batti": false
+  },
+  {
+   "sembol": "BASUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-08-26",
+   "son_gun": "2026-10-27",
+   "gun": 428,
+   "funding": 2401,
+   "batti": false
+  },
+  {
+   "sembol": "BATUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-02-13",
+   "son_gun": "2026-10-27",
+   "gun": 2449,
+   "funding": 7265,
+   "batti": false
+  },
+  {
+   "sembol": "BBUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-05-13",
+   "son_gun": "2026-10-27",
+   "gun": 898,
+   "funding": 5221,
+   "batti": false
+  },
+  {
+   "sembol": "BBXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-01",
+   "son_gun": "2026-10-27",
+   "gun": 149,
+   "funding": 365,
+   "batti": false
+  },
+  {
+   "sembol": "BCHUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-01-01",
+   "son_gun": "2026-10-27",
+   "gun": 2492,
+   "funding": 7395,
+   "batti": false
+  },
+  {
+   "sembol": "BDXNUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-06-03",
+   "son_gun": "2026-03-31",
+   "gun": 302,
+   "funding": 1722,
+   "batti": true
+  },
+  {
+   "sembol": "BEAMXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-11-17",
+   "son_gun": "2026-10-27",
+   "gun": 1076,
+   "funding": 6290,
+   "batti": false
+  },
+  {
+   "sembol": "BEATUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-11-12",
+   "son_gun": "2026-10-27",
+   "gun": 350,
+   "funding": 2270,
+   "batti": false
+  },
+  {
+   "sembol": "BELUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-11-18",
+   "son_gun": "2026-10-27",
+   "gun": 2170,
+   "funding": 6428,
+   "batti": false
+  },
+  {
+   "sembol": "BERAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-02-06",
+   "son_gun": "2026-10-27",
+   "gun": 629,
+   "funding": 3607,
+   "batti": false
+  },
+  {
+   "sembol": "BEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-26",
+   "son_gun": "2026-10-27",
+   "gun": 155,
+   "funding": 382,
+   "batti": false
+  },
+  {
+   "sembol": "BICOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-09-28",
+   "son_gun": "2026-10-27",
+   "gun": 1126,
+   "funding": 3296,
+   "batti": false
+  },
+  {
+   "sembol": "BIDUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-03-20",
+   "son_gun": "2026-10-27",
+   "gun": 587,
+   "funding": 1842,
+   "batti": false
+  },
+  {
+   "sembol": "BIGTIMEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-10-12",
+   "son_gun": "2026-10-27",
+   "gun": 1112,
+   "funding": 6505,
+   "batti": false
+  },
+  {
+   "sembol": "BILLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-07",
+   "son_gun": "2026-10-27",
+   "gun": 174,
+   "funding": 879,
+   "batti": false
+  },
+  {
+   "sembol": "BIOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-01-03",
+   "son_gun": "2026-10-27",
+   "gun": 663,
+   "funding": 4623,
+   "batti": false
+  },
+  {
+   "sembol": "BIRBUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-01-29",
+   "son_gun": "2026-10-27",
+   "gun": 272,
+   "funding": 1581,
+   "batti": false
+  },
+  {
+   "sembol": "BITOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-27",
+   "son_gun": "2026-10-27",
+   "gun": 93,
+   "funding": 196,
+   "batti": false
+  },
+  {
+   "sembol": "BLESSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-23",
+   "son_gun": "2026-10-27",
+   "gun": 400,
+   "funding": 2234,
+   "batti": false
+  },
+  {
+   "sembol": "BLUAIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-10-21",
+   "son_gun": "2026-10-27",
+   "gun": 372,
+   "funding": 2066,
+   "batti": false
+  },
+  {
+   "sembol": "BLUEBIRDUSDT",
+   "atlanan": [],
+   "ilk_gun": "2022-11-02",
+   "son_gun": "2024-05-28",
+   "gun": 574,
+   "funding": 1874,
+   "batti": true
+  },
+  {
+   "sembol": "BLURUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-04-28",
+   "son_gun": "2026-10-27",
+   "gun": 1279,
+   "funding": 4347,
+   "batti": false
+  },
+  {
+   "sembol": "BLZUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-09-17",
+   "son_gun": "2026-10-27",
+   "gun": 2232,
+   "funding": 7133,
+   "batti": false
+  },
+  {
+   "sembol": "BMNRUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-11",
+   "son_gun": "2026-10-27",
+   "gun": 139,
+   "funding": 335,
+   "batti": false
+  },
+  {
+   "sembol": "BMTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-03-17",
+   "son_gun": "2026-10-27",
+   "gun": 590,
+   "funding": 3373,
+   "batti": false
+  },
+  {
+   "sembol": "BNBUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-02-10",
+   "son_gun": "2026-10-27",
+   "gun": 2452,
+   "funding": 7274,
+   "batti": false
+  },
+  {
+   "sembol": "BNCUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-09",
+   "son_gun": "2026-10-27",
+   "gun": 111,
+   "funding": 250,
+   "batti": false
+  },
+  {
+   "sembol": "BNTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-08-10",
+   "son_gun": "2026-10-27",
+   "gun": 1175,
+   "funding": 3796,
+   "batti": false
+  },
+  {
+   "sembol": "BNXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2022-04-01",
+   "son_gun": "2026-10-27",
+   "gun": 1645,
+   "funding": 2998,
+   "batti": false
+  },
+  {
+   "sembol": "BOBUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-11-21",
+   "son_gun": "2026-10-27",
+   "gun": 341,
+   "funding": 948,
+   "batti": false
+  },
+  {
+   "sembol": "BOMEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-03-16",
+   "son_gun": "2026-10-27",
+   "gun": 956,
+   "funding": 5571,
+   "batti": false
+  },
+  {
+   "sembol": "BONDUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-10-15",
+   "son_gun": "2026-10-27",
+   "gun": 1109,
+   "funding": 3677,
+   "batti": false
+  },
+  {
+   "sembol": "BOTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-09",
+   "son_gun": "2026-10-27",
+   "gun": 111,
+   "funding": 250,
+   "batti": false
+  },
+  {
+   "sembol": "BRETTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-08-20",
+   "son_gun": "2026-10-27",
+   "gun": 799,
+   "funding": 4628,
+   "batti": false
+  },
+  {
+   "sembol": "BREVUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-12-30",
+   "son_gun": "2026-10-27",
+   "gun": 302,
+   "funding": 1646,
+   "batti": false
+  },
+  {
+   "sembol": "BRKBUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-18",
+   "son_gun": "2026-10-27",
+   "gun": 163,
+   "funding": 407,
+   "batti": false
+  },
+  {
+   "sembol": "BROCCOLI714USDT",
+   "atlanan": [],
+   "ilk_gun": "2025-03-21",
+   "son_gun": "2026-10-27",
+   "gun": 586,
+   "funding": 3386,
+   "batti": false
+  },
+  {
+   "sembol": "BROCCOLIF3BUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-03-21",
+   "son_gun": "2026-10-27",
+   "gun": 586,
+   "funding": 4484,
+   "batti": false
+  },
+  {
+   "sembol": "BRUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-03-21",
+   "son_gun": "2026-10-27",
+   "gun": 586,
+   "funding": 3349,
+   "batti": false
+  },
+  {
+   "sembol": "BSBUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-03-25",
+   "son_gun": "2026-10-27",
+   "gun": 217,
+   "funding": 1136,
+   "batti": false
+  },
+  {
+   "sembol": "BSPUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-02",
+   "son_gun": "2026-10-27",
+   "gun": 118,
+   "funding": 271,
+   "batti": false
+  },
+  {
+   "sembol": "BSVUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-10-20",
+   "son_gun": "2026-10-27",
+   "gun": 1104,
+   "funding": 6458,
+   "batti": false
+  },
+  {
+   "sembol": "BSWUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-09-05",
+   "son_gun": "2026-10-27",
+   "gun": 783,
+   "funding": 2251,
+   "batti": false
+  },
+  {
+   "sembol": "BTCDOMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-06-21",
+   "son_gun": "2026-10-27",
+   "gun": 1955,
+   "funding": 5783,
+   "batti": false
+  },
+  {
+   "sembol": "BTCSTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-03-04",
+   "son_gun": "2026-06-30",
+   "gun": 1945,
+   "funding": 5631,
+   "batti": true
+  },
+  {
    "sembol": "BTCUSDT",
    "atlanan": [],
    "ilk_gun": "2020-01-01",
@@ -45,12 +1530,6537 @@
    "batti": false
   },
   {
+   "sembol": "BTRUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-08-27",
+   "son_gun": "2026-10-27",
+   "gun": 427,
+   "funding": 2414,
+   "batti": false
+  },
+  {
+   "sembol": "BTSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-02-01",
+   "son_gun": "2024-05-28",
+   "gun": 1213,
+   "funding": 3874,
+   "batti": true
+  },
+  {
+   "sembol": "BTTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-04-06",
+   "son_gun": "2022-01-26",
+   "gun": 296,
+   "funding": 892,
+   "batti": true
+  },
+  {
+   "sembol": "BTWUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-04",
+   "son_gun": "2026-10-27",
+   "gun": 146,
+   "funding": 709,
+   "batti": false
+  },
+  {
+   "sembol": "BULLAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-07-04",
+   "son_gun": "2026-10-27",
+   "gun": 481,
+   "funding": 2901,
+   "batti": false
+  },
+  {
+   "sembol": "BUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-05-22",
+   "son_gun": "2026-10-27",
+   "gun": 524,
+   "funding": 2977,
+   "batti": false
+  },
+  {
+   "sembol": "BWETUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-29",
+   "son_gun": "2026-10-27",
+   "gun": 29,
+   "funding": 5,
+   "batti": false
+  },
+  {
+   "sembol": "BXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-08",
+   "son_gun": "2026-10-27",
+   "gun": 142,
+   "funding": 349,
+   "batti": false
+  },
+  {
+   "sembol": "BYDUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-07",
+   "son_gun": "2026-10-27",
+   "gun": 51,
+   "funding": 160,
+   "batti": false
+  },
+  {
+   "sembol": "BZRXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-09-05",
+   "son_gun": "2021-12-19",
+   "gun": 471,
+   "funding": 1445,
+   "batti": true
+  },
+  {
+   "sembol": "BZUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-04-01",
+   "son_gun": "2026-10-27",
+   "gun": 210,
+   "funding": 1101,
+   "batti": false
+  },
+  {
+   "sembol": "C98USDT",
+   "atlanan": [],
+   "ilk_gun": "2021-08-24",
+   "son_gun": "2026-10-27",
+   "gun": 1891,
+   "funding": 5591,
+   "batti": false
+  },
+  {
+   "sembol": "CAKEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-11-02",
+   "son_gun": "2026-10-27",
+   "gun": 1091,
+   "funding": 6379,
+   "batti": false
+  },
+  {
+   "sembol": "CAPUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-27",
+   "son_gun": "2026-10-27",
+   "gun": 123,
+   "funding": 573,
+   "batti": false
+  },
+  {
+   "sembol": "CARVUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-08-07",
+   "son_gun": "2026-10-27",
+   "gun": 447,
+   "funding": 2515,
+   "batti": false
+  },
+  {
+   "sembol": "CATIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-09-20",
+   "son_gun": "2026-10-27",
+   "gun": 768,
+   "funding": 4448,
+   "batti": false
+  },
+  {
+   "sembol": "CATUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-02",
+   "son_gun": "2026-10-27",
+   "gun": 118,
+   "funding": 336,
+   "batti": false
+  },
+  {
+   "sembol": "CBRSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-19",
+   "son_gun": "2026-10-27",
+   "gun": 162,
+   "funding": 404,
+   "batti": false
+  },
+  {
+   "sembol": "CCUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-10-31",
+   "son_gun": "2026-10-27",
+   "gun": 362,
+   "funding": 2007,
+   "batti": false
+  },
+  {
+   "sembol": "CELOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-09-27",
+   "son_gun": "2026-10-27",
+   "gun": 1857,
+   "funding": 5489,
+   "batti": false
+  },
+  {
+   "sembol": "CELRUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-03-29",
+   "son_gun": "2026-10-27",
+   "gun": 2039,
+   "funding": 6035,
+   "batti": false
+  },
+  {
+   "sembol": "CETUSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-11-06",
+   "son_gun": "2026-10-27",
+   "gun": 721,
+   "funding": 4159,
+   "batti": false
+  },
+  {
+   "sembol": "CFGUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-03-16",
+   "son_gun": "2026-10-27",
+   "gun": 226,
+   "funding": 1189,
+   "batti": false
+  },
+  {
+   "sembol": "CFXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-02-20",
+   "son_gun": "2026-10-27",
+   "gun": 1346,
+   "funding": 3956,
+   "batti": false
+  },
+  {
+   "sembol": "CGPTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-12-20",
+   "son_gun": "2026-10-27",
+   "gun": 677,
+   "funding": 3894,
+   "batti": false
+  },
+  {
+   "sembol": "CHESSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-08-29",
+   "son_gun": "2026-10-27",
+   "gun": 790,
+   "funding": 3157,
+   "batti": false
+  },
+  {
+   "sembol": "CHILLGUYUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-11-27",
+   "son_gun": "2026-10-27",
+   "gun": 700,
+   "funding": 4033,
+   "batti": false
+  },
+  {
+   "sembol": "CHIPUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-04-16",
+   "son_gun": "2026-10-27",
+   "gun": 195,
+   "funding": 1005,
+   "batti": false
+  },
+  {
+   "sembol": "CHRUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-03-12",
+   "son_gun": "2026-10-27",
+   "gun": 2056,
+   "funding": 6086,
+   "batti": false
+  },
+  {
+   "sembol": "CHZUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-01-21",
+   "son_gun": "2026-10-27",
+   "gun": 2106,
+   "funding": 6297,
+   "batti": false
+  },
+  {
+   "sembol": "CIENUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-22",
+   "son_gun": "2026-10-27",
+   "gun": 128,
+   "funding": 301,
+   "batti": false
+  },
+  {
+   "sembol": "CKBUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-02-28",
+   "son_gun": "2026-10-27",
+   "gun": 1338,
+   "funding": 3932,
+   "batti": false
+  },
+  {
+   "sembol": "CLANKERUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-11-12",
+   "son_gun": "2026-10-27",
+   "gun": 350,
+   "funding": 1934,
+   "batti": false
+  },
+  {
+   "sembol": "CLOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-10-14",
+   "son_gun": "2026-10-27",
+   "gun": 379,
+   "funding": 2214,
+   "batti": false
+  },
+  {
+   "sembol": "CLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-04-01",
+   "son_gun": "2026-10-27",
+   "gun": 210,
+   "funding": 1101,
+   "batti": false
+  },
+  {
+   "sembol": "COAIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-25",
+   "son_gun": "2026-10-27",
+   "gun": 398,
+   "funding": 3013,
+   "batti": false
+  },
+  {
+   "sembol": "COCOSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-02-21",
+   "son_gun": "2024-05-28",
+   "gun": 463,
+   "funding": 1542,
+   "batti": true
+  },
+  {
+   "sembol": "COHRUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-26",
+   "son_gun": "2026-10-27",
+   "gun": 155,
+   "funding": 382,
+   "batti": false
+  },
+  {
+   "sembol": "COINUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-02-09",
+   "son_gun": "2026-10-27",
+   "gun": 261,
+   "funding": 709,
+   "batti": false
+  },
+  {
+   "sembol": "COLLECTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-12-31",
+   "son_gun": "2026-10-27",
+   "gun": 301,
+   "funding": 1639,
+   "batti": false
+  },
+  {
+   "sembol": "COMBOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-06-02",
+   "son_gun": "2026-10-27",
+   "gun": 1244,
+   "funding": 2245,
+   "batti": false
+  },
+  {
+   "sembol": "COMMONUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-10-27",
+   "son_gun": "2026-10-27",
+   "gun": 366,
+   "funding": 570,
+   "batti": false
+  },
+  {
+   "sembol": "COMPUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-06-30",
+   "son_gun": "2026-10-27",
+   "gun": 2311,
+   "funding": 6851,
+   "batti": false
+  },
+  {
+   "sembol": "COOKIEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-01-07",
+   "son_gun": "2026-10-27",
+   "gun": 659,
+   "funding": 3788,
+   "batti": false
+  },
+  {
+   "sembol": "COPPERUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-03-06",
+   "son_gun": "2026-10-27",
+   "gun": 236,
+   "funding": 1257,
+   "batti": false
+  },
+  {
+   "sembol": "COSTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-09",
+   "son_gun": "2026-10-27",
+   "gun": 141,
+   "funding": 341,
+   "batti": false
+  },
+  {
+   "sembol": "COSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-09-30",
+   "son_gun": "2026-10-27",
+   "gun": 758,
+   "funding": 3794,
+   "batti": false
+  },
+  {
+   "sembol": "COTIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-03-10",
+   "son_gun": "2026-10-27",
+   "gun": 2058,
+   "funding": 6914,
+   "batti": false
+  },
+  {
+   "sembol": "COWUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-11-06",
+   "son_gun": "2026-10-27",
+   "gun": 721,
+   "funding": 4159,
+   "batti": false
+  },
+  {
+   "sembol": "CRCLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-02-09",
+   "son_gun": "2026-10-27",
+   "gun": 261,
+   "funding": 709,
+   "batti": false
+  },
+  {
+   "sembol": "CRDOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-08",
+   "son_gun": "2026-10-27",
+   "gun": 142,
+   "funding": 344,
+   "batti": false
+  },
+  {
+   "sembol": "CRMLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-29",
+   "son_gun": "2026-10-27",
+   "gun": 29,
+   "funding": 5,
+   "batti": false
+  },
+  {
+   "sembol": "CRMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-03",
+   "son_gun": "2026-10-27",
+   "gun": 147,
+   "funding": 373,
+   "batti": false
+  },
+  {
+   "sembol": "CROSSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-07-10",
+   "son_gun": "2026-10-27",
+   "gun": 475,
+   "funding": 2684,
+   "batti": false
+  },
+  {
+   "sembol": "CRVUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-09-01",
+   "son_gun": "2026-10-27",
+   "gun": 2248,
+   "funding": 6662,
+   "batti": false
+  },
+  {
+   "sembol": "CRWDUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-08",
+   "son_gun": "2026-10-27",
+   "gun": 142,
+   "funding": 343,
+   "batti": false
+  },
+  {
+   "sembol": "CRWVUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-18",
+   "son_gun": "2026-10-27",
+   "gun": 163,
+   "funding": 407,
+   "batti": false
+  },
+  {
+   "sembol": "CSCOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-15",
+   "son_gun": "2026-10-27",
+   "gun": 166,
+   "funding": 424,
+   "batti": false
+  },
+  {
+   "sembol": "CSOPSAMSUNG2LUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-08-11",
+   "son_gun": "2026-10-27",
+   "gun": 78,
+   "funding": 234,
+   "batti": false
+  },
+  {
+   "sembol": "CSOPSKHYNIX2LUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-08-11",
+   "son_gun": "2026-10-27",
+   "gun": 78,
+   "funding": 234,
+   "batti": false
+  },
+  {
+   "sembol": "CTKUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-11-19",
+   "son_gun": "2026-10-27",
+   "gun": 2169,
+   "funding": 7980,
+   "batti": false
+  },
+  {
+   "sembol": "CTRUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-28",
+   "son_gun": "2026-10-27",
+   "gun": 153,
+   "funding": 752,
+   "batti": false
+  },
+  {
+   "sembol": "CTSIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-10-26",
+   "son_gun": "2026-10-27",
+   "gun": 1828,
+   "funding": 5402,
+   "batti": false
+  },
+  {
+   "sembol": "CUDISUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-08-20",
+   "son_gun": "2026-10-27",
+   "gun": 434,
+   "funding": 1023,
+   "batti": false
+  },
+  {
+   "sembol": "CUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-07-15",
+   "son_gun": "2026-10-27",
+   "gun": 470,
+   "funding": 2782,
+   "batti": false
+  },
+  {
+   "sembol": "CVCUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-11-11",
+   "son_gun": "2026-10-27",
+   "gun": 2177,
+   "funding": 8498,
+   "batti": false
+  },
+  {
+   "sembol": "CVNAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-28",
+   "son_gun": "2026-10-27",
+   "gun": 30,
+   "funding": 8,
+   "batti": false
+  },
+  {
+   "sembol": "CVXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2022-09-22",
+   "son_gun": "2026-10-27",
+   "gun": 1497,
+   "funding": 5611,
+   "batti": false
+  },
+  {
+   "sembol": "CXMTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-08-18",
+   "son_gun": "2026-10-27",
+   "gun": 71,
+   "funding": 214,
+   "batti": false
+  },
+  {
+   "sembol": "CYBERUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-08-21",
+   "son_gun": "2026-10-27",
+   "gun": 1164,
+   "funding": 6701,
+   "batti": false
+  },
+  {
+   "sembol": "CYPHUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-18",
+   "son_gun": "2026-10-27",
+   "gun": 40,
+   "funding": 38,
+   "batti": false
+  },
+  {
+   "sembol": "CYSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-12-12",
+   "son_gun": "2026-10-27",
+   "gun": 320,
+   "funding": 1754,
+   "batti": false
+  },
+  {
+   "sembol": "DAMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-08-18",
+   "son_gun": "2026-10-27",
+   "gun": 436,
+   "funding": 1524,
+   "batti": false
+  },
+  {
+   "sembol": "DARUSDT",
+   "atlanan": [],
+   "ilk_gun": "2022-04-29",
+   "son_gun": "2026-10-27",
+   "gun": 1643,
+   "funding": 3442,
+   "batti": false
+  },
+  {
+   "sembol": "DASHUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-02-04",
+   "son_gun": "2026-10-27",
+   "gun": 2458,
+   "funding": 7292,
+   "batti": false
+  },
+  {
+   "sembol": "DATAIPUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-03",
+   "son_gun": "2026-10-27",
+   "gun": 117,
+   "funding": 538,
+   "batti": false
+  },
+  {
+   "sembol": "DDOGUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-02",
+   "son_gun": "2026-10-27",
+   "gun": 56,
+   "funding": 85,
+   "batti": false
+  },
+  {
+   "sembol": "DEEPUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-04-22",
+   "son_gun": "2026-10-27",
+   "gun": 554,
+   "funding": 3158,
+   "batti": false
+  },
+  {
+   "sembol": "DEFIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-08-28",
+   "son_gun": "2026-10-27",
+   "gun": 2252,
+   "funding": 5431,
+   "batti": false
+  },
+  {
+   "sembol": "DEGENUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-11-15",
+   "son_gun": "2026-10-27",
+   "gun": 712,
+   "funding": 3174,
+   "batti": false
+  },
+  {
+   "sembol": "DEGOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-12-13",
+   "son_gun": "2026-10-27",
+   "gun": 684,
+   "funding": 2996,
+   "batti": false
+  },
+  {
+   "sembol": "DELLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-03",
+   "son_gun": "2026-10-27",
+   "gun": 147,
+   "funding": 364,
+   "batti": false
+  },
+  {
+   "sembol": "DENTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-03-24",
+   "son_gun": "2026-10-27",
+   "gun": 2044,
+   "funding": 5563,
+   "batti": false
+  },
+  {
+   "sembol": "DEXEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-12-24",
+   "son_gun": "2026-10-27",
+   "gun": 673,
+   "funding": 4177,
+   "batti": false
+  },
+  {
+   "sembol": "DFUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-12-30",
+   "son_gun": "2026-10-27",
+   "gun": 667,
+   "funding": 2418,
+   "batti": false
+  },
+  {
+   "sembol": "DGBUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-04-21",
+   "son_gun": "2026-10-27",
+   "gun": 2016,
+   "funding": 4563,
+   "batti": false
+  },
+  {
+   "sembol": "DIAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-10-02",
+   "son_gun": "2026-10-27",
+   "gun": 756,
+   "funding": 4369,
+   "batti": false
+  },
+  {
+   "sembol": "DISUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-15",
+   "son_gun": "2026-10-27",
+   "gun": 166,
+   "funding": 424,
+   "batti": false
+  },
+  {
+   "sembol": "DJTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-08-25",
+   "son_gun": "2026-10-27",
+   "gun": 64,
+   "funding": 110,
+   "batti": false
+  },
+  {
+   "sembol": "DKNGUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-10",
+   "son_gun": "2026-10-27",
+   "gun": 140,
+   "funding": 338,
+   "batti": false
+  },
+  {
+   "sembol": "DMCUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-06-24",
+   "son_gun": "2026-10-27",
+   "gun": 491,
+   "funding": 1266,
+   "batti": false
+  },
+  {
+   "sembol": "DODOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-02-19",
+   "son_gun": "2022-05-27",
+   "gun": 463,
+   "funding": 1386,
+   "batti": true
+  },
+  {
+   "sembol": "DODOXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-08-08",
+   "son_gun": "2026-10-27",
+   "gun": 1177,
+   "funding": 6704,
+   "batti": false
+  },
+  {
+   "sembol": "DOGEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-07-10",
+   "son_gun": "2026-10-27",
+   "gun": 2301,
+   "funding": 6821,
+   "batti": false
+  },
+  {
+   "sembol": "DOGSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-08-26",
+   "son_gun": "2026-10-27",
+   "gun": 793,
+   "funding": 4591,
+   "batti": false
+  },
+  {
+   "sembol": "DOLOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-05-01",
+   "son_gun": "2026-10-27",
+   "gun": 545,
+   "funding": 3107,
+   "batti": false
+  },
+  {
+   "sembol": "DOODUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-05-09",
+   "son_gun": "2026-10-27",
+   "gun": 537,
+   "funding": 4247,
+   "batti": false
+  },
+  {
+   "sembol": "DOSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-08-11",
+   "son_gun": "2026-10-27",
+   "gun": 78,
+   "funding": 302,
+   "batti": false
+  },
+  {
+   "sembol": "DOTECOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-01-20",
+   "son_gun": "2021-02-19",
+   "gun": 31,
+   "funding": 120,
+   "batti": true
+  },
+  {
+   "sembol": "DOTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-08-22",
+   "son_gun": "2026-10-27",
+   "gun": 2258,
+   "funding": 6698,
+   "batti": false
+  },
+  {
+   "sembol": "DRAMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-18",
+   "son_gun": "2026-10-27",
+   "gun": 163,
+   "funding": 407,
+   "batti": false
+  },
+  {
+   "sembol": "DRIFTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-11-08",
+   "son_gun": "2026-10-27",
+   "gun": 719,
+   "funding": 4297,
+   "batti": false
+  },
+  {
+   "sembol": "DUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-01-09",
+   "son_gun": "2026-10-27",
+   "gun": 657,
+   "funding": 3201,
+   "batti": false
+  },
+  {
+   "sembol": "DUSKUSDT",
+   "atlanan": [],
+   "ilk_gun": "2022-01-07",
+   "son_gun": "2026-10-27",
+   "gun": 1755,
+   "funding": 6032,
+   "batti": false
+  },
+  {
+   "sembol": "DYDXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-09-10",
+   "son_gun": "2026-10-27",
+   "gun": 1874,
+   "funding": 5542,
+   "batti": false
+  },
+  {
+   "sembol": "DYMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-02-07",
+   "son_gun": "2026-10-27",
+   "gun": 994,
+   "funding": 5799,
+   "batti": false
+  },
+  {
+   "sembol": "EBAYUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-09",
+   "son_gun": "2026-10-27",
+   "gun": 141,
+   "funding": 346,
+   "batti": false
+  },
+  {
+   "sembol": "EDENUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-30",
+   "son_gun": "2026-10-27",
+   "gun": 393,
+   "funding": 2193,
+   "batti": false
+  },
+  {
+   "sembol": "EDGEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-03-19",
+   "son_gun": "2026-10-27",
+   "gun": 223,
+   "funding": 1171,
+   "batti": false
+  },
+  {
+   "sembol": "EDUUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-04-30",
+   "son_gun": "2026-10-27",
+   "gun": 1277,
+   "funding": 3754,
+   "batti": false
+  },
+  {
+   "sembol": "EGLDUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-09-14",
+   "son_gun": "2026-10-27",
+   "gun": 2235,
+   "funding": 6625,
+   "batti": false
+  },
+  {
+   "sembol": "EIGENUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-10-01",
+   "son_gun": "2026-10-27",
+   "gun": 757,
+   "funding": 4377,
+   "batti": false
+  },
+  {
+   "sembol": "ELSAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-01-22",
+   "son_gun": "2026-10-27",
+   "gun": 279,
+   "funding": 1571,
+   "batti": false
+  },
+  {
+   "sembol": "ENAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-04-02",
+   "son_gun": "2026-10-27",
+   "gun": 939,
+   "funding": 5467,
+   "batti": false
+  },
+  {
+   "sembol": "ENJUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-09-29",
+   "son_gun": "2026-10-27",
+   "gun": 2220,
+   "funding": 7437,
+   "batti": false
+  },
+  {
+   "sembol": "ENSOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-10-14",
+   "son_gun": "2026-10-27",
+   "gun": 379,
+   "funding": 2250,
+   "batti": false
+  },
+  {
+   "sembol": "ENSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-11-30",
+   "son_gun": "2026-10-27",
+   "gun": 1793,
+   "funding": 5299,
+   "batti": false
+  },
+  {
+   "sembol": "EOSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-01-08",
+   "son_gun": "2025-05-21",
+   "gun": 1961,
+   "funding": 7373,
+   "batti": true
+  },
+  {
+   "sembol": "EPICUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-03-13",
+   "son_gun": "2026-10-27",
+   "gun": 594,
+   "funding": 3443,
+   "batti": false
+  },
+  {
+   "sembol": "EPTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-04-21",
+   "son_gun": "2026-10-27",
+   "gun": 555,
+   "funding": 1703,
+   "batti": false
+  },
+  {
+   "sembol": "ERAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-07-17",
+   "son_gun": "2026-10-27",
+   "gun": 468,
+   "funding": 3002,
+   "batti": false
+  },
+  {
+   "sembol": "ESPORTSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-07-29",
+   "son_gun": "2026-10-27",
+   "gun": 456,
+   "funding": 2951,
+   "batti": false
+  },
+  {
+   "sembol": "ESPUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-02-10",
+   "son_gun": "2026-10-27",
+   "gun": 260,
+   "funding": 1566,
+   "batti": false
+  },
+  {
+   "sembol": "ETCUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-01-16",
+   "son_gun": "2026-10-27",
+   "gun": 2477,
+   "funding": 7349,
+   "batti": false
+  },
+  {
+   "sembol": "ETHFIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-03-18",
+   "son_gun": "2026-10-27",
+   "gun": 954,
+   "funding": 5557,
+   "batti": false
+  },
+  {
    "sembol": "ETHUSDT",
    "atlanan": [],
    "ilk_gun": "2020-01-01",
    "son_gun": "2026-10-27",
    "gun": 2492,
    "funding": 7395,
+   "batti": false
+  },
+  {
+   "sembol": "ETHWUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-11-28",
+   "son_gun": "2026-10-27",
+   "gun": 1065,
+   "funding": 6223,
+   "batti": false
+  },
+  {
+   "sembol": "EULUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-10-13",
+   "son_gun": "2026-10-27",
+   "gun": 380,
+   "funding": 2114,
+   "batti": false
+  },
+  {
+   "sembol": "EVAAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-10-03",
+   "son_gun": "2026-10-27",
+   "gun": 390,
+   "funding": 2174,
+   "batti": false
+  },
+  {
+   "sembol": "EWJUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-03-19",
+   "son_gun": "2026-10-27",
+   "gun": 223,
+   "funding": 593,
+   "batti": false
+  },
+  {
+   "sembol": "EWTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-01",
+   "son_gun": "2026-10-27",
+   "gun": 149,
+   "funding": 365,
+   "batti": false
+  },
+  {
+   "sembol": "EWYUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-03-16",
+   "son_gun": "2026-10-27",
+   "gun": 226,
+   "funding": 605,
+   "batti": false
+  },
+  {
+   "sembol": "EWZUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-10",
+   "son_gun": "2026-10-27",
+   "gun": 140,
+   "funding": 338,
+   "batti": false
+  },
+  {
+   "sembol": "FARTCOINUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-12-20",
+   "son_gun": "2026-10-27",
+   "gun": 677,
+   "funding": 3894,
+   "batti": false
+  },
+  {
+   "sembol": "FETUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-01-17",
+   "son_gun": "2026-10-27",
+   "gun": 1380,
+   "funding": 4061,
+   "batti": false
+  },
+  {
+   "sembol": "FFUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-29",
+   "son_gun": "2026-10-27",
+   "gun": 394,
+   "funding": 2198,
+   "batti": false
+  },
+  {
+   "sembol": "FHEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-04-12",
+   "son_gun": "2026-10-27",
+   "gun": 564,
+   "funding": 3217,
+   "batti": false
+  },
+  {
+   "sembol": "FIDAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-09-19",
+   "son_gun": "2026-10-27",
+   "gun": 769,
+   "funding": 4488,
+   "batti": false
+  },
+  {
+   "sembol": "FIGHTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-01-23",
+   "son_gun": "2026-10-27",
+   "gun": 278,
+   "funding": 1502,
+   "batti": false
+  },
+  {
+   "sembol": "FILUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-10-16",
+   "son_gun": "2026-10-27",
+   "gun": 2198,
+   "funding": 6527,
+   "batti": false
+  },
+  {
+   "sembol": "FIOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-09-20",
+   "son_gun": "2026-10-27",
+   "gun": 768,
+   "funding": 3456,
+   "batti": false
+  },
+  {
+   "sembol": "FISUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-04-25",
+   "son_gun": "2026-10-27",
+   "gun": 551,
+   "funding": 1375,
+   "batti": false
+  },
+  {
+   "sembol": "FLEXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-02",
+   "son_gun": "2026-10-27",
+   "gun": 118,
+   "funding": 271,
+   "batti": false
+  },
+  {
+   "sembol": "FLMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-09-29",
+   "son_gun": "2026-10-27",
+   "gun": 2215,
+   "funding": 8483,
+   "batti": false
+  },
+  {
+   "sembol": "FLNCUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-18",
+   "son_gun": "2026-10-27",
+   "gun": 163,
+   "funding": 407,
+   "batti": false
+  },
+  {
+   "sembol": "FLOCKUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-09",
+   "son_gun": "2026-10-27",
+   "gun": 414,
+   "funding": 2319,
+   "batti": false
+  },
+  {
+   "sembol": "FLOWUSDT",
+   "atlanan": [],
+   "ilk_gun": "2022-02-10",
+   "son_gun": "2026-10-27",
+   "gun": 1716,
+   "funding": 6285,
+   "batti": false
+  },
+  {
+   "sembol": "FLUIDUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-24",
+   "son_gun": "2026-10-27",
+   "gun": 399,
+   "funding": 2229,
+   "batti": false
+  },
+  {
+   "sembol": "FLUXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-09-03",
+   "son_gun": "2026-10-27",
+   "gun": 785,
+   "funding": 4545,
+   "batti": false
+  },
+  {
+   "sembol": "FOGOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-01-10",
+   "son_gun": "2026-10-27",
+   "gun": 291,
+   "funding": 1579,
+   "batti": false
+  },
+  {
+   "sembol": "FOLKSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-11-06",
+   "son_gun": "2026-10-27",
+   "gun": 356,
+   "funding": 2328,
+   "batti": false
+  },
+  {
+   "sembol": "FOOTBALLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2022-09-01",
+   "son_gun": "2024-05-28",
+   "gun": 636,
+   "funding": 2064,
+   "batti": true
+  },
+  {
+   "sembol": "FORMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-03-19",
+   "son_gun": "2026-10-27",
+   "gun": 588,
+   "funding": 3363,
+   "batti": false
+  },
+  {
+   "sembol": "FORTHUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-04-08",
+   "son_gun": "2026-10-27",
+   "gun": 568,
+   "funding": 2101,
+   "batti": false
+  },
+  {
+   "sembol": "FRAXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-01-15",
+   "son_gun": "2026-10-27",
+   "gun": 286,
+   "funding": 1551,
+   "batti": false
+  },
+  {
+   "sembol": "FRONTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-09-22",
+   "son_gun": "2024-09-11",
+   "gun": 356,
+   "funding": 3313,
+   "batti": true
+  },
+  {
+   "sembol": "FTMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-09-24",
+   "son_gun": "2026-10-27",
+   "gun": 2220,
+   "funding": 5190,
+   "batti": false
+  },
+  {
+   "sembol": "FTTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2022-04-15",
+   "son_gun": "2026-10-27",
+   "gun": 1657,
+   "funding": 3522,
+   "batti": false
+  },
+  {
+   "sembol": "FUNUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-03-31",
+   "son_gun": "2026-10-27",
+   "gun": 576,
+   "funding": 2823,
+   "batti": false
+  },
+  {
+   "sembol": "FUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-06-18",
+   "son_gun": "2026-10-27",
+   "gun": 497,
+   "funding": 3101,
+   "batti": false
+  },
+  {
+   "sembol": "FWDIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-09",
+   "son_gun": "2026-10-27",
+   "gun": 111,
+   "funding": 250,
+   "batti": false
+  },
+  {
+   "sembol": "FXSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-01-20",
+   "son_gun": "2026-10-27",
+   "gun": 1377,
+   "funding": 3247,
+   "batti": false
+  },
+  {
+   "sembol": "GALAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-09-18",
+   "son_gun": "2026-10-27",
+   "gun": 1866,
+   "funding": 5518,
+   "batti": false
+  },
+  {
+   "sembol": "GALUSDT",
+   "atlanan": [],
+   "ilk_gun": "2022-05-05",
+   "son_gun": "2024-07-30",
+   "gun": 818,
+   "funding": 2499,
+   "batti": true
+  },
+  {
+   "sembol": "GASUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-10-25",
+   "son_gun": "2026-10-27",
+   "gun": 1099,
+   "funding": 6469,
+   "batti": false
+  },
+  {
+   "sembol": "GDXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-08-17",
+   "son_gun": "2026-10-27",
+   "gun": 72,
+   "funding": 134,
+   "batti": false
+  },
+  {
+   "sembol": "GENIUSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-04-16",
+   "son_gun": "2026-10-27",
+   "gun": 195,
+   "funding": 1006,
+   "batti": false
+  },
+  {
+   "sembol": "GEVUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-10",
+   "son_gun": "2026-10-27",
+   "gun": 110,
+   "funding": 248,
+   "batti": false
+  },
+  {
+   "sembol": "GHSTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-09-23",
+   "son_gun": "2026-10-27",
+   "gun": 765,
+   "funding": 3005,
+   "batti": false
+  },
+  {
+   "sembol": "GIGADEVUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-08-03",
+   "son_gun": "2026-10-27",
+   "gun": 86,
+   "funding": 238,
+   "batti": false
+  },
+  {
+   "sembol": "GIGGLEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-10-09",
+   "son_gun": "2026-10-27",
+   "gun": 384,
+   "funding": 2139,
+   "batti": false
+  },
+  {
+   "sembol": "GLMRUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-09-26",
+   "son_gun": "2026-10-27",
+   "gun": 1128,
+   "funding": 1899,
+   "batti": false
+  },
+  {
+   "sembol": "GLMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-02-22",
+   "son_gun": "2026-10-27",
+   "gun": 979,
+   "funding": 5709,
+   "batti": false
+  },
+  {
+   "sembol": "GLWUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-11",
+   "son_gun": "2026-10-27",
+   "gun": 139,
+   "funding": 349,
+   "batti": false
+  },
+  {
+   "sembol": "GMEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-10",
+   "son_gun": "2026-10-27",
+   "gun": 140,
+   "funding": 338,
+   "batti": false
+  },
+  {
+   "sembol": "GMTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2022-03-15",
+   "son_gun": "2026-10-27",
+   "gun": 1686,
+   "funding": 5866,
+   "batti": false
+  },
+  {
+   "sembol": "GMXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-02-17",
+   "son_gun": "2026-10-27",
+   "gun": 1349,
+   "funding": 3965,
+   "batti": false
+  },
+  {
+   "sembol": "GOATUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-10-24",
+   "son_gun": "2026-10-27",
+   "gun": 734,
+   "funding": 4237,
+   "batti": false
+  },
+  {
+   "sembol": "GOOGLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-03-26",
+   "son_gun": "2026-10-27",
+   "gun": 216,
+   "funding": 583,
+   "batti": false
+  },
+  {
+   "sembol": "GPROUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-03",
+   "son_gun": "2026-10-27",
+   "gun": 55,
+   "funding": 82,
+   "batti": false
+  },
+  {
+   "sembol": "GPSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-02-17",
+   "son_gun": "2026-10-27",
+   "gun": 618,
+   "funding": 4043,
+   "batti": false
+  },
+  {
+   "sembol": "GRAMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-02",
+   "son_gun": "2026-10-27",
+   "gun": 118,
+   "funding": 544,
+   "batti": false
+  },
+  {
+   "sembol": "GRASSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-11-08",
+   "son_gun": "2026-10-27",
+   "gun": 719,
+   "funding": 4147,
+   "batti": false
+  },
+  {
+   "sembol": "GRIFFAINUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-01-02",
+   "son_gun": "2026-10-27",
+   "gun": 664,
+   "funding": 3817,
+   "batti": false
+  },
+  {
+   "sembol": "GRTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-12-19",
+   "son_gun": "2026-10-27",
+   "gun": 2133,
+   "funding": 6335,
+   "batti": false
+  },
+  {
+   "sembol": "GRVTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-31",
+   "son_gun": "2026-10-27",
+   "gun": 89,
+   "funding": 369,
+   "batti": false
+  },
+  {
+   "sembol": "GSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-29",
+   "son_gun": "2026-10-27",
+   "gun": 91,
+   "funding": 196,
+   "batti": false
+  },
+  {
+   "sembol": "GTCUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-06-11",
+   "son_gun": "2026-10-27",
+   "gun": 1960,
+   "funding": 5813,
+   "batti": false
+  },
+  {
+   "sembol": "GTLBUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-02",
+   "son_gun": "2026-10-27",
+   "gun": 56,
+   "funding": 85,
+   "batti": false
+  },
+  {
+   "sembol": "GUAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-12-21",
+   "son_gun": "2026-10-27",
+   "gun": 311,
+   "funding": 1800,
+   "batti": false
+  },
+  {
+   "sembol": "GUNUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-03-31",
+   "son_gun": "2026-10-27",
+   "gun": 576,
+   "funding": 3289,
+   "batti": false
+  },
+  {
+   "sembol": "GUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-08-15",
+   "son_gun": "2026-10-27",
+   "gun": 804,
+   "funding": 4783,
+   "batti": false
+  },
+  {
+   "sembol": "GWEIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-01-29",
+   "son_gun": "2026-10-27",
+   "gun": 272,
+   "funding": 1788,
+   "batti": false
+  },
+  {
+   "sembol": "HAEDALUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-05-01",
+   "son_gun": "2026-10-27",
+   "gun": 545,
+   "funding": 3107,
+   "batti": false
+  },
+  {
+   "sembol": "HANAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-26",
+   "son_gun": "2026-10-27",
+   "gun": 397,
+   "funding": 3698,
+   "batti": false
+  },
+  {
+   "sembol": "HANMIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-08-14",
+   "son_gun": "2026-10-27",
+   "gun": 75,
+   "funding": 226,
+   "batti": false
+  },
+  {
+   "sembol": "HBARUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-03-17",
+   "son_gun": "2026-10-27",
+   "gun": 2046,
+   "funding": 6071,
+   "batti": false
+  },
+  {
+   "sembol": "HDUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-15",
+   "son_gun": "2026-10-27",
+   "gun": 166,
+   "funding": 433,
+   "batti": false
+  },
+  {
+   "sembol": "HEIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-02-13",
+   "son_gun": "2026-10-27",
+   "gun": 622,
+   "funding": 3580,
+   "batti": false
+  },
+  {
+   "sembol": "HEMIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-08-29",
+   "son_gun": "2026-10-27",
+   "gun": 425,
+   "funding": 2388,
+   "batti": false
+  },
+  {
+   "sembol": "HFTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-04-06",
+   "son_gun": "2026-10-27",
+   "gun": 1301,
+   "funding": 3667,
+   "batti": false
+  },
+  {
+   "sembol": "HIFIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-09-16",
+   "son_gun": "2026-10-27",
+   "gun": 1138,
+   "funding": 4414,
+   "batti": false
+  },
+  {
+   "sembol": "HIGHUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-02-07",
+   "son_gun": "2026-10-27",
+   "gun": 1359,
+   "funding": 3673,
+   "batti": false
+  },
+  {
+   "sembol": "HIMSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-09",
+   "son_gun": "2026-10-27",
+   "gun": 141,
+   "funding": 341,
+   "batti": false
+  },
+  {
+   "sembol": "HIPPOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-11-13",
+   "son_gun": "2026-10-27",
+   "gun": 714,
+   "funding": 4082,
+   "batti": false
+  },
+  {
+   "sembol": "HIVEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-12-23",
+   "son_gun": "2026-10-27",
+   "gun": 674,
+   "funding": 3961,
+   "batti": false
+  },
+  {
+   "sembol": "HK0625USDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-01",
+   "son_gun": "2026-10-27",
+   "gun": 57,
+   "funding": 179,
+   "batti": false
+  },
+  {
+   "sembol": "HK0700USDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-22",
+   "son_gun": "2026-10-27",
+   "gun": 98,
+   "funding": 289,
+   "batti": false
+  },
+  {
+   "sembol": "HK0992USDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-07",
+   "son_gun": "2026-10-27",
+   "gun": 51,
+   "funding": 160,
+   "batti": false
+  },
+  {
+   "sembol": "HK1810USDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-22",
+   "son_gun": "2026-10-27",
+   "gun": 98,
+   "funding": 289,
+   "batti": false
+  },
+  {
+   "sembol": "HMSTRUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-09-26",
+   "son_gun": "2026-10-27",
+   "gun": 762,
+   "funding": 4405,
+   "batti": false
+  },
+  {
+   "sembol": "HNTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-09-28",
+   "son_gun": "2024-05-28",
+   "gun": 1339,
+   "funding": 4266,
+   "batti": true
+  },
+  {
+   "sembol": "HOLOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-11",
+   "son_gun": "2026-10-27",
+   "gun": 412,
+   "funding": 2307,
+   "batti": false
+  },
+  {
+   "sembol": "HOMEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-06-10",
+   "son_gun": "2026-10-27",
+   "gun": 505,
+   "funding": 3209,
+   "batti": false
+  },
+  {
+   "sembol": "HOODUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-02-02",
+   "son_gun": "2026-10-27",
+   "gun": 268,
+   "funding": 722,
+   "batti": false
+  },
+  {
+   "sembol": "HOOKUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-01-23",
+   "son_gun": "2026-10-27",
+   "gun": 1374,
+   "funding": 3478,
+   "batti": false
+  },
+  {
+   "sembol": "HOTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-03-30",
+   "son_gun": "2026-10-27",
+   "gun": 2033,
+   "funding": 6032,
+   "batti": false
+  },
+  {
+   "sembol": "HPEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-08",
+   "son_gun": "2026-10-27",
+   "gun": 142,
+   "funding": 358,
+   "batti": false
+  },
+  {
+   "sembol": "HUMAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-05-26",
+   "son_gun": "2026-10-27",
+   "gun": 520,
+   "funding": 2953,
+   "batti": false
+  },
+  {
+   "sembol": "HUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-06-25",
+   "son_gun": "2026-10-27",
+   "gun": 490,
+   "funding": 3190,
+   "batti": false
+  },
+  {
+   "sembol": "HUTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-18",
+   "son_gun": "2026-10-27",
+   "gun": 40,
+   "funding": 38,
+   "batti": false
+  },
+  {
+   "sembol": "HYPERUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-04-22",
+   "son_gun": "2026-10-27",
+   "gun": 554,
+   "funding": 3307,
+   "batti": false
+  },
+  {
+   "sembol": "HYPEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-05-30",
+   "son_gun": "2026-10-27",
+   "gun": 516,
+   "funding": 2930,
+   "batti": false
+  },
+  {
+   "sembol": "HYUNDAIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-02",
+   "son_gun": "2026-10-27",
+   "gun": 148,
+   "funding": 602,
+   "batti": false
+  },
+  {
+   "sembol": "IBMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-03",
+   "son_gun": "2026-10-27",
+   "gun": 147,
+   "funding": 364,
+   "batti": false
+  },
+  {
+   "sembol": "ICNTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-07-03",
+   "son_gun": "2026-10-27",
+   "gun": 482,
+   "funding": 2726,
+   "batti": false
+  },
+  {
+   "sembol": "ICPUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-05-11",
+   "son_gun": "2026-10-27",
+   "gun": 1970,
+   "funding": 4473,
+   "batti": false
+  },
+  {
+   "sembol": "ICXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-09-15",
+   "son_gun": "2026-10-27",
+   "gun": 2234,
+   "funding": 7052,
+   "batti": false
+  },
+  {
+   "sembol": "IDEXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-05-03",
+   "son_gun": "2026-10-27",
+   "gun": 1274,
+   "funding": 2338,
+   "batti": false
+  },
+  {
+   "sembol": "IDOLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-07-04",
+   "son_gun": "2026-10-27",
+   "gun": 481,
+   "funding": 2720,
+   "batti": false
+  },
+  {
+   "sembol": "IDUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-03-23",
+   "son_gun": "2026-10-27",
+   "gun": 1315,
+   "funding": 4307,
+   "batti": false
+  },
+  {
+   "sembol": "ILVUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-11-10",
+   "son_gun": "2026-10-27",
+   "gun": 1083,
+   "funding": 6331,
+   "batti": false
+  },
+  {
+   "sembol": "IMXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2022-02-11",
+   "son_gun": "2026-10-27",
+   "gun": 1715,
+   "funding": 8331,
+   "batti": false
+  },
+  {
+   "sembol": "INITUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-04-16",
+   "son_gun": "2026-10-27",
+   "gun": 560,
+   "funding": 3253,
+   "batti": false
+  },
+  {
+   "sembol": "INJUSDT",
+   "atlanan": [],
+   "ilk_gun": "2022-08-17",
+   "son_gun": "2026-10-27",
+   "gun": 1533,
+   "funding": 4519,
+   "batti": false
+  },
+  {
+   "sembol": "INTCUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-02-02",
+   "son_gun": "2026-10-27",
+   "gun": 268,
+   "funding": 722,
+   "batti": false
+  },
+  {
+   "sembol": "INTWUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-09",
+   "son_gun": "2026-10-27",
+   "gun": 111,
+   "funding": 250,
+   "batti": false
+  },
+  {
+   "sembol": "INUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-08-07",
+   "son_gun": "2026-10-27",
+   "gun": 447,
+   "funding": 2536,
+   "batti": false
+  },
+  {
+   "sembol": "INXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-01-30",
+   "son_gun": "2026-10-27",
+   "gun": 271,
+   "funding": 1458,
+   "batti": false
+  },
+  {
+   "sembol": "IONQUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-08-28",
+   "son_gun": "2026-10-27",
+   "gun": 61,
+   "funding": 100,
+   "batti": false
+  },
+  {
+   "sembol": "IOSTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-02-21",
+   "son_gun": "2026-10-27",
+   "gun": 2441,
+   "funding": 7407,
+   "batti": false
+  },
+  {
+   "sembol": "IOTAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-02-12",
+   "son_gun": "2026-10-27",
+   "gun": 2445,
+   "funding": 7268,
+   "batti": false
+  },
+  {
+   "sembol": "IOTXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-08-12",
+   "son_gun": "2026-10-27",
+   "gun": 1903,
+   "funding": 5629,
+   "batti": false
+  },
+  {
+   "sembol": "IOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-06-11",
+   "son_gun": "2026-10-27",
+   "gun": 869,
+   "funding": 5047,
+   "batti": false
+  },
+  {
+   "sembol": "IPUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-02-13",
+   "son_gun": "2026-10-27",
+   "gun": 622,
+   "funding": 3569,
+   "batti": false
+  },
+  {
+   "sembol": "IRENUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-03",
+   "son_gun": "2026-10-27",
+   "gun": 147,
+   "funding": 359,
+   "batti": false
+  },
+  {
+   "sembol": "IRUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-12-21",
+   "son_gun": "2026-10-27",
+   "gun": 311,
+   "funding": 774,
+   "batti": false
+  },
+  {
+   "sembol": "IRYSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-11-26",
+   "son_gun": "2026-10-27",
+   "gun": 336,
+   "funding": 1919,
+   "batti": false
+  },
+  {
+   "sembol": "IWMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-08",
+   "son_gun": "2026-10-27",
+   "gun": 142,
+   "funding": 344,
+   "batti": false
+  },
+  {
+   "sembol": "JASMYUSDT",
+   "atlanan": [],
+   "ilk_gun": "2022-04-20",
+   "son_gun": "2026-10-27",
+   "gun": 1652,
+   "funding": 4877,
+   "batti": false
+  },
+  {
+   "sembol": "JCTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-11-10",
+   "son_gun": "2026-10-27",
+   "gun": 352,
+   "funding": 1948,
+   "batti": false
+  },
+  {
+   "sembol": "JELLYJELLYUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-03-26",
+   "son_gun": "2026-10-27",
+   "gun": 581,
+   "funding": 3332,
+   "batti": false
+  },
+  {
+   "sembol": "JOEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-03-29",
+   "son_gun": "2026-10-27",
+   "gun": 1309,
+   "funding": 3847,
+   "batti": false
+  },
+  {
+   "sembol": "JPMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-18",
+   "son_gun": "2026-10-27",
+   "gun": 163,
+   "funding": 412,
+   "batti": false
+  },
+  {
+   "sembol": "JSTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-04-28",
+   "son_gun": "2026-10-27",
+   "gun": 548,
+   "funding": 3122,
+   "batti": false
+  },
+  {
+   "sembol": "JTOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-12-08",
+   "son_gun": "2026-10-27",
+   "gun": 1055,
+   "funding": 6164,
+   "batti": false
+  },
+  {
+   "sembol": "JUPUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-01-31",
+   "son_gun": "2026-10-27",
+   "gun": 1001,
+   "funding": 5836,
+   "batti": false
+  },
+  {
+   "sembol": "KAIAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-12-04",
+   "son_gun": "2026-10-27",
+   "gun": 693,
+   "funding": 3991,
+   "batti": false
+  },
+  {
+   "sembol": "KAITOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-02-20",
+   "son_gun": "2026-10-27",
+   "gun": 615,
+   "funding": 3523,
+   "batti": false
+  },
+  {
+   "sembol": "KASUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-11-17",
+   "son_gun": "2026-10-27",
+   "gun": 1076,
+   "funding": 6294,
+   "batti": false
+  },
+  {
+   "sembol": "KATUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-03-02",
+   "son_gun": "2026-10-27",
+   "gun": 240,
+   "funding": 1275,
+   "batti": false
+  },
+  {
+   "sembol": "KAVAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-07-28",
+   "son_gun": "2026-10-27",
+   "gun": 2283,
+   "funding": 8489,
+   "batti": false
+  },
+  {
+   "sembol": "KDAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-09-18",
+   "son_gun": "2026-10-27",
+   "gun": 770,
+   "funding": 2483,
+   "batti": false
+  },
+  {
+   "sembol": "KEEPUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-06-22",
+   "son_gun": "2022-02-15",
+   "gun": 239,
+   "funding": 714,
+   "batti": true
+  },
+  {
+   "sembol": "KERNELUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-04-14",
+   "son_gun": "2026-10-27",
+   "gun": 562,
+   "funding": 3205,
+   "batti": false
+  },
+  {
+   "sembol": "KEYUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-05-24",
+   "son_gun": "2026-10-27",
+   "gun": 1253,
+   "funding": 2274,
+   "batti": false
+  },
+  {
+   "sembol": "KGENUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-10-07",
+   "son_gun": "2026-10-27",
+   "gun": 386,
+   "funding": 2150,
+   "batti": false
+  },
+  {
+   "sembol": "KITEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-10-29",
+   "son_gun": "2026-10-27",
+   "gun": 364,
+   "funding": 2018,
+   "batti": false
+  },
+  {
+   "sembol": "KLACUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-22",
+   "son_gun": "2026-10-27",
+   "gun": 128,
+   "funding": 306,
+   "batti": false
+  },
+  {
+   "sembol": "KLAYUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-10-12",
+   "son_gun": "2026-10-27",
+   "gun": 1842,
+   "funding": 4041,
+   "batti": false
+  },
+  {
+   "sembol": "KMNOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-12-20",
+   "son_gun": "2026-10-27",
+   "gun": 677,
+   "funding": 3894,
+   "batti": false
+  },
+  {
+   "sembol": "KNCUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-06-22",
+   "son_gun": "2026-10-27",
+   "gun": 2314,
+   "funding": 6875,
+   "batti": false
+  },
+  {
+   "sembol": "KODEX200USDT",
+   "atlanan": [],
+   "ilk_gun": "2026-08-14",
+   "son_gun": "2026-10-27",
+   "gun": 75,
+   "funding": 226,
+   "batti": false
+  },
+  {
+   "sembol": "KOMAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-12-10",
+   "son_gun": "2026-10-27",
+   "gun": 687,
+   "funding": 3955,
+   "batti": false
+  },
+  {
+   "sembol": "KORUUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-22",
+   "son_gun": "2026-10-27",
+   "gun": 128,
+   "funding": 300,
+   "batti": false
+  },
+  {
+   "sembol": "KOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-08-06",
+   "son_gun": "2026-10-27",
+   "gun": 83,
+   "funding": 172,
+   "batti": false
+  },
+  {
+   "sembol": "KSMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-10-14",
+   "son_gun": "2026-10-27",
+   "gun": 2200,
+   "funding": 6533,
+   "batti": false
+  },
+  {
+   "sembol": "KSTRUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-02",
+   "son_gun": "2026-10-27",
+   "gun": 118,
+   "funding": 271,
+   "batti": false
+  },
+  {
+   "sembol": "KUAISHOUUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-08-11",
+   "son_gun": "2026-10-27",
+   "gun": 78,
+   "funding": 217,
+   "batti": false
+  },
+  {
+   "sembol": "LABUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-10-17",
+   "son_gun": "2026-10-27",
+   "gun": 376,
+   "funding": 2478,
+   "batti": false
+  },
+  {
+   "sembol": "LAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-06-05",
+   "son_gun": "2026-10-27",
+   "gun": 510,
+   "funding": 4648,
+   "batti": false
+  },
+  {
+   "sembol": "LAYERUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-02-11",
+   "son_gun": "2026-10-27",
+   "gun": 624,
+   "funding": 5694,
+   "batti": false
+  },
+  {
+   "sembol": "LDOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2022-09-22",
+   "son_gun": "2026-10-27",
+   "gun": 1497,
+   "funding": 4409,
+   "batti": false
+  },
+  {
+   "sembol": "LENDUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-07-23",
+   "son_gun": "2020-11-10",
+   "gun": 111,
+   "funding": 243,
+   "batti": true
+  },
+  {
+   "sembol": "LEVERUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-03-30",
+   "son_gun": "2026-10-27",
+   "gun": 1308,
+   "funding": 2665,
+   "batti": false
+  },
+  {
+   "sembol": "LGELECTRONICSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-08-14",
+   "son_gun": "2026-10-27",
+   "gun": 75,
+   "funding": 226,
+   "batti": false
+  },
+  {
+   "sembol": "LIGHTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-27",
+   "son_gun": "2026-10-27",
+   "gun": 396,
+   "funding": 2281,
+   "batti": false
+  },
+  {
+   "sembol": "LINAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-03-19",
+   "son_gun": "2026-10-27",
+   "gun": 2044,
+   "funding": 4660,
+   "batti": false
+  },
+  {
+   "sembol": "LINEAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-01",
+   "son_gun": "2026-10-27",
+   "gun": 422,
+   "funding": 2366,
+   "batti": false
+  },
+  {
+   "sembol": "LINKUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-01-17",
+   "son_gun": "2026-10-27",
+   "gun": 2476,
+   "funding": 7346,
+   "batti": false
+  },
+  {
+   "sembol": "LISTAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-06-20",
+   "son_gun": "2026-10-27",
+   "gun": 860,
+   "funding": 4993,
+   "batti": false
+  },
+  {
+   "sembol": "LITEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-15",
+   "son_gun": "2026-10-27",
+   "gun": 166,
+   "funding": 419,
+   "batti": false
+  },
+  {
+   "sembol": "LITUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-02-18",
+   "son_gun": "2026-10-27",
+   "gun": 2073,
+   "funding": 6433,
+   "batti": false
+  },
+  {
+   "sembol": "LLYUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-01",
+   "son_gun": "2026-10-27",
+   "gun": 149,
+   "funding": 370,
+   "batti": false
+  },
+  {
+   "sembol": "LOKAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-09-24",
+   "son_gun": "2026-10-27",
+   "gun": 764,
+   "funding": 1800,
+   "batti": false
+  },
+  {
+   "sembol": "LOOMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-10-11",
+   "son_gun": "2026-10-27",
+   "gun": 1113,
+   "funding": 3702,
+   "batti": false
+  },
+  {
+   "sembol": "LPTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-11-11",
+   "son_gun": "2026-10-27",
+   "gun": 1812,
+   "funding": 9519,
+   "batti": false
+  },
+  {
+   "sembol": "LQTYUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-03-10",
+   "son_gun": "2026-10-27",
+   "gun": 1328,
+   "funding": 3904,
+   "batti": false
+  },
+  {
+   "sembol": "LRCUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-10-19",
+   "son_gun": "2026-10-27",
+   "gun": 2195,
+   "funding": 6662,
+   "batti": false
+  },
+  {
+   "sembol": "LRCXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-22",
+   "son_gun": "2026-10-27",
+   "gun": 128,
+   "funding": 306,
+   "batti": false
+  },
+  {
+   "sembol": "LSKUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-01-25",
+   "son_gun": "2026-10-27",
+   "gun": 1007,
+   "funding": 7026,
+   "batti": false
+  },
+  {
+   "sembol": "LTCUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-01-09",
+   "son_gun": "2026-10-27",
+   "gun": 2479,
+   "funding": 7370,
+   "batti": false
+  },
+  {
+   "sembol": "LUMIAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-12-18",
+   "son_gun": "2026-10-27",
+   "gun": 679,
+   "funding": 3908,
+   "batti": false
+  },
+  {
+   "sembol": "LUNA2USDT",
+   "atlanan": [],
+   "ilk_gun": "2022-09-10",
+   "son_gun": "2026-10-27",
+   "gun": 1509,
+   "funding": 5892,
+   "batti": false
+  },
+  {
+   "sembol": "LUNAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-01-28",
+   "son_gun": "2022-05-13",
+   "gun": 466,
+   "funding": 1410,
+   "batti": true
+  },
+  {
+   "sembol": "LYNUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-10-06",
+   "son_gun": "2026-10-27",
+   "gun": 387,
+   "funding": 2656,
+   "batti": false
+  },
+  {
+   "sembol": "LYTEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-08-17",
+   "son_gun": "2026-10-27",
+   "gun": 72,
+   "funding": 134,
+   "batti": false
+  },
+  {
+   "sembol": "MAGICUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-01-25",
+   "son_gun": "2026-10-27",
+   "gun": 1372,
+   "funding": 5620,
+   "batti": false
+  },
+  {
+   "sembol": "MAGMAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-12-31",
+   "son_gun": "2026-10-27",
+   "gun": 301,
+   "funding": 1639,
+   "batti": false
+  },
+  {
+   "sembol": "MANAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-03-15",
+   "son_gun": "2026-10-27",
+   "gun": 2048,
+   "funding": 6077,
+   "batti": false
+  },
+  {
+   "sembol": "MANTAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-01-18",
+   "son_gun": "2026-10-27",
+   "gun": 1014,
+   "funding": 5917,
+   "batti": false
+  },
+  {
+   "sembol": "MANTRAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-03-04",
+   "son_gun": "2026-10-27",
+   "gun": 238,
+   "funding": 1263,
+   "batti": false
+  },
+  {
+   "sembol": "MARAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-08-28",
+   "son_gun": "2026-10-27",
+   "gun": 61,
+   "funding": 100,
+   "batti": false
+  },
+  {
+   "sembol": "MARSCOINUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-01",
+   "son_gun": "2026-10-27",
+   "gun": 57,
+   "funding": 177,
+   "batti": false
+  },
+  {
+   "sembol": "MASKUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-08-27",
+   "son_gun": "2026-10-27",
+   "gun": 1883,
+   "funding": 7777,
+   "batti": false
+  },
+  {
+   "sembol": "MATICUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-10-22",
+   "son_gun": "2024-09-11",
+   "gun": 1421,
+   "funding": 6509,
+   "batti": true
+  },
+  {
+   "sembol": "MAVIAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-02-21",
+   "son_gun": "2026-10-27",
+   "gun": 980,
+   "funding": 5714,
+   "batti": false
+  },
+  {
+   "sembol": "MAVUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-06-29",
+   "son_gun": "2026-10-27",
+   "gun": 1217,
+   "funding": 3571,
+   "batti": false
+  },
+  {
+   "sembol": "MBLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-11-14",
+   "son_gun": "2024-05-28",
+   "gun": 197,
+   "funding": 1486,
+   "batti": true
+  },
+  {
+   "sembol": "MBOXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-08-28",
+   "son_gun": "2026-10-27",
+   "gun": 791,
+   "funding": 3978,
+   "batti": false
+  },
+  {
+   "sembol": "MDBUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-02",
+   "son_gun": "2026-10-27",
+   "gun": 56,
+   "funding": 85,
+   "batti": false
+  },
+  {
+   "sembol": "MDTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-06-30",
+   "son_gun": "2026-10-27",
+   "gun": 1208,
+   "funding": 2163,
+   "batti": false
+  },
+  {
+   "sembol": "MEGAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-01-30",
+   "son_gun": "2026-10-27",
+   "gun": 271,
+   "funding": 1460,
+   "batti": false
+  },
+  {
+   "sembol": "MEITUANUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-08-11",
+   "son_gun": "2026-10-27",
+   "gun": 78,
+   "funding": 217,
+   "batti": false
+  },
+  {
+   "sembol": "MELANIAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-01-20",
+   "son_gun": "2026-10-27",
+   "gun": 646,
+   "funding": 3710,
+   "batti": false
+  },
+  {
+   "sembol": "MEMEFIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-04-25",
+   "son_gun": "2026-10-27",
+   "gun": 551,
+   "funding": 649,
+   "batti": false
+  },
+  {
+   "sembol": "MEMEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-11-03",
+   "son_gun": "2026-10-27",
+   "gun": 1090,
+   "funding": 6373,
+   "batti": false
+  },
+  {
+   "sembol": "MERLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-05-29",
+   "son_gun": "2026-10-27",
+   "gun": 517,
+   "funding": 3238,
+   "batti": false
+  },
+  {
+   "sembol": "METAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-03-26",
+   "son_gun": "2026-10-27",
+   "gun": 216,
+   "funding": 583,
+   "batti": false
+  },
+  {
+   "sembol": "METISUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-03-12",
+   "son_gun": "2026-10-27",
+   "gun": 960,
+   "funding": 5597,
+   "batti": false
+  },
+  {
+   "sembol": "METUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-10-11",
+   "son_gun": "2026-10-27",
+   "gun": 382,
+   "funding": 2126,
+   "batti": false
+  },
+  {
+   "sembol": "MEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-12-10",
+   "son_gun": "2026-10-27",
+   "gun": 687,
+   "funding": 5198,
+   "batti": false
+  },
+  {
+   "sembol": "MEWUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-06-17",
+   "son_gun": "2026-10-27",
+   "gun": 863,
+   "funding": 5011,
+   "batti": false
+  },
+  {
+   "sembol": "MILKUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-05-06",
+   "son_gun": "2026-10-27",
+   "gun": 540,
+   "funding": 1277,
+   "batti": false
+  },
+  {
+   "sembol": "MINAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-02-07",
+   "son_gun": "2026-10-27",
+   "gun": 1359,
+   "funding": 4007,
+   "batti": false
+  },
+  {
+   "sembol": "MINIMAXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-17",
+   "son_gun": "2026-10-27",
+   "gun": 103,
+   "funding": 289,
+   "batti": false
+  },
+  {
+   "sembol": "MIRAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-26",
+   "son_gun": "2026-10-27",
+   "gun": 397,
+   "funding": 2450,
+   "batti": false
+  },
+  {
+   "sembol": "MITOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-08-28",
+   "son_gun": "2026-10-27",
+   "gun": 426,
+   "funding": 2390,
+   "batti": false
+  },
+  {
+   "sembol": "MKRUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-08-13",
+   "son_gun": "2026-10-27",
+   "gun": 2262,
+   "funding": 5557,
+   "batti": false
+  },
+  {
+   "sembol": "MLNUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-03-31",
+   "son_gun": "2026-10-27",
+   "gun": 576,
+   "funding": 2484,
+   "batti": false
+  },
+  {
+   "sembol": "MMTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-11-04",
+   "son_gun": "2026-10-27",
+   "gun": 358,
+   "funding": 1982,
+   "batti": false
+  },
+  {
+   "sembol": "MOCAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-12-16",
+   "son_gun": "2026-10-27",
+   "gun": 681,
+   "funding": 3920,
+   "batti": false
+  },
+  {
+   "sembol": "MONUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-10-10",
+   "son_gun": "2026-10-27",
+   "gun": 383,
+   "funding": 2133,
+   "batti": false
+  },
+  {
+   "sembol": "MOODENGUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-10-25",
+   "son_gun": "2026-10-27",
+   "gun": 733,
+   "funding": 4232,
+   "batti": false
+  },
+  {
+   "sembol": "MOONSHOTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-22",
+   "son_gun": "2026-10-27",
+   "gun": 36,
+   "funding": 26,
+   "batti": false
+  },
+  {
+   "sembol": "MORPHOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-11-27",
+   "son_gun": "2026-10-27",
+   "gun": 700,
+   "funding": 4033,
+   "batti": false
+  },
+  {
+   "sembol": "MOVEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-12-09",
+   "son_gun": "2026-10-27",
+   "gun": 688,
+   "funding": 3997,
+   "batti": false
+  },
+  {
+   "sembol": "MOVRUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-12-26",
+   "son_gun": "2026-10-27",
+   "gun": 1037,
+   "funding": 6055,
+   "batti": false
+  },
+  {
+   "sembol": "MPUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-29",
+   "son_gun": "2026-10-27",
+   "gun": 29,
+   "funding": 5,
+   "batti": false
+  },
+  {
+   "sembol": "MRKUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-08-28",
+   "son_gun": "2026-10-27",
+   "gun": 61,
+   "funding": 105,
+   "batti": false
+  },
+  {
+   "sembol": "MRNAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-08-25",
+   "son_gun": "2026-10-27",
+   "gun": 64,
+   "funding": 110,
+   "batti": false
+  },
+  {
+   "sembol": "MRVLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-15",
+   "son_gun": "2026-10-27",
+   "gun": 166,
+   "funding": 423,
+   "batti": false
+  },
+  {
+   "sembol": "MSFTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-04-20",
+   "son_gun": "2026-10-27",
+   "gun": 191,
+   "funding": 527,
+   "batti": false
+  },
+  {
+   "sembol": "MSTRUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-02-09",
+   "son_gun": "2026-10-27",
+   "gun": 261,
+   "funding": 709,
+   "batti": false
+  },
+  {
+   "sembol": "MTLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-03-31",
+   "son_gun": "2026-10-27",
+   "gun": 2037,
+   "funding": 6197,
+   "batti": false
+  },
+  {
+   "sembol": "MUBARAKUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-03-17",
+   "son_gun": "2026-10-27",
+   "gun": 590,
+   "funding": 3373,
+   "batti": false
+  },
+  {
+   "sembol": "MUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-07-07",
+   "son_gun": "2026-10-27",
+   "gun": 478,
+   "funding": 3632,
+   "batti": false
+  },
+  {
+   "sembol": "MUUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-04-07",
+   "son_gun": "2026-10-27",
+   "gun": 204,
+   "funding": 535,
+   "batti": false
+  },
+  {
+   "sembol": "MUUUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-16",
+   "son_gun": "2026-10-27",
+   "gun": 104,
+   "funding": 230,
+   "batti": false
+  },
+  {
+   "sembol": "MVLLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-29",
+   "son_gun": "2026-10-27",
+   "gun": 121,
+   "funding": 295,
+   "batti": false
+  },
+  {
+   "sembol": "MYROUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-03-05",
+   "son_gun": "2026-10-27",
+   "gun": 967,
+   "funding": 3715,
+   "batti": false
+  },
+  {
+   "sembol": "MYXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-06-18",
+   "son_gun": "2026-10-27",
+   "gun": 497,
+   "funding": 4283,
+   "batti": false
+  },
+  {
+   "sembol": "NAORISUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-07-31",
+   "son_gun": "2026-10-27",
+   "gun": 454,
+   "funding": 2559,
+   "batti": false
+  },
+  {
+   "sembol": "NATGASUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-04-01",
+   "son_gun": "2026-10-27",
+   "gun": 210,
+   "funding": 1101,
+   "batti": false
+  },
+  {
+   "sembol": "NAVERUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-08-14",
+   "son_gun": "2026-10-27",
+   "gun": 75,
+   "funding": 226,
+   "batti": false
+  },
+  {
+   "sembol": "NBISUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-26",
+   "son_gun": "2026-10-27",
+   "gun": 155,
+   "funding": 382,
+   "batti": false
+  },
+  {
+   "sembol": "NEARUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-10-15",
+   "son_gun": "2026-10-27",
+   "gun": 2199,
+   "funding": 6532,
+   "batti": false
+  },
+  {
+   "sembol": "NEIROETHUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-09-06",
+   "son_gun": "2026-10-27",
+   "gun": 782,
+   "funding": 2309,
+   "batti": false
+  },
+  {
+   "sembol": "NEIROUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-09-16",
+   "son_gun": "2026-10-27",
+   "gun": 772,
+   "funding": 4466,
+   "batti": false
+  },
+  {
+   "sembol": "NEOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-02-17",
+   "son_gun": "2026-10-27",
+   "gun": 2445,
+   "funding": 7253,
+   "batti": false
+  },
+  {
+   "sembol": "NETUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-08-17",
+   "son_gun": "2026-10-27",
+   "gun": 72,
+   "funding": 134,
+   "batti": false
+  },
+  {
+   "sembol": "NEWTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-06-19",
+   "son_gun": "2026-10-27",
+   "gun": 496,
+   "funding": 3241,
+   "batti": false
+  },
+  {
+   "sembol": "NFLXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-09",
+   "son_gun": "2026-10-27",
+   "gun": 141,
+   "funding": 341,
+   "batti": false
+  },
+  {
+   "sembol": "NFPUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-12-27",
+   "son_gun": "2026-10-27",
+   "gun": 1036,
+   "funding": 5521,
+   "batti": false
+  },
+  {
+   "sembol": "NIGHTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-12-10",
+   "son_gun": "2026-10-27",
+   "gun": 322,
+   "funding": 1766,
+   "batti": false
+  },
+  {
+   "sembol": "NILUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-03-24",
+   "son_gun": "2026-10-27",
+   "gun": 583,
+   "funding": 3332,
+   "batti": false
+  },
+  {
+   "sembol": "NKEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-29",
+   "son_gun": "2026-10-27",
+   "gun": 29,
+   "funding": 5,
+   "batti": false
+  },
+  {
+   "sembol": "NKNUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-04-09",
+   "son_gun": "2026-10-27",
+   "gun": 2028,
+   "funding": 6169,
+   "batti": false
+  },
+  {
+   "sembol": "NMRUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-06-22",
+   "son_gun": "2026-10-27",
+   "gun": 1224,
+   "funding": 6870,
+   "batti": false
+  },
+  {
+   "sembol": "NOKUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-01",
+   "son_gun": "2026-10-27",
+   "gun": 149,
+   "funding": 365,
+   "batti": false
+  },
+  {
+   "sembol": "NOMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-10-01",
+   "son_gun": "2026-10-27",
+   "gun": 392,
+   "funding": 2390,
+   "batti": false
+  },
+  {
+   "sembol": "NOTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-05-16",
+   "son_gun": "2026-10-27",
+   "gun": 895,
+   "funding": 5203,
+   "batti": false
+  },
+  {
+   "sembol": "NOWUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-03",
+   "son_gun": "2026-10-27",
+   "gun": 147,
+   "funding": 359,
+   "batti": false
+  },
+  {
+   "sembol": "NTRNUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-11-14",
+   "son_gun": "2026-10-27",
+   "gun": 1079,
+   "funding": 5166,
+   "batti": false
+  },
+  {
+   "sembol": "NULSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-08-26",
+   "son_gun": "2026-10-27",
+   "gun": 793,
+   "funding": 1783,
+   "batti": false
+  },
+  {
+   "sembol": "NUUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-10-21",
+   "son_gun": "2022-02-15",
+   "gun": 118,
+   "funding": 357,
+   "batti": true
+  },
+  {
+   "sembol": "NVDAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-03-26",
+   "son_gun": "2026-10-27",
+   "gun": 216,
+   "funding": 583,
+   "batti": false
+  },
+  {
+   "sembol": "NVDLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-02",
+   "son_gun": "2026-10-27",
+   "gun": 56,
+   "funding": 85,
+   "batti": false
+  },
+  {
+   "sembol": "NVOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-01",
+   "son_gun": "2026-10-27",
+   "gun": 149,
+   "funding": 370,
+   "batti": false
+  },
+  {
+   "sembol": "NXPCUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-05-15",
+   "son_gun": "2026-10-27",
+   "gun": 531,
+   "funding": 3021,
+   "batti": false
+  },
+  {
+   "sembol": "OBOLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-05-07",
+   "son_gun": "2026-10-27",
+   "gun": 539,
+   "funding": 1272,
+   "batti": false
+  },
+  {
+   "sembol": "OCEANUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-11-03",
+   "son_gun": "2026-10-27",
+   "gun": 2180,
+   "funding": 5070,
+   "batti": false
+  },
+  {
+   "sembol": "OGNUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-04-01",
+   "son_gun": "2026-10-27",
+   "gun": 2031,
+   "funding": 6679,
+   "batti": false
+  },
+  {
+   "sembol": "OGUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-05-12",
+   "son_gun": "2026-10-27",
+   "gun": 534,
+   "funding": 3038,
+   "batti": false
+  },
+  {
+   "sembol": "OKLOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-28",
+   "son_gun": "2026-10-27",
+   "gun": 30,
+   "funding": 8,
+   "batti": false
+  },
+  {
+   "sembol": "OLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-06-25",
+   "son_gun": "2026-10-27",
+   "gun": 490,
+   "funding": 1722,
+   "batti": false
+  },
+  {
+   "sembol": "OMGUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-07-02",
+   "son_gun": "2026-10-27",
+   "gun": 2304,
+   "funding": 5448,
+   "batti": false
+  },
+  {
+   "sembol": "OMNIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-04-17",
+   "son_gun": "2026-10-27",
+   "gun": 924,
+   "funding": 3371,
+   "batti": false
+  },
+  {
+   "sembol": "OMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-02-13",
+   "son_gun": "2026-10-27",
+   "gun": 988,
+   "funding": 4623,
+   "batti": false
+  },
+  {
+   "sembol": "ONDOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-01-20",
+   "son_gun": "2026-10-27",
+   "gun": 1012,
+   "funding": 5905,
+   "batti": false
+  },
+  {
+   "sembol": "ONDSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-03",
+   "son_gun": "2026-10-27",
+   "gun": 147,
+   "funding": 359,
+   "batti": false
+  },
+  {
+   "sembol": "ONEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-03-18",
+   "son_gun": "2026-10-27",
+   "gun": 2045,
+   "funding": 6294,
+   "batti": false
+  },
+  {
+   "sembol": "ONGUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-11-27",
+   "son_gun": "2026-10-27",
+   "gun": 1066,
+   "funding": 6645,
+   "batti": false
+  },
+  {
+   "sembol": "ONTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-02-11",
+   "son_gun": "2026-10-27",
+   "gun": 2451,
+   "funding": 8574,
+   "batti": false
+  },
+  {
+   "sembol": "ONUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-10-24",
+   "son_gun": "2026-10-27",
+   "gun": 369,
+   "funding": 2056,
+   "batti": false
+  },
+  {
+   "sembol": "OPENAIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-26",
+   "son_gun": "2026-10-27",
+   "gun": 155,
+   "funding": 382,
+   "batti": false
+  },
+  {
+   "sembol": "OPENUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-08",
+   "son_gun": "2026-10-27",
+   "gun": 415,
+   "funding": 2347,
+   "batti": false
+  },
+  {
+   "sembol": "OPGUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-04-22",
+   "son_gun": "2026-10-27",
+   "gun": 189,
+   "funding": 967,
+   "batti": false
+  },
+  {
+   "sembol": "OPNUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-02-21",
+   "son_gun": "2026-10-27",
+   "gun": 249,
+   "funding": 1327,
+   "batti": false
+  },
+  {
+   "sembol": "OPUSDT",
+   "atlanan": [],
+   "ilk_gun": "2022-06-01",
+   "son_gun": "2026-10-27",
+   "gun": 1610,
+   "funding": 4748,
+   "batti": false
+  },
+  {
+   "sembol": "ORBSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-10-17",
+   "son_gun": "2026-10-27",
+   "gun": 1107,
+   "funding": 3667,
+   "batti": false
+  },
+  {
+   "sembol": "ORCAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-12-06",
+   "son_gun": "2026-10-27",
+   "gun": 691,
+   "funding": 4997,
+   "batti": false
+  },
+  {
+   "sembol": "ORCLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-15",
+   "son_gun": "2026-10-27",
+   "gun": 166,
+   "funding": 424,
+   "batti": false
+  },
+  {
+   "sembol": "ORDERUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-26",
+   "son_gun": "2026-10-27",
+   "gun": 397,
+   "funding": 1712,
+   "batti": false
+  },
+  {
+   "sembol": "ORDIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-11-07",
+   "son_gun": "2026-10-27",
+   "gun": 1086,
+   "funding": 6349,
+   "batti": false
+  },
+  {
+   "sembol": "OURAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-23",
+   "son_gun": "2026-10-27",
+   "gun": 35,
+   "funding": 23,
+   "batti": false
+  },
+  {
+   "sembol": "OUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-24",
+   "son_gun": "2026-10-27",
+   "gun": 126,
+   "funding": 591,
+   "batti": false
+  },
+  {
+   "sembol": "OXTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-08-11",
+   "son_gun": "2026-10-27",
+   "gun": 1174,
+   "funding": 2937,
+   "batti": false
+  },
+  {
+   "sembol": "PANWUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-21",
+   "son_gun": "2026-10-27",
+   "gun": 99,
+   "funding": 215,
+   "batti": false
+  },
+  {
+   "sembol": "PARTIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-03-25",
+   "son_gun": "2026-10-27",
+   "gun": 582,
+   "funding": 3347,
+   "batti": false
+  },
+  {
+   "sembol": "PATHUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-18",
+   "son_gun": "2026-10-27",
+   "gun": 40,
+   "funding": 38,
+   "batti": false
+  },
+  {
+   "sembol": "PAXGUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-03-27",
+   "son_gun": "2026-10-27",
+   "gun": 580,
+   "funding": 3315,
+   "batti": false
+  },
+  {
+   "sembol": "PAYPUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-03-23",
+   "son_gun": "2026-10-27",
+   "gun": 219,
+   "funding": 575,
+   "batti": false
+  },
+  {
+   "sembol": "PDDUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-08-28",
+   "son_gun": "2026-10-27",
+   "gun": 61,
+   "funding": 100,
+   "batti": false
+  },
+  {
+   "sembol": "PENDLEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-07-28",
+   "son_gun": "2026-10-27",
+   "gun": 1188,
+   "funding": 3490,
+   "batti": false
+  },
+  {
+   "sembol": "PENGUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-21",
+   "son_gun": "2026-10-27",
+   "gun": 99,
+   "funding": 215,
+   "batti": false
+  },
+  {
+   "sembol": "PENGUUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-12-17",
+   "son_gun": "2026-10-27",
+   "gun": 680,
+   "funding": 3913,
+   "batti": false
+  },
+  {
+   "sembol": "PEOPLEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-12-24",
+   "son_gun": "2026-10-27",
+   "gun": 1764,
+   "funding": 5227,
+   "batti": false
+  },
+  {
+   "sembol": "PERPUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-03-06",
+   "son_gun": "2026-10-27",
+   "gun": 1332,
+   "funding": 5295,
+   "batti": false
+  },
+  {
+   "sembol": "PHAROSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-14",
+   "son_gun": "2026-10-27",
+   "gun": 167,
+   "funding": 837,
+   "batti": false
+  },
+  {
+   "sembol": "PHAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-12-30",
+   "son_gun": "2026-10-27",
+   "gun": 667,
+   "funding": 3836,
+   "batti": false
+  },
+  {
+   "sembol": "PHBUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-02-16",
+   "son_gun": "2026-10-27",
+   "gun": 1350,
+   "funding": 3567,
+   "batti": false
+  },
+  {
+   "sembol": "PIEVERSEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-11-14",
+   "son_gun": "2026-10-27",
+   "gun": 348,
+   "funding": 1922,
+   "batti": false
+  },
+  {
+   "sembol": "PIPPINUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-01-24",
+   "son_gun": "2026-10-27",
+   "gun": 642,
+   "funding": 5023,
+   "batti": false
+  },
+  {
+   "sembol": "PIXELUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-02-19",
+   "son_gun": "2026-10-27",
+   "gun": 982,
+   "funding": 5764,
+   "batti": false
+  },
+  {
+   "sembol": "PLAYUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-07-31",
+   "son_gun": "2026-10-27",
+   "gun": 454,
+   "funding": 2584,
+   "batti": false
+  },
+  {
+   "sembol": "PLTRUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-02-09",
+   "son_gun": "2026-10-27",
+   "gun": 261,
+   "funding": 709,
+   "batti": false
+  },
+  {
+   "sembol": "PLUMEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-03-21",
+   "son_gun": "2026-10-27",
+   "gun": 586,
+   "funding": 3977,
+   "batti": false
+  },
+  {
+   "sembol": "PNUTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-11-11",
+   "son_gun": "2026-10-27",
+   "gun": 716,
+   "funding": 4129,
+   "batti": false
+  },
+  {
+   "sembol": "POLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-09-13",
+   "son_gun": "2026-10-27",
+   "gun": 775,
+   "funding": 4483,
+   "batti": false
+  },
+  {
+   "sembol": "POLYXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-10-25",
+   "son_gun": "2026-10-27",
+   "gun": 1099,
+   "funding": 6531,
+   "batti": false
+  },
+  {
+   "sembol": "PONKEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-11-04",
+   "son_gun": "2026-10-27",
+   "gun": 723,
+   "funding": 2333,
+   "batti": false
+  },
+  {
+   "sembol": "PONSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-06",
+   "son_gun": "2026-10-27",
+   "gun": 52,
+   "funding": 148,
+   "batti": false
+  },
+  {
+   "sembol": "POPCATUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-08-22",
+   "son_gun": "2026-10-27",
+   "gun": 797,
+   "funding": 4615,
+   "batti": false
+  },
+  {
+   "sembol": "POPMARTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-23",
+   "son_gun": "2026-10-27",
+   "gun": 97,
+   "funding": 271,
+   "batti": false
+  },
+  {
+   "sembol": "PORT3USDT",
+   "atlanan": [],
+   "ilk_gun": "2025-06-04",
+   "son_gun": "2026-10-27",
+   "gun": 511,
+   "funding": 1032,
+   "batti": false
+  },
+  {
+   "sembol": "PORTALUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-02-29",
+   "son_gun": "2026-10-27",
+   "gun": 972,
+   "funding": 5665,
+   "batti": false
+  },
+  {
+   "sembol": "POWERUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-12-06",
+   "son_gun": "2026-10-27",
+   "gun": 326,
+   "funding": 1976,
+   "batti": false
+  },
+  {
+   "sembol": "POWRUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-10-27",
+   "son_gun": "2026-10-27",
+   "gun": 1097,
+   "funding": 6420,
+   "batti": false
+  },
+  {
+   "sembol": "PRLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-04-01",
+   "son_gun": "2026-10-27",
+   "gun": 210,
+   "funding": 1129,
+   "batti": false
+  },
+  {
+   "sembol": "PROMPTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-04-11",
+   "son_gun": "2026-10-27",
+   "gun": 565,
+   "funding": 3248,
+   "batti": false
+  },
+  {
+   "sembol": "PROMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-01-15",
+   "son_gun": "2026-10-27",
+   "gun": 651,
+   "funding": 3798,
+   "batti": false
+  },
+  {
+   "sembol": "PROVEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-08-05",
+   "son_gun": "2026-10-27",
+   "gun": 449,
+   "funding": 2560,
+   "batti": false
+  },
+  {
+   "sembol": "PTBUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-03",
+   "son_gun": "2026-10-27",
+   "gun": 420,
+   "funding": 2382,
+   "batti": false
+  },
+  {
+   "sembol": "PUFFERUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-06-04",
+   "son_gun": "2026-10-27",
+   "gun": 511,
+   "funding": 1849,
+   "batti": false
+  },
+  {
+   "sembol": "PUMPBTCUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-06-13",
+   "son_gun": "2026-10-27",
+   "gun": 502,
+   "funding": 2851,
+   "batti": false
+  },
+  {
+   "sembol": "PUMPUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-04-12",
+   "son_gun": "2026-10-27",
+   "gun": 564,
+   "funding": 3092,
+   "batti": false
+  },
+  {
+   "sembol": "PUNDIXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-04-30",
+   "son_gun": "2026-10-27",
+   "gun": 546,
+   "funding": 3110,
+   "batti": false
+  },
+  {
+   "sembol": "PYPLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-29",
+   "son_gun": "2026-10-27",
+   "gun": 91,
+   "funding": 196,
+   "batti": false
+  },
+  {
+   "sembol": "PYTHUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-11-22",
+   "son_gun": "2026-10-27",
+   "gun": 1071,
+   "funding": 6259,
+   "batti": false
+  },
+  {
+   "sembol": "QCOMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-06",
+   "son_gun": "2026-10-27",
+   "gun": 175,
+   "funding": 457,
+   "batti": false
+  },
+  {
+   "sembol": "QNTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2022-10-20",
+   "son_gun": "2026-10-27",
+   "gun": 1469,
+   "funding": 4325,
+   "batti": false
+  },
+  {
+   "sembol": "QNTXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-29",
+   "son_gun": "2026-10-27",
+   "gun": 152,
+   "funding": 373,
+   "batti": false
+  },
+  {
+   "sembol": "QQQUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-04-06",
+   "son_gun": "2026-10-27",
+   "gun": 205,
+   "funding": 556,
+   "batti": false
+  },
+  {
+   "sembol": "QTUMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-02-20",
+   "son_gun": "2026-10-27",
+   "gun": 2442,
+   "funding": 7215,
+   "batti": false
+  },
+  {
+   "sembol": "QUICKUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-09-06",
+   "son_gun": "2026-10-27",
+   "gun": 782,
+   "funding": 2689,
+   "batti": false
+  },
+  {
+   "sembol": "QUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-02",
+   "son_gun": "2026-10-27",
+   "gun": 421,
+   "funding": 2361,
+   "batti": false
+  },
+  {
+   "sembol": "RADUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-05-10",
+   "son_gun": "2026-10-27",
+   "gun": 1267,
+   "funding": 2328,
+   "batti": false
+  },
+  {
+   "sembol": "RAMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-08-25",
+   "son_gun": "2026-10-27",
+   "gun": 64,
+   "funding": 110,
+   "batti": false
+  },
+  {
+   "sembol": "RAREUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-08-15",
+   "son_gun": "2026-10-27",
+   "gun": 804,
+   "funding": 4657,
+   "batti": false
+  },
+  {
+   "sembol": "RAVEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-12-14",
+   "son_gun": "2026-10-27",
+   "gun": 318,
+   "funding": 1951,
+   "batti": false
+  },
+  {
+   "sembol": "RAYSOLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-12-10",
+   "son_gun": "2026-10-27",
+   "gun": 687,
+   "funding": 3951,
+   "batti": false
+  },
+  {
+   "sembol": "RAYUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-08-20",
+   "son_gun": "2026-10-27",
+   "gun": 1895,
+   "funding": 4773,
+   "batti": false
+  },
+  {
+   "sembol": "RDDTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-08-06",
+   "son_gun": "2026-10-27",
+   "gun": 83,
+   "funding": 167,
+   "batti": false
+  },
+  {
+   "sembol": "RDNTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-04-05",
+   "son_gun": "2026-10-27",
+   "gun": 1302,
+   "funding": 3311,
+   "batti": false
+  },
+  {
+   "sembol": "RECALLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-10-15",
+   "son_gun": "2026-10-27",
+   "gun": 378,
+   "funding": 2103,
+   "batti": false
+  },
+  {
+   "sembol": "REDUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-03-06",
+   "son_gun": "2026-10-27",
+   "gun": 601,
+   "funding": 3838,
+   "batti": false
+  },
+  {
+   "sembol": "REEFUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-02-22",
+   "son_gun": "2026-10-27",
+   "gun": 2074,
+   "funding": 5473,
+   "batti": false
+  },
+  {
+   "sembol": "REIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-09-27",
+   "son_gun": "2026-10-27",
+   "gun": 761,
+   "funding": 2634,
+   "batti": false
+  },
+  {
+   "sembol": "RENDERUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-07-26",
+   "son_gun": "2026-10-27",
+   "gun": 824,
+   "funding": 4778,
+   "batti": false
+  },
+  {
+   "sembol": "RENUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-10-13",
+   "son_gun": "2026-10-27",
+   "gun": 2206,
+   "funding": 5131,
+   "batti": false
+  },
+  {
+   "sembol": "RESOLVUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-06-10",
+   "son_gun": "2026-10-27",
+   "gun": 505,
+   "funding": 3641,
+   "batti": false
+  },
+  {
+   "sembol": "REUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-18",
+   "son_gun": "2026-10-27",
+   "gun": 132,
+   "funding": 625,
+   "batti": false
+  },
+  {
+   "sembol": "REZUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-04-30",
+   "son_gun": "2026-10-27",
+   "gun": 911,
+   "funding": 5299,
+   "batti": false
+  },
+  {
+   "sembol": "RIFUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-10-21",
+   "son_gun": "2026-10-27",
+   "gun": 1103,
+   "funding": 6482,
+   "batti": false
+  },
+  {
+   "sembol": "RIVERUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-10-17",
+   "son_gun": "2026-10-27",
+   "gun": 376,
+   "funding": 3122,
+   "batti": false
+  },
+  {
+   "sembol": "RIVNUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-10",
+   "son_gun": "2026-10-27",
+   "gun": 140,
+   "funding": 338,
+   "batti": false
+  },
+  {
+   "sembol": "RKLBUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-18",
+   "son_gun": "2026-10-27",
+   "gun": 163,
+   "funding": 407,
+   "batti": false
+  },
+  {
+   "sembol": "RLCUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-07-31",
+   "son_gun": "2026-10-27",
+   "gun": 2275,
+   "funding": 6758,
+   "batti": false
+  },
+  {
+   "sembol": "RLSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-12-02",
+   "son_gun": "2026-10-27",
+   "gun": 330,
+   "funding": 762,
+   "batti": false
+  },
+  {
+   "sembol": "RNDRUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-02-03",
+   "son_gun": "2024-07-30",
+   "gun": 544,
+   "funding": 1678,
+   "batti": true
+  },
+  {
+   "sembol": "ROBOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-02-27",
+   "son_gun": "2026-10-27",
+   "gun": 243,
+   "funding": 1292,
+   "batti": false
+  },
+  {
+   "sembol": "RONINUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-02-06",
+   "son_gun": "2026-10-27",
+   "gun": 995,
+   "funding": 5807,
+   "batti": false
+  },
+  {
+   "sembol": "ROSEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-12-31",
+   "son_gun": "2026-10-27",
+   "gun": 1757,
+   "funding": 5207,
+   "batti": false
+  },
+  {
+   "sembol": "RPLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-09-09",
+   "son_gun": "2026-10-27",
+   "gun": 779,
+   "funding": 4610,
+   "batti": false
+  },
+  {
+   "sembol": "RSRUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-10-19",
+   "son_gun": "2026-10-27",
+   "gun": 2195,
+   "funding": 6518,
+   "batti": false
+  },
+  {
+   "sembol": "RUMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-28",
+   "son_gun": "2026-10-27",
+   "gun": 30,
+   "funding": 8,
+   "batti": false
+  },
+  {
+   "sembol": "RUNEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-09-04",
+   "son_gun": "2026-10-27",
+   "gun": 2245,
+   "funding": 6653,
+   "batti": false
+  },
+  {
+   "sembol": "RVNUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-02-23",
+   "son_gun": "2026-10-27",
+   "gun": 2068,
+   "funding": 8357,
+   "batti": false
+  },
+  {
+   "sembol": "RVVUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-10-18",
+   "son_gun": "2026-10-27",
+   "gun": 375,
+   "funding": 698,
+   "batti": false
+  },
+  {
+   "sembol": "SAFEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-10-25",
+   "son_gun": "2026-10-27",
+   "gun": 733,
+   "funding": 4231,
+   "batti": false
+  },
+  {
+   "sembol": "SAGAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-04-09",
+   "son_gun": "2026-10-27",
+   "gun": 932,
+   "funding": 5428,
+   "batti": false
+  },
+  {
+   "sembol": "SAHARAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-06-26",
+   "son_gun": "2026-10-27",
+   "gun": 489,
+   "funding": 3603,
+   "batti": false
+  },
+  {
+   "sembol": "SAMSUNGEMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-08-14",
+   "son_gun": "2026-10-27",
+   "gun": 75,
+   "funding": 226,
+   "batti": false
+  },
+  {
+   "sembol": "SAMSUNGUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-02",
+   "son_gun": "2026-10-27",
+   "gun": 148,
+   "funding": 608,
+   "batti": false
+  },
+  {
+   "sembol": "SANDUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-01-25",
+   "son_gun": "2026-10-27",
+   "gun": 2097,
+   "funding": 6224,
+   "batti": false
+  },
+  {
+   "sembol": "SANTOSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-10-28",
+   "son_gun": "2026-10-27",
+   "gun": 730,
+   "funding": 4213,
+   "batti": false
+  },
+  {
+   "sembol": "SAPIENUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-08-20",
+   "son_gun": "2026-10-27",
+   "gun": 434,
+   "funding": 2436,
+   "batti": false
+  },
+  {
+   "sembol": "SCRTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-11-21",
+   "son_gun": "2026-10-27",
+   "gun": 706,
+   "funding": 3857,
+   "batti": false
+  },
+  {
+   "sembol": "SCRUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-10-22",
+   "son_gun": "2026-10-27",
+   "gun": 736,
+   "funding": 4250,
+   "batti": false
+  },
+  {
+   "sembol": "SCUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-04-12",
+   "son_gun": "2026-10-27",
+   "gun": 2025,
+   "funding": 4588,
+   "batti": false
+  },
+  {
+   "sembol": "SECZUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-29",
+   "son_gun": "2026-10-27",
+   "gun": 29,
+   "funding": 5,
+   "batti": false
+  },
+  {
+   "sembol": "SEIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-08-17",
+   "son_gun": "2026-10-27",
+   "gun": 1168,
+   "funding": 3424,
+   "batti": false
+  },
+  {
+   "sembol": "SENTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-11-14",
+   "son_gun": "2026-10-27",
+   "gun": 348,
+   "funding": 2400,
+   "batti": false
+  },
+  {
+   "sembol": "SFPUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-02-24",
+   "son_gun": "2026-10-27",
+   "gun": 2072,
+   "funding": 6134,
+   "batti": false
+  },
+  {
+   "sembol": "SHAZUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-21",
+   "son_gun": "2026-10-27",
+   "gun": 99,
+   "funding": 215,
+   "batti": false
+  },
+  {
+   "sembol": "SHELLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-02-17",
+   "son_gun": "2026-10-27",
+   "gun": 618,
+   "funding": 3540,
+   "batti": false
+  },
+  {
+   "sembol": "SHOPUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-08-17",
+   "son_gun": "2026-10-27",
+   "gun": 72,
+   "funding": 134,
+   "batti": false
+  },
+  {
+   "sembol": "SIGNUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-04-28",
+   "son_gun": "2026-10-27",
+   "gun": 548,
+   "funding": 4708,
+   "batti": false
+  },
+  {
+   "sembol": "SIRENUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-03-22",
+   "son_gun": "2026-10-27",
+   "gun": 585,
+   "funding": 3819,
+   "batti": false
+  },
+  {
+   "sembol": "SKATEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-06-09",
+   "son_gun": "2026-10-27",
+   "gun": 506,
+   "funding": 1104,
+   "batti": false
+  },
+  {
+   "sembol": "SKDDUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-08-25",
+   "son_gun": "2026-10-27",
+   "gun": 64,
+   "funding": 110,
+   "batti": false
+  },
+  {
+   "sembol": "SKHYNIXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-02",
+   "son_gun": "2026-10-27",
+   "gun": 148,
+   "funding": 602,
+   "batti": false
+  },
+  {
+   "sembol": "SKHYUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-10",
+   "son_gun": "2026-10-27",
+   "gun": 110,
+   "funding": 247,
+   "batti": false
+  },
+  {
+   "sembol": "SKLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-12-08",
+   "son_gun": "2026-10-27",
+   "gun": 2145,
+   "funding": 7484,
+   "batti": false
+  },
+  {
+   "sembol": "SKRUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-01-22",
+   "son_gun": "2026-10-27",
+   "gun": 279,
+   "funding": 1752,
+   "batti": false
+  },
+  {
+   "sembol": "SKUUUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-08-25",
+   "son_gun": "2026-10-27",
+   "gun": 64,
+   "funding": 110,
+   "batti": false
+  },
+  {
+   "sembol": "SKYAIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-05-13",
+   "son_gun": "2026-10-27",
+   "gun": 533,
+   "funding": 3032,
+   "batti": false
+  },
+  {
+   "sembol": "SKYUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-09",
+   "son_gun": "2026-10-27",
+   "gun": 414,
+   "funding": 2319,
+   "batti": false
+  },
+  {
+   "sembol": "SLERFUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-11-21",
+   "son_gun": "2026-10-27",
+   "gun": 706,
+   "funding": 1998,
+   "batti": false
+  },
+  {
+   "sembol": "SLPUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-10-31",
+   "son_gun": "2026-10-27",
+   "gun": 1093,
+   "funding": 6189,
+   "batti": false
+  },
+  {
+   "sembol": "SLXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-01",
+   "son_gun": "2026-10-27",
+   "gun": 149,
+   "funding": 920,
+   "batti": false
+  },
+  {
+   "sembol": "SMCIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-22",
+   "son_gun": "2026-10-27",
+   "gun": 128,
+   "funding": 301,
+   "batti": false
+  },
+  {
+   "sembol": "SMHUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-29",
+   "son_gun": "2026-10-27",
+   "gun": 91,
+   "funding": 191,
+   "batti": false
+  },
+  {
+   "sembol": "SNDKUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-04-07",
+   "son_gun": "2026-10-27",
+   "gun": 204,
+   "funding": 530,
+   "batti": false
+  },
+  {
+   "sembol": "SNOWUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-10",
+   "son_gun": "2026-10-27",
+   "gun": 110,
+   "funding": 248,
+   "batti": false
+  },
+  {
+   "sembol": "SNTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-11-02",
+   "son_gun": "2026-10-27",
+   "gun": 1091,
+   "funding": 3570,
+   "batti": false
+  },
+  {
+   "sembol": "SNXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-08-14",
+   "son_gun": "2026-10-27",
+   "gun": 2266,
+   "funding": 6716,
+   "batti": false
+  },
+  {
+   "sembol": "SNXXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-09",
+   "son_gun": "2026-10-27",
+   "gun": 111,
+   "funding": 250,
+   "batti": false
+  },
+  {
+   "sembol": "SOFIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-21",
+   "son_gun": "2026-10-27",
+   "gun": 99,
+   "funding": 215,
+   "batti": false
+  },
+  {
+   "sembol": "SOLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-09-14",
+   "son_gun": "2026-10-27",
+   "gun": 2230,
+   "funding": 6700,
+   "batti": false
+  },
+  {
+   "sembol": "SOLVUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-01-17",
+   "son_gun": "2026-10-27",
+   "gun": 649,
+   "funding": 3727,
+   "batti": false
+  },
+  {
+   "sembol": "SOMIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-08-25",
+   "son_gun": "2026-10-27",
+   "gun": 429,
+   "funding": 2408,
+   "batti": false
+  },
+  {
+   "sembol": "SONICUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-01-08",
+   "son_gun": "2026-10-27",
+   "gun": 658,
+   "funding": 3783,
+   "batti": false
+  },
+  {
+   "sembol": "SONYUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-22",
+   "son_gun": "2026-10-27",
+   "gun": 128,
+   "funding": 301,
+   "batti": false
+  },
+  {
+   "sembol": "SOONUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-05-23",
+   "son_gun": "2026-10-27",
+   "gun": 523,
+   "funding": 4061,
+   "batti": false
+  },
+  {
+   "sembol": "SOPHUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-05-28",
+   "son_gun": "2026-10-27",
+   "gun": 518,
+   "funding": 4157,
+   "batti": false
+  },
+  {
+   "sembol": "SOXLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-15",
+   "son_gun": "2026-10-27",
+   "gun": 166,
+   "funding": 418,
+   "batti": false
+  },
+  {
+   "sembol": "SOXSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-16",
+   "son_gun": "2026-10-27",
+   "gun": 104,
+   "funding": 230,
+   "batti": false
+  },
+  {
+   "sembol": "SPACEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-01-23",
+   "son_gun": "2026-10-27",
+   "gun": 278,
+   "funding": 1502,
+   "batti": false
+  },
+  {
+   "sembol": "SPCXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-21",
+   "son_gun": "2026-10-27",
+   "gun": 160,
+   "funding": 397,
+   "batti": false
+  },
+  {
+   "sembol": "SPELLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2022-09-06",
+   "son_gun": "2026-10-27",
+   "gun": 1513,
+   "funding": 4456,
+   "batti": false
+  },
+  {
+   "sembol": "SPKUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-06-17",
+   "son_gun": "2026-10-27",
+   "gun": 498,
+   "funding": 2822,
+   "batti": false
+  },
+  {
+   "sembol": "SPORTFUNUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-01-16",
+   "son_gun": "2026-10-27",
+   "gun": 285,
+   "funding": 1543,
+   "batti": false
+  },
+  {
+   "sembol": "SPXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-12-10",
+   "son_gun": "2026-10-27",
+   "gun": 687,
+   "funding": 3955,
+   "batti": false
+  },
+  {
+   "sembol": "SPYUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-04-06",
+   "son_gun": "2026-10-27",
+   "gun": 205,
+   "funding": 556,
+   "batti": false
+  },
+  {
+   "sembol": "SQDUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-06-11",
+   "son_gun": "2026-10-27",
+   "gun": 504,
+   "funding": 3268,
+   "batti": false
+  },
+  {
+   "sembol": "SQQQUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-29",
+   "son_gun": "2026-10-27",
+   "gun": 121,
+   "funding": 295,
+   "batti": false
+  },
+  {
+   "sembol": "SRMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-09-05",
+   "son_gun": "2024-05-28",
+   "gun": 1362,
+   "funding": 4241,
+   "batti": true
+  },
+  {
+   "sembol": "SSVUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-02-24",
+   "son_gun": "2026-10-27",
+   "gun": 1342,
+   "funding": 3947,
+   "batti": false
+  },
+  {
+   "sembol": "STABLEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-11-06",
+   "son_gun": "2026-10-27",
+   "gun": 356,
+   "funding": 1986,
+   "batti": false
+  },
+  {
+   "sembol": "STARUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-14",
+   "son_gun": "2026-10-27",
+   "gun": 167,
+   "funding": 837,
+   "batti": false
+  },
+  {
+   "sembol": "STBLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-17",
+   "son_gun": "2026-10-27",
+   "gun": 406,
+   "funding": 2272,
+   "batti": false
+  },
+  {
+   "sembol": "STEEMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-11-08",
+   "son_gun": "2026-10-27",
+   "gun": 1085,
+   "funding": 6509,
+   "batti": false
+  },
+  {
+   "sembol": "STGUSDT",
+   "atlanan": [],
+   "ilk_gun": "2022-08-25",
+   "son_gun": "2026-10-27",
+   "gun": 1525,
+   "funding": 4864,
+   "batti": false
+  },
+  {
+   "sembol": "STMXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-03-22",
+   "son_gun": "2026-10-27",
+   "gun": 2046,
+   "funding": 6519,
+   "batti": false
+  },
+  {
+   "sembol": "STORJUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-09-16",
+   "son_gun": "2026-10-27",
+   "gun": 2228,
+   "funding": 7368,
+   "batti": false
+  },
+  {
+   "sembol": "STOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-04-12",
+   "son_gun": "2026-10-27",
+   "gun": 564,
+   "funding": 3339,
+   "batti": false
+  },
+  {
+   "sembol": "STPTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-10-18",
+   "son_gun": "2026-10-27",
+   "gun": 1106,
+   "funding": 3660,
+   "batti": false
+  },
+  {
+   "sembol": "STRAXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-10-11",
+   "son_gun": "2026-10-27",
+   "gun": 1113,
+   "funding": 3706,
+   "batti": false
+  },
+  {
+   "sembol": "STRCUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-02",
+   "son_gun": "2026-10-27",
+   "gun": 118,
+   "funding": 310,
+   "batti": false
+  },
+  {
+   "sembol": "STRKUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-02-20",
+   "son_gun": "2026-10-27",
+   "gun": 981,
+   "funding": 5719,
+   "batti": false
+  },
+  {
+   "sembol": "STXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-02-21",
+   "son_gun": "2026-10-27",
+   "gun": 1345,
+   "funding": 3953,
+   "batti": false
+  },
+  {
+   "sembol": "STXXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-11",
+   "son_gun": "2026-10-27",
+   "gun": 139,
+   "funding": 345,
+   "batti": false
+  },
+  {
+   "sembol": "SUIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-05-03",
+   "son_gun": "2026-10-27",
+   "gun": 1274,
+   "funding": 3739,
+   "batti": false
+  },
+  {
+   "sembol": "SUNUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-08-22",
+   "son_gun": "2026-10-27",
+   "gun": 797,
+   "funding": 4615,
+   "batti": false
+  },
+  {
+   "sembol": "SUPERUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-11-26",
+   "son_gun": "2026-10-27",
+   "gun": 1067,
+   "funding": 7561,
+   "batti": false
+  },
+  {
+   "sembol": "SUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-01-16",
+   "son_gun": "2026-10-27",
+   "gun": 650,
+   "funding": 3734,
+   "batti": false
+  },
+  {
+   "sembol": "SUSHIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-09-04",
+   "son_gun": "2026-10-27",
+   "gun": 2240,
+   "funding": 6653,
+   "batti": false
+  },
+  {
+   "sembol": "SWARMSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-01-07",
+   "son_gun": "2026-10-27",
+   "gun": 659,
+   "funding": 3787,
+   "batti": false
+  },
+  {
+   "sembol": "SWELLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-11-08",
+   "son_gun": "2026-10-27",
+   "gun": 719,
+   "funding": 2309,
+   "batti": false
+  },
+  {
+   "sembol": "SXPUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-07-21",
+   "son_gun": "2026-05-31",
+   "gun": 2141,
+   "funding": 5890,
+   "batti": true
+  },
+  {
+   "sembol": "SXTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-05-02",
+   "son_gun": "2026-10-27",
+   "gun": 544,
+   "funding": 3099,
+   "batti": false
+  },
+  {
+   "sembol": "SYNUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-08-16",
+   "son_gun": "2026-10-27",
+   "gun": 803,
+   "funding": 4651,
+   "batti": false
+  },
+  {
+   "sembol": "SYRUPUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-05-07",
+   "son_gun": "2026-10-27",
+   "gun": 539,
+   "funding": 3071,
+   "batti": false
+  },
+  {
+   "sembol": "SYSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-08-19",
+   "son_gun": "2026-10-27",
+   "gun": 800,
+   "funding": 3828,
+   "batti": false
+  },
+  {
+   "sembol": "TACUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-07-15",
+   "son_gun": "2026-10-27",
+   "gun": 470,
+   "funding": 2654,
+   "batti": false
+  },
+  {
+   "sembol": "TAGUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-07-25",
+   "son_gun": "2026-10-27",
+   "gun": 460,
+   "funding": 2594,
+   "batti": false
+  },
+  {
+   "sembol": "TAIKOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-06-11",
+   "son_gun": "2026-10-27",
+   "gun": 504,
+   "funding": 2923,
+   "batti": false
+  },
+  {
+   "sembol": "TAKEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-03",
+   "son_gun": "2026-10-27",
+   "gun": 420,
+   "funding": 2354,
+   "batti": false
+  },
+  {
+   "sembol": "TANSSIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-07-09",
+   "son_gun": "2026-10-27",
+   "gun": 476,
+   "funding": 1176,
+   "batti": false
+  },
+  {
+   "sembol": "TAOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-04-11",
+   "son_gun": "2026-10-27",
+   "gun": 930,
+   "funding": 5413,
+   "batti": false
+  },
+  {
+   "sembol": "TAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-07-21",
+   "son_gun": "2026-10-27",
+   "gun": 464,
+   "funding": 2619,
+   "batti": false
+  },
+  {
+   "sembol": "TBTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-27",
+   "son_gun": "2026-10-27",
+   "gun": 93,
+   "funding": 196,
+   "batti": false
+  },
+  {
+   "sembol": "TEAMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-02",
+   "son_gun": "2026-10-27",
+   "gun": 56,
+   "funding": 85,
+   "batti": false
+  },
+  {
+   "sembol": "TEMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-08-28",
+   "son_gun": "2026-10-27",
+   "gun": 61,
+   "funding": 100,
+   "batti": false
+  },
+  {
+   "sembol": "TENCENTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-22",
+   "son_gun": "2026-10-27",
+   "gun": 98,
+   "funding": 289,
+   "batti": false
+  },
+  {
+   "sembol": "TERUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-02",
+   "son_gun": "2026-10-27",
+   "gun": 118,
+   "funding": 276,
+   "batti": false
+  },
+  {
+   "sembol": "THETAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-05-27",
+   "son_gun": "2026-10-27",
+   "gun": 2345,
+   "funding": 6955,
+   "batti": false
+  },
+  {
+   "sembol": "THEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-11-27",
+   "son_gun": "2026-10-27",
+   "gun": 700,
+   "funding": 4033,
+   "batti": false
+  },
+  {
+   "sembol": "TIAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-10-31",
+   "son_gun": "2026-10-27",
+   "gun": 1093,
+   "funding": 6390,
+   "batti": false
+  },
+  {
+   "sembol": "TLMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-07-16",
+   "son_gun": "2026-10-27",
+   "gun": 1901,
+   "funding": 4589,
+   "batti": false
+  },
+  {
+   "sembol": "TMFUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-27",
+   "son_gun": "2026-10-27",
+   "gun": 93,
+   "funding": 196,
+   "batti": false
+  },
+  {
+   "sembol": "TNSRUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-04-08",
+   "son_gun": "2026-10-27",
+   "gun": 933,
+   "funding": 6219,
+   "batti": false
+  },
+  {
+   "sembol": "TOKENUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-11-03",
+   "son_gun": "2026-10-27",
+   "gun": 1090,
+   "funding": 4577,
+   "batti": false
+  },
+  {
+   "sembol": "TOMOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-10-12",
+   "son_gun": "2024-05-28",
+   "gun": 1325,
+   "funding": 4210,
+   "batti": true
+  },
+  {
+   "sembol": "TONUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-03-01",
+   "son_gun": "2026-10-27",
+   "gun": 971,
+   "funding": 5064,
+   "batti": false
+  },
+  {
+   "sembol": "TOSHIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-17",
+   "son_gun": "2026-10-27",
+   "gun": 406,
+   "funding": 2271,
+   "batti": false
+  },
+  {
+   "sembol": "TOWNSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-08-05",
+   "son_gun": "2026-10-27",
+   "gun": 449,
+   "funding": 2527,
+   "batti": false
+  },
+  {
+   "sembol": "TQQQUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-29",
+   "son_gun": "2026-10-27",
+   "gun": 121,
+   "funding": 295,
+   "batti": false
+  },
+  {
+   "sembol": "TRADOORUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-19",
+   "son_gun": "2026-10-27",
+   "gun": 404,
+   "funding": 2258,
+   "batti": false
+  },
+  {
+   "sembol": "TRBUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-09-03",
+   "son_gun": "2026-10-27",
+   "gun": 2241,
+   "funding": 9909,
+   "batti": false
+  },
+  {
+   "sembol": "TREEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-07-29",
+   "son_gun": "2026-10-27",
+   "gun": 456,
+   "funding": 2629,
+   "batti": false
+  },
+  {
+   "sembol": "TRIAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-02-06",
+   "son_gun": "2026-10-27",
+   "gun": 264,
+   "funding": 1418,
+   "batti": false
+  },
+  {
+   "sembol": "TROYUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-10-31",
+   "son_gun": "2026-10-27",
+   "gun": 727,
+   "funding": 1805,
+   "batti": false
+  },
+  {
+   "sembol": "TRUMPUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-01-18",
+   "son_gun": "2026-10-27",
+   "gun": 648,
+   "funding": 3721,
+   "batti": false
+  },
+  {
+   "sembol": "TRUSTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-11-05",
+   "son_gun": "2026-10-27",
+   "gun": 357,
+   "funding": 2521,
+   "batti": false
+  },
+  {
+   "sembol": "TRUTHUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-10-01",
+   "son_gun": "2026-10-27",
+   "gun": 392,
+   "funding": 2187,
+   "batti": false
+  },
+  {
+   "sembol": "TRUUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-03-07",
+   "son_gun": "2026-10-27",
+   "gun": 1331,
+   "funding": 3426,
+   "batti": false
+  },
+  {
+   "sembol": "TRXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-01-15",
+   "son_gun": "2026-10-27",
+   "gun": 2473,
+   "funding": 7352,
+   "batti": false
+  },
+  {
+   "sembol": "TSLAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-01-28",
+   "son_gun": "2026-10-27",
+   "gun": 273,
+   "funding": 748,
+   "batti": false
+  },
+  {
+   "sembol": "TSLLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-02",
+   "son_gun": "2026-10-27",
+   "gun": 56,
+   "funding": 85,
+   "batti": false
+  },
+  {
+   "sembol": "TSMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-04-06",
+   "son_gun": "2026-10-27",
+   "gun": 205,
+   "funding": 556,
+   "batti": false
+  },
+  {
+   "sembol": "TSTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-02-09",
+   "son_gun": "2026-10-27",
+   "gun": 626,
+   "funding": 3589,
+   "batti": false
+  },
+  {
+   "sembol": "TTWOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-02",
+   "son_gun": "2026-10-27",
+   "gun": 118,
+   "funding": 271,
+   "batti": false
+  },
+  {
+   "sembol": "TURBOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-05-30",
+   "son_gun": "2026-10-27",
+   "gun": 881,
+   "funding": 5119,
+   "batti": false
+  },
+  {
+   "sembol": "TURTLEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-10-22",
+   "son_gun": "2026-10-27",
+   "gun": 371,
+   "funding": 2100,
+   "batti": false
+  },
+  {
+   "sembol": "TUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-02-01",
+   "son_gun": "2026-10-27",
+   "gun": 1365,
+   "funding": 6050,
+   "batti": false
+  },
+  {
+   "sembol": "TUTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-03-20",
+   "son_gun": "2026-10-27",
+   "gun": 587,
+   "funding": 3356,
+   "batti": false
+  },
+  {
+   "sembol": "TWSTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-28",
+   "son_gun": "2026-10-27",
+   "gun": 30,
+   "funding": 8,
+   "batti": false
+  },
+  {
+   "sembol": "TWTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-11-03",
+   "son_gun": "2026-10-27",
+   "gun": 1090,
+   "funding": 6374,
+   "batti": false
+  },
+  {
+   "sembol": "TXNUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-02",
+   "son_gun": "2026-10-27",
+   "gun": 118,
+   "funding": 276,
+   "batti": false
+  },
+  {
+   "sembol": "TZAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-16",
+   "son_gun": "2026-10-27",
+   "gun": 104,
+   "funding": 230,
+   "batti": false
+  },
+  {
+   "sembol": "UAIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-11-06",
+   "son_gun": "2026-10-27",
+   "gun": 356,
+   "funding": 2325,
+   "batti": false
+  },
+  {
+   "sembol": "UBERUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-15",
+   "son_gun": "2026-10-27",
+   "gun": 166,
+   "funding": 419,
+   "batti": false
+  },
+  {
+   "sembol": "UBUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-12",
+   "son_gun": "2026-10-27",
+   "gun": 411,
+   "funding": 2300,
+   "batti": false
+  },
+  {
+   "sembol": "UMAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-05-10",
+   "son_gun": "2026-10-27",
+   "gun": 1267,
+   "funding": 6676,
+   "batti": false
+  },
+  {
+   "sembol": "UNFIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-02-19",
+   "son_gun": "2026-10-27",
+   "gun": 2072,
+   "funding": 6647,
+   "batti": false
+  },
+  {
+   "sembol": "UNHUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-29",
+   "son_gun": "2026-10-27",
+   "gun": 29,
+   "funding": 5,
+   "batti": false
+  },
+  {
+   "sembol": "UNITREEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-08-19",
+   "son_gun": "2026-10-27",
+   "gun": 70,
+   "funding": 256,
+   "batti": false
+  },
+  {
+   "sembol": "UNIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-09-18",
+   "son_gun": "2026-10-27",
+   "gun": 2231,
+   "funding": 6614,
+   "batti": false
+  },
+  {
+   "sembol": "URNMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-09",
+   "son_gun": "2026-10-27",
+   "gun": 141,
+   "funding": 341,
+   "batti": false
+  },
+  {
+   "sembol": "USARUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-06",
+   "son_gun": "2026-10-27",
+   "gun": 175,
+   "funding": 443,
+   "batti": false
+  },
+  {
+   "sembol": "USDBRLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-21",
+   "son_gun": "2026-10-27",
+   "gun": 37,
+   "funding": 37,
+   "batti": false
+  },
+  {
+   "sembol": "USDCUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-03-12",
+   "son_gun": "2026-10-27",
+   "gun": 1326,
+   "funding": 3894,
+   "batti": false
+  },
+  {
+   "sembol": "USELESSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-08-15",
+   "son_gun": "2026-10-27",
+   "gun": 439,
+   "funding": 2468,
+   "batti": false
+  },
+  {
+   "sembol": "USTCUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-11-27",
+   "son_gun": "2026-10-27",
+   "gun": 1066,
+   "funding": 6230,
+   "batti": false
+  },
+  {
+   "sembol": "USUALUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-12-18",
+   "son_gun": "2026-10-27",
+   "gun": 679,
+   "funding": 3907,
+   "batti": false
+  },
+  {
+   "sembol": "USUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-12-12",
+   "son_gun": "2026-10-27",
+   "gun": 320,
+   "funding": 1754,
+   "batti": false
+  },
+  {
+   "sembol": "UVXYUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-11",
+   "son_gun": "2026-10-27",
+   "gun": 139,
+   "funding": 335,
+   "batti": false
+  },
+  {
+   "sembol": "UXLINKUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-09-15",
+   "son_gun": "2026-10-27",
+   "gun": 773,
+   "funding": 2255,
+   "batti": false
+  },
+  {
+   "sembol": "VANAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-12-16",
+   "son_gun": "2026-10-27",
+   "gun": 681,
+   "funding": 3919,
+   "batti": false
+  },
+  {
+   "sembol": "VANRYUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-03-13",
+   "son_gun": "2026-10-27",
+   "gun": 959,
+   "funding": 5341,
+   "batti": false
+  },
+  {
+   "sembol": "VELODROMEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-12-13",
+   "son_gun": "2026-10-27",
+   "gun": 684,
+   "funding": 3937,
+   "batti": false
+  },
+  {
+   "sembol": "VELVETUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-07-15",
+   "son_gun": "2026-10-27",
+   "gun": 470,
+   "funding": 2654,
+   "batti": false
+  },
+  {
+   "sembol": "VETUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-02-14",
+   "son_gun": "2026-10-27",
+   "gun": 2443,
+   "funding": 7262,
+   "batti": false
+  },
+  {
+   "sembol": "VFYUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-30",
+   "son_gun": "2026-10-27",
+   "gun": 393,
+   "funding": 1009,
+   "batti": false
+  },
+  {
+   "sembol": "VICUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-03-12",
+   "son_gun": "2026-10-27",
+   "gun": 595,
+   "funding": 3279,
+   "batti": false
+  },
+  {
+   "sembol": "VIDTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-08-23",
+   "son_gun": "2026-10-27",
+   "gun": 796,
+   "funding": 2227,
+   "batti": false
+  },
+  {
+   "sembol": "VINEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-01-24",
+   "son_gun": "2026-10-27",
+   "gun": 642,
+   "funding": 2754,
+   "batti": false
+  },
+  {
+   "sembol": "VIRTUALUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-12-10",
+   "son_gun": "2026-10-27",
+   "gun": 687,
+   "funding": 3955,
+   "batti": false
+  },
+  {
+   "sembol": "VOXELUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-08-20",
+   "son_gun": "2026-10-27",
+   "gun": 799,
+   "funding": 4475,
+   "batti": false
+  },
+  {
+   "sembol": "VRTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-10",
+   "son_gun": "2026-10-27",
+   "gun": 110,
+   "funding": 253,
+   "batti": false
+  },
+  {
+   "sembol": "VSTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-08-17",
+   "son_gun": "2026-10-27",
+   "gun": 72,
+   "funding": 139,
+   "batti": false
+  },
+  {
+   "sembol": "VTHOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-01-22",
+   "son_gun": "2026-10-27",
+   "gun": 644,
+   "funding": 3698,
+   "batti": false
+  },
+  {
+   "sembol": "VUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-18",
+   "son_gun": "2026-10-27",
+   "gun": 163,
+   "funding": 412,
+   "batti": false
+  },
+  {
+   "sembol": "VVVUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-01-29",
+   "son_gun": "2026-10-27",
+   "gun": 637,
+   "funding": 3657,
+   "batti": false
+  },
+  {
+   "sembol": "WALUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-03-27",
+   "son_gun": "2026-10-27",
+   "gun": 580,
+   "funding": 3313,
+   "batti": false
+  },
+  {
+   "sembol": "WAVESUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-08-12",
+   "son_gun": "2026-10-27",
+   "gun": 2263,
+   "funding": 5317,
+   "batti": false
+  },
+  {
+   "sembol": "WAXPUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-10-18",
+   "son_gun": "2026-10-27",
+   "gun": 1106,
+   "funding": 6512,
+   "batti": false
+  },
+  {
+   "sembol": "WCTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-04-15",
+   "son_gun": "2026-10-27",
+   "gun": 561,
+   "funding": 4067,
+   "batti": false
+  },
+  {
+   "sembol": "WDCUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-26",
+   "son_gun": "2026-10-27",
+   "gun": 155,
+   "funding": 396,
+   "batti": false
+  },
+  {
+   "sembol": "WENUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-09",
+   "son_gun": "2026-10-27",
+   "gun": 111,
+   "funding": 255,
+   "batti": false
+  },
+  {
+   "sembol": "WETUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-12-10",
+   "son_gun": "2026-10-27",
+   "gun": 322,
+   "funding": 2091,
+   "batti": false
+  },
+  {
+   "sembol": "WIFUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-01-18",
+   "son_gun": "2026-10-27",
+   "gun": 1014,
+   "funding": 5917,
+   "batti": false
+  },
+  {
+   "sembol": "WLDUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-07-24",
+   "son_gun": "2026-10-27",
+   "gun": 1192,
+   "funding": 3493,
+   "batti": false
+  },
+  {
+   "sembol": "WLFIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-08-23",
+   "son_gun": "2026-10-27",
+   "gun": 431,
+   "funding": 2420,
+   "batti": false
+  },
+  {
+   "sembol": "WMTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-05-18",
+   "son_gun": "2026-10-27",
+   "gun": 163,
+   "funding": 412,
+   "batti": false
+  },
+  {
+   "sembol": "WOOUSDT",
+   "atlanan": [],
+   "ilk_gun": "2022-04-08",
+   "son_gun": "2026-10-27",
+   "gun": 1664,
+   "funding": 4912,
+   "batti": false
+  },
+  {
+   "sembol": "WUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-04-03",
+   "son_gun": "2026-10-27",
+   "gun": 938,
+   "funding": 5461,
+   "batti": false
+  },
+  {
+   "sembol": "XAGUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-01-07",
+   "son_gun": "2026-10-27",
+   "gun": 294,
+   "funding": 1599,
+   "batti": false
+  },
+  {
+   "sembol": "XAIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-01-09",
+   "son_gun": "2026-10-27",
+   "gun": 1023,
+   "funding": 5971,
+   "batti": false
+  },
+  {
+   "sembol": "XANUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-29",
+   "son_gun": "2026-10-27",
+   "gun": 394,
+   "funding": 2199,
+   "batti": false
+  },
+  {
+   "sembol": "XAUTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-03-26",
+   "son_gun": "2026-10-27",
+   "gun": 216,
+   "funding": 1129,
+   "batti": false
+  },
+  {
+   "sembol": "XAUUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-12-11",
+   "son_gun": "2026-10-27",
+   "gun": 321,
+   "funding": 1761,
+   "batti": false
+  },
+  {
+   "sembol": "XBIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-09",
+   "son_gun": "2026-10-27",
+   "gun": 111,
+   "funding": 255,
+   "batti": false
+  },
+  {
+   "sembol": "XCNUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-04-11",
+   "son_gun": "2026-10-27",
+   "gun": 565,
+   "funding": 1343,
+   "batti": false
+  },
+  {
+   "sembol": "XEMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2021-03-03",
+   "son_gun": "2026-10-27",
+   "gun": 2060,
+   "funding": 4708,
+   "batti": false
+  },
+  {
+   "sembol": "XLEUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-10",
+   "son_gun": "2026-10-27",
+   "gun": 140,
+   "funding": 352,
+   "batti": false
+  },
+  {
+   "sembol": "XLMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-01-20",
+   "son_gun": "2026-10-27",
+   "gun": 2468,
+   "funding": 7339,
+   "batti": false
+  },
+  {
+   "sembol": "XMRUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-02-03",
+   "son_gun": "2026-10-27",
+   "gun": 2459,
+   "funding": 7302,
+   "batti": false
+  },
+  {
+   "sembol": "XNYUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-08-13",
+   "son_gun": "2026-10-27",
+   "gun": 441,
+   "funding": 2480,
+   "batti": false
+  },
+  {
+   "sembol": "XOMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-28",
+   "son_gun": "2026-10-27",
+   "gun": 30,
+   "funding": 8,
+   "batti": false
+  },
+  {
+   "sembol": "XPDUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-01-30",
+   "son_gun": "2026-10-27",
+   "gun": 271,
+   "funding": 1460,
+   "batti": false
+  },
+  {
+   "sembol": "XPINUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-12",
+   "son_gun": "2026-10-27",
+   "gun": 411,
+   "funding": 2301,
+   "batti": false
+  },
+  {
+   "sembol": "XPLUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-08-22",
+   "son_gun": "2026-10-27",
+   "gun": 432,
+   "funding": 2426,
+   "batti": false
+  },
+  {
+   "sembol": "XPTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-01-30",
+   "son_gun": "2026-10-27",
+   "gun": 271,
+   "funding": 1460,
+   "batti": false
+  },
+  {
+   "sembol": "XRPUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-01-06",
+   "son_gun": "2026-10-27",
+   "gun": 2482,
+   "funding": 7379,
+   "batti": false
+  },
+  {
+   "sembol": "XTZUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-02-06",
+   "son_gun": "2026-10-27",
+   "gun": 2456,
+   "funding": 8643,
+   "batti": false
+  },
+  {
+   "sembol": "XVGUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-07-05",
+   "son_gun": "2026-10-27",
+   "gun": 1211,
+   "funding": 3567,
+   "batti": false
+  },
+  {
+   "sembol": "XVSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-04-13",
+   "son_gun": "2026-10-27",
+   "gun": 1294,
+   "funding": 3803,
+   "batti": false
+  },
+  {
+   "sembol": "YALAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-08-07",
+   "son_gun": "2026-10-27",
+   "gun": 447,
+   "funding": 1121,
+   "batti": false
+  },
+  {
+   "sembol": "YBUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-10-10",
+   "son_gun": "2026-10-27",
+   "gun": 383,
+   "funding": 2131,
+   "batti": false
+  },
+  {
+   "sembol": "YFIIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-09-03",
+   "son_gun": "2022-04-12",
+   "gun": 582,
+   "funding": 1765,
+   "batti": true
+  },
+  {
+   "sembol": "YFIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-08-31",
+   "son_gun": "2026-10-27",
+   "gun": 2244,
+   "funding": 6665,
+   "batti": false
+  },
+  {
+   "sembol": "YGGUSDT",
+   "atlanan": [],
+   "ilk_gun": "2023-08-05",
+   "son_gun": "2026-10-27",
+   "gun": 1180,
+   "funding": 6722,
+   "batti": false
+  },
+  {
+   "sembol": "ZAMAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-01-09",
+   "son_gun": "2026-10-27",
+   "gun": 292,
+   "funding": 1586,
+   "batti": false
+  },
+  {
+   "sembol": "ZBTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-10-17",
+   "son_gun": "2026-10-27",
+   "gun": 376,
+   "funding": 2474,
+   "batti": false
+  },
+  {
+   "sembol": "ZECUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-02-05",
+   "son_gun": "2026-10-27",
+   "gun": 2452,
+   "funding": 7292,
+   "batti": false
+  },
+  {
+   "sembol": "ZENUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-11-24",
+   "son_gun": "2026-10-27",
+   "gun": 2159,
+   "funding": 6410,
+   "batti": false
+  },
+  {
+   "sembol": "ZEREBROUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-01-02",
+   "son_gun": "2026-10-27",
+   "gun": 664,
+   "funding": 3817,
+   "batti": false
+  },
+  {
+   "sembol": "ZESTUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-04",
+   "son_gun": "2026-10-27",
+   "gun": 146,
+   "funding": 709,
+   "batti": false
+  },
+  {
+   "sembol": "ZETAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-02-02",
+   "son_gun": "2026-10-27",
+   "gun": 999,
+   "funding": 5829,
+   "batti": false
+  },
+  {
+   "sembol": "ZHIPUUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-07-17",
+   "son_gun": "2026-10-27",
+   "gun": 103,
+   "funding": 289,
+   "batti": false
+  },
+  {
+   "sembol": "ZHONGJIUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-08-14",
+   "son_gun": "2026-10-27",
+   "gun": 75,
+   "funding": 226,
+   "batti": false
+  },
+  {
+   "sembol": "ZILUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-06-18",
+   "son_gun": "2026-10-27",
+   "gun": 2318,
+   "funding": 7778,
+   "batti": false
+  },
+  {
+   "sembol": "ZKCUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-15",
+   "son_gun": "2026-10-27",
+   "gun": 408,
+   "funding": 2341,
+   "batti": false
+  },
+  {
+   "sembol": "ZKJUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-05-13",
+   "son_gun": "2026-10-27",
+   "gun": 533,
+   "funding": 2124,
+   "batti": false
+  },
+  {
+   "sembol": "ZKPUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-12-21",
+   "son_gun": "2026-10-27",
+   "gun": 311,
+   "funding": 2082,
+   "batti": false
+  },
+  {
+   "sembol": "ZKUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-06-17",
+   "son_gun": "2026-10-27",
+   "gun": 863,
+   "funding": 5057,
+   "batti": false
+  },
+  {
+   "sembol": "ZMUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-06-10",
+   "son_gun": "2026-10-27",
+   "gun": 140,
+   "funding": 338,
+   "batti": false
+  },
+  {
+   "sembol": "ZORAUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-07-25",
+   "son_gun": "2026-10-27",
+   "gun": 460,
+   "funding": 2594,
+   "batti": false
+  },
+  {
+   "sembol": "ZRCUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-07-29",
+   "son_gun": "2026-10-27",
+   "gun": 456,
+   "funding": 1056,
+   "batti": false
+  },
+  {
+   "sembol": "ZROUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-06-20",
+   "son_gun": "2026-10-27",
+   "gun": 860,
+   "funding": 4993,
+   "batti": false
+  },
+  {
+   "sembol": "ZRXUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-06-24",
+   "son_gun": "2026-10-27",
+   "gun": 2317,
+   "funding": 7824,
+   "batti": false
+  },
+  {
+   "sembol": "ZSUSDT",
+   "atlanan": [],
+   "ilk_gun": "2026-09-02",
+   "son_gun": "2026-10-27",
+   "gun": 56,
+   "funding": 85,
    "batti": false
   }
  ]
