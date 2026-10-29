@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.36R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.361R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 1218 | %44.3 | -0.36 | -438.39 |
+| polat_tum_sinyaller | 1220 | %44.3 | -0.361 | -439.85 |
 | polat_girilen | 6 | %50.0 | -0.631 | -3.78 |
-| polat_girilmeyen | 1212 | %44.2 | -0.359 | -434.61 |
-| rastgele | 1226 | %43.4 | -0.384 | -471.25 |
-| trend_naif | 1222 | %38.2 | -0.491 | -599.64 |
+| polat_girilmeyen | 1214 | %44.2 | -0.359 | -436.06 |
+| rastgele | 1231 | %43.5 | -0.383 | -471.79 |
+| trend_naif | 1225 | %38.2 | -0.491 | -601.88 |
 
-Polat özsermaye: %-3.45 · BTC al-tut: %-1.23
+Polat özsermaye: %-3.45 · BTC al-tut: %-1.0
 
 ## Öğrenme (walk-forward)
 
@@ -63,9 +63,9 @@ En az işe yarayan okumalar: momentum_1H ×0.488, obv_egim_1H ×0.528, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 4188
+- ders: 4198
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 1102
+- gösterge aileleri aynı yönde değil: 1107
 - büyük zaman dilimi trendi ters: 1041
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
@@ -120,9 +120,9 @@ En az işe yarayan okumalar: momentum_1H ×0.488, obv_egim_1H ×0.528, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 4188
+- ders: 4198
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 1102
+- gösterge aileleri aynı yönde değil: 1107
 - büyük zaman dilimi trendi ters: 1041
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
@@ -177,9 +177,9 @@ En az işe yarayan okumalar: momentum_1H ×0.488, obv_egim_1H ×0.528, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 4188
+- ders: 4198
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 1102
+- gösterge aileleri aynı yönde değil: 1107
 - büyük zaman dilimi trendi ters: 1041
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
