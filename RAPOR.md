@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 1460 | %47.1 | -0.292 | -426.19 |
+| polat_tum_sinyaller | 1462 | %47.1 | -0.292 | -427.17 |
 | polat_girilen | 8 | %50.0 | -0.596 | -4.77 |
-| polat_girilmeyen | 1452 | %47.1 | -0.29 | -421.42 |
-| rastgele | 1465 | %44.0 | -0.359 | -526.58 |
-| trend_naif | 1461 | %39.2 | -0.46 | -672.7 |
+| polat_girilmeyen | 1454 | %47.1 | -0.291 | -422.4 |
+| rastgele | 1467 | %44.0 | -0.359 | -526.05 |
+| trend_naif | 1463 | %39.2 | -0.46 | -673.68 |
 
-Polat özsermaye: %-4.4 · BTC al-tut: %-0.24
+Polat özsermaye: %-4.4 · BTC al-tut: %-0.23
 
 ## Öğrenme (walk-forward)
 
@@ -63,11 +63,11 @@ En az işe yarayan okumalar: momentum_1H ×0.518, obv_egim_1H ×0.519, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 5246
+- ders: 5249
 - üst üste 3 zarar: 2345
-- günlük işlem tavanı (8): 1975
+- günlük işlem tavanı (8): 1987
+- gösterge aileleri aynı yönde değil: 1529
 - büyük zaman dilimi trendi ters: 1523
-- gösterge aileleri aynı yönde değil: 1517
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
@@ -118,11 +118,11 @@ En az işe yarayan okumalar: momentum_1H ×0.518, obv_egim_1H ×0.519, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 5246
+- ders: 5249
 - üst üste 3 zarar: 2345
-- günlük işlem tavanı (8): 1975
+- günlük işlem tavanı (8): 1987
+- gösterge aileleri aynı yönde değil: 1529
 - büyük zaman dilimi trendi ters: 1523
-- gösterge aileleri aynı yönde değil: 1517
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
@@ -178,11 +178,11 @@ En az işe yarayan okumalar: momentum_1H ×0.518, obv_egim_1H ×0.519, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 5246
+- ders: 5249
 - üst üste 3 zarar: 2345
-- günlük işlem tavanı (8): 1975
+- günlük işlem tavanı (8): 1987
+- gösterge aileleri aynı yönde değil: 1529
 - büyük zaman dilimi trendi ters: 1523
-- gösterge aileleri aynı yönde değil: 1517
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
