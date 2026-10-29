@@ -1,0 +1,53 @@
+name: Araştırma (gün içi)
+
+# tools/arastirma/gun_ici.py: saatlik veride 9 gün içi kural, eğitim/saklı test. Saatlik veri, binance-saatlik
+# iş akışının artifact'inden okunur (repo şişmez). Sonuç küçük dosyalar olarak arastirma-sonuc dalına yazılır.
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: "Saatlik arşiv koşusunun run id'si (artifact kaynağı)"
+        required: true
+      artifact:
+        description: "Artifact adı"
+        default: "binance-1h-top30"
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  gun-ici:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install pandas numpy
+      - name: Günlük arşiv
+        run: |
+          git fetch -q --depth 1 origin binance-veri
+          git worktree add -q bv FETCH_HEAD
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ github.event.inputs.artifact }}
+          run-id: ${{ github.event.inputs.run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: h1
+      - name: Panel
+        run: python -u tools/arastirma/panel.py bv /tmp/panel.pkl > /dev/null
+      - name: Gün içi araştırma
+        run: |
+          python -u tools/arastirma/gun_ici.py h1/um_1h /tmp/panel.pkl res
+          python -u tools/arastirma/gun_ici.py h1/um_1h /tmp/panel.pkl res --stres
+      - name: Sonucu kaydet
+        run: |
+          git config --global user.name "kripto-radar"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git fetch -q origin arastirma-sonuc:arastirma-sonuc 2>/dev/null; then git worktree add -q sonuc arastirma-sonuc
+          else git worktree add -q --detach sonuc; cd sonuc && git checkout -q --orphan arastirma-sonuc && git rm -rqf . ; cd ..; fi
+          mkdir -p sonuc/gun_ici && cp res/* sonuc/gun_ici/
+          cd sonuc && git add -A && git commit -qm "🔬 gün içi araştırma" || exit 0
+          for i in 1 2 3; do git push -q origin arastirma-sonuc && break; git pull -q --rebase origin arastirma-sonuc || true; sleep 3; done
