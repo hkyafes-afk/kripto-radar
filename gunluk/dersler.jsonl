@@ -31,3 +31,4 @@
 {"olay": "yol", "yol": "kirilim|long|momentum+seviye|btc:yatay", "karar": "kacin", "n": 8, "ort_R": -0.466, "ts": 1793223153039}
 {"olay": "yol", "yol": "geri_cekilme|long|akis+seviye|btc:yatay", "karar": null, "n": 12, "ort_R": 0.326, "ts": 1793224976325}
 {"olay": "yol", "yol": "geri_test|long|hacim+seviye|btc:yatay", "karar": "kacin", "n": 5, "ort_R": -0.911, "ts": 1793234273762}
+{"olay": "yol", "yol": "yapi_bozulmasi|short|momentum+uyusmazlik|btc:yukari", "karar": "benimse", "n": 7, "ort_R": 0.501, "ts": 1793238931551}
