@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.345R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.35R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 1157 | %44.8 | -0.345 | -399.59 |
+| polat_tum_sinyaller | 1164 | %44.5 | -0.35 | -407.35 |
 | polat_girilen | 5 | %40.0 | -0.772 | -3.86 |
-| polat_girilmeyen | 1152 | %44.8 | -0.344 | -395.72 |
-| rastgele | 1166 | %42.6 | -0.397 | -463.33 |
-| trend_naif | 1165 | %37.9 | -0.491 | -572.03 |
+| polat_girilmeyen | 1159 | %44.5 | -0.348 | -403.49 |
+| rastgele | 1174 | %42.3 | -0.402 | -472.0 |
+| trend_naif | 1175 | %37.5 | -0.497 | -584.13 |
 
-Polat özsermaye: %-3.54 · BTC al-tut: %-1.21
+Polat özsermaye: %-3.67 · BTC al-tut: %-1.06
 
 ## Öğrenme (walk-forward)
 
@@ -63,15 +63,15 @@ En az işe yarayan okumalar: momentum_1H ×0.502, obv_egim_1H ×0.525, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 3942
+- ders: 3970
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 1081
-- büyük zaman dilimi trendi ters: 988
+- gösterge aileleri aynı yönde değil: 1082
+- büyük zaman dilimi trendi ters: 994
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 274
 - aynı yönde pozisyon tavanı: 270
-- yüksek etkili ABD verisi yakın (takvim sessizliği): 253
+- yüksek etkili ABD verisi yakın (takvim sessizliği): 258
 - puan -0.121 eşiğin (0.25) altında: 91
 
 **Hata sınıfları**
@@ -119,15 +119,15 @@ En az işe yarayan okumalar: momentum_1H ×0.502, obv_egim_1H ×0.525, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 3942
+- ders: 3970
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 1081
-- büyük zaman dilimi trendi ters: 988
+- gösterge aileleri aynı yönde değil: 1082
+- büyük zaman dilimi trendi ters: 994
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 274
 - aynı yönde pozisyon tavanı: 270
-- yüksek etkili ABD verisi yakın (takvim sessizliği): 253
+- yüksek etkili ABD verisi yakın (takvim sessizliği): 258
 - puan -0.121 eşiğin (0.25) altında: 91
 
 **Hata sınıfları**
@@ -175,15 +175,15 @@ En az işe yarayan okumalar: momentum_1H ×0.502, obv_egim_1H ×0.525, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 3942
+- ders: 3970
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 1081
-- büyük zaman dilimi trendi ters: 988
+- gösterge aileleri aynı yönde değil: 1082
+- büyük zaman dilimi trendi ters: 994
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 274
 - aynı yönde pozisyon tavanı: 270
-- yüksek etkili ABD verisi yakın (takvim sessizliği): 253
+- yüksek etkili ABD verisi yakın (takvim sessizliği): 258
 - puan -0.121 eşiğin (0.25) altında: 91
 
 **Hata sınıfları**
