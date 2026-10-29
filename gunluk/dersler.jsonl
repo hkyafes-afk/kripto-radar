@@ -81,3 +81,4 @@
 {"olay": "yol", "yol": "yapi_bozulmasi|short|formasyon+seviye|btc:yukari", "karar": "kacin", "n": 5, "ort_R": -0.879, "ts": 1793304511164}
 {"olay": "yol", "yol": "geri_cekilme|short|akis+momentum|btc:yukari", "karar": "benimse", "n": 5, "ort_R": 0.961, "ts": 1793304534798}
 {"olay": "yol", "yol": "yapi_bozulmasi|short|akis+momentum|btc:yatay", "karar": null, "n": 8, "ort_R": -0.405, "ts": 1793307046896}
+{"olay": "yol", "yol": "yapi_bozulmasi|short|hacim+trend|btc:yatay", "karar": null, "n": 6, "ort_R": -0.36, "ts": 1793307934443}
