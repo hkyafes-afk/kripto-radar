@@ -77,3 +77,6 @@
 {"olay": "yol", "yol": "yapi_bozulmasi|long|hacim+momentum|btc:yatay", "karar": null, "n": 9, "ort_R": 0.388, "ts": 1793293624847}
 {"olay": "yol", "yol": "yapi_bozulmasi|short|akis+seviye|btc:yukari", "karar": "kacin", "n": 5, "ort_R": -0.9, "ts": 1793302250385}
 {"olay": "yol", "yol": "geri_test|long|akis+seviye|btc:yukari", "karar": "kacin", "n": 5, "ort_R": -0.934, "ts": 1793304094372}
+{"olay": "yol", "yol": "geri_cekilme|short|piyasa+seviye|btc:yatay", "karar": "kacin", "n": 5, "ort_R": -0.543, "ts": 1793304510126}
+{"olay": "yol", "yol": "yapi_bozulmasi|short|formasyon+seviye|btc:yukari", "karar": "kacin", "n": 5, "ort_R": -0.879, "ts": 1793304511164}
+{"olay": "yol", "yol": "geri_cekilme|short|akis+momentum|btc:yukari", "karar": "benimse", "n": 5, "ort_R": 0.961, "ts": 1793304534798}
