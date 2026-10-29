@@ -1,0 +1,57 @@
+{
+ "olusturuldu": "2026-10-29 21:45 UTC",
+ "kaynak": "data.binance.vision (MIT)",
+ "sembol": 5,
+ "veri_olan": 5,
+ "batan": 0,
+ "en_yeni_gun": "2026-10-27",
+ "atlanan_dosya": 0,
+ "sure_sn": 97,
+ "semboller": [
+  {
+   "sembol": "0GUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-09-17",
+   "son_gun": "2026-10-27",
+   "gun": 406,
+   "funding": 3622,
+   "batti": false
+  },
+  {
+   "sembol": "1000000BOBUSDT",
+   "atlanan": [],
+   "ilk_gun": "2025-06-05",
+   "son_gun": "2026-10-27",
+   "gun": 510,
+   "funding": 2895,
+   "batti": false
+  },
+  {
+   "sembol": "1000000MOGUSDT",
+   "atlanan": [],
+   "ilk_gun": "2024-11-07",
+   "son_gun": "2026-10-27",
+   "gun": 720,
+   "funding": 4153,
+   "batti": false
+  },
+  {
+   "sembol": "BTCUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-01-01",
+   "son_gun": "2026-10-27",
+   "gun": 2492,
+   "funding": 7395,
+   "batti": false
+  },
+  {
+   "sembol": "ETHUSDT",
+   "atlanan": [],
+   "ilk_gun": "2020-01-01",
+   "son_gun": "2026-10-27",
+   "gun": 2492,
+   "funding": 7395,
+   "batti": false
+  }
+ ]
+}
