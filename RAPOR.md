@@ -12,9 +12,9 @@ _Yatırım tavsiyesi değildir._
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
 | polat_girilmeyen | 749 | %47.8 | -0.311 | -232.65 |
 | rastgele | 761 | %42.7 | -0.43 | -327.4 |
-| trend_naif | 767 | %38.1 | -0.51 | -391.02 |
+| trend_naif | 768 | %38.0 | -0.511 | -392.16 |
 
-Polat özsermaye: %-2.57 · BTC al-tut: %-1.5
+Polat özsermaye: %-2.57 · BTC al-tut: %-1.46
 
 ## Öğrenme (walk-forward)
 
@@ -57,9 +57,9 @@ En az işe yarayan okumalar: obv_egim_1H ×0.713, yapi_1D ×0.723, adx_di_1D ×0
 
 **Girilmeyen kurulumlar (engel)**
 
-- üst üste 3 zarar: 1978
-- ders: 1859
-- gösterge aileleri aynı yönde değil: 855
+- üst üste 3 zarar: 2029
+- ders: 1868
+- gösterge aileleri aynı yönde değil: 857
 - büyük zaman dilimi trendi ters: 756
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
@@ -107,9 +107,9 @@ En az işe yarayan okumalar: obv_egim_1H ×0.713, yapi_1D ×0.723, adx_di_1D ×0
 
 **Girilmeyen kurulumlar (engel)**
 
-- üst üste 3 zarar: 1978
-- ders: 1859
-- gösterge aileleri aynı yönde değil: 855
+- üst üste 3 zarar: 2029
+- ders: 1868
+- gösterge aileleri aynı yönde değil: 857
 - büyük zaman dilimi trendi ters: 756
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
@@ -157,9 +157,9 @@ En az işe yarayan okumalar: obv_egim_1H ×0.713, yapi_1D ×0.723, adx_di_1D ×0
 
 **Girilmeyen kurulumlar (engel)**
 
-- üst üste 3 zarar: 1978
-- ders: 1859
-- gösterge aileleri aynı yönde değil: 855
+- üst üste 3 zarar: 2029
+- ders: 1868
+- gösterge aileleri aynı yönde değil: 857
 - büyük zaman dilimi trendi ters: 756
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
