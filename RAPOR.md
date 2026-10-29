@@ -4,24 +4,24 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.307R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.306R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 1335 | %46.1 | -0.307 | -409.41 |
+| polat_tum_sinyaller | 1338 | %46.2 | -0.306 | -409.96 |
 | polat_girilen | 7 | %57.1 | -0.501 | -3.5 |
-| polat_girilmeyen | 1328 | %46.1 | -0.306 | -405.91 |
-| rastgele | 1349 | %43.9 | -0.354 | -478.22 |
-| trend_naif | 1344 | %38.8 | -0.47 | -631.28 |
+| polat_girilmeyen | 1331 | %46.1 | -0.305 | -406.45 |
+| rastgele | 1370 | %43.4 | -0.365 | -500.44 |
+| trend_naif | 1359 | %38.3 | -0.478 | -649.33 |
 
-Polat özsermaye: %-3.19 · BTC al-tut: %0.98
+Polat özsermaye: %-3.12 · BTC al-tut: %1.0
 
 ## Öğrenme (walk-forward)
 
-Örnek 1320 (eğitim 923, doğrulama 397) · uygulanan katsayı 69 · doğrulamada tutmadığı için reddedilen 24
+Örnek 1335 (eğitim 934, doğrulama 401) · uygulanan katsayı 67 · doğrulamada tutmadığı için reddedilen 26
 
-En çok işe yarayan okumalar: momentum_5m ×1.393, tetik_psar_donus_15m ×1.375, macd_hist_15m ×1.371, cci_5m ×1.355, tetik_yapi_bozulmasi_15m ×1.323, oi_fiyat ×1.3, obv_egim_15m ×1.278, cci_15m ×1.274, rsi_5m ×1.269, macd_hist_5m ×1.265
-En az işe yarayan okumalar: momentum_1H ×0.528, obv_egim_1H ×0.569, psar_1H ×0.619, ultimate_1H ×0.676, adx_di_1H ×0.683, ema_4H ×0.753, long_short ×0.761, tetik_geri_test_1H ×0.769, mfi_1H ×0.771, cci_1H ×0.781
+En çok işe yarayan okumalar: tetik_psar_donus_15m ×1.375, macd_hist_15m ×1.371, cci_5m ×1.361, tetik_yapi_bozulmasi_15m ×1.323, oi_fiyat ×1.295, obv_egim_15m ×1.278, rsi_5m ×1.271, cci_15m ×1.268, uyusmazlik_rsi_15m ×1.235, demand_15m ×1.225
+En az işe yarayan okumalar: momentum_1H ×0.541, obv_egim_1H ×0.574, psar_1H ×0.631, ultimate_1H ×0.684, adx_di_1H ×0.69, ema_4H ×0.768, long_short ×0.778, mfi_1H ×0.78, tetik_geri_test_1H ×0.784, cci_1H ×0.788
 
 ## Son 1 gün
 
@@ -63,16 +63,16 @@ En az işe yarayan okumalar: momentum_1H ×0.528, obv_egim_1H ×0.569, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 5211
+- ders: 5220
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 1403
-- gösterge aileleri aynı yönde değil: 1262
-- günlük işlem tavanı (8): 668
+- büyük zaman dilimi trendi ters: 1426
+- gösterge aileleri aynı yönde değil: 1285
+- günlük işlem tavanı (8): 791
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
-- puan +0.127 eşiğin (0.25) altında: 101
+- puan +0.123 eşiğin (0.25) altında: 101
 
 **Hata sınıfları**
 
@@ -120,16 +120,16 @@ En az işe yarayan okumalar: momentum_1H ×0.528, obv_egim_1H ×0.569, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 5211
+- ders: 5220
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 1403
-- gösterge aileleri aynı yönde değil: 1262
-- günlük işlem tavanı (8): 668
+- büyük zaman dilimi trendi ters: 1426
+- gösterge aileleri aynı yönde değil: 1285
+- günlük işlem tavanı (8): 791
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
-- puan +0.127 eşiğin (0.25) altında: 101
+- puan +0.123 eşiğin (0.25) altında: 101
 
 **Hata sınıfları**
 
@@ -178,16 +178,16 @@ En az işe yarayan okumalar: momentum_1H ×0.528, obv_egim_1H ×0.569, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 5211
+- ders: 5220
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 1403
-- gösterge aileleri aynı yönde değil: 1262
-- günlük işlem tavanı (8): 668
+- büyük zaman dilimi trendi ters: 1426
+- gösterge aileleri aynı yönde değil: 1285
+- günlük işlem tavanı (8): 791
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
-- puan +0.127 eşiğin (0.25) altında: 101
+- puan +0.123 eşiğin (0.25) altında: 101
 
 **Hata sınıfları**
 
