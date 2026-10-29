@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.341R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.342R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 1107 | %44.8 | -0.341 | -377.97 |
+| polat_tum_sinyaller | 1112 | %44.8 | -0.342 | -380.14 |
 | polat_girilen | 5 | %40.0 | -0.772 | -3.86 |
-| polat_girilmeyen | 1102 | %44.8 | -0.339 | -374.11 |
-| rastgele | 1110 | %42.6 | -0.397 | -440.53 |
-| trend_naif | 1111 | %37.7 | -0.492 | -547.08 |
+| polat_girilmeyen | 1107 | %44.8 | -0.34 | -376.28 |
+| rastgele | 1113 | %42.6 | -0.398 | -442.99 |
+| trend_naif | 1112 | %37.7 | -0.493 | -548.27 |
 
-Polat özsermaye: %-3.54 · BTC al-tut: %-1.01
+Polat özsermaye: %-3.54 · BTC al-tut: %-1.05
 
 ## Öğrenme (walk-forward)
 
@@ -63,9 +63,9 @@ En az işe yarayan okumalar: momentum_1H ×0.484, obv_egim_1H ×0.514, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 3638
+- ders: 3661
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 1048
+- gösterge aileleri aynı yönde değil: 1049
 - büyük zaman dilimi trendi ters: 936
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
@@ -119,9 +119,9 @@ En az işe yarayan okumalar: momentum_1H ×0.484, obv_egim_1H ×0.514, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 3638
+- ders: 3661
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 1048
+- gösterge aileleri aynı yönde değil: 1049
 - büyük zaman dilimi trendi ters: 936
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
@@ -175,9 +175,9 @@ En az işe yarayan okumalar: momentum_1H ×0.484, obv_egim_1H ×0.514, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 3638
+- ders: 3661
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 1048
+- gösterge aileleri aynı yönde değil: 1049
 - büyük zaman dilimi trendi ters: 936
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
