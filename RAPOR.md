@@ -11,10 +11,10 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 1637 | %49.4 | -0.205 | -335.93 |
 | polat_girilen | 8 | %50.0 | -0.596 | -4.77 |
 | polat_girilmeyen | 1629 | %49.4 | -0.203 | -331.16 |
-| rastgele | 1644 | %44.2 | -0.327 | -536.88 |
+| rastgele | 1649 | %44.1 | -0.328 | -540.64 |
 | trend_naif | 1639 | %41.2 | -0.372 | -610.26 |
 
-Polat özsermaye: %-4.4 · BTC al-tut: %-2.55
+Polat özsermaye: %-4.4 · BTC al-tut: %-2.53
 
 ## Öğrenme (walk-forward)
 
@@ -63,11 +63,11 @@ En az işe yarayan okumalar: obv_egim_1H ×0.455, momentum_1H ×0.495, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 6598
-- günlük işlem tavanı (8): 4291
+- ders: 6633
+- günlük işlem tavanı (8): 4308
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 1703
-- gösterge aileleri aynı yönde değil: 1583
+- büyük zaman dilimi trendi ters: 1705
+- gösterge aileleri aynı yönde değil: 1584
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
@@ -118,11 +118,11 @@ En az işe yarayan okumalar: obv_egim_1H ×0.455, momentum_1H ×0.495, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 6598
-- günlük işlem tavanı (8): 4291
+- ders: 6633
+- günlük işlem tavanı (8): 4308
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 1703
-- gösterge aileleri aynı yönde değil: 1583
+- büyük zaman dilimi trendi ters: 1705
+- gösterge aileleri aynı yönde değil: 1584
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
@@ -178,11 +178,11 @@ En az işe yarayan okumalar: obv_egim_1H ×0.455, momentum_1H ×0.495, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 6598
-- günlük işlem tavanı (8): 4291
+- ders: 6633
+- günlük işlem tavanı (8): 4308
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 1703
-- gösterge aileleri aynı yönde değil: 1583
+- büyük zaman dilimi trendi ters: 1705
+- gösterge aileleri aynı yönde değil: 1584
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
