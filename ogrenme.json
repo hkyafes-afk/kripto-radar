@@ -83,74 +83,74 @@
   "baslangic_ts": 1793153633796
  },
  "cevrimici": {
-  "yapi_4H": 0.255,
-  "ema_4H": 1.6192,
+  "yapi_4H": 0.2633,
+  "ema_4H": 1.672,
   "ema200_4H": 2.0,
-  "adx_di_4H": 0.25,
-  "psar_4H": 1.0264,
-  "supertrend_4H": 0.7769,
-  "trix_4H": 0.2579,
-  "ema_1H": 0.36,
-  "ema200_1H": 2.0,
-  "adx_di_1H": 0.3754,
-  "psar_1H": 0.43,
-  "supertrend_1H": 0.4165,
+  "adx_di_4H": 0.2581,
+  "psar_4H": 1.0598,
+  "supertrend_4H": 0.8022,
+  "trix_4H": 0.2663,
+  "ema_1H": 0.3717,
+  "ema200_1H": 1.9369,
+  "adx_di_1H": 0.3636,
+  "psar_1H": 0.4164,
+  "supertrend_1H": 0.4034,
   "konum": 1.9504,
-  "vwap": 0.9256,
-  "vwap_hafta": 0.8653,
-  "avwap_dip": 0.885,
-  "avwap_tepe": 1.3729,
-  "ustunde_gun_acilis": 2.0,
-  "ustunde_hafta_acilis": 0.376,
-  "ustunde_dun_kapanis": 2.0,
-  "ustunde_gecen_hafta_kapanis": 0.376,
-  "ustunde_poc": 0.4036,
+  "vwap": 0.8964,
+  "vwap_hafta": 0.838,
+  "avwap_dip": 0.8571,
+  "avwap_tepe": 1.3296,
+  "ustunde_gun_acilis": 1.9369,
+  "ustunde_hafta_acilis": 0.3883,
+  "ustunde_dun_kapanis": 1.9369,
+  "ustunde_gecen_hafta_kapanis": 0.3883,
+  "ustunde_poc": 0.3909,
   "cift_tepe_1H": 0.4646,
   "mum_cimbiz_tepe_15m": 1.0283,
   "canli_mum_15m": 0.7035,
-  "canli_mum_1H": 0.7882,
-  "stoch_1H": 2.0,
-  "cci_1H": 0.4138,
-  "momentum_1H": 0.4035,
-  "stoch_15m": 0.2954,
-  "cci_15m": 2.0,
-  "willr_15m": 2.0,
-  "momentum_15m": 2.0,
-  "rsi_5m": 2.0,
-  "stoch_5m": 0.3247,
-  "cci_5m": 2.0,
-  "ultimate_5m": 1.857,
-  "pvi_1H": 0.4161,
+  "canli_mum_1H": 0.7633,
+  "stoch_1H": 1.9369,
+  "cci_1H": 0.4007,
+  "momentum_1H": 0.3908,
+  "stoch_15m": 0.305,
+  "cci_15m": 1.9369,
+  "willr_15m": 1.9369,
+  "momentum_15m": 1.9369,
+  "rsi_5m": 1.9369,
+  "stoch_5m": 0.3145,
+  "cci_5m": 1.9369,
+  "ultimate_5m": 1.7984,
+  "pvi_1H": 0.4297,
   "mfi_15m": 2.0,
-  "pvi_15m": 0.4786,
-  "demand_15m": 1.0848,
-  "oi_fiyat": 2.0,
-  "cvd_5dk": 0.6037,
-  "cvd_15dk": 0.3819,
+  "pvi_15m": 0.4635,
+  "demand_15m": 1.0506,
+  "oi_fiyat": 1.9369,
+  "cvd_5dk": 0.5847,
+  "cvd_15dk": 0.3699,
   "btc_1H": 0.2982,
-  "stablecoin": 2.0,
-  "tetik_yapi_bozulmasi_15m": 2.0,
+  "stablecoin": 1.9369,
+  "tetik_yapi_bozulmasi_15m": 1.9369,
   "tetik_geri_test_15m": 1.4588,
   "tetik_geri_test_1H": 0.3445,
-  "tetik_stoch_kesisim_15m": 0.6134,
-  "ema_1D": 1.8092,
-  "ema200_1D": 0.25,
-  "psar_1D": 1.5235,
+  "tetik_stoch_kesisim_15m": 0.6334,
+  "ema_1D": 1.8681,
+  "ema200_1D": 0.2581,
+  "psar_1D": 1.5731,
   "supertrend_1D": 2.0,
   "trix_1D": 2.0,
   "dow_4H": 0.2772,
-  "trix_1H": 0.2605,
+  "trix_1H": 0.269,
   "mum_cimbiz_dip_5m": 0.8069,
-  "willr_1H": 0.4179,
-  "ultimate_1H": 0.3713,
-  "macd_hist_1H": 0.6415,
-  "ultimate_15m": 1.7543,
+  "willr_1H": 0.4047,
+  "ultimate_1H": 0.3596,
+  "macd_hist_1H": 0.6213,
+  "ultimate_15m": 1.6989,
   "macd_hist_15m": 1.9384,
-  "obv_egim_1H": 0.3876,
-  "uyusmazlik_obv_1H": 0.529,
+  "obv_egim_1H": 0.3754,
+  "uyusmazlik_obv_1H": 0.5123,
   "likidasyon_miknatisi": 1.4328,
-  "yapi_1D": 1.9384,
-  "adx_di_1D": 1.9384,
+  "yapi_1D": 2.0,
+  "adx_di_1D": 2.0,
   "cift_tepe_4H": 1.1709,
   "momentum_5m": 1.9605,
   "macd_hist_5m": 0.25,
@@ -159,36 +159,36 @@
   "long_short": 1.9384,
   "duvar_alt": 1.2079,
   "duvar_ust": 0.8323,
-  "tape_hizi": 0.619,
+  "tape_hizi": 0.5995,
   "cift_dip_1H": 0.8535,
   "mum_dis_mum_5m": 1.222,
-  "obv_egim_15m": 2.0,
+  "obv_egim_15m": 1.9369,
   "uyusmazlik_obv_15m": 0.925,
   "uyusmazlik_mfi_15m": 0.6147,
   "cvd_ayrisma": 0.3057,
-  "defter_dengesi": 1.5602,
-  "buyuk_islemler": 0.8372,
-  "dow_1D": 1.3912,
+  "defter_dengesi": 1.611,
+  "buyuk_islemler": 0.8108,
+  "dow_1D": 1.4365,
   "mum_kayan_yildiz_5m": 1.8223,
   "obv_kirilim_15m": 0.6772,
   "uyusmazlik_macd_15m": 1.8678,
   "fonlama": 1.0789,
   "basis": 0.8451,
-  "tetik_trend_cizgisi_kirilim_1H": 2.0,
+  "tetik_trend_cizgisi_kirilim_1H": 1.9369,
   "tetik_obv_kirilim_15m": 0.6772,
   "mum_cimbiz_tepe_5m": 0.9099,
   "uyusmazlik_rsi_1H": 0.3412,
   "uyusmazlik_rsi_15m": 2.0,
   "uyusmazlik_cci_15m": 2.0,
   "mum_cekic_15m": 0.7817,
-  "rsi_1H": 0.4121,
-  "rsi_15m": 2.0,
-  "willr_5m": 0.664,
+  "rsi_1H": 0.3991,
+  "rsi_15m": 1.9369,
+  "willr_5m": 0.643,
   "mfi_1H": 0.2628,
   "uyusmazlik_cci_1H": 0.3672,
   "tetik_psar_donus_15m": 1.0819,
-  "yapi_1H": 0.4217,
-  "tetik_geri_cekilme": 0.8717,
+  "yapi_1H": 0.4084,
+  "tetik_geri_cekilme": 0.9001,
   "tetik_trend_cizgisi_kirilim_15m": 1.477,
   "tetik_uyusmazlik_donus_macd": 1.1771,
   "dow_1H": 0.3839,
@@ -208,7 +208,7 @@
   "hacim_oran_15m": 0.63,
   "tetik_sikisma_cikisi": 1.2208,
   "obo_1H": 0.6119,
-  "mum_ters_cekic_15m": 0.9488,
+  "mum_ters_cekic_15m": 0.9797,
   "cift_dip_15m": 1.0924,
   "mum_harami_5m": 1.0119,
   "tetik_canli_ret_15m": 1.0514,
@@ -223,7 +223,7 @@
   "mum_asili_adam_15m": 0.903,
   "tetik_kirilim": 1.0089,
   "tetik_uyusmazlik_donus_mfi": 0.6737,
-  "canli_hacim_tempo_1H": 1.573,
+  "canli_hacim_tempo_1H": 1.5234,
   "tetik_supurme": 1.1551,
   "tetik_anlik_kirilim_avwap_tepe": 1.0539,
   "cift_tepe_15m": 0.8103,
@@ -270,3207 +270,579 @@
   "mum_uc_kara_karga_5m": 0.9692
  },
  "yollar": {
-  "yapi_bozulmasi|long|momentum+seviye|btc:?": {
-   "n": 3,
-   "sumR": -0.8616,
+  "yapi_bozulmasi|long|btc:?": {
+   "n": 11,
+   "sumR": -5.484,
    "gercek": 0,
    "karar": null
   },
-  "yapi_bozulmasi|long|akis+momentum|btc:?": {
-   "n": 2,
-   "sumR": 0.6225,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|long|seviye+uyusmazlik|btc:?": {
+  "geri_cekilme|long|btc:?": {
    "n": 1,
    "sumR": -0.0523,
    "gercek": 0,
    "karar": null
   },
-  "yapi_bozulmasi|long|akis+momentum|btc:belirsiz": {
-   "n": 1,
-   "sumR": 0.296,
+  "yapi_bozulmasi|long|btc:belirsiz": {
+   "n": 9,
+   "sumR": -5.2231,
    "gercek": 0,
    "karar": null
   },
-  "yapi_bozulmasi|long|momentum+seviye|btc:belirsiz": {
-   "n": 3,
-   "sumR": -2.3836,
+  "geri_test|long|btc:?": {
+   "n": 8,
+   "sumR": -8.8634,
    "gercek": 0,
    "karar": null
   },
-  "yapi_bozulmasi|long|akis+uyusmazlik|btc:belirsiz": {
-   "n": 2,
-   "sumR": -1.3311,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|long|seviye+uyusmazlik|btc:?": {
-   "n": 4,
-   "sumR": -5.2959,
-   "gercek": 0,
-   "karar": null
-  },
-  "obv_kirilim|long|akis+seviye|btc:belirsiz": {
+  "obv_kirilim|long|btc:belirsiz": {
    "n": 1,
    "sumR": -1.0971,
    "gercek": 0,
    "karar": null
   },
-  "yapi_bozulmasi|long|akis+seviye|btc:belirsiz": {
-   "n": 2,
-   "sumR": -0.6485,
+  "geri_test|long|btc:belirsiz": {
+   "n": 3,
+   "sumR": -0.0058,
    "gercek": 0,
    "karar": null
   },
-  "geri_test|long|akis+trend|btc:belirsiz": {
-   "n": 2,
-   "sumR": -0.6027,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|long|akis+seviye|btc:?": {
-   "n": 2,
-   "sumR": -0.3795,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_1H|short|akis+seviye|btc:?": {
+  "trend_cizgisi_kirilim_1H|short|btc:?": {
    "n": 1,
    "sumR": -1.2515,
    "gercek": 0,
    "karar": null
   },
-  "trend_cizgisi_kirilim_15m|short|akis+seviye|btc:?": {
+  "trend_cizgisi_kirilim_15m|short|btc:?": {
    "n": 1,
    "sumR": 0.2856,
    "gercek": 0,
    "karar": null
   },
-  "geri_test|long|seviye+uyusmazlik|btc:yatay": {
-   "n": 24,
-   "sumR": -11.1783,
+  "geri_test|long|btc:yatay": {
+   "n": 180,
+   "sumR": -60.2534,
    "gercek": 0,
    "karar": "kacin"
   },
-  "geri_test|long|akis+uyusmazlik|btc:yatay": {
-   "n": 17,
-   "sumR": 1.0881,
-   "gercek": 0,
+  "yapi_bozulmasi|long|btc:yatay": {
+   "n": 214,
+   "sumR": 5.9004,
+   "gercek": 4,
    "karar": null
   },
-  "yapi_bozulmasi|long|seviye+trend|btc:yatay": {
-   "n": 16,
-   "sumR": -2.172,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|long|akis+seviye|btc:yatay": {
-   "n": 44,
-   "sumR": -18.6471,
-   "gercek": 0,
-   "karar": "kacin"
-  },
-  "geri_test|long|akis+seviye|btc:?": {
-   "n": 1,
-   "sumR": 0.6235,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_15m|long|akis+seviye|btc:yatay": {
-   "n": 4,
-   "sumR": -2.3882,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|long|akis+momentum|btc:yatay": {
-   "n": 16,
-   "sumR": 1.6001,
-   "gercek": 1,
-   "karar": null
-  },
-  "geri_test|long|seviye+uyusmazlik|btc:belirsiz": {
-   "n": 1,
-   "sumR": 0.5969,
-   "gercek": 0,
-   "karar": null
-  },
-  "stoch_kesisim|short|formasyon+uyusmazlik|btc:yatay": {
-   "n": 2,
-   "sumR": -1.0411,
-   "gercek": 0,
-   "karar": null
-  },
-  "kirilim|long|akis+seviye|btc:?": {
-   "n": 1,
-   "sumR": 0.6306,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|long|seviye+uyusmazlik|btc:yatay": {
+  "trend_cizgisi_kirilim_15m|long|btc:yatay": {
    "n": 32,
-   "sumR": 0.9485,
+   "sumR": 6.9061,
    "gercek": 0,
    "karar": null
   },
-  "uyusmazlik_donus_rsi|long|akis+uyusmazlik|btc:yatay": {
-   "n": 6,
-   "sumR": 1.0823,
+  "stoch_kesisim|short|btc:yatay": {
+   "n": 10,
+   "sumR": -6.4501,
    "gercek": 0,
    "karar": null
   },
-  "geri_cekilme|short|akis+formasyon|btc:yatay": {
-   "n": 9,
-   "sumR": -8.5569,
-   "gercek": 0,
-   "karar": "kacin"
-  },
-  "uyusmazlik_donus_rsi|short|seviye+uyusmazlik|btc:yatay": {
+  "kirilim|long|btc:?": {
    "n": 2,
-   "sumR": -2.4446,
+   "sumR": -0.5278,
    "gercek": 0,
    "karar": null
   },
-  "geri_cekilme|short|akis+uyusmazlik|btc:yatay": {
-   "n": 14,
-   "sumR": -8.8303,
+  "uyusmazlik_donus_rsi|long|btc:yatay": {
+   "n": 16,
+   "sumR": 1.9646,
    "gercek": 0,
+   "karar": null
+  },
+  "geri_cekilme|short|btc:yatay": {
+   "n": 77,
+   "sumR": -40.0539,
+   "gercek": 2,
    "karar": "kacin"
   },
-  "geri_test|short|akis+seviye|btc:belirsiz": {
+  "uyusmazlik_donus_rsi|short|btc:yatay": {
+   "n": 10,
+   "sumR": -5.9362,
+   "gercek": 0,
+   "karar": null
+  },
+  "geri_test|short|btc:belirsiz": {
    "n": 1,
    "sumR": 0.488,
    "gercek": 0,
    "karar": null
   },
-  "geri_cekilme|long|akis+seviye|btc:yatay": {
-   "n": 14,
-   "sumR": 1.5802,
+  "geri_cekilme|long|btc:yatay": {
+   "n": 57,
+   "sumR": -5.1769,
    "gercek": 0,
    "karar": null
   },
-  "stoch_kesisim|short|akis+formasyon|btc:yatay": {
-   "n": 4,
-   "sumR": -3.8371,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|short|formasyon+trend|btc:yatay": {
-   "n": 3,
-   "sumR": -3.9296,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|long|seviye+trend|btc:yatay": {
-   "n": 14,
-   "sumR": 0.041,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|long|formasyon+seviye|btc:yatay": {
-   "n": 23,
-   "sumR": -12.5487,
+  "obv_kirilim|long|btc:yatay": {
+   "n": 25,
+   "sumR": -10.3195,
    "gercek": 0,
    "karar": "kacin"
   },
-  "obv_kirilim|long|akis+seviye|btc:yatay": {
-   "n": 3,
-   "sumR": -1.733,
+  "sikisma_cikisi|long|btc:yatay": {
+   "n": 14,
+   "sumR": -1.3894,
    "gercek": 0,
    "karar": null
   },
-  "sikisma_cikisi|long|seviye+trend|btc:yatay": {
-   "n": 1,
-   "sumR": 0.5009,
+  "formasyon_cift_dip|long|btc:yatay": {
+   "n": 2,
+   "sumR": -0.0366,
    "gercek": 0,
    "karar": null
   },
-  "formasyon_cift_dip|long|formasyon+seviye|btc:yatay": {
-   "n": 1,
-   "sumR": 1.0871,
-   "gercek": 0,
-   "karar": null
-  },
-  "sikisma_cikisi|long|momentum+seviye|btc:yatay": {
-   "n": 5,
-   "sumR": -5.1009,
-   "gercek": 0,
-   "karar": "kacin"
-  },
-  "yapi_bozulmasi|long|formasyon+seviye|btc:yatay": {
+  "macd_kesisim|long|btc:yatay": {
    "n": 11,
-   "sumR": 2.7384,
+   "sumR": -1.3062,
    "gercek": 0,
    "karar": null
   },
-  "macd_kesisim|long|momentum+seviye|btc:yatay": {
-   "n": 1,
-   "sumR": -0.3034,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_15m|short|akis+formasyon|btc:yatay": {
-   "n": 4,
-   "sumR": -3.2235,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|long|akis+uyusmazlik|btc:yatay": {
-   "n": 11,
-   "sumR": 5.1786,
-   "gercek": 0,
-   "karar": "benimse"
-  },
-  "yapi_bozulmasi|long|akis+seviye|btc:yatay": {
-   "n": 27,
-   "sumR": 0.6953,
+  "trend_cizgisi_kirilim_15m|short|btc:yatay": {
+   "n": 17,
+   "sumR": -17.2802,
    "gercek": 1,
    "karar": null
   },
-  "anlik_kirilim|long|akis+seviye|btc:yatay": {
-   "n": 10,
-   "sumR": -0.2893,
+  "anlik_kirilim|long|btc:yatay": {
+   "n": 25,
+   "sumR": 6.5944,
    "gercek": 0,
    "karar": null
   },
-  "trend_cizgisi_kirilim_15m|long|akis+momentum|btc:yatay": {
-   "n": 5,
-   "sumR": 3.5666,
-   "gercek": 0,
-   "karar": "benimse"
-  },
-  "geri_test|long|akis+trend|btc:yatay": {
-   "n": 4,
-   "sumR": -1.3593,
-   "gercek": 0,
+  "yapi_bozulmasi|short|btc:yatay": {
+   "n": 189,
+   "sumR": 4.3168,
+   "gercek": 5,
    "karar": null
   },
-  "yapi_bozulmasi|long|momentum+uyusmazlik|btc:belirsiz": {
-   "n": 1,
-   "sumR": -1.1559,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|long|momentum+seviye|btc:yatay": {
-   "n": 48,
-   "sumR": -5.1867,
-   "gercek": 1,
-   "karar": null
-  },
-  "geri_test|long|momentum+seviye|btc:yatay": {
-   "n": 14,
-   "sumR": -7.909,
-   "gercek": 0,
-   "karar": "kacin"
-  },
-  "geri_test|long|formasyon+momentum|btc:yatay": {
-   "n": 5,
-   "sumR": -2.0646,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|long|akis+uyusmazlik|btc:?": {
-   "n": 1,
-   "sumR": -1.1224,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|momentum+seviye|btc:yatay": {
-   "n": 29,
-   "sumR": 14.4694,
-   "gercek": 0,
-   "karar": "benimse"
-  },
-  "geri_cekilme|short|akis+momentum|btc:yatay": {
-   "n": 4,
-   "sumR": -1.5064,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|short|seviye+trend|btc:?": {
+  "geri_cekilme|short|btc:?": {
    "n": 1,
    "sumR": 0.3526,
    "gercek": 0,
    "karar": null
   },
-  "yapi_bozulmasi|long|hacim+momentum|btc:yatay": {
-   "n": 9,
-   "sumR": 3.4946,
+  "kirilim|short|btc:yatay": {
+   "n": 18,
+   "sumR": 1.764,
    "gercek": 0,
    "karar": null
   },
-  "geri_cekilme|short|seviye+trend|btc:yatay": {
-   "n": 5,
-   "sumR": -1.8921,
+  "uyusmazlik_donus_obv|short|btc:yatay": {
+   "n": 12,
+   "sumR": -10.1812,
    "gercek": 0,
    "karar": null
   },
-  "anlik_kirilim|long|akis+formasyon|btc:yatay": {
-   "n": 1,
-   "sumR": -1.0302,
+  "obv_kirilim|short|btc:yatay": {
+   "n": 24,
+   "sumR": -6.2581,
    "gercek": 0,
    "karar": null
   },
-  "uyusmazlik_donus_rsi|short|akis+uyusmazlik|btc:yatay": {
-   "n": 5,
-   "sumR": -6.5689,
+  "psar_donus|long|btc:yatay": {
+   "n": 13,
+   "sumR": 1.1243,
+   "gercek": 0,
+   "karar": null
+  },
+  "geri_test|short|btc:yatay": {
+   "n": 185,
+   "sumR": -136.3153,
+   "gercek": 3,
+   "karar": "kacin"
+  },
+  "anlik_kirilim|short|btc:yatay": {
+   "n": 34,
+   "sumR": -12.5405,
    "gercek": 0,
    "karar": "kacin"
   },
-  "kirilim|short|akis+trend|btc:yatay": {
-   "n": 2,
-   "sumR": -2.5942,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_obv|short|akis+uyusmazlik|btc:yatay": {
-   "n": 3,
-   "sumR": -4.0144,
-   "gercek": 0,
-   "karar": null
-  },
-  "obv_kirilim|short|akis+uyusmazlik|btc:yatay": {
-   "n": 6,
-   "sumR": -1.1237,
-   "gercek": 0,
-   "karar": null
-  },
-  "stoch_kesisim|short|seviye+trend|btc:yatay": {
-   "n": 1,
-   "sumR": -1.2884,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|long|hacim+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.0626,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|long|hacim+seviye|btc:yatay": {
-   "n": 6,
-   "sumR": -5.7721,
-   "gercek": 0,
-   "karar": "kacin"
-  },
-  "psar_donus|long|akis+momentum|btc:yatay": {
-   "n": 2,
-   "sumR": -2.2789,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_obv|short|momentum+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.0511,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|long|hacim+momentum|btc:?": {
-   "n": 1,
-   "sumR": -1.0467,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|akis+seviye|btc:yatay": {
-   "n": 7,
-   "sumR": -1.6551,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|short|akis+seviye|btc:yatay": {
-   "n": 27,
-   "sumR": -22.6322,
-   "gercek": 0,
-   "karar": "kacin"
-  },
-  "anlik_kirilim|short|akis+uyusmazlik|btc:yatay": {
-   "n": 8,
-   "sumR": -4.7578,
-   "gercek": 0,
-   "karar": "kacin"
-  },
-  "canli_ret|long|akis+seviye|btc:yatay": {
+  "canli_ret|long|btc:yatay": {
    "n": 1,
    "sumR": 0.9649,
    "gercek": 0,
    "karar": null
   },
-  "trend_cizgisi_kirilim_15m|long|seviye+uyusmazlik|btc:yatay": {
+  "uyusmazlik_donus_macd|long|btc:yatay": {
+   "n": 10,
+   "sumR": 0.5677,
+   "gercek": 0,
+   "karar": null
+  },
+  "trend_cizgisi_kirilim_1H|short|btc:yatay": {
+   "n": 15,
+   "sumR": 0.5239,
+   "gercek": 0,
+   "karar": null
+  },
+  "sikisma_cikisi|short|btc:yatay": {
+   "n": 6,
+   "sumR": -3.2861,
+   "gercek": 0,
+   "karar": null
+  },
+  "macd_kesisim|short|btc:yatay": {
+   "n": 10,
+   "sumR": -4.7213,
+   "gercek": 0,
+   "karar": null
+  },
+  "uyusmazlik_donus_macd|short|btc:yatay": {
+   "n": 6,
+   "sumR": -3.3856,
+   "gercek": 0,
+   "karar": null
+  },
+  "supurme|long|btc:yatay": {
    "n": 4,
-   "sumR": 1.5428,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|akis+momentum|btc:yatay": {
-   "n": 9,
-   "sumR": -4.2749,
-   "gercek": 0,
-   "karar": "kacin"
-  },
-  "uyusmazlik_donus_macd|long|akis+seviye|btc:yatay": {
-   "n": 2,
-   "sumR": 0.0688,
-   "gercek": 0,
-   "karar": null
-  },
-  "formasyon_cift_dip|long|seviye+trend|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1237,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|long|akis+formasyon|btc:yatay": {
-   "n": 4,
-   "sumR": -2.3793,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_1H|short|akis+formasyon|btc:yatay": {
-   "n": 1,
-   "sumR": 0.2964,
-   "gercek": 0,
-   "karar": null
-  },
-  "obv_kirilim|short|turev+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": 0.4707,
-   "gercek": 0,
-   "karar": null
-  },
-  "sikisma_cikisi|short|seviye+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": 0.4415,
-   "gercek": 0,
-   "karar": null
-  },
-  "macd_kesisim|short|akis+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": 0.4309,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|short|seviye+trend|btc:yatay": {
-   "n": 26,
-   "sumR": -21.067,
-   "gercek": 0,
-   "karar": "kacin"
-  },
-  "sikisma_cikisi|short|formasyon+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.3486,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_obv|short|akis+trend|btc:yatay": {
-   "n": 1,
-   "sumR": -1.3047,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_1H|short|momentum+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.0797,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_15m|short|akis+trend|btc:yatay": {
-   "n": 1,
-   "sumR": -1.6164,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_macd|short|akis+uyusmazlik|btc:yatay": {
-   "n": 2,
-   "sumR": -2.7675,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_15m|short|momentum+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.5408,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|short|momentum+seviye|btc:yatay": {
-   "n": 5,
-   "sumR": -3.1234,
-   "gercek": 1,
-   "karar": "kacin"
-  },
-  "trend_cizgisi_kirilim_15m|short|akis+uyusmazlik|btc:yatay": {
-   "n": 4,
-   "sumR": -5.8036,
-   "gercek": 0,
-   "karar": null
-  },
-  "supurme|long|akis+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": 0.5772,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|long|akis+momentum|btc:yatay": {
-   "n": 3,
-   "sumR": 1.5219,
-   "gercek": 0,
-   "karar": null
-  },
-  "sikisma_cikisi|long|momentum+trend|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1362,
-   "gercek": 0,
-   "karar": null
-  },
-  "stoch_kesisim|long|akis+seviye|btc:yatay": {
-   "n": 2,
-   "sumR": -0.646,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|long|hacim+seviye|btc:yatay": {
-   "n": 4,
-   "sumR": 1.2338,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|long|trend+uyusmazlik|btc:yatay": {
-   "n": 2,
-   "sumR": -2.7487,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|long|formasyon+seviye|btc:yatay": {
-   "n": 3,
-   "sumR": -3.9619,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|short|akis+turev|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1911,
-   "gercek": 0,
-   "karar": null
-  },
-  "obv_kirilim|long|formasyon+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.397,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|long|seviye+uyusmazlik|btc:yatay": {
-   "n": 7,
-   "sumR": -0.192,
-   "gercek": 0,
-   "karar": null
-  },
-  "stoch_kesisim|long|akis+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": 0.5702,
-   "gercek": 0,
-   "karar": null
-  },
-  "kirilim|long|formasyon+seviye|btc:yatay": {
-   "n": 5,
-   "sumR": 3.3698,
-   "gercek": 0,
-   "karar": "benimse"
-  },
-  "obv_kirilim|short|hacim+seviye|btc:yatay": {
-   "n": 1,
-   "sumR": 0.3106,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|long|momentum+seviye|btc:yatay": {
-   "n": 8,
-   "sumR": 1.0078,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|long|trend+uyusmazlik|btc:yatay": {
-   "n": 2,
-   "sumR": -3.049,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|long|momentum+uyusmazlik|btc:yatay": {
-   "n": 16,
-   "sumR": -5.0456,
+   "sumR": -0.3559,
    "gercek": 1,
    "karar": null
   },
-  "uyusmazlik_donus_rsi|short|formasyon+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": 0.0237,
+  "stoch_kesisim|long|btc:yatay": {
+   "n": 11,
+   "sumR": -2.7234,
    "gercek": 0,
    "karar": null
   },
-  "yapi_bozulmasi|long|momentum+trend|btc:yatay": {
-   "n": 2,
-   "sumR": 0.3719,
+  "kirilim|long|btc:yatay": {
+   "n": 43,
+   "sumR": 4.7411,
    "gercek": 0,
    "karar": null
   },
-  "obv_kirilim|short|akis+momentum|btc:yatay": {
-   "n": 1,
-   "sumR": 0.2211,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|long|piyasa+seviye|btc:yatay": {
-   "n": 2,
-   "sumR": -3.0749,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|trend+uyusmazlik|btc:yatay": {
-   "n": 20,
-   "sumR": 0.4852,
-   "gercek": 3,
-   "karar": null
-  },
-  "formasyon_alcalan_ucgen|short|momentum+seviye|btc:yatay": {
+  "formasyon_alcalan_ucgen|short|btc:yatay": {
    "n": 1,
    "sumR": -1.3348,
    "gercek": 0,
    "karar": null
   },
-  "yapi_bozulmasi|short|akis+uyusmazlik|btc:yatay": {
-   "n": 15,
-   "sumR": -2.128,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_macd|short|seviye+trend|btc:yatay": {
-   "n": 1,
-   "sumR": 0.2246,
-   "gercek": 0,
-   "karar": null
-  },
-  "obv_kirilim|short|akis+hacim|btc:yatay": {
-   "n": 1,
-   "sumR": -1.0958,
-   "gercek": 0,
-   "karar": null
-  },
-  "formasyon_yukselen_takoz|short|akis+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.709,
-   "gercek": 0,
-   "karar": null
-  },
-  "sikisma_cikisi|short|akis+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.5607,
-   "gercek": 0,
-   "karar": null
-  },
-  "macd_kesisim|long|akis+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1118,
-   "gercek": 0,
-   "karar": null
-  },
-  "formasyon_abcd|short|akis+formasyon|btc:yatay": {
-   "n": 1,
-   "sumR": -1.253,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|short|seviye+uyusmazlik|btc:yatay": {
-   "n": 6,
-   "sumR": -4.8058,
-   "gercek": 2,
-   "karar": "kacin"
-  },
-  "geri_cekilme|short|akis+seviye|btc:yatay": {
-   "n": 7,
-   "sumR": -5.0641,
-   "gercek": 0,
-   "karar": "kacin"
-  },
-  "geri_test|short|akis+uyusmazlik|btc:yatay": {
-   "n": 22,
-   "sumR": -20.6029,
-   "gercek": 0,
-   "karar": "kacin"
-  },
-  "supertrend_donus|short|akis+momentum|btc:yatay": {
+  "formasyon_yukselen_takoz|short|btc:yatay": {
    "n": 2,
-   "sumR": -2.5815,
+   "sumR": -1.4067,
    "gercek": 0,
    "karar": null
   },
-  "obv_kirilim|long|seviye+trend|btc:yatay": {
-   "n": 2,
-   "sumR": -1.3702,
-   "gercek": 0,
-   "karar": null
-  },
-  "obv_kirilim|short|akis+trend|btc:yatay": {
-   "n": 2,
-   "sumR": -0.4857,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|momentum+uyusmazlik|btc:yatay": {
-   "n": 20,
-   "sumR": -1.3179,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_15m|long|akis+trend|btc:yatay": {
+  "formasyon_abcd|short|btc:yatay": {
    "n": 3,
-   "sumR": 5.8259,
+   "sumR": -3.5453,
    "gercek": 0,
    "karar": null
   },
-  "kirilim|long|seviye+uyusmazlik|btc:yatay": {
-   "n": 7,
-   "sumR": 0.4481,
-   "gercek": 0,
-   "karar": null
-  },
-  "psar_donus|long|akis+seviye|btc:yatay": {
-   "n": 3,
-   "sumR": 1.3258,
-   "gercek": 0,
-   "karar": null
-  },
-  "obv_kirilim|long|momentum+seviye|btc:yatay": {
-   "n": 2,
-   "sumR": 0.866,
-   "gercek": 0,
-   "karar": null
-  },
-  "psar_donus|long|trend+turev|btc:yatay": {
-   "n": 1,
-   "sumR": -1.0736,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_1H|short|trend+uyusmazlik|btc:yatay": {
-   "n": 2,
-   "sumR": -2.7439,
-   "gercek": 0,
-   "karar": null
-  },
-  "kirilim|long|formasyon+momentum|btc:yatay": {
-   "n": 2,
-   "sumR": 0.7389,
-   "gercek": 0,
-   "karar": null
-  },
-  "kirilim|long|momentum+seviye|btc:yatay": {
-   "n": 16,
-   "sumR": -5.2455,
-   "gercek": 0,
-   "karar": null
-  },
-  "kirilim|long|formasyon+uyusmazlik|btc:yatay": {
-   "n": 2,
-   "sumR": -0.9449,
-   "gercek": 0,
-   "karar": null
-  },
-  "obv_kirilim|long|akis+uyusmazlik|btc:yatay": {
-   "n": 4,
-   "sumR": -1.4694,
-   "gercek": 0,
-   "karar": null
-  },
-  "anlik_kirilim|short|seviye+uyusmazlik|btc:yatay": {
-   "n": 6,
-   "sumR": -4.0841,
-   "gercek": 0,
-   "karar": "kacin"
-  },
-  "yapi_bozulmasi|long|formasyon+uyusmazlik|btc:yatay": {
-   "n": 6,
-   "sumR": -0.7821,
-   "gercek": 0,
-   "karar": null
-  },
-  "obv_kirilim|short|formasyon+uyusmazlik|btc:yatay": {
-   "n": 2,
-   "sumR": -0.6937,
-   "gercek": 0,
-   "karar": null
-  },
-  "psar_donus|short|akis+uyusmazlik|btc:yatay": {
-   "n": 2,
-   "sumR": 1.0977,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|long|momentum+uyusmazlik|btc:yatay": {
-   "n": 8,
-   "sumR": 0.7132,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_1H|long|akis+uyusmazlik|btc:yatay": {
-   "n": 6,
-   "sumR": 0.0026,
-   "gercek": 0,
-   "karar": null
-  },
-  "sikisma_cikisi|long|formasyon+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.222,
-   "gercek": 0,
-   "karar": null
-  },
-  "anlik_kirilim|long|formasyon+seviye|btc:yatay": {
-   "n": 4,
-   "sumR": 1.2991,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|short|formasyon+seviye|btc:yatay": {
-   "n": 2,
-   "sumR": -0.9078,
-   "gercek": 0,
-   "karar": null
-  },
-  "formasyon_alcalan_takoz|long|seviye+uyusmazlik|btc:yatay": {
-   "n": 2,
-   "sumR": -0.8146,
-   "gercek": 0,
-   "karar": null
-  },
-  "sikisma_cikisi|short|seviye+trend|btc:yatay": {
-   "n": 1,
-   "sumR": 1.3084,
-   "gercek": 0,
-   "karar": null
-  },
-  "stoch_kesisim|long|seviye+trend|btc:yatay": {
-   "n": 4,
-   "sumR": -2.7961,
-   "gercek": 0,
-   "karar": null
-  },
-  "kirilim|long|akis+seviye|btc:yatay": {
-   "n": 4,
-   "sumR": 2.4451,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|long|seviye+trend|btc:?": {
-   "n": 2,
-   "sumR": -2.6963,
-   "gercek": 0,
-   "karar": null
-  },
-  "kirilim|long|momentum+seviye|btc:?": {
-   "n": 1,
-   "sumR": -1.1584,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_macd|long|formasyon+seviye|btc:yatay": {
-   "n": 2,
-   "sumR": -2.4872,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|long|momentum+seviye|btc:?": {
-   "n": 2,
-   "sumR": -2.9911,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|long|akis+formasyon|btc:yatay": {
+  "supertrend_donus|short|btc:yatay": {
    "n": 5,
-   "sumR": 1.3245,
+   "sumR": -6.3821,
    "gercek": 0,
    "karar": null
   },
-  "yapi_bozulmasi|short|seviye+trend|btc:?": {
-   "n": 1,
-   "sumR": -1.1345,
+  "psar_donus|short|btc:yatay": {
+   "n": 22,
+   "sumR": -6.5428,
    "gercek": 0,
    "karar": null
   },
-  "yapi_bozulmasi|short|seviye+uyusmazlik|btc:yatay": {
-   "n": 26,
-   "sumR": -9.4725,
-   "gercek": 1,
-   "karar": "kacin"
+  "trend_cizgisi_kirilim_1H|long|btc:yatay": {
+   "n": 20,
+   "sumR": -1.7693,
+   "gercek": 0,
+   "karar": null
   },
-  "uyusmazlik_donus_macd|long|seviye+uyusmazlik|btc:?": {
+  "formasyon_alcalan_takoz|long|btc:yatay": {
+   "n": 3,
+   "sumR": 0.6605,
+   "gercek": 0,
+   "karar": null
+  },
+  "yapi_bozulmasi|short|btc:?": {
+   "n": 2,
+   "sumR": -2.1848,
+   "gercek": 0,
+   "karar": null
+  },
+  "uyusmazlik_donus_macd|long|btc:?": {
    "n": 1,
    "sumR": -1.0484,
    "gercek": 0,
    "karar": null
   },
-  "trend_cizgisi_kirilim_1H|short|akis+momentum|btc:yatay": {
+  "uyusmazlik_donus_obv|long|btc:yatay": {
+   "n": 3,
+   "sumR": -3.3825,
+   "gercek": 0,
+   "karar": null
+  },
+  "formasyon_obo|short|btc:yatay": {
+   "n": 3,
+   "sumR": 3.1507,
+   "gercek": 0,
+   "karar": null
+  },
+  "uyusmazlik_donus_cci|short|btc:yatay": {
    "n": 4,
-   "sumR": 3.3597,
+   "sumR": -3.8901,
    "gercek": 0,
    "karar": null
   },
-  "anlik_kirilim|short|akis+seviye|btc:yatay": {
-   "n": 13,
-   "sumR": -2.752,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|long|akis+formasyon|btc:yatay": {
-   "n": 4,
-   "sumR": -0.1566,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_1H|long|momentum+seviye|btc:yatay": {
-   "n": 2,
-   "sumR": 0.3581,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|long|formasyon+momentum|btc:yatay": {
-   "n": 4,
-   "sumR": 0.3502,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|momentum+uyusmazlik|btc:?": {
-   "n": 1,
-   "sumR": -1.0503,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_rsi|long|seviye+uyusmazlik|btc:yatay": {
-   "n": 4,
-   "sumR": 1.2092,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_15m|long|seviye+trend|btc:yatay": {
-   "n": 2,
-   "sumR": -2.2684,
-   "gercek": 0,
-   "karar": null
-  },
-  "anlik_kirilim|short|akis+trend|btc:yatay": {
-   "n": 2,
-   "sumR": 0.3702,
-   "gercek": 0,
-   "karar": null
-  },
-  "macd_kesisim|long|akis+trend|btc:yatay": {
-   "n": 2,
-   "sumR": 1.0013,
-   "gercek": 0,
-   "karar": null
-  },
-  "psar_donus|short|akis+momentum|btc:yatay": {
-   "n": 1,
-   "sumR": 0.2425,
-   "gercek": 0,
-   "karar": null
-  },
-  "sikisma_cikisi|short|momentum+uyusmazlik|btc:yatay": {
-   "n": 2,
-   "sumR": -2.1267,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_obv|long|akis+seviye|btc:yatay": {
-   "n": 2,
-   "sumR": -2.331,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_1H|short|akis+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": 0.3884,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|seviye+trend|btc:yatay": {
-   "n": 9,
-   "sumR": 8.3941,
-   "gercek": 0,
-   "karar": "benimse"
-  },
-  "obv_kirilim|long|formasyon+trend|btc:yatay": {
-   "n": 1,
-   "sumR": -1.0827,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_1H|long|formasyon+uyusmazlik|btc:yatay": {
-   "n": 3,
-   "sumR": -1.7758,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_1H|long|seviye+trend|btc:yatay": {
-   "n": 1,
-   "sumR": 2.4825,
-   "gercek": 0,
-   "karar": null
-  },
-  "kirilim|short|momentum+seviye|btc:yatay": {
-   "n": 2,
-   "sumR": 0.9642,
-   "gercek": 0,
-   "karar": null
-  },
-  "kirilim|short|seviye+uyusmazlik|btc:yatay": {
-   "n": 3,
-   "sumR": 2.5536,
-   "gercek": 0,
-   "karar": null
-  },
-  "kirilim|short|akis+uyusmazlik|btc:yatay": {
-   "n": 3,
-   "sumR": 2.0185,
-   "gercek": 0,
-   "karar": null
-  },
-  "kirilim|short|trend+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": 1.2226,
-   "gercek": 0,
-   "karar": null
-  },
-  "psar_donus|short|seviye+trend|btc:yatay": {
-   "n": 4,
-   "sumR": -3.294,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_15m|long|formasyon+seviye|btc:yatay": {
-   "n": 3,
-   "sumR": 1.1181,
-   "gercek": 0,
-   "karar": null
-  },
-  "kirilim|short|akis+hacim|btc:yatay": {
-   "n": 1,
-   "sumR": 0.4914,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|short|akis+momentum|btc:yatay": {
-   "n": 5,
-   "sumR": -2.2736,
-   "gercek": 0,
-   "karar": null
-  },
-  "macd_kesisim|short|seviye+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": 2.4893,
-   "gercek": 0,
-   "karar": null
-  },
-  "obv_kirilim|long|formasyon+seviye|btc:yatay": {
-   "n": 3,
-   "sumR": -1.7852,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|short|formasyon+uyusmazlik|btc:yatay": {
-   "n": 6,
-   "sumR": -2.3603,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_macd|long|seviye+uyusmazlik|btc:yatay": {
-   "n": 3,
-   "sumR": 2.7161,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|formasyon+momentum|btc:yatay": {
-   "n": 3,
-   "sumR": -2.2705,
-   "gercek": 0,
-   "karar": null
-  },
-  "formasyon_obo|short|akis+seviye|btc:yatay": {
-   "n": 1,
-   "sumR": 2.2444,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|hacim+trend|btc:yatay": {
-   "n": 6,
-   "sumR": -2.1619,
-   "gercek": 1,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|akis+hacim|btc:yatay": {
-   "n": 2,
-   "sumR": -0.6128,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|momentum+trend|btc:yatay": {
-   "n": 10,
-   "sumR": -3.8051,
-   "gercek": 0,
-   "karar": "kacin"
-  },
-  "uyusmazlik_donus_obv|short|akis+seviye|btc:yatay": {
-   "n": 1,
-   "sumR": 3.3083,
-   "gercek": 0,
-   "karar": null
-  },
-  "obv_kirilim|long|akis+trend|btc:yatay": {
-   "n": 1,
-   "sumR": -1.2849,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|short|hacim+seviye|btc:yatay": {
-   "n": 2,
-   "sumR": 0.6314,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_1H|short|akis+trend|btc:yatay": {
-   "n": 2,
-   "sumR": 3.4464,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|formasyon+seviye|btc:yatay": {
-   "n": 1,
-   "sumR": 1.1953,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|hacim+momentum|btc:yatay": {
-   "n": 2,
-   "sumR": 0.3747,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_cci|short|momentum+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.5609,
-   "gercek": 0,
-   "karar": null
-  },
-  "psar_donus|short|seviye+uyusmazlik|btc:yatay": {
-   "n": 4,
-   "sumR": -0.3417,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|long|piyasa+trend|btc:yatay": {
-   "n": 1,
-   "sumR": 0.51,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|short|akis+hacim|btc:yatay": {
-   "n": 1,
-   "sumR": 0.4002,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|short|trend+uyusmazlik|btc:yatay": {
-   "n": 6,
-   "sumR": -1.4207,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|formasyon+uyusmazlik|btc:yatay": {
-   "n": 4,
-   "sumR": 0.7076,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|short|hacim+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": 0.3965,
-   "gercek": 0,
-   "karar": null
-  },
-  "kirilim|long|akis+trend|btc:yatay": {
-   "n": 1,
-   "sumR": -1.0174,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|short|momentum+uyusmazlik|btc:yatay": {
-   "n": 3,
-   "sumR": -1.7892,
-   "gercek": 0,
-   "karar": null
-  },
-  "stoch_kesisim|long|formasyon+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": 0.3709,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|formasyon+trend|btc:yatay": {
-   "n": 2,
-   "sumR": -2.5017,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_rsi|short|trend+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": 1.7335,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_rsi|long|momentum+uyusmazlik|btc:yatay": {
-   "n": 3,
-   "sumR": -0.0952,
-   "gercek": 0,
-   "karar": null
-  },
-  "formasyon_obo|short|akis+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": 1.9289,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_1H|short|formasyon+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1927,
-   "gercek": 0,
-   "karar": null
-  },
-  "kirilim|short|formasyon+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.167,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|short|formasyon+uyusmazlik|btc:yatay": {
-   "n": 4,
-   "sumR": 0.8604,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|short|momentum+trend|btc:yatay": {
-   "n": 1,
-   "sumR": 2.1542,
-   "gercek": 0,
-   "karar": null
-  },
-  "obv_kirilim|short|momentum+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": 0.6308,
-   "gercek": 0,
-   "karar": null
-  },
-  "obv_kirilim|short|formasyon+momentum|btc:yatay": {
-   "n": 2,
-   "sumR": -0.6203,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|short|formasyon+momentum|btc:yatay": {
-   "n": 2,
-   "sumR": -0.9696,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|short|akis+formasyon|btc:yatay": {
-   "n": 8,
-   "sumR": -9.4647,
-   "gercek": 0,
-   "karar": "kacin"
-  },
-  "obv_kirilim|short|seviye+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.0523,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|short|formasyon+trend|btc:yatay": {
-   "n": 1,
-   "sumR": -1.2379,
-   "gercek": 0,
-   "karar": null
-  },
-  "formasyon_yukselen_takoz|short|formasyon+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": 0.3023,
-   "gercek": 0,
-   "karar": null
-  },
-  "stoch_kesisim|long|akis+formasyon|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1284,
-   "gercek": 0,
-   "karar": null
-  },
-  "stoch_kesisim|short|akis+formasyon|btc:?": {
+  "stoch_kesisim|short|btc:?": {
    "n": 1,
    "sumR": 0.3182,
    "gercek": 0,
    "karar": null
   },
-  "geri_test|short|seviye+uyusmazlik|btc:yatay": {
-   "n": 20,
-   "sumR": -14.5923,
-   "gercek": 0,
-   "karar": "kacin"
-  },
-  "geri_test|short|trend+uyusmazlik|btc:yatay": {
-   "n": 11,
-   "sumR": -6.8462,
-   "gercek": 0,
-   "karar": "kacin"
-  },
-  "anlik_kirilim|short|akis+seviye|btc:?": {
+  "anlik_kirilim|short|btc:?": {
    "n": 1,
    "sumR": -1.386,
    "gercek": 0,
    "karar": null
   },
-  "uyusmazlik_donus_cci|short|akis+uyusmazlik|btc:yatay": {
-   "n": 2,
-   "sumR": -2.8051,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_1H|long|trend+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1382,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_macd|long|momentum+seviye|btc:yatay": {
-   "n": 1,
-   "sumR": 0.8654,
-   "gercek": 0,
-   "karar": null
-  },
-  "psar_donus|short|formasyon+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": 0.1526,
-   "gercek": 0,
-   "karar": null
-  },
-  "macd_kesisim|short|akis+momentum|btc:yatay": {
-   "n": 1,
-   "sumR": -1.2904,
-   "gercek": 0,
-   "karar": null
-  },
-  "macd_kesisim|short|formasyon+momentum|btc:yatay": {
-   "n": 1,
-   "sumR": -1.4831,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|short|akis+trend|btc:yatay": {
-   "n": 2,
-   "sumR": -2.8326,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_obv|short|trend+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.5064,
-   "gercek": 0,
-   "karar": null
-  },
-  "formasyon_alcalan_takoz|long|akis+seviye|btc:yatay": {
-   "n": 1,
-   "sumR": 1.4751,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|short|momentum+trend|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1992,
-   "gercek": 0,
-   "karar": null
-  },
-  "macd_kesisim|long|formasyon+seviye|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1011,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_obv|short|formasyon+seviye|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1653,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_obv|short|seviye+trend|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1265,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_obv|short|seviye+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.2061,
-   "gercek": 0,
-   "karar": null
-  },
-  "anlik_kirilim|short|formasyon+seviye|btc:yatay": {
-   "n": 2,
-   "sumR": -0.6191,
-   "gercek": 0,
-   "karar": null
-  },
-  "psar_donus|short|akis+trend|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1611,
-   "gercek": 0,
-   "karar": null
-  },
-  "obv_kirilim|short|akis+formasyon|btc:?": {
+  "obv_kirilim|short|btc:?": {
    "n": 1,
    "sumR": -1.0705,
    "gercek": 0,
    "karar": null
   },
-  "macd_kesisim|short|momentum+trend|btc:yatay": {
-   "n": 3,
-   "sumR": -3.4997,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|short|akis+seviye|btc:?": {
+  "geri_test|short|btc:?": {
    "n": 2,
    "sumR": -2.2482,
    "gercek": 0,
    "karar": null
   },
-  "trend_cizgisi_kirilim_15m|long|akis+formasyon|btc:yatay": {
-   "n": 2,
-   "sumR": 0.6319,
+  "canli_ret|short|btc:yatay": {
+   "n": 6,
+   "sumR": -4.6208,
    "gercek": 0,
    "karar": null
   },
-  "geri_cekilme|short|momentum+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1028,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|long|akis+trend|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1204,
-   "gercek": 0,
-   "karar": null
-  },
-  "canli_ret|short|formasyon+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.3531,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_obv|short|formasyon+uyusmazlik|btc:yatay": {
-   "n": 2,
-   "sumR": -2.115,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|short|formasyon+hacim|btc:yatay": {
-   "n": 1,
-   "sumR": -1.0243,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|hacim+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.0886,
-   "gercek": 0,
-   "karar": null
-  },
-  "canli_ret|short|akis+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1891,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|long|akis+uyusmazlik|btc:yatay": {
-   "n": 7,
-   "sumR": 0.9408,
-   "gercek": 0,
-   "karar": null
-  },
-  "stoch_kesisim|long|seviye+uyusmazlik|btc:yatay": {
-   "n": 2,
-   "sumR": 0.906,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_rsi|long|formasyon+seviye|btc:yatay": {
-   "n": 1,
-   "sumR": 0.5989,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_1H|long|seviye+uyusmazlik|btc:yatay": {
-   "n": 2,
-   "sumR": 0.6721,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|long|turev+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": 0.5374,
-   "gercek": 0,
-   "karar": null
-  },
-  "sikisma_cikisi|long|seviye+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": 0.8362,
-   "gercek": 0,
-   "karar": null
-  },
-  "sikisma_cikisi|long|akis+uyusmazlik|btc:yatay": {
-   "n": 2,
-   "sumR": 3.542,
-   "gercek": 0,
-   "karar": null
-  },
-  "obv_kirilim|long|akis+formasyon|btc:yatay": {
-   "n": 1,
-   "sumR": 1.2723,
-   "gercek": 0,
-   "karar": null
-  },
-  "kirilim|long|hacim+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": 1.8133,
-   "gercek": 0,
-   "karar": null
-  },
-  "supertrend_donus|long|akis+seviye|btc:yatay": {
-   "n": 2,
-   "sumR": -0.6614,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|long|trend+uyusmazlik|btc:yatay": {
-   "n": 3,
-   "sumR": 2.7878,
-   "gercek": 0,
-   "karar": null
-  },
-  "obv_kirilim|long|momentum+uyusmazlik|btc:yatay": {
+  "supertrend_donus|long|btc:yatay": {
    "n": 5,
-   "sumR": -1.3953,
+   "sumR": -1.1089,
    "gercek": 0,
    "karar": null
   },
-  "geri_test|long|momentum+trend|btc:yatay": {
-   "n": 1,
-   "sumR": 1.8067,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|long|formasyon+uyusmazlik|btc:yatay": {
+  "supurme|short|btc:yatay": {
    "n": 3,
-   "sumR": 1.0757,
+   "sumR": -2.1413,
    "gercek": 0,
    "karar": null
   },
-  "supertrend_donus|long|formasyon+momentum|btc:yatay": {
-   "n": 1,
-   "sumR": 2.2796,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|long|hacim+seviye|btc:yatay": {
-   "n": 1,
-   "sumR": 2.0066,
-   "gercek": 0,
-   "karar": null
-  },
-  "supurme|short|akis+uyusmazlik|btc:yatay": {
-   "n": 2,
-   "sumR": -2.558,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_cci|short|formasyon+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": 0.4759,
-   "gercek": 0,
-   "karar": null
-  },
-  "stoch_kesisim|short|akis+uyusmazlik|btc:yatay": {
-   "n": 2,
-   "sumR": -0.6413,
-   "gercek": 0,
-   "karar": null
-  },
-  "psar_donus|long|momentum+seviye|btc:yatay": {
-   "n": 3,
-   "sumR": 2.5437,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_15m|long|momentum+uyusmazlik|btc:yatay": {
-   "n": 4,
-   "sumR": 2.465,
-   "gercek": 0,
-   "karar": null
-  },
-  "formasyon_simetrik_ucgen|short|formasyon+seviye|btc:yatay": {
+  "formasyon_simetrik_ucgen|short|btc:yatay": {
    "n": 1,
    "sumR": 0.4476,
    "gercek": 0,
    "karar": null
   },
-  "geri_test|long|seviye+turev|btc:yatay": {
-   "n": 1,
-   "sumR": -1.0435,
-   "gercek": 0,
-   "karar": null
-  },
-  "formasyon_fincan|long|hacim+seviye|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1294,
-   "gercek": 0,
-   "karar": null
-  },
-  "formasyon_fincan|long|seviye+trend|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1428,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_macd|long|turev+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.0763,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_15m|long|akis+uyusmazlik|btc:yatay": {
+  "formasyon_fincan|long|btc:yatay": {
    "n": 3,
-   "sumR": -0.2881,
+   "sumR": -3.4435,
    "gercek": 0,
    "karar": null
   },
-  "trend_cizgisi_kirilim_1H|long|hacim+seviye|btc:yatay": {
-   "n": 1,
-   "sumR": -1.3772,
+  "yapi_bozulmasi|short|btc:yukari": {
+   "n": 130,
+   "sumR": 12.0406,
    "gercek": 0,
    "karar": null
   },
-  "kirilim|long|akis+uyusmazlik|btc:yatay": {
-   "n": 2,
-   "sumR": 2.0143,
-   "gercek": 0,
-   "karar": null
-  },
-  "formasyon_fincan|long|momentum+seviye|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1713,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|long|akis+formasyon|btc:?": {
-   "n": 1,
-   "sumR": -1.1999,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|momentum+uyusmazlik|btc:yukari": {
-   "n": 31,
-   "sumR": 15.4482,
+  "geri_test|short|btc:yukari": {
+   "n": 24,
+   "sumR": 14.4356,
    "gercek": 0,
    "karar": "benimse"
   },
-  "yapi_bozulmasi|short|akis+momentum|btc:yukari": {
+  "geri_cekilme|short|btc:yukari": {
+   "n": 27,
+   "sumR": 6.4127,
+   "gercek": 0,
+   "karar": null
+  },
+  "geri_test|long|btc:yukari": {
+   "n": 38,
+   "sumR": -38.6686,
+   "gercek": 0,
+   "karar": "kacin"
+  },
+  "geri_cekilme|long|btc:yukari": {
    "n": 11,
-   "sumR": 8.0567,
-   "gercek": 0,
-   "karar": "benimse"
-  },
-  "yapi_bozulmasi|short|akis+uyusmazlik|btc:yukari": {
-   "n": 9,
-   "sumR": 12.0561,
-   "gercek": 0,
-   "karar": "benimse"
-  },
-  "geri_test|short|seviye+uyusmazlik|btc:yukari": {
-   "n": 5,
-   "sumR": -0.6079,
+   "sumR": -11.1028,
    "gercek": 0,
    "karar": null
   },
-  "geri_cekilme|short|momentum+uyusmazlik|btc:yukari": {
+  "anlik_kirilim|long|btc:yukari": {
+   "n": 4,
+   "sumR": -4.9703,
+   "gercek": 0,
+   "karar": null
+  },
+  "canli_ret|long|btc:yukari": {
    "n": 2,
-   "sumR": -1.2078,
+   "sumR": -0.6255,
    "gercek": 0,
    "karar": null
   },
-  "yapi_bozulmasi|short|momentum+seviye|btc:yukari": {
-   "n": 22,
-   "sumR": -1.636,
+  "stoch_kesisim|long|btc:yukari": {
+   "n": 4,
+   "sumR": -2.9288,
    "gercek": 0,
    "karar": null
   },
-  "geri_test|long|seviye+trend|btc:yukari": {
+  "sikisma_cikisi|short|btc:yukari": {
+   "n": 5,
+   "sumR": 9.1451,
+   "gercek": 0,
+   "karar": null
+  },
+  "uyusmazlik_donus_macd|short|btc:yukari": {
    "n": 3,
-   "sumR": -1.5246,
+   "sumR": -2.3647,
    "gercek": 0,
    "karar": null
   },
-  "geri_cekilme|long|piyasa+uyusmazlik|btc:yukari": {
-   "n": 1,
-   "sumR": -1.1852,
+  "kirilim|long|btc:yukari": {
+   "n": 4,
+   "sumR": -2.8959,
    "gercek": 0,
    "karar": null
   },
-  "geri_test|long|akis+seviye|btc:yukari": {
-   "n": 13,
-   "sumR": -14.5472,
-   "gercek": 0,
-   "karar": "kacin"
-  },
-  "anlik_kirilim|long|formasyon+seviye|btc:yukari": {
-   "n": 1,
-   "sumR": -1.1092,
+  "obv_kirilim|short|btc:yukari": {
+   "n": 4,
+   "sumR": -3.0957,
    "gercek": 0,
    "karar": null
   },
-  "geri_cekilme|long|akis+seviye|btc:yukari": {
-   "n": 1,
-   "sumR": -1.1414,
+  "kirilim|short|btc:yukari": {
+   "n": 3,
+   "sumR": -1.8184,
    "gercek": 0,
    "karar": null
   },
-  "canli_ret|long|seviye+uyusmazlik|btc:yukari": {
-   "n": 1,
-   "sumR": -1.4339,
-   "gercek": 0,
-   "karar": null
-  },
-  "stoch_kesisim|long|akis+seviye|btc:yukari": {
+  "trend_cizgisi_kirilim_1H|short|btc:yukari": {
    "n": 2,
-   "sumR": -2.3405,
+   "sumR": 1.5452,
    "gercek": 0,
    "karar": null
   },
-  "geri_cekilme|long|formasyon+uyusmazlik|btc:yukari": {
-   "n": 1,
-   "sumR": -1.1637,
+  "trend_cizgisi_kirilim_15m|short|btc:yukari": {
+   "n": 14,
+   "sumR": 15.6429,
    "gercek": 0,
    "karar": null
   },
-  "yapi_bozulmasi|short|seviye+uyusmazlik|btc:yukari": {
-   "n": 23,
-   "sumR": -10.0768,
-   "gercek": 0,
-   "karar": "kacin"
-  },
-  "sikisma_cikisi|short|momentum+uyusmazlik|btc:yukari": {
-   "n": 1,
-   "sumR": 0.4433,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_macd|short|akis+momentum|btc:yukari": {
-   "n": 1,
-   "sumR": 0.1955,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|akis+seviye|btc:yukari": {
-   "n": 6,
-   "sumR": -5.7528,
-   "gercek": 0,
-   "karar": "kacin"
-  },
-  "yapi_bozulmasi|short|momentum+piyasa|btc:yukari": {
-   "n": 2,
-   "sumR": 2.6003,
-   "gercek": 0,
-   "karar": null
-  },
-  "kirilim|long|formasyon+seviye|btc:yukari": {
-   "n": 1,
-   "sumR": -1.093,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|formasyon+seviye|btc:yukari": {
-   "n": 5,
-   "sumR": -4.3927,
-   "gercek": 0,
-   "karar": "kacin"
-  },
-  "yapi_bozulmasi|short|formasyon+momentum|btc:yukari": {
-   "n": 6,
-   "sumR": 0.8171,
-   "gercek": 0,
-   "karar": null
-  },
-  "obv_kirilim|short|akis+uyusmazlik|btc:yukari": {
-   "n": 1,
-   "sumR": -1.1037,
-   "gercek": 0,
-   "karar": null
-  },
-  "anlik_kirilim|long|akis+seviye|btc:yukari": {
-   "n": 2,
-   "sumR": -2.4551,
-   "gercek": 0,
-   "karar": null
-  },
-  "kirilim|short|momentum+seviye|btc:yukari": {
-   "n": 1,
-   "sumR": -1.1239,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|long|momentum+piyasa|btc:yukari": {
-   "n": 1,
-   "sumR": 0.7494,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|short|formasyon+seviye|btc:yukari": {
-   "n": 1,
-   "sumR": -1.1642,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|long|akis+turev|btc:yukari": {
-   "n": 1,
-   "sumR": -1.0977,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_1H|short|akis+momentum|btc:yukari": {
-   "n": 1,
-   "sumR": 0.1181,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|short|akis+uyusmazlik|btc:yukari": {
-   "n": 2,
-   "sumR": 1.6664,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_15m|short|formasyon+uyusmazlik|btc:yukari": {
-   "n": 1,
-   "sumR": -1.0755,
-   "gercek": 0,
-   "karar": null
-  },
-  "supurme|short|momentum+uyusmazlik|btc:yukari": {
+  "supurme|short|btc:yukari": {
    "n": 1,
    "sumR": -1.1885,
    "gercek": 0,
    "karar": null
   },
-  "sikisma_cikisi|short|formasyon+momentum|btc:yukari": {
-   "n": 1,
-   "sumR": 2.168,
+  "yapi_bozulmasi|long|btc:yukari": {
+   "n": 25,
+   "sumR": -19.007,
    "gercek": 0,
-   "karar": null
+   "karar": "kacin"
   },
-  "yapi_bozulmasi|long|formasyon+momentum|btc:yukari": {
-   "n": 1,
-   "sumR": 1.4371,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|long|formasyon+seviye|btc:yukari": {
-   "n": 4,
-   "sumR": -2.8064,
-   "gercek": 0,
-   "karar": null
-  },
-  "canli_ret|long|seviye+trend|btc:yukari": {
-   "n": 1,
-   "sumR": 0.8084,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|long|piyasa+seviye|btc:yukari": {
-   "n": 4,
-   "sumR": -2.9401,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_15m|short|momentum+uyusmazlik|btc:yukari": {
-   "n": 3,
-   "sumR": 3.1186,
-   "gercek": 0,
-   "karar": null
-  },
-  "psar_donus|long|akis+uyusmazlik|btc:yukari": {
+  "psar_donus|long|btc:yukari": {
    "n": 1,
    "sumR": 1.5429,
    "gercek": 0,
    "karar": null
   },
-  "kirilim|short|akis+seviye|btc:yukari": {
-   "n": 1,
-   "sumR": -1.0732,
+  "uyusmazlik_donus_obv|long|btc:yukari": {
+   "n": 6,
+   "sumR": -2.0735,
    "gercek": 0,
    "karar": null
   },
-  "anlik_kirilim|long|akis+formasyon|btc:yukari": {
-   "n": 1,
-   "sumR": -1.406,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|long|trend+uyusmazlik|btc:yukari": {
-   "n": 3,
-   "sumR": -3.1412,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|seviye+turev|btc:yukari": {
-   "n": 1,
-   "sumR": 0.3036,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|formasyon+hacim|btc:yukari": {
-   "n": 1,
-   "sumR": 0.3167,
-   "gercek": 0,
-   "karar": null
-  },
-  "kirilim|short|akis+momentum|btc:yukari": {
-   "n": 1,
-   "sumR": 0.3787,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|formasyon+uyusmazlik|btc:yukari": {
-   "n": 1,
-   "sumR": 0.403,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|short|hacim+momentum|btc:yukari": {
-   "n": 1,
-   "sumR": -1.0677,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_obv|long|seviye+trend|btc:yukari": {
-   "n": 1,
-   "sumR": 0.6693,
-   "gercek": 0,
-   "karar": null
-  },
-  "obv_kirilim|long|seviye+trend|btc:yukari": {
-   "n": 1,
-   "sumR": 0.8326,
-   "gercek": 0,
-   "karar": null
-  },
-  "obv_kirilim|short|akis+momentum|btc:yukari": {
-   "n": 1,
-   "sumR": -1.0603,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|long|momentum+uyusmazlik|btc:yukari": {
-   "n": 1,
-   "sumR": -1.0815,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_macd|short|akis+seviye|btc:yukari": {
-   "n": 1,
-   "sumR": -1.3331,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|short|akis+seviye|btc:yukari": {
+  "obv_kirilim|long|btc:yukari": {
    "n": 2,
-   "sumR": 0.1633,
+   "sumR": -0.2472,
    "gercek": 0,
    "karar": null
   },
-  "sikisma_cikisi|short|seviye+uyusmazlik|btc:yukari": {
-   "n": 1,
-   "sumR": 2.661,
+  "formasyon_cift_tepe|short|btc:yukari": {
+   "n": 6,
+   "sumR": -7.6543,
    "gercek": 0,
    "karar": null
   },
-  "sikisma_cikisi|short|akis+uyusmazlik|btc:yukari": {
-   "n": 1,
-   "sumR": 2.4673,
+  "formasyon_cift_tepe|short|btc:yatay": {
+   "n": 14,
+   "sumR": -17.4074,
    "gercek": 0,
    "karar": null
   },
-  "formasyon_cift_tepe|short|formasyon+seviye|btc:yukari": {
-   "n": 2,
-   "sumR": -2.6898,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|short|seviye+trend|btc:yukari": {
-   "n": 4,
-   "sumR": 4.119,
-   "gercek": 0,
-   "karar": null
-  },
-  "formasyon_cift_tepe|short|hacim+uyusmazlik|btc:yukari": {
-   "n": 2,
-   "sumR": -2.6414,
-   "gercek": 0,
-   "karar": null
-  },
-  "formasyon_cift_tepe|short|akis+uyusmazlik|btc:yatay": {
-   "n": 2,
-   "sumR": -2.4527,
-   "gercek": 0,
-   "karar": null
-  },
-  "obv_kirilim|short|hacim+momentum|btc:yukari": {
-   "n": 1,
-   "sumR": -1.1987,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|piyasa+seviye|btc:yatay": {
-   "n": 8,
-   "sumR": 4.9906,
-   "gercek": 0,
-   "karar": "benimse"
-  },
-  "formasyon_cift_tepe|short|akis+uyusmazlik|btc:yukari": {
-   "n": 1,
-   "sumR": -1.1809,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|short|akis+momentum|btc:yukari": {
-   "n": 5,
-   "sumR": 4.8061,
-   "gercek": 0,
-   "karar": "benimse"
-  },
-  "geri_test|short|akis+formasyon|btc:yukari": {
-   "n": 1,
-   "sumR": -1.228,
-   "gercek": 0,
-   "karar": null
-  },
-  "formasyon_cift_tepe|short|akis+formasyon|btc:yatay": {
-   "n": 1,
-   "sumR": -1.313,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|akis+formasyon|btc:yukari": {
-   "n": 1,
-   "sumR": -1.3061,
-   "gercek": 0,
-   "karar": null
-  },
-  "formasyon_cift_tepe|short|seviye+uyusmazlik|btc:yatay": {
-   "n": 3,
-   "sumR": -3.9975,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|short|hacim+trend|btc:yukari": {
-   "n": 2,
-   "sumR": 0.2895,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|short|formasyon+seviye|btc:yatay": {
-   "n": 9,
-   "sumR": -5.9481,
-   "gercek": 1,
-   "karar": "kacin"
-  },
-  "yapi_bozulmasi|short|hacim+uyusmazlik|btc:yukari": {
-   "n": 4,
-   "sumR": -4.5162,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|piyasa+trend|btc:yatay": {
-   "n": 4,
-   "sumR": 0.3882,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|long|akis+uyusmazlik|btc:yukari": {
-   "n": 1,
-   "sumR": 0.5258,
-   "gercek": 0,
-   "karar": null
-  },
-  "formasyon_cift_tepe|short|seviye+uyusmazlik|btc:yukari": {
-   "n": 1,
-   "sumR": -1.1422,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|short|formasyon+piyasa|btc:yatay": {
-   "n": 1,
-   "sumR": -1.185,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|hacim+seviye|btc:yukari": {
-   "n": 2,
-   "sumR": -2.2313,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_15m|short|seviye+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": 0.4483,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|short|piyasa+seviye|btc:yatay": {
-   "n": 5,
-   "sumR": -2.7171,
-   "gercek": 0,
-   "karar": "kacin"
-  },
-  "formasyon_cift_tepe|short|trend+uyusmazlik|btc:yatay": {
-   "n": 2,
-   "sumR": -2.7049,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|short|piyasa+uyusmazlik|btc:yatay": {
-   "n": 5,
-   "sumR": -2.2885,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|long|momentum+seviye|btc:yukari": {
-   "n": 2,
-   "sumR": -0.7889,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_obv|long|formasyon+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.0515,
-   "gercek": 0,
-   "karar": null
-  },
-  "formasyon_cift_tepe|short|formasyon+seviye|btc:yatay": {
-   "n": 1,
-   "sumR": -1.3317,
-   "gercek": 0,
-   "karar": null
-  },
-  "macd_kesisim|long|akis+momentum|btc:yatay": {
-   "n": 2,
-   "sumR": -0.4102,
-   "gercek": 0,
-   "karar": null
-  },
-  "psar_donus|long|akis+uyusmazlik|btc:yatay": {
-   "n": 3,
-   "sumR": 0.2633,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_rsi|long|momentum+seviye|btc:yatay": {
-   "n": 1,
-   "sumR": -1.2316,
-   "gercek": 0,
-   "karar": null
-  },
-  "kirilim|long|momentum+uyusmazlik|btc:yukari": {
-   "n": 1,
-   "sumR": 0.5534,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|long|seviye+trend|btc:yatay": {
-   "n": 1,
-   "sumR": 1.6063,
-   "gercek": 0,
-   "karar": null
-  },
-  "anlik_kirilim|long|akis+turev|btc:yatay": {
-   "n": 1,
-   "sumR": 0.4819,
-   "gercek": 0,
-   "karar": null
-  },
-  "stoch_kesisim|long|akis+uyusmazlik|btc:yukari": {
-   "n": 1,
-   "sumR": 0.5357,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|long|formasyon+uyusmazlik|btc:yatay": {
-   "n": 2,
-   "sumR": -0.9304,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_1H|long|akis+momentum|btc:yatay": {
-   "n": 1,
-   "sumR": 0.7909,
-   "gercek": 0,
-   "karar": null
-  },
-  "supertrend_donus|long|akis+momentum|btc:yatay": {
-   "n": 1,
-   "sumR": -1.3793,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_mfi|long|momentum+uyusmazlik|btc:yatay": {
+  "uyusmazlik_donus_mfi|long|btc:yatay": {
    "n": 1,
    "sumR": -1.2756,
    "gercek": 0,
    "karar": null
   },
-  "geri_cekilme|long|momentum+uyusmazlik|btc:yatay": {
-   "n": 4,
-   "sumR": -1.6086,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_obv|long|akis+trend|btc:yukari": {
-   "n": 1,
-   "sumR": 1.915,
-   "gercek": 0,
-   "karar": null
-  },
-  "psar_donus|short|akis+seviye|btc:yatay": {
+  "uyusmazlik_donus_mfi|short|btc:yatay": {
    "n": 2,
-   "sumR": -0.6509,
+   "sumR": -2.5151,
    "gercek": 0,
    "karar": null
   },
-  "stoch_kesisim|short|akis+seviye|btc:yatay": {
-   "n": 1,
-   "sumR": 0.3578,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|short|piyasa+seviye|btc:yatay": {
-   "n": 15,
-   "sumR": -11.4775,
-   "gercek": 0,
-   "karar": "kacin"
-  },
-  "geri_cekilme|short|piyasa+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1987,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|short|piyasa+trend|btc:yatay": {
-   "n": 9,
-   "sumR": -2.2202,
-   "gercek": 1,
-   "karar": null
-  },
-  "geri_cekilme|short|formasyon+piyasa|btc:yatay": {
-   "n": 1,
-   "sumR": 0.3178,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_15m|short|formasyon+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": 0.5632,
-   "gercek": 0,
-   "karar": null
-  },
-  "psar_donus|short|formasyon+seviye|btc:yatay": {
-   "n": 1,
-   "sumR": 1.3271,
-   "gercek": 0,
-   "karar": null
-  },
-  "psar_donus|short|piyasa+seviye|btc:yatay": {
-   "n": 3,
-   "sumR": -2.1699,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_macd|short|seviye+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.0657,
-   "gercek": 0,
-   "karar": null
-  },
-  "supertrend_donus|short|momentum+seviye|btc:yatay": {
-   "n": 1,
-   "sumR": -1.4731,
-   "gercek": 0,
-   "karar": null
-  },
-  "sikisma_cikisi|long|momentum+uyusmazlik|btc:yatay": {
-   "n": 2,
-   "sumR": 0.8859,
-   "gercek": 0,
-   "karar": null
-  },
-  "obv_kirilim|short|formasyon+piyasa|btc:yatay": {
-   "n": 1,
-   "sumR": 0.2919,
-   "gercek": 0,
-   "karar": null
-  },
-  "psar_donus|short|piyasa+turev|btc:yatay": {
-   "n": 1,
-   "sumR": 0.8003,
-   "gercek": 0,
-   "karar": null
-  },
-  "macd_kesisim|short|momentum+uyusmazlik|btc:yatay": {
-   "n": 2,
-   "sumR": -0.3193,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|short|momentum+piyasa|btc:yatay": {
-   "n": 3,
-   "sumR": -1.5207,
-   "gercek": 0,
-   "karar": null
-  },
-  "supertrend_donus|short|seviye+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.2522,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_15m|short|piyasa+uyusmazlik|btc:yatay": {
-   "n": 2,
-   "sumR": -2.257,
-   "gercek": 0,
-   "karar": null
-  },
-  "obv_kirilim|short|akis+piyasa|btc:yatay": {
-   "n": 2,
-   "sumR": 0.2502,
-   "gercek": 0,
-   "karar": null
-  },
-  "psar_donus|short|momentum+seviye|btc:yatay": {
-   "n": 1,
-   "sumR": -1.4293,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_15m|long|formasyon+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.3601,
-   "gercek": 0,
-   "karar": null
-  },
-  "formasyon_cift_tepe|short|seviye+trend|btc:yatay": {
-   "n": 2,
-   "sumR": -1.2447,
-   "gercek": 0,
-   "karar": null
-  },
-  "canli_ret|short|akis+seviye|btc:yatay": {
-   "n": 2,
-   "sumR": -1.5408,
-   "gercek": 0,
-   "karar": null
-  },
-  "formasyon_cift_tepe|short|akis+seviye|btc:yatay": {
-   "n": 2,
-   "sumR": -2.8411,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_15m|short|seviye+trend|btc:yatay": {
-   "n": 2,
-   "sumR": -2.7446,
-   "gercek": 1,
-   "karar": null
-  },
-  "formasyon_cift_tepe|short|formasyon+trend|btc:yatay": {
-   "n": 1,
-   "sumR": -1.5218,
-   "gercek": 0,
-   "karar": null
-  },
-  "obv_kirilim|short|piyasa+trend|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1139,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|momentum+piyasa|btc:yatay": {
-   "n": 7,
-   "sumR": 0.5672,
-   "gercek": 0,
-   "karar": null
-  },
-  "psar_donus|short|momentum+piyasa|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1161,
-   "gercek": 0,
-   "karar": null
-  },
-  "obv_kirilim|long|akis+momentum|btc:yatay": {
-   "n": 1,
-   "sumR": 0.3124,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_1H|long|momentum+uyusmazlik|btc:yatay": {
-   "n": 2,
-   "sumR": -0.6385,
-   "gercek": 0,
-   "karar": null
-  },
-  "macd_kesisim|long|seviye+trend|btc:yatay": {
-   "n": 1,
-   "sumR": -1.0795,
-   "gercek": 0,
-   "karar": null
-  },
-  "supurme|short|akis+seviye|btc:yatay": {
-   "n": 1,
-   "sumR": 0.4167,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_1H|short|piyasa+seviye|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1178,
-   "gercek": 0,
-   "karar": null
-  },
-  "obv_kirilim|short|piyasa+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1288,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_mfi|short|akis+trend|btc:yatay": {
-   "n": 1,
-   "sumR": -1.3312,
-   "gercek": 0,
-   "karar": null
-  },
-  "anlik_kirilim|long|formasyon+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": 0.2696,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_macd|long|momentum+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": 0.4809,
-   "gercek": 0,
-   "karar": null
-  },
-  "macd_kesisim|long|momentum+uyusmazlik|btc:yatay": {
-   "n": 2,
-   "sumR": 0.9891,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|long|akis+momentum|btc:yatay": {
-   "n": 2,
-   "sumR": -2.7188,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|long|hacim+momentum|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1824,
-   "gercek": 0,
-   "karar": null
-  },
-  "anlik_kirilim|long|akis+uyusmazlik|btc:yatay": {
-   "n": 7,
-   "sumR": 4.4201,
-   "gercek": 0,
-   "karar": "benimse"
-  },
-  "trend_cizgisi_kirilim_15m|long|momentum+piyasa|btc:yatay": {
-   "n": 1,
-   "sumR": -1.9394,
-   "gercek": 0,
-   "karar": null
-  },
-  "canli_ret|short|akis+formasyon|btc:yatay": {
-   "n": 1,
-   "sumR": 0.7315,
-   "gercek": 0,
-   "karar": null
-  },
-  "obv_kirilim|short|hacim+piyasa|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1192,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|short|formasyon+momentum|btc:yatay": {
-   "n": 2,
-   "sumR": 2.3323,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_mfi|short|piyasa+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1839,
-   "gercek": 0,
-   "karar": null
-  },
-  "anlik_kirilim|short|akis+formasyon|btc:yatay": {
-   "n": 2,
-   "sumR": -2.6661,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_1H|long|hacim+momentum|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1458,
-   "gercek": 0,
-   "karar": null
-  },
-  "psar_donus|long|seviye+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": 0.344,
-   "gercek": 0,
-   "karar": null
-  },
-  "kirilim|short|hacim+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.149,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_15m|short|momentum+seviye|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1058,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|short|akis+piyasa|btc:yatay": {
-   "n": 1,
-   "sumR": -1.7158,
-   "gercek": 0,
-   "karar": null
-  },
-  "formasyon_abcd|long|trend+uyusmazlik|btc:yatay": {
+  "formasyon_abcd|long|btc:yatay": {
    "n": 3,
    "sumR": 5.031,
    "gercek": 0,
    "karar": null
   },
-  "kirilim|long|seviye+trend|btc:yatay": {
-   "n": 1,
-   "sumR": 0.5771,
-   "gercek": 0,
-   "karar": null
-  },
-  "supertrend_donus|long|momentum+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.3478,
-   "gercek": 0,
-   "karar": null
-  },
-  "obv_kirilim|long|hacim+momentum|btc:yatay": {
-   "n": 1,
-   "sumR": -1.2525,
-   "gercek": 0,
-   "karar": null
-  },
-  "kirilim|long|momentum+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1356,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_1H|short|seviye+uyusmazlik|btc:yatay": {
-   "n": 2,
-   "sumR": -0.8329,
-   "gercek": 0,
-   "karar": null
-  },
-  "macd_kesisim|short|formasyon+hacim|btc:yatay": {
-   "n": 1,
-   "sumR": -1.049,
-   "gercek": 0,
-   "karar": null
-  },
-  "kirilim|short|akis+seviye|btc:yatay": {
-   "n": 1,
-   "sumR": -1.3579,
-   "gercek": 0,
-   "karar": null
-  },
-  "macd_kesisim|long|formasyon+turev|btc:yatay": {
-   "n": 1,
-   "sumR": 0.7094,
-   "gercek": 0,
-   "karar": null
-  },
-  "canli_ret|short|seviye+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.2693,
-   "gercek": 0,
-   "karar": null
-  },
-  "formasyon_abcd|short|akis+seviye|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1604,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|short|momentum+seviye|btc:yatay": {
-   "n": 2,
-   "sumR": -2.5038,
-   "gercek": 0,
-   "karar": null
-  },
-  "formasyon_abcd|short|formasyon+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1319,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_rsi|long|akis+momentum|btc:yatay": {
-   "n": 1,
-   "sumR": 0.401,
-   "gercek": 0,
-   "karar": null
-  },
-  "supurme|long|momentum+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.5611,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|long|akis+hacim|btc:yatay": {
-   "n": 1,
-   "sumR": 1.7758,
-   "gercek": 0,
-   "karar": null
-  },
-  "kirilim|long|akis+momentum|btc:yatay": {
-   "n": 1,
-   "sumR": 1.6779,
-   "gercek": 0,
-   "karar": null
-  },
-  "supertrend_donus|short|momentum+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": -1.0753,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_macd|short|akis+formasyon|btc:yatay": {
-   "n": 1,
-   "sumR": -1.2297,
-   "gercek": 0,
-   "karar": null
-  },
-  "formasyon_obo|short|formasyon+momentum|btc:yatay": {
-   "n": 1,
-   "sumR": -1.0226,
-   "gercek": 0,
-   "karar": null
-  },
-  "sikisma_cikisi|long|hacim+momentum|btc:yatay": {
-   "n": 1,
-   "sumR": 0.3047,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|long|momentum+piyasa|btc:yatay": {
-   "n": 2,
-   "sumR": 1.5338,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|long|momentum+turev|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1509,
-   "gercek": 0,
-   "karar": null
-  },
-  "anlik_kirilim|long|akis+trend|btc:yatay": {
-   "n": 1,
-   "sumR": 1.4432,
-   "gercek": 0,
-   "karar": null
-  },
-  "supurme|long|seviye+uyusmazlik|btc:yatay": {
-   "n": 2,
-   "sumR": 0.628,
-   "gercek": 1,
-   "karar": null
-  },
-  "yapi_bozulmasi|long|momentum+piyasa|btc:yukari": {
-   "n": 9,
-   "sumR": -8.8021,
-   "gercek": 0,
-   "karar": "kacin"
-  },
-  "geri_test|long|akis+piyasa|btc:yatay": {
-   "n": 1,
-   "sumR": 0.4649,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|long|hacim+uyusmazlik|btc:yatay": {
-   "n": 1,
-   "sumR": 0.5817,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|long|seviye+uyusmazlik|btc:yukari": {
-   "n": 4,
-   "sumR": -5.1154,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|long|momentum+uyusmazlik|btc:yukari": {
-   "n": 1,
-   "sumR": -1.239,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|long|hacim+piyasa|btc:yukari": {
-   "n": 1,
-   "sumR": -1.0376,
-   "gercek": 0,
-   "karar": null
-  },
-  "kirilim|long|momentum+piyasa|btc:yukari": {
-   "n": 2,
-   "sumR": -2.3563,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|long|hacim+piyasa|btc:yukari": {
-   "n": 1,
-   "sumR": -1.1381,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|long|seviye+uyusmazlik|btc:yukari": {
-   "n": 3,
-   "sumR": -2.509,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|long|akis+momentum|btc:yukari": {
-   "n": 1,
-   "sumR": -1.0331,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|long|piyasa+seviye|btc:yukari": {
-   "n": 4,
-   "sumR": -4.7702,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_macd|short|akis+uyusmazlik|btc:yukari": {
-   "n": 1,
-   "sumR": -1.2271,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|long|piyasa+uyusmazlik|btc:yukari": {
-   "n": 1,
-   "sumR": -1.3726,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|long|piyasa+seviye|btc:yukari": {
-   "n": 1,
-   "sumR": -1.1784,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|long|piyasa+uyusmazlik|btc:yukari": {
-   "n": 2,
-   "sumR": -0.79,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|long|akis+uyusmazlik|btc:yukari": {
-   "n": 3,
-   "sumR": -3.5688,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|long|momentum+seviye|btc:yukari": {
-   "n": 1,
-   "sumR": -1.1289,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_obv|long|seviye+uyusmazlik|btc:yukari": {
-   "n": 3,
-   "sumR": -3.4361,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|long|akis+uyusmazlik|btc:yukari": {
-   "n": 3,
-   "sumR": -3.7778,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|short|akis+seviye|btc:yukari": {
-   "n": 4,
-   "sumR": 3.4729,
-   "gercek": 0,
-   "karar": null
-  },
-  "psar_donus|short|seviye+trend|btc:yukari": {
+  "psar_donus|short|btc:yukari": {
    "n": 1,
    "sumR": 0.1533,
    "gercek": 0,
    "karar": null
   },
-  "macd_kesisim|short|akis+seviye|btc:yukari": {
-   "n": 3,
-   "sumR": 1.5196,
+  "macd_kesisim|short|btc:yukari": {
+   "n": 9,
+   "sumR": 7.7672,
    "gercek": 0,
    "karar": null
   },
-  "anlik_kirilim|short|akis+uyusmazlik|btc:yukari": {
-   "n": 1,
-   "sumR": 0.2991,
+  "anlik_kirilim|short|btc:yukari": {
+   "n": 5,
+   "sumR": 3.2651,
    "gercek": 0,
    "karar": null
   },
-  "trend_cizgisi_kirilim_15m|short|akis+seviye|btc:yukari": {
-   "n": 3,
-   "sumR": 1.2392,
+  "uyusmazlik_donus_rsi|short|btc:yukari": {
+   "n": 9,
+   "sumR": 4.2706,
    "gercek": 0,
    "karar": null
   },
-  "obv_kirilim|long|momentum+trend|btc:yukari": {
-   "n": 1,
-   "sumR": -1.0798,
-   "gercek": 0,
-   "karar": null
-  },
-  "anlik_kirilim|short|formasyon+uyusmazlik|btc:yukari": {
-   "n": 1,
-   "sumR": 0.7246,
-   "gercek": 0,
-   "karar": null
-  },
-  "sikisma_cikisi|short|momentum+seviye|btc:yukari": {
-   "n": 1,
-   "sumR": 1.4055,
-   "gercek": 0,
-   "karar": null
-  },
-  "macd_kesisim|short|seviye+uyusmazlik|btc:yukari": {
+  "uyusmazlik_donus_cci|short|btc:yukari": {
    "n": 2,
-   "sumR": 2.2117,
+   "sumR": 1.9782,
    "gercek": 0,
    "karar": null
   },
-  "anlik_kirilim|short|momentum+seviye|btc:yukari": {
-   "n": 1,
-   "sumR": 1.3951,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_obv|long|formasyon+uyusmazlik|btc:yukari": {
-   "n": 1,
-   "sumR": -1.2217,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|long|seviye+uyusmazlik|btc:yukari": {
-   "n": 1,
-   "sumR": -1.4355,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|short|momentum+seviye|btc:yukari": {
-   "n": 8,
-   "sumR": -1.7585,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|short|piyasa+seviye|btc:yukari": {
-   "n": 1,
-   "sumR": 0.0784,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_rsi|short|akis+seviye|btc:yukari": {
-   "n": 2,
-   "sumR": 0.9381,
-   "gercek": 0,
-   "karar": null
-  },
-  "anlik_kirilim|short|akis+momentum|btc:yukari": {
-   "n": 1,
-   "sumR": 0.3317,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|short|momentum+seviye|btc:yukari": {
-   "n": 3,
-   "sumR": 2.5966,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_15m|short|momentum+seviye|btc:yukari": {
-   "n": 4,
-   "sumR": 6.8211,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_rsi|short|formasyon+uyusmazlik|btc:yukari": {
-   "n": 1,
-   "sumR": -1.0849,
-   "gercek": 0,
-   "karar": null
-  },
-  "macd_kesisim|short|akis+uyusmazlik|btc:yukari": {
-   "n": 3,
-   "sumR": 3.4439,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_cci|short|momentum+seviye|btc:yukari": {
-   "n": 1,
-   "sumR": 0.6537,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_rsi|short|akis+formasyon|btc:yukari": {
-   "n": 1,
-   "sumR": 0.5438,
-   "gercek": 0,
-   "karar": null
-  },
-  "macd_kesisim|short|akis+momentum|btc:yukari": {
-   "n": 1,
-   "sumR": 0.592,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_mfi|short|akis+momentum|btc:yukari": {
+  "uyusmazlik_donus_mfi|short|btc:yukari": {
    "n": 1,
    "sumR": -1.3263,
    "gercek": 0,
    "karar": null
   },
-  "obv_kirilim|short|momentum+seviye|btc:yukari": {
-   "n": 1,
-   "sumR": 0.267,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|short|momentum+piyasa|btc:yukari": {
-   "n": 1,
-   "sumR": -1.248,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|short|formasyon+seviye|btc:yukari": {
-   "n": 3,
-   "sumR": 0.2644,
-   "gercek": 0,
-   "karar": null
-  },
-  "anlik_kirilim|short|akis+seviye|btc:yukari": {
-   "n": 1,
-   "sumR": 0.5146,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|short|formasyon+momentum|btc:yukari": {
-   "n": 1,
-   "sumR": -1.2869,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|piyasa+seviye|btc:yukari": {
-   "n": 3,
-   "sumR": 0.8251,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|long|akis+formasyon|btc:yukari": {
-   "n": 1,
-   "sumR": -1.1763,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_15m|long|seviye+uyusmazlik|btc:yukari": {
+  "trend_cizgisi_kirilim_15m|long|btc:yukari": {
    "n": 1,
    "sumR": -1.2391,
    "gercek": 0,
    "karar": null
   },
-  "stoch_kesisim|long|akis+trend|btc:yukari": {
-   "n": 1,
-   "sumR": -1.124,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|short|momentum+uyusmazlik|btc:yukari": {
-   "n": 1,
-   "sumR": 1.3776,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|seviye+trend|btc:yukari": {
-   "n": 1,
-   "sumR": 0.5171,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|momentum+trend|btc:yukari": {
-   "n": 1,
-   "sumR": 0.6086,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_macd|short|akis+seviye|btc:yatay": {
-   "n": 1,
-   "sumR": 1.4527,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_rsi|short|akis+formasyon|btc:yatay": {
-   "n": 1,
-   "sumR": 1.3201,
-   "gercek": 0,
-   "karar": null
-  },
-  "supertrend_donus|short|momentum+seviye|btc:yukari": {
+  "supertrend_donus|short|btc:yukari": {
    "n": 1,
    "sumR": 1.2078,
    "gercek": 0,
    "karar": null
   },
-  "trend_cizgisi_kirilim_15m|short|akis+formasyon|btc:yukari": {
-   "n": 1,
-   "sumR": 1.6469,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_15m|short|akis+momentum|btc:yukari": {
-   "n": 1,
-   "sumR": 1.6233,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|short|piyasa+trend|btc:yukari": {
-   "n": 1,
-   "sumR": 1.3882,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_rsi|short|seviye+trend|btc:yukari": {
-   "n": 1,
-   "sumR": 1.411,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|short|seviye+trend|btc:yukari": {
-   "n": 2,
-   "sumR": 2.8351,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_rsi|short|momentum+seviye|btc:yukari": {
-   "n": 2,
-   "sumR": 0.3488,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_1H|short|formasyon+seviye|btc:yukari": {
-   "n": 1,
-   "sumR": 1.4271,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_cci|short|piyasa+seviye|btc:yukari": {
-   "n": 1,
-   "sumR": 1.3245,
-   "gercek": 0,
-   "karar": null
-  },
-  "formasyon_yarasa|short|seviye+uyusmazlik|btc:yukari": {
+  "formasyon_yarasa|short|btc:yukari": {
    "n": 1,
    "sumR": 1.5318,
-   "gercek": 0,
-   "karar": null
-  },
-  "kirilim|short|momentum+trend|btc:yatay": {
-   "n": 2,
-   "sumR": 1.9106,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_cekilme|short|piyasa+trend|btc:yatay": {
-   "n": 1,
-   "sumR": 0.5364,
-   "gercek": 0,
-   "karar": null
-  },
-  "uyusmazlik_donus_rsi|short|akis+momentum|btc:yukari": {
-   "n": 2,
-   "sumR": 2.1138,
-   "gercek": 0,
-   "karar": null
-  },
-  "anlik_kirilim|short|akis+momentum|btc:yatay": {
-   "n": 1,
-   "sumR": 1.9684,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|akis+formasyon|btc:yatay": {
-   "n": 2,
-   "sumR": 3.6411,
-   "gercek": 0,
-   "karar": null
-  },
-  "geri_test|short|piyasa+seviye|btc:yukari": {
-   "n": 1,
-   "sumR": 7.3598,
-   "gercek": 0,
-   "karar": null
-  },
-  "kirilim|short|momentum+piyasa|btc:yatay": {
-   "n": 1,
-   "sumR": -1.1288,
-   "gercek": 0,
-   "karar": null
-  },
-  "trend_cizgisi_kirilim_15m|short|seviye+uyusmazlik|btc:yukari": {
-   "n": 1,
-   "sumR": 2.2693,
-   "gercek": 0,
-   "karar": null
-  },
-  "yapi_bozulmasi|short|hacim+piyasa|btc:yatay": {
-   "n": 1,
-   "sumR": 1.4611,
    "gercek": 0,
    "karar": null
   }
