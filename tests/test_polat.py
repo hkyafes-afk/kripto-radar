@@ -630,10 +630,12 @@ def test_learning_from_every_result_paths_and_ab_guard():
     L.learn_from(win, real=True)
     assert L.online["iyi"] > 1 and L.online["kotu"] < 1            # tek bir sonuçtan bile ders
     lose = {"R": -1.2, "d": 1, "oylar": {"iyi": 0.8}, "yol": "supurme|long|akis|btc:asagi", "S": 0.4, "S_temel": 0.4}
-    for _ in range(6):
+    for _ in range(19):
         L.learn_from(dict(lose), real=False)
+    assert L.path_rule("supurme|long|akis|btc:asagi") is None         # 20 sonuçtan önce hüküm yok (gürültü)
+    L.learn_from(dict(lose), real=False)
     assert L.path_rule("supurme|long|akis|btc:asagi") == "kacin"     # zarar ettiren yoldan dönülür
-    for _ in range(6):
+    for _ in range(20):
         L.learn_from(dict(win), real=False)
     assert L.path_rule("kirilim|long|seviye+trend|btc:yukari") == "benimse"
     lessons = [json.loads(x) for x in (tmp / "gunluk" / "dersler.jsonl").read_text().splitlines()]
@@ -644,6 +646,19 @@ def test_learning_from_every_result_paths_and_ab_guard():
     L.learn_from({"R": -1.0, "d": 1, "oylar": {}, "S": 0.4, "S_temel": 0.1}, real=False)
     assert L.online == {}
     assert any(json.loads(x)["olay"] == "geri_alindi" for x in (tmp / "gunluk" / "dersler.jsonl").read_text().splitlines())
+
+
+def test_old_path_keys_migrate_to_coarse_paths():
+    tmp = Path(tempfile.mkdtemp())
+    from polat.learn import Learner
+    old = {"geri_test|short|akis+seviye|btc:yatay": {"n": 12, "sumR": -9.0, "gercek": 1},
+           "geri_test|short|formasyon+seviye|btc:yatay": {"n": 12, "sumR": -9.0, "gercek": 0, "karar": "kacin"},
+           "kirilim|long|trend|btc:yukari": {"n": 3, "sumR": 3.0, "gercek": 0}}
+    (tmp / "ogrenme.json").write_text(json.dumps({"yollar": old}), encoding="utf-8")
+    L = Learner(copy.deepcopy(CFG), tmp)
+    e = L.paths["geri_test|short|btc:yatay"]
+    assert e["n"] == 24 and e["sumR"] == -18.0 and e["gercek"] == 1 and e["karar"] == "kacin"
+    assert L.paths["kirilim|long|btc:yukari"]["karar"] is None       # 3 sonuçla hüküm yok
 
 
 def test_shadow_managed_like_real_trade():

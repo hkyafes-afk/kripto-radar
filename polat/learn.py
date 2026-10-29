@@ -48,7 +48,7 @@ class Learner:
             js = json.loads(self.weights_file.read_text(encoding="utf-8"))
             self.mult, self.cat_mult, self.meta = js.get("carpan", {}), js.get("kategori_carpan", {}), js.get("meta", self.meta)
             self.bench = js.get("kiyas", self.bench)
-            self.online, self.paths = js.get("cevrimici", {}), js.get("yollar", {})
+            self.online, self.paths = js.get("cevrimici", {}), self._migrate_paths(js.get("yollar", {}))
             self.ab = js.get("ab", self.ab)
             self.adjust = js.get("ayar", {})
 
@@ -206,6 +206,25 @@ class Learner:
                 self.online = {}
                 self.ab = {"ogrenilmis": [], "temel": []}
         self.save_weights()
+
+    def _migrate_paths(self, paths: dict) -> dict:
+        """Eski 4 parçalı yolları (tetik|yön|kategoriler|btc) yeni 3 parçalıya (tetik|yön|btc) toplar.
+        n ve toplam R toplanabilir olduğu için geçmiş birikim kaybolmaz; hüküm yeni eşiklerle yeniden verilir."""
+        if not any(k.count("|") == 3 for k in paths):
+            return paths
+        L, out = self.L, {}
+        for k, v in paths.items():
+            p = k.split("|")
+            nk = f"{p[0]}|{p[1]}|{p[3]}" if len(p) == 4 else k
+            e = out.setdefault(nk, {"n": 0, "sumR": 0.0, "gercek": 0})
+            e["n"] += v.get("n", 0)
+            e["sumR"] = round(e["sumR"] + v.get("sumR", 0.0), 4)
+            e["gercek"] += v.get("gercek", 0)
+        for nk, e in out.items():
+            score = e["sumR"] / (e["n"] + L["yol_kuculme"])
+            e["karar"] = ("kacin" if score <= -L["yol_esik"] else "benimse" if score >= L["yol_esik"] else None) \
+                if e["n"] >= L["yol_min"] else None
+        return out
 
     def path_rule(self, path: str | None) -> str | None:
         e = self.paths.get(path or "")

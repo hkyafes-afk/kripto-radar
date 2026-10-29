@@ -86,9 +86,9 @@ ogrenme:
   carpan_alt: 0.25
   carpan_ust: 2.0
   ders_hizi: 0.03            # her sonuçtan sonra katsayı değişimi (gerçek işlemde 2 katı)
-  yol_min: 5                 # bir yol (tetik + yön + baskın kategoriler + BTC rejimi) en az bu kadar sonuçtan sonra hüküm alır
+  yol_min: 20                # bir yol (tetik + yön + BTC rejimi) en az bu kadar sonuçtan sonra hüküm alır (5'te ±0,45R gürültü vardı)
   yol_esik: 0.25             # küçültülmüş ortalama R ≤ −0,25 → kaçın; ≥ +0,25 → benimse
-  yol_kuculme: 5             # ortalama = toplam R / (n + 5): az örnekte aşırı hüküm verme
+  yol_kuculme: 10            # ortalama = toplam R / (n + 10): az örnekte aşırı hüküm verme
   yol_benimse_indirim: 0.05  # benimsenen yolda eşik bu kadar düşer
   ab_min: 30                 # A/B koruması için en az örnek
   ab_pencere: 100

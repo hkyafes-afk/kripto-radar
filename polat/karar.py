@@ -505,16 +505,17 @@ _LEVEL_TOKENS = {"dun", "gecen", "gun", "hafta", "4s", "poc", "vah", "val", "vwa
 
 
 def path_key(trig_name: str, d: int, cats: dict, btc_rd: dict | None) -> str:
-    """Yol: tetik ailesi + yön + en güçlü iki kategori + BTC 4S rejimi (ders defterinin anahtarı)."""
+    """Yol: tetik ailesi + yön + BTC 4S rejimi (ders defterinin anahtarı).
+    Kategoriler anahtarda yok: onlarla 1.681 sonuç 526 yola bölünüyor, yol başına medyan 1 örnek kalıyordu.
+    (cats imza uyumu için duruyor.)"""
     toks = []
     for t in trig_name.split("_"):
         if t in TF_W or t in _LEVEL_TOKENS:
             break
         toks.append(t)
     fam = "_".join(toks[:3]) or trig_name
-    top = sorted((k for k, v in cats.items() if v * d > 0 and k != "tetik"), key=lambda k: -abs(cats[k]))[:2]
     btc = ((btc_rd or {}).get("yapi_4H") or {}).get("yon", "?")
-    return f"{fam}|{'long' if d > 0 else 'short'}|{'+'.join(sorted(top))}|btc:{btc}"
+    return f"{fam}|{'long' if d > 0 else 'short'}|btc:{btc}"
 
 
 def decide(m, c, rd: dict, btc_rd: dict | None, mult: dict | None, cat_mult: dict | None, cfg: dict,
