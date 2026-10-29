@@ -432,6 +432,20 @@ Kaynaklar (ek):
 - [Why meta-labeling is not a silver bullet (QuantConnect)](https://www.quantconnect.com/forum/discussion/14706/why-meta-labeling-is-not-a-silver-bullet/)
 - [Reconciling Open Interest with Traded Volume in Perpetual Swaps](https://arxiv.org/html/2310.14973v2)
 
+## Binance verisiyle test edilecek adaylar (kayıt: 30 Ekim 2026)
+
+Veriye bakmadan yazıldı. Eğitim %70'te aranır, son %30 saklı test olarak yalnız bir kez açılır; her aday güven aralığıyla raporlanır
+ve aralığın tamamı tabanın üstünde değilse benimsenmez. Kaç aday denendiği DSR için kaydedilir.
+Veri: `binance-veri` dalı (895 USDT-M coin, batanlar dahil, 2020-01'den; günlük mum + funding), `binance-metrik` dalı (ilk 100 coin: OI, long/short, taker; 2020-09'dan).
+Kapsam: yalnız günlük kurallar. Polat'ın dakikalık/emir defteri kararları bu veriyle test edilemez.
+
+1. **Giriş:** Turbo, Murat, Kaan için geri çekilmede limit giriş (kazananlar girişte ort. 0,38–0,39R geri çekilme yaşıyor).
+2. **Çıkış:** Murat için kısmi kâr + kalanı ATR iz stop (canlı kayıtta zirvedeki kârın yalnız %14'ü korunuyor).
+3. **Zaman stopu:** kârda ama N gün yeni zirve yoksa kapat (LAB'da denenmemiş).
+4. **Kemal çıkışı:** MA50 kuralı yerine daha hızlı bitiş sinyali (korunma oranı %3).
+
+Not: daha sıkı iz stop / tepe kârı koruma LAB'da zaten denendi ve ortalama R'yi düşürdü; 2–4 buna dönüşmemeli.
+
 ## Kaynaklar
 
 - [Quantopian 888 strateji çalışması (CXO Advisory)](https://www.cxoadvisory.com/big-ideas/in-sample-vs-out-of-sample-performance-of-888-trading-strategies)
