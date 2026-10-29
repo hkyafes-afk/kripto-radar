@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.331R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.33R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 1002 | %45.1 | -0.331 | -331.86 |
+| polat_tum_sinyaller | 1007 | %45.3 | -0.33 | -332.31 |
 | polat_girilen | 5 | %40.0 | -0.772 | -3.86 |
-| polat_girilmeyen | 997 | %45.1 | -0.329 | -328.0 |
-| rastgele | 1000 | %42.2 | -0.405 | -405.47 |
-| trend_naif | 1003 | %39.1 | -0.461 | -462.84 |
+| polat_girilmeyen | 1002 | %45.3 | -0.328 | -328.44 |
+| rastgele | 1005 | %42.5 | -0.402 | -404.04 |
+| trend_naif | 1005 | %39.1 | -0.462 | -464.17 |
 
-Polat özsermaye: %-3.54 · BTC al-tut: %-0.99
+Polat özsermaye: %-3.54 · BTC al-tut: %-0.98
 
 ## Öğrenme (walk-forward)
 
@@ -63,10 +63,10 @@ En az işe yarayan okumalar: obv_egim_1H ×0.553, momentum_1H ×0.58, uyusmazlik
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 3272
+- ders: 3287
 - üst üste 3 zarar: 2345
 - gösterge aileleri aynı yönde değil: 1037
-- büyük zaman dilimi trendi ters: 809
+- büyük zaman dilimi trendi ters: 810
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 274
@@ -119,10 +119,10 @@ En az işe yarayan okumalar: obv_egim_1H ×0.553, momentum_1H ×0.58, uyusmazlik
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 3272
+- ders: 3287
 - üst üste 3 zarar: 2345
 - gösterge aileleri aynı yönde değil: 1037
-- büyük zaman dilimi trendi ters: 809
+- büyük zaman dilimi trendi ters: 810
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 274
@@ -175,10 +175,10 @@ En az işe yarayan okumalar: obv_egim_1H ×0.553, momentum_1H ×0.58, uyusmazlik
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 3272
+- ders: 3287
 - üst üste 3 zarar: 2345
 - gösterge aileleri aynı yönde değil: 1037
-- büyük zaman dilimi trendi ters: 809
+- büyük zaman dilimi trendi ters: 810
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 274
