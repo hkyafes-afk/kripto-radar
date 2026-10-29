@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.327R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.326R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 693 | %46.6 | -0.327 | -226.87 |
+| polat_tum_sinyaller | 697 | %46.8 | -0.326 | -226.99 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
-| polat_girilmeyen | 691 | %46.6 | -0.327 | -225.67 |
-| rastgele | 700 | %41.9 | -0.442 | -309.38 |
-| trend_naif | 708 | %36.7 | -0.53 | -375.38 |
+| polat_girilmeyen | 695 | %46.8 | -0.325 | -225.79 |
+| rastgele | 705 | %42.0 | -0.441 | -310.69 |
+| trend_naif | 712 | %36.9 | -0.527 | -375.5 |
 
-Polat özsermaye: %-2.57 · BTC al-tut: %-1.09
+Polat özsermaye: %-2.57 · BTC al-tut: %-1.2
 
 ## Öğrenme (walk-forward)
 
@@ -58,11 +58,11 @@ En az işe yarayan okumalar: yapi_1D ×0.764, adx_di_1D ×0.822, ema_1D ×0.834,
 **Girilmeyen kurulumlar (engel)**
 
 - ders: 1347
-- üst üste 3 zarar: 932
+- üst üste 3 zarar: 1024
 - günlük işlem tavanı (8): 635
-- gösterge aileleri aynı yönde değil: 595
+- gösterge aileleri aynı yönde değil: 624
 - emir defteri doğrulanmadı: 593
-- büyük zaman dilimi trendi ters: 506
+- büyük zaman dilimi trendi ters: 525
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.123 eşiğin (0.25) altında: 63
@@ -108,11 +108,11 @@ En az işe yarayan okumalar: yapi_1D ×0.764, adx_di_1D ×0.822, ema_1D ×0.834,
 **Girilmeyen kurulumlar (engel)**
 
 - ders: 1347
-- üst üste 3 zarar: 932
+- üst üste 3 zarar: 1024
 - günlük işlem tavanı (8): 635
-- gösterge aileleri aynı yönde değil: 595
+- gösterge aileleri aynı yönde değil: 624
 - emir defteri doğrulanmadı: 593
-- büyük zaman dilimi trendi ters: 506
+- büyük zaman dilimi trendi ters: 525
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.123 eşiğin (0.25) altında: 63
@@ -158,11 +158,11 @@ En az işe yarayan okumalar: yapi_1D ×0.764, adx_di_1D ×0.822, ema_1D ×0.834,
 **Girilmeyen kurulumlar (engel)**
 
 - ders: 1347
-- üst üste 3 zarar: 932
+- üst üste 3 zarar: 1024
 - günlük işlem tavanı (8): 635
-- gösterge aileleri aynı yönde değil: 595
+- gösterge aileleri aynı yönde değil: 624
 - emir defteri doğrulanmadı: 593
-- büyük zaman dilimi trendi ters: 506
+- büyük zaman dilimi trendi ters: 525
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.123 eşiğin (0.25) altında: 63
