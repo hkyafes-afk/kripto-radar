@@ -218,7 +218,8 @@ def coin_first_ts(client, sym: str, inst: str | None = None):
     return None
 
 
-def run_manager(mgr, F, sym, inst, bar_h, warm, ctx_extra_fn, cfg, cooldown_bars=3, first_ts=None):
+def run_manager(mgr, F, sym, inst, bar_h, warm, ctx_extra_fn, cfg, cooldown_bars=3, first_ts=None, eligible=None):
+    """eligible: opsiyonel bool dizisi (F ile aynı uzunlukta). Yanlış olan barda yeni işlem aranmaz (gün gün evren kapısı)."""
     trades = []
     n = len(F)
     hv_cache = {}
@@ -232,6 +233,9 @@ def run_manager(mgr, F, sym, inst, bar_h, warm, ctx_extra_fn, cfg, cooldown_bars
 
     i = warm
     while i < n - 1:
+        if eligible is not None and not eligible[i]:
+            i += 1
+            continue
         ctx = ctx_fn(i)
         if mgr.id == "murat":
             if i not in hv_cache:

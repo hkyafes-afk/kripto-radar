@@ -49,6 +49,10 @@ def main(argv=None) -> int:
     p = sub.add_parser("yaris", help="v9 Faz 1: 5 yıllık varyant yarışı (çıkış, giriş, stop, firma kuralları)")
     p.add_argument("--coins", type=int, default=30)
     p.add_argument("--years", type=float, default=5.0)
+    p.add_argument("--binance", default=None, help="Binance Vision arşiv klasörü (binance-veri dalı); verilirse OKX yerine bu kullanılır, "
+                                                    "--coins = her gün hacme göre ilk N coin, batan coinler dahil")
+    p.add_argument("--yoneticiler", default=None, help="virgülle ayrılmış yönetici listesi (ör. kemal,kaan)")
+    p.add_argument("--cikti", default=None, help="çıktı klasörü (varsayılan data/; Binance için ayrı klasör önerilir)")
     p.add_argument("--demo", action="store_true")
     p.add_argument("--config", default=None)
 
@@ -77,8 +81,9 @@ def main(argv=None) -> int:
         if a.demo:
             from .demo import DemoClient
             client = DemoClient()
-        race.run(client=client, cfg_path=a.config, n_coins=a.coins, years=a.years,
-                 out_dir=(Path("site") / "yaris_demo") if a.demo else None)
+        out_dir = (Path("site") / "yaris_demo") if a.demo else (Path(a.cikti) if a.cikti else None)
+        race.run(client=client, cfg_path=a.config, n_coins=a.coins, years=a.years, out_dir=out_dir,
+                 binance_dir=a.binance, only_mgrs=[x for x in (a.yoneticiler or "").split(",") if x] or None)
         return 0
 
     if a.cmd == "hakem":

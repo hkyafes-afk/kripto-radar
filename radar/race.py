@@ -50,15 +50,25 @@ def _r(x, d=3):
     return None if x is None or x != x else round(float(x), d)
 
 
-def run(client=None, cfg_path=None, n_coins=30, years=5.0, out_dir: Path | None = None) -> dict:
+def run(client=None, cfg_path=None, n_coins=30, years=5.0, out_dir: Path | None = None,
+        binance_dir: str | None = None, only: list[str] | None = None,
+        only_mgrs: list[str] | None = None) -> dict:
+    """binance_dir verilirse OKX yerine Binance Vision arşivi (batan coinler dahil, gün gün evren, n_coins = ilk N) kullanılır."""
     t0 = time.time()
     base = load_config(cfg_path)
     base["_learned"] = learn.load_learned()
     base.setdefault("ekip", {})["varyant"] = {}          # taban = varyantsız (yarış kendi denemesini verir)
-    if client is None:
-        from .okx import OKXClient
-        client = OKXClient()
-    daily, _, now_ms = bt2.load_data(client, base, n_coins, years, deniz_days=0)
+    elig, bn_info = None, None
+    if binance_dir:
+        from . import binance_data
+        daily, elig, ages_bn, bn_info = binance_data.load(binance_dir, top_n=n_coins, only=only)
+        now_ms = int(max(d[1].index[-1] for d in daily.values()).timestamp() * 1000)
+        print(f"  Binance: {bn_info}")
+    else:
+        if client is None:
+            from .okx import OKXClient
+            client = OKXClient()
+        daily, _, now_ms = bt2.load_data(client, base, n_coins, years, deniz_days=0)
     test_start = pd.Timestamp(now_ms - int(years * 365 * 86400_000), unit="ms", tz="UTC")
     end = pd.Timestamp(now_ms, unit="ms", tz="UTC")
     split = test_start + (end - test_start) * 0.7
@@ -67,8 +77,12 @@ def run(client=None, cfg_path=None, n_coins=30, years=5.0, out_dir: Path | None 
     wx = {BF.index[k]: quant.btc_weather(BF, k) for k in range(len(BF))}
     feats = {sym: quant.features(df) for sym, (inst, df, _) in daily.items()}
     mgrs = {m.id: m for m in team.roster(base) if m.analyze}
-    ages = {sym: bt2.coin_first_ts(client, sym, inst) for sym, (inst, df, _) in daily.items()}
-    print("  coin yaşları: " + ", ".join(f"{s} {a.date() if a is not None else '?'}" for s, a in sorted(ages.items())))
+    trials_all = {m: t for m, t in TRIALS.items() if not only_mgrs or m in only_mgrs}
+    if binance_dir:
+        ages = ages_bn
+    else:
+        ages = {sym: bt2.coin_first_ts(client, sym, inst) for sym, (inst, df, _) in daily.items()}
+        print("  coin yaşları: " + ", ".join(f"{s} {a.date() if a is not None else '?'}" for s, a in sorted(ages.items())))
 
     def trades_for(mid, var):
         cfg = copy.deepcopy(base)
@@ -79,11 +93,15 @@ def run(client=None, cfg_path=None, n_coins=30, years=5.0, out_dir: Path | None 
             idx = F.index
             warm = max(int(np.searchsorted(idx, test_start)), 210)
 
-            def extra(k, idx=idx):
+            vol_arr = vol.to_numpy(float) if hasattr(vol, "to_numpy") else None
+
+            def extra(k, idx=idx, vol=vol, vol_arr=vol_arr):
                 w = wx.get(idx[k]) or {}
+                v = (None if vol_arr[k] != vol_arr[k] else float(vol_arr[k])) if vol_arr is not None else vol
                 return {"btc_bear": w.get("btc_bear", False), "btc_bull": w.get("btc_bull", False),
-                        "w_trend": w.get("trend"), "high_vol": w.get("high_vol"), "vol24_usd": vol}
-            out += bt2.run_manager(mgrs[mid], F, sym, inst, 24.0, warm, extra, cfg, first_ts=ages.get(sym))
+                        "w_trend": w.get("trend"), "high_vol": w.get("high_vol"), "vol24_usd": v}
+            el = elig[sym].to_numpy(bool) if elig is not None else None
+            out += bt2.run_manager(mgrs[mid], F, sym, inst, 24.0, warm, extra, cfg, first_ts=ages.get(sym), eligible=el)
         return out
 
     def wmult_fn(bear_long=0.5, classes=None):
@@ -123,7 +141,7 @@ def run(client=None, cfg_path=None, n_coins=30, years=5.0, out_dir: Path | None 
                 and v(c["mar"]) >= 0.9 * v(b["mar"]))
 
     results, all_trades, srs = {}, {}, []
-    for mid, trials in TRIALS.items():
+    for mid, trials in trials_all.items():
         if mid not in mgrs:
             continue
         rows = []
@@ -198,10 +216,11 @@ def run(client=None, cfg_path=None, n_coins=30, years=5.0, out_dir: Path | None 
             for k in [k for k in r if k.startswith("_")]:
                 r.pop(k)
     out = {"generated": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"), "years": years,
-           "n_coins": len(daily), "coins": sorted(daily), "test_start": str(test_start.date()), "split": str(split.date()),
+           "n_coins": len(daily), "coins": sorted(daily)[:400], "test_start": str(test_start.date()), "split": str(split.date()),
            "n_trials": len(srs), "managers": results, "firm": firm, "class_counts": cls_counts, "class_avg_r": cls_r,
            "cost": {**bt2.COST, "stop_kayma": "taban 5 bp + günlük ATR'nin %5'i (genç coinde ×1,5)"},
-           "duration_s": round(time.time() - t0, 1)}
+           "duration_s": round(time.time() - t0, 1),
+           "kaynak": ("binance-vision " + str(bn_info)) if bn_info else "okx"}
     d = out_dir or (ROOT / "data")
     d.mkdir(parents=True, exist_ok=True)
     (d / "race.json").write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
@@ -230,5 +249,7 @@ def report_md(o: dict) -> str:
     L += ["", f"Kanıt sınıfına göre işlemler: A {o['class_counts'].get('A')} (ort. {o['class_avg_r'].get('A')}R), "
               f"B {o['class_counts'].get('B')} (ort. {o['class_avg_r'].get('B')}R), C {o['class_counts'].get('C')} "
               f"(ort. {o['class_avg_r'].get('C')}R)", "",
-          "Uyarı: coin evreni bugün hâlâ işlem gören coinler (batanlar yok) → sonuçlar iyimser tarafta.", ""]
+          ("Kaynak: " + str(o["kaynak"]) + " · evren gün gün kuruldu (batan coinler dahil, hacme göre ilk N)."
+           if str(o.get("kaynak", "okx")).startswith("binance") else
+           "Uyarı: coin evreni bugün hâlâ işlem gören coinler (batanlar yok) → sonuçlar iyimser tarafta."), ""]
     return "\n".join(L)
