@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.316R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.314R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 784 | %47.1 | -0.316 | -247.62 |
+| polat_tum_sinyaller | 803 | %46.7 | -0.314 | -252.5 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
-| polat_girilmeyen | 782 | %47.1 | -0.315 | -246.42 |
-| rastgele | 782 | %42.5 | -0.431 | -336.96 |
-| trend_naif | 794 | %38.2 | -0.5 | -396.63 |
+| polat_girilmeyen | 801 | %46.7 | -0.314 | -251.3 |
+| rastgele | 792 | %42.3 | -0.43 | -340.79 |
+| trend_naif | 806 | %38.0 | -0.499 | -402.09 |
 
-Polat özsermaye: %-2.57 · BTC al-tut: %-1.18
+Polat özsermaye: %-2.57 · BTC al-tut: %-1.11
 
 ## Öğrenme (walk-forward)
 
@@ -57,9 +57,9 @@ En az işe yarayan okumalar: obv_egim_1H ×0.684, yapi_1D ×0.706, adx_di_1D ×0
 
 **Girilmeyen kurulumlar (engel)**
 
-- üst üste 3 zarar: 2248
-- ders: 2027
-- gösterge aileleri aynı yönde değil: 897
+- üst üste 3 zarar: 2263
+- ders: 2065
+- gösterge aileleri aynı yönde değil: 901
 - büyük zaman dilimi trendi ters: 760
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
@@ -107,9 +107,9 @@ En az işe yarayan okumalar: obv_egim_1H ×0.684, yapi_1D ×0.706, adx_di_1D ×0
 
 **Girilmeyen kurulumlar (engel)**
 
-- üst üste 3 zarar: 2248
-- ders: 2027
-- gösterge aileleri aynı yönde değil: 897
+- üst üste 3 zarar: 2263
+- ders: 2065
+- gösterge aileleri aynı yönde değil: 901
 - büyük zaman dilimi trendi ters: 760
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
@@ -157,9 +157,9 @@ En az işe yarayan okumalar: obv_egim_1H ×0.684, yapi_1D ×0.706, adx_di_1D ×0
 
 **Girilmeyen kurulumlar (engel)**
 
-- üst üste 3 zarar: 2248
-- ders: 2027
-- gösterge aileleri aynı yönde değil: 897
+- üst üste 3 zarar: 2263
+- ders: 2065
+- gösterge aileleri aynı yönde değil: 901
 - büyük zaman dilimi trendi ters: 760
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
