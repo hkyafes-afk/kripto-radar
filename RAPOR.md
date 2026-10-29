@@ -4,24 +4,24 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.301R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.303R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 1431 | %46.5 | -0.301 | -431.09 |
+| polat_tum_sinyaller | 1436 | %46.4 | -0.303 | -434.45 |
 | polat_girilen | 8 | %50.0 | -0.596 | -4.77 |
-| polat_girilmeyen | 1423 | %46.5 | -0.3 | -426.33 |
-| rastgele | 1438 | %43.5 | -0.363 | -522.26 |
-| trend_naif | 1431 | %38.7 | -0.469 | -670.58 |
+| polat_girilmeyen | 1428 | %46.4 | -0.301 | -429.68 |
+| rastgele | 1446 | %43.4 | -0.366 | -529.4 |
+| trend_naif | 1441 | %38.6 | -0.472 | -680.37 |
 
-Polat özsermaye: %-4.4 · BTC al-tut: %-0.29
+Polat özsermaye: %-4.4 · BTC al-tut: %-0.45
 
 ## Öğrenme (walk-forward)
 
-Örnek 1428 (eğitim 999, doğrulama 429) · uygulanan katsayı 75 · doğrulamada tutmadığı için reddedilen 19
+Örnek 1431 (eğitim 1001, doğrulama 430) · uygulanan katsayı 79 · doğrulamada tutmadığı için reddedilen 15
 
-En çok işe yarayan okumalar: tetik_psar_donus_15m ×1.365, momentum_5m ×1.362, macd_hist_15m ×1.359, cci_5m ×1.32, tetik_yapi_bozulmasi_15m ×1.317, obv_egim_15m ×1.27, oi_fiyat ×1.266, macd_hist_5m ×1.26, uyusmazlik_rsi_15m ×1.256, cci_15m ×1.248
-En az işe yarayan okumalar: momentum_1H ×0.53, obv_egim_1H ×0.536, psar_1H ×0.615, ultimate_1H ×0.652, adx_di_1H ×0.663, ema_4H ×0.742, tetik_geri_test_1H ×0.742, long_short ×0.742, adx_di_1D ×0.763, cci_1H ×0.766
+En çok işe yarayan okumalar: momentum_5m ×1.368, macd_hist_15m ×1.366, tetik_psar_donus_15m ×1.365, cci_5m ×1.327, hacim_oran_1H ×1.322, tetik_yapi_bozulmasi_15m ×1.319, oi_fiyat ×1.271, obv_egim_15m ×1.27, macd_hist_5m ×1.267, uyusmazlik_rsi_15m ×1.256
+En az işe yarayan okumalar: momentum_1H ×0.528, obv_egim_1H ×0.536, psar_1H ×0.614, ultimate_1H ×0.651, adx_di_1H ×0.662, tetik_geri_test_1H ×0.74, long_short ×0.744, ema_4H ×0.748, cci_1H ×0.765, adx_di_1D ×0.767
 
 ## Son 1 gün
 
@@ -65,9 +65,9 @@ En az işe yarayan okumalar: momentum_1H ×0.53, obv_egim_1H ×0.536, psar_1H ×
 
 - ders: 5234
 - üst üste 3 zarar: 2345
-- günlük işlem tavanı (8): 1669
-- büyük zaman dilimi trendi ters: 1488
-- gösterge aileleri aynı yönde değil: 1423
+- günlük işlem tavanı (8): 1738
+- büyük zaman dilimi trendi ters: 1495
+- gösterge aileleri aynı yönde değil: 1440
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
@@ -120,9 +120,9 @@ En az işe yarayan okumalar: momentum_1H ×0.53, obv_egim_1H ×0.536, psar_1H ×
 
 - ders: 5234
 - üst üste 3 zarar: 2345
-- günlük işlem tavanı (8): 1669
-- büyük zaman dilimi trendi ters: 1488
-- gösterge aileleri aynı yönde değil: 1423
+- günlük işlem tavanı (8): 1738
+- büyük zaman dilimi trendi ters: 1495
+- gösterge aileleri aynı yönde değil: 1440
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
@@ -180,9 +180,9 @@ En az işe yarayan okumalar: momentum_1H ×0.53, obv_egim_1H ×0.536, psar_1H ×
 
 - ders: 5234
 - üst üste 3 zarar: 2345
-- günlük işlem tavanı (8): 1669
-- büyük zaman dilimi trendi ters: 1488
-- gösterge aileleri aynı yönde değil: 1423
+- günlük işlem tavanı (8): 1738
+- büyük zaman dilimi trendi ters: 1495
+- gösterge aileleri aynı yönde değil: 1440
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
