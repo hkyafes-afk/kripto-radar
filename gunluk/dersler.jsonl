@@ -53,3 +53,4 @@
 {"olay": "yol", "yol": "geri_test|short|momentum+seviye|btc:yatay", "karar": "kacin", "n": 5, "ort_R": -0.625, "ts": 1793264164785}
 {"olay": "yol", "yol": "geri_test|short|trend+uyusmazlik|btc:yatay", "karar": "kacin", "n": 6, "ort_R": -0.564, "ts": 1793264185902}
 {"olay": "yol", "yol": "geri_test|short|akis+seviye|btc:yatay", "karar": "kacin", "n": 9, "ort_R": -0.439, "ts": 1793265056871}
+{"olay": "yol", "yol": "yapi_bozulmasi|long|akis+momentum|btc:yatay", "karar": "kacin", "n": 5, "ort_R": -0.835, "ts": 1793268702130}
