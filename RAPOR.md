@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.318R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.32R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 671 | %47.1 | -0.318 | -213.67 |
+| polat_tum_sinyaller | 672 | %47.0 | -0.32 | -214.9 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
-| polat_girilmeyen | 669 | %47.1 | -0.318 | -212.47 |
-| rastgele | 672 | %42.7 | -0.425 | -285.53 |
-| trend_naif | 676 | %38.2 | -0.501 | -338.42 |
+| polat_girilmeyen | 670 | %47.0 | -0.319 | -213.7 |
+| rastgele | 673 | %42.6 | -0.426 | -286.76 |
+| trend_naif | 677 | %38.3 | -0.499 | -338.11 |
 
-Polat özsermaye: %-2.57 · BTC al-tut: %-0.04
+Polat özsermaye: %-2.57 · BTC al-tut: %-0.12
 
 ## Öğrenme (walk-forward)
 
@@ -60,8 +60,8 @@ En az işe yarayan okumalar: yapi_1D ×0.796, stoch_5m ×0.818, ema_1D ×0.856, 
 - ders: 1347
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- gösterge aileleri aynı yönde değil: 535
-- üst üste 3 zarar: 450
+- gösterge aileleri aynı yönde değil: 538
+- üst üste 3 zarar: 451
 - büyük zaman dilimi trendi ters: 380
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
@@ -110,8 +110,8 @@ En az işe yarayan okumalar: yapi_1D ×0.796, stoch_5m ×0.818, ema_1D ×0.856, 
 - ders: 1347
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- gösterge aileleri aynı yönde değil: 535
-- üst üste 3 zarar: 450
+- gösterge aileleri aynı yönde değil: 538
+- üst üste 3 zarar: 451
 - büyük zaman dilimi trendi ters: 380
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
@@ -160,8 +160,8 @@ En az işe yarayan okumalar: yapi_1D ×0.796, stoch_5m ×0.818, ema_1D ×0.856, 
 - ders: 1347
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- gösterge aileleri aynı yönde değil: 535
-- üst üste 3 zarar: 450
+- gösterge aileleri aynı yönde değil: 538
+- üst üste 3 zarar: 451
 - büyük zaman dilimi trendi ters: 380
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
