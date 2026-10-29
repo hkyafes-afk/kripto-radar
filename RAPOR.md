@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.361R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.365R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 1220 | %44.3 | -0.361 | -439.85 |
+| polat_tum_sinyaller | 1228 | %44.1 | -0.365 | -448.53 |
 | polat_girilen | 6 | %50.0 | -0.631 | -3.78 |
-| polat_girilmeyen | 1214 | %44.2 | -0.359 | -436.06 |
-| rastgele | 1231 | %43.5 | -0.383 | -471.79 |
-| trend_naif | 1225 | %38.2 | -0.491 | -601.88 |
+| polat_girilmeyen | 1222 | %44.0 | -0.364 | -444.74 |
+| rastgele | 1237 | %43.2 | -0.388 | -479.6 |
+| trend_naif | 1231 | %38.1 | -0.494 | -608.38 |
 
-Polat özsermaye: %-3.45 · BTC al-tut: %-1.0
+Polat özsermaye: %-3.45 · BTC al-tut: %-0.83
 
 ## Öğrenme (walk-forward)
 
@@ -25,7 +25,7 @@ En az işe yarayan okumalar: momentum_1H ×0.488, obv_egim_1H ×0.528, psar_1H �
 
 ## Son 1 gün
 
-İşlem 8 · kazanma %37.5 · ort. -0.702R · toplam -5.61R · net -2742.23$ · maks. düşüş -2839.18$ · kâr faktörü 0.11
+İşlem 7 · kazanma %42.9 · ort. -0.613R · toplam -4.29R · net -2084.16$ · maks. düşüş -2181.11$ · kâr faktörü 0.14
 
 **Kuruluma göre**
 
@@ -36,20 +36,19 @@ En az işe yarayan okumalar: momentum_1H ×0.488, obv_egim_1H ×0.528, psar_1H �
 | geri_test_1H | 2 | %100.0 | 0.256 | 245.01 |
 | geri_test_1H+formasyon_cift_tepe_1H+obv_kirilim_15m | 1 | %0.0 | -1.223 | -591.29 |
 | trend_cizgisi_kirilim_15m+geri_test_1H+formasyon_cift_tepe_1H | 1 | %0.0 | -1.311 | -621.76 |
-| yapi_bozulmasi_15m+geri_test_15m+trend_cizgisi_kirilim_1H | 1 | %0.0 | -1.324 | -658.07 |
 | yapi_bozulmasi_15m+geri_test_1H+formasyon_yukselen_takoz_1H | 1 | %0.0 | -1.103 | -544.81 |
 
 **Çıkış nedenine göre**
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
-| stop | 8 | %37.5 | -0.702 | -2742.23 |
+| stop | 7 | %42.9 | -0.613 | -2084.16 |
 
 **Seansa göre**
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
-| ABD | 4 | %25.0 | -0.897 | -1774.19 |
+| ABD | 3 | %33.3 | -0.755 | -1116.12 |
 | Asya | 2 | %100.0 | 0.256 | 245.01 |
 | Avrupa | 2 | %0.0 | -1.267 | -1213.05 |
 
@@ -58,14 +57,14 @@ En az işe yarayan okumalar: momentum_1H ×0.488, obv_egim_1H ×0.528, psar_1H �
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
 | 7 | 3 | %33.3 | -0.755 | -1116.12 |
-| 8 | 3 | %66.7 | -0.271 | -413.06 |
+| 8 | 2 | %100.0 | 0.256 | 245.01 |
 | 9 | 2 | %0.0 | -1.267 | -1213.05 |
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 4198
+- ders: 4209
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 1107
+- gösterge aileleri aynı yönde değil: 1113
 - büyük zaman dilimi trendi ters: 1041
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
@@ -76,7 +75,6 @@ En az işe yarayan okumalar: momentum_1H ×0.488, obv_egim_1H ×0.528, psar_1H �
 
 **Hata sınıfları**
 
-- ilk 15 dk'da stop (giriş zamanlaması): 1
 - kayma > 10 bp: 1
 
 ## Son 50 gün
@@ -120,9 +118,9 @@ En az işe yarayan okumalar: momentum_1H ×0.488, obv_egim_1H ×0.528, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 4198
+- ders: 4209
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 1107
+- gösterge aileleri aynı yönde değil: 1113
 - büyük zaman dilimi trendi ters: 1041
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
@@ -177,9 +175,9 @@ En az işe yarayan okumalar: momentum_1H ×0.488, obv_egim_1H ×0.528, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 4198
+- ders: 4209
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 1107
+- gösterge aileleri aynı yönde değil: 1113
 - büyük zaman dilimi trendi ters: 1041
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
