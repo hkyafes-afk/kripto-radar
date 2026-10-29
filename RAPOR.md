@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.268R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.267R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 1540 | %47.9 | -0.268 | -412.11 |
+| polat_tum_sinyaller | 1541 | %47.9 | -0.267 | -411.73 |
 | polat_girilen | 8 | %50.0 | -0.596 | -4.77 |
-| polat_girilmeyen | 1532 | %47.8 | -0.266 | -407.34 |
-| rastgele | 1545 | %44.0 | -0.357 | -551.1 |
-| trend_naif | 1543 | %40.0 | -0.432 | -666.78 |
+| polat_girilmeyen | 1533 | %47.9 | -0.265 | -406.97 |
+| rastgele | 1546 | %44.0 | -0.356 | -550.72 |
+| trend_naif | 1544 | %40.0 | -0.433 | -668.2 |
 
-Polat özsermaye: %-4.4 · BTC al-tut: %-0.86
+Polat özsermaye: %-4.4 · BTC al-tut: %-0.74
 
 ## Öğrenme (walk-forward)
 
@@ -63,11 +63,11 @@ En az işe yarayan okumalar: obv_egim_1H ×0.517, momentum_1H ×0.522, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 5493
+- ders: 5508
+- günlük işlem tavanı (8): 2350
 - üst üste 3 zarar: 2345
-- günlük işlem tavanı (8): 2280
-- gösterge aileleri aynı yönde değil: 1542
-- büyük zaman dilimi trendi ters: 1533
+- gösterge aileleri aynı yönde değil: 1546
+- büyük zaman dilimi trendi ters: 1542
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
@@ -118,11 +118,11 @@ En az işe yarayan okumalar: obv_egim_1H ×0.517, momentum_1H ×0.522, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 5493
+- ders: 5508
+- günlük işlem tavanı (8): 2350
 - üst üste 3 zarar: 2345
-- günlük işlem tavanı (8): 2280
-- gösterge aileleri aynı yönde değil: 1542
-- büyük zaman dilimi trendi ters: 1533
+- gösterge aileleri aynı yönde değil: 1546
+- büyük zaman dilimi trendi ters: 1542
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
@@ -178,11 +178,11 @@ En az işe yarayan okumalar: obv_egim_1H ×0.517, momentum_1H ×0.522, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 5493
+- ders: 5508
+- günlük işlem tavanı (8): 2350
 - üst üste 3 zarar: 2345
-- günlük işlem tavanı (8): 2280
-- gösterge aileleri aynı yönde değil: 1542
-- büyük zaman dilimi trendi ters: 1533
+- gösterge aileleri aynı yönde değil: 1546
+- büyük zaman dilimi trendi ters: 1542
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
