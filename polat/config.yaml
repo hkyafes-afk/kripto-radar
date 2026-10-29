@@ -106,8 +106,9 @@ kurulum:
   duvar_kalici_sn: 30        # duvar ancak 30 sn yerinde kalırsa gerçek sayılır
 
 devir:
-  calisma_dk: 340            # GitHub'da bir döngü
-  halef_once_dk: 8           # halef bu kadar önce çağrılır, ısınır, nöbeti devralır
+  calisma_dk: 340            # GitHub'da bir döngü (sürecin başından; iş akışı --sure 20400 verir, iş sınırı 360 dk)
+  halef_once_dk: 15          # halef bu kadar önce çağrılır (başarısızsa her dakika yeniden), ısınır, nöbeti devralır
+  uzatma_dk: 10              # bitişte halef koşusu görünmüyorsa döngü en çok bu kadar uzar (halef yeniden çağrılır)
   kayit_sn: 30               # durum dosyası aralığı
 
 bildirim:

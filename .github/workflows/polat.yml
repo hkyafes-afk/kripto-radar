@@ -1,12 +1,18 @@
 name: Polat
 
 # Polat: Kripto Radar'dan bağımsız tek ajan (sanal 100.000$). Yatırım tavsiyesi değildir.
-# Süreklilik (polat/lease.py): nöbetçi her dakika nabız yazar; bitişten 8 dk önce halefi çağırır (devir=1).
-# Halef ısınır (veri, abonelikler, göstergeler) ama işlem yapmaz; nöbetçi bırakınca birkaç saniye içinde devralır.
-# Zamanlanmış tetik bekçidir: nabız tazeyse hemen çıkar, nabız durmuşsa (çökme) devralır.
+# 7/24 süreklilik (ayrıntı: polat/lease.py):
+#   - Nöbetçi her dakika nabız yazar; bitişten 15 dk önce halefi çağırır (başarısızsa her dakika yeniden, HTTP sonucu
+#     günlüğe yazılır). Bitişte halef koşusu görünmüyorsa 10 dk'ya kadar uzar.
+#   - Halef ısınır ama işlem yapmaz; nöbet boşalınca ATOMİK olarak alır (aynı anda iki aday varsa yalnızca biri kazanır).
+#   - Zamanlanmış tetik bekçidir: nöbet sağlıklıysa ~10 sn'de çıkar; nabız durmuşsa (çökme) devralır.
+#   - Nöbetini kaybeden koşu hemen durur; nöbeti yalnızca sahibi bırakır. İki Polat aynı anda işlem yapamaz.
+# Eşzamanlılık grubu bilerek YOK: eski 'polat-bekci' grubu, bekçiden devralan uzun koşu sürerken sonraki bekçileri
+# kuyrukta iptal ettiriyordu. Tek Polat kuralını nöbet sağlar.
+# Bu iş akışı devre dışı bırakılırsa halef de başlatılamaz ve zincir en geç ~6 saatte kopar.
 on:
   schedule:
-    - cron: "7,27,47 * * * *"
+    - cron: "3,13,23,33,43,53 * * * *"
   workflow_dispatch:
     inputs:
       devir:
@@ -21,11 +27,6 @@ permissions:
   contents: write
   actions: write
 
-# Bekçiler kendi aralarında sıraya girer; devir koşuları birbirini beklemez (halef selefle aynı anda ısınır).
-concurrency:
-  group: ${{ github.event_name == 'schedule' && 'polat-bekci' || format('polat-{0}', github.run_id) }}
-  cancel-in-progress: false
-
 jobs:
   polat:
     runs-on: ubuntu-latest
@@ -33,42 +34,53 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      # Python paketleri kurulmadan: nöbet sağlıklıysa bekçi burada biter.
+      - name: Nöbet kontrolü
+        id: nobet
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEVIR: ${{ github.event.inputs.devir || '0' }}
+          DEVAM: ${{ github.event.inputs.devam || 'false' }}
+        run: |
+          echo "START_TS=$(date +%s)" >> "$GITHUB_ENV"
+          python3 -m polat.lease kontrol
+
       - uses: actions/setup-python@v6
+        if: steps.nobet.outputs.calis == '1'
         with:
           python-version: "3.12"
           cache: pip
 
       - name: Kütüphaneler
+        if: steps.nobet.outputs.calis == '1'
         run: pip install -r polat/requirements.txt
 
       - name: Önceki durum
+        if: steps.nobet.outputs.calis == '1'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: bash scripts/polat_veri.sh pull
 
-      - name: Risk durdurmasını kaldır (onaylı)
-        if: github.event.inputs.devam == 'true'
-        run: python -m polat devam --kok polat_veri
-
       - name: Polat
+        if: steps.nobet.outputs.calis == '1'
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.POLAT_TELEGRAM_CHAT_ID || secrets.TELEGRAM_CHAT_ID }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEVIR: ${{ github.event.inputs.devir || '0' }}
-        run: python -m polat calis --kok polat_veri --sure 20400 --git-push-dk 1
+        run: python -m polat calis --kok polat_veri --sure 20400 --git-push-dk 1 ${{ github.event.inputs.devam == 'true' && '--devam' || '' }}
 
-      - name: Son durumu kaydet
-        if: failure()
+      # Süreç sert çökerse (bellek, öldürülme) Python kendi temizliğini yapamaz. Nöbet BU koşudaysa son durumla
+      # bırakılır; koşu ≥10 dk çalışmışsa yeni koşu başlatılır (açılışta çökme döngüsüne girmemek için).
+      - name: Çökme sonrası nöbeti bırak
+        if: failure() && steps.nobet.outputs.calis == '1'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: bash scripts/polat_veri.sh push "çökme sonrası kayıt"
+        run: python3 -m polat.lease birak --kok polat_veri --neden "çökme" --yeniden-baslat --basla "${START_TS:-0}"
 
-      # Elle durdurulursa nöbeti hemen bırak (yoksa yeni koşu nabız eskiyene kadar 3 dk bekler).
+      # Elle durdurulursa nöbet hemen bırakılır (yalnızca bu koşudaysa; başka koşunun nöbetine dokunulmaz).
       - name: Durdurulunca nöbeti bırak
-        if: cancelled()
+        if: cancelled() && steps.nobet.outputs.calis == '1'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          python3 -c "import json,os,time;p='polat_veri/lease.json';l=json.load(open(p)) if os.path.exists(p) else {};l.update(released=True,hb=time.time());json.dump(l,open(p,'w'))"
-          bash scripts/polat_veri.sh push "iptal: nöbet bırakıldı"
+        run: python3 -m polat.lease birak --kok polat_veri --neden "iptal"

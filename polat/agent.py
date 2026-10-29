@@ -89,6 +89,10 @@ class Polat:
         self.dom_hist: list[tuple[int, float]] = []
         self.recent_closes: list[dict] = [x for x in self.journal.read("islemler") if x.get("olay") == "kapanis"][-50:]
         self.last_report: dict = {}
+        # Nöbet kapısı (__main__ bağlar): nöbet kanıtlı değilse yeni işlem açılmaz → iki Polat aynı anda işlem yapamaz.
+        self.lease_gate = None
+        # Durum diskten yüklenmeden save() çağrılmaz: başlatma yarıda kalırsa boş defter gerçek durumun üstüne yazılmaz.
+        self.state_ready = False
 
     # ===================================================================================== durum
     @property
@@ -96,8 +100,8 @@ class Polat:
         return self.root / "durum.json"
 
     def save(self):
-        if getattr(self, "standby", False):
-            return                                   # halef ısınırken selefin durum dosyasına dokunmaz
+        if getattr(self, "standby", False) or not self.state_ready:
+            return                                   # halef ısınırken / durum yüklenmeden selefin dosyasına dokunmaz
         self.journal.flush()
         st = {"version": VERSION, "saved": now_ms(), "broker": self.broker.to_state(), "risk": self.risk.to_state(),
               "deep": sorted(self.deep), "learner": self.learner.to_state(),
@@ -167,6 +171,8 @@ class Polat:
         m.on_book_bad = self._on_book_bad
         m.on_liq = self._on_liq
         st = None if standby else self.load()
+        if not standby:
+            self.state_ready = True
         if st and st.get("liq_calib"):
             m.liq_calib = st["liq_calib"]
         self.eval_q = asyncio.Queue()
@@ -220,8 +226,13 @@ class Polat:
             return set()
 
     async def activate(self) -> dict:
-        """Halef devralıyor: selefin son durumunu yükle, aradaki birkaç saniyeyi 1 dk mumlarla kapat, işleme başla."""
+        """Halef devralıyor: selefin son durumunu yükle, aradaki birkaç saniyeyi 1 dk mumlarla kapat, işleme başla.
+        Klasör az önce uzak durumla değiştirildi: günlük dizini ve son işlemler de diskten yeniden okunur."""
+        self.journal.flush()
+        self.journal = Journal(self.root / "gunluk")
+        self.recent_closes = [x for x in self.journal.read("islemler") if x.get("olay") == "kapanis"][-50:]
         st = self.load()
+        self.state_ready = True
         if st and st.get("liq_calib"):
             self.market.liq_calib = st["liq_calib"]
         self.learner.__init__(self.cfg, self.root)                 # ağırlıklar/yollar diskten yeniden
@@ -547,6 +558,8 @@ class Polat:
         r, k = self.cfg["risk"], self.cfg["kurulum"]
         entry = (c.ask if L else c.bid) or c.price()
         engel = dec["engel"]
+        if not engel and self.lease_gate is not None:
+            engel = self.lease_gate()
         sl, sl_why = (None, "")
         if d and entry:
             sl, sl_why = karar.structural_stop(c, rd, d, entry, r["min_stop_atr"])
