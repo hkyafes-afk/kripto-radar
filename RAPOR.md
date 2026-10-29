@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.348R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.347R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 1170 | %44.6 | -0.348 | -407.25 |
+| polat_tum_sinyaller | 1174 | %44.7 | -0.347 | -407.04 |
 | polat_girilen | 5 | %40.0 | -0.772 | -3.86 |
-| polat_girilmeyen | 1165 | %44.6 | -0.346 | -403.39 |
-| rastgele | 1180 | %42.3 | -0.402 | -473.85 |
-| trend_naif | 1179 | %37.6 | -0.497 | -585.91 |
+| polat_girilmeyen | 1169 | %44.7 | -0.345 | -403.18 |
+| rastgele | 1182 | %42.3 | -0.401 | -474.31 |
+| trend_naif | 1181 | %37.6 | -0.497 | -586.46 |
 
-Polat özsermaye: %-3.59 · BTC al-tut: %-1.11
+Polat özsermaye: %-3.45 · BTC al-tut: %-1.19
 
 ## Öğrenme (walk-forward)
 
@@ -63,9 +63,9 @@ En az işe yarayan okumalar: momentum_1H ×0.495, obv_egim_1H ×0.518, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 3995
+- ders: 4019
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 1083
+- gösterge aileleri aynı yönde değil: 1085
 - büyük zaman dilimi trendi ters: 1003
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
@@ -119,9 +119,9 @@ En az işe yarayan okumalar: momentum_1H ×0.495, obv_egim_1H ×0.518, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 3995
+- ders: 4019
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 1083
+- gösterge aileleri aynı yönde değil: 1085
 - büyük zaman dilimi trendi ters: 1003
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
@@ -175,9 +175,9 @@ En az işe yarayan okumalar: momentum_1H ×0.495, obv_egim_1H ×0.518, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 3995
+- ders: 4019
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 1083
+- gösterge aileleri aynı yönde değil: 1085
 - büyük zaman dilimi trendi ters: 1003
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
