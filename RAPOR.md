@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.294R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.292R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 1452 | %47.0 | -0.294 | -427.41 |
+| polat_tum_sinyaller | 1459 | %47.1 | -0.292 | -426.54 |
 | polat_girilen | 8 | %50.0 | -0.596 | -4.77 |
-| polat_girilmeyen | 1444 | %47.0 | -0.293 | -422.64 |
-| rastgele | 1458 | %43.9 | -0.36 | -524.8 |
-| trend_naif | 1455 | %39.1 | -0.462 | -672.87 |
+| polat_girilmeyen | 1451 | %47.1 | -0.291 | -421.77 |
+| rastgele | 1464 | %44.0 | -0.359 | -525.39 |
+| trend_naif | 1460 | %39.2 | -0.461 | -673.05 |
 
-Polat özsermaye: %-4.4 · BTC al-tut: %-0.25
+Polat özsermaye: %-4.4 · BTC al-tut: %-0.12
 
 ## Öğrenme (walk-forward)
 
@@ -65,9 +65,9 @@ En az işe yarayan okumalar: momentum_1H ×0.528, obv_egim_1H ×0.536, psar_1H �
 
 - ders: 5236
 - üst üste 3 zarar: 2345
-- günlük işlem tavanı (8): 1850
+- günlük işlem tavanı (8): 1868
 - büyük zaman dilimi trendi ters: 1521
-- gösterge aileleri aynı yönde değil: 1468
+- gösterge aileleri aynı yönde değil: 1478
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
@@ -120,9 +120,9 @@ En az işe yarayan okumalar: momentum_1H ×0.528, obv_egim_1H ×0.536, psar_1H �
 
 - ders: 5236
 - üst üste 3 zarar: 2345
-- günlük işlem tavanı (8): 1850
+- günlük işlem tavanı (8): 1868
 - büyük zaman dilimi trendi ters: 1521
-- gösterge aileleri aynı yönde değil: 1468
+- gösterge aileleri aynı yönde değil: 1478
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
@@ -180,9 +180,9 @@ En az işe yarayan okumalar: momentum_1H ×0.528, obv_egim_1H ×0.536, psar_1H �
 
 - ders: 5236
 - üst üste 3 zarar: 2345
-- günlük işlem tavanı (8): 1850
+- günlük işlem tavanı (8): 1868
 - büyük zaman dilimi trendi ters: 1521
-- gösterge aileleri aynı yönde değil: 1468
+- gösterge aileleri aynı yönde değil: 1478
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
