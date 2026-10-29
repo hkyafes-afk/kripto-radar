@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 761 | %42.7 | -0.43 | -327.4 |
 | trend_naif | 768 | %38.0 | -0.511 | -392.16 |
 
-Polat özsermaye: %-2.57 · BTC al-tut: %-1.46
+Polat özsermaye: %-2.57 · BTC al-tut: %-1.48
 
 ## Öğrenme (walk-forward)
 
@@ -57,15 +57,15 @@ En az işe yarayan okumalar: obv_egim_1H ×0.713, yapi_1D ×0.723, adx_di_1D ×0
 
 **Girilmeyen kurulumlar (engel)**
 
-- üst üste 3 zarar: 2029
-- ders: 1868
+- üst üste 3 zarar: 2074
+- ders: 1898
 - gösterge aileleri aynı yönde değil: 857
-- büyük zaman dilimi trendi ters: 756
+- büyük zaman dilimi trendi ters: 758
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
-- puan -0.122 eşiğin (0.25) altında: 69
+- puan -0.122 eşiğin (0.25) altında: 70
 - puan +0.127 eşiğin (0.25) altında: 66
 
 **Hata sınıfları**
@@ -107,15 +107,15 @@ En az işe yarayan okumalar: obv_egim_1H ×0.713, yapi_1D ×0.723, adx_di_1D ×0
 
 **Girilmeyen kurulumlar (engel)**
 
-- üst üste 3 zarar: 2029
-- ders: 1868
+- üst üste 3 zarar: 2074
+- ders: 1898
 - gösterge aileleri aynı yönde değil: 857
-- büyük zaman dilimi trendi ters: 756
+- büyük zaman dilimi trendi ters: 758
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
-- puan -0.122 eşiğin (0.25) altında: 69
+- puan -0.122 eşiğin (0.25) altında: 70
 - puan +0.127 eşiğin (0.25) altında: 66
 
 **Hata sınıfları**
@@ -157,15 +157,15 @@ En az işe yarayan okumalar: obv_egim_1H ×0.713, yapi_1D ×0.723, adx_di_1D ×0
 
 **Girilmeyen kurulumlar (engel)**
 
-- üst üste 3 zarar: 2029
-- ders: 1868
+- üst üste 3 zarar: 2074
+- ders: 1898
 - gösterge aileleri aynı yönde değil: 857
-- büyük zaman dilimi trendi ters: 756
+- büyük zaman dilimi trendi ters: 758
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
-- puan -0.122 eşiğin (0.25) altında: 69
+- puan -0.122 eşiğin (0.25) altında: 70
 - puan +0.127 eşiğin (0.25) altında: 66
 
 **Hata sınıfları**
