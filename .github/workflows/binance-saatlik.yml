@@ -1,0 +1,39 @@
+name: Binance saatlik arşiv
+
+# Gün içi işlem araştırması için saatlik (ya da başka aralıkta) USDT-M mumları. Coinler: geçmişte herhangi bir gün
+# hacme göre ilk N'e girmiş olanlar (batanlar dahil). Boyut büyük olduğu için git dalına değil, iş akışı dosyası
+# (artifact, 30 gün saklanır) olarak kaydedilir: repo şişmez.
+on:
+  workflow_dispatch:
+    inputs:
+      interval:
+        description: "Mum aralığı (1h, 4h, 15m)"
+        default: "1h"
+      top:
+        description: "Geçmişte hacme göre ilk kaç coin"
+        default: "30"
+
+permissions:
+  contents: read
+
+jobs:
+  arsiv:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install pandas numpy
+      - name: Günlük arşivi çek (evren için)
+        run: |
+          git fetch -q --depth 1 origin binance-veri
+          git worktree add -q bv FETCH_HEAD
+      - name: İndir
+        run: python -u tools/binance_arsiv.py --interval ${{ github.event.inputs.interval }} --evren-dir bv/um_1d --evren-top ${{ github.event.inputs.top }} --out out --workers 24
+      - uses: actions/upload-artifact@v4
+        with:
+          name: binance-${{ github.event.inputs.interval }}-top${{ github.event.inputs.top }}
+          path: out
+          retention-days: 30

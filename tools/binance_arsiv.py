@@ -116,11 +116,11 @@ def write_gz(path: Path, header: list[str], rows: list[tuple]):
     path.write_bytes(gzip.compress(buf.getvalue().encode(), mtime=0))   # mtime=0: aynı veri → aynı dosya (git farkı yok)
 
 
-def one_symbol(sym: str, out: Path) -> dict:
+def one_symbol(sym: str, out: Path, interval: str = "1d") -> dict:
     info = {"sembol": sym, "atlanan": []}
     keys = []
     try:
-        keys = [k for k in s3_list(f"data/futures/um/monthly/klines/{sym}/1d/", None)[1] if k.endswith(".zip")]
+        keys = [k for k in s3_list(f"data/futures/um/monthly/klines/{sym}/{interval}/", None)[1] if k.endswith(".zip")]
     except Exception as e:
         info["atlanan"].append(f"aylık: {e}")
     # Günlük dosyalar yalnızca aylık arşivi henüz çıkmamış aylar için (yoksa coin başına binlerce istek olur)
@@ -129,7 +129,7 @@ def one_symbol(sym: str, out: Path) -> dict:
     recent = {now.strftime("%Y-%m"), (now.replace(day=1) - timedelta(days=1)).strftime("%Y-%m")} - have
     for ym in sorted(recent):
         try:
-            keys += [k for k in s3_list(f"data/futures/um/daily/klines/{sym}/1d/{sym}-1d-{ym}", None)[1]
+            keys += [k for k in s3_list(f"data/futures/um/daily/klines/{sym}/{interval}/{sym}-{interval}-{ym}", None)[1]
                      if k.endswith(".zip")]
         except Exception as e:
             info["atlanan"].append(f"günlük {ym}: {e}")
@@ -142,12 +142,18 @@ def one_symbol(sym: str, out: Path) -> dict:
             info["atlanan"].append(f"{k}: {e}")
     rows = [bars[t] for t in sorted(bars)]
     if rows:
-        write_gz(out / "um_1d" / f"{sym}.csv.gz",
+        # son İŞLEM günü: hacmi ve işlem sayısı sıfırdan büyük son gün (çıkıştan sonra zombi satırlar var)
+        live = [r for r in rows if float(r[6] or 0) > 0 and float(r[7] or 0) > 0]
+        info["son_islem_gunu"] = datetime.fromtimestamp(live[-1][0] / 1000, timezone.utc).strftime("%Y-%m-%d") if live else None
+        write_gz(out / f"um_{interval}" / f"{sym}.csv.gz",
                  ["ts_ms", "open", "high", "low", "close", "volume", "quote_volume", "trades", "taker_buy_volume"], rows)
         info["ilk_gun"] = datetime.fromtimestamp(rows[0][0] / 1000, timezone.utc).strftime("%Y-%m-%d")
         info["son_gun"] = datetime.fromtimestamp(rows[-1][0] / 1000, timezone.utc).strftime("%Y-%m-%d")
         info["gun"] = len(rows)
     fkeys = []
+    if interval != "1d":                    # funding günlük arşivle zaten iniyor
+        info["funding"] = 0
+        return info
     try:
         fkeys = [k for k in s3_list(f"data/futures/um/monthly/fundingRate/{sym}/", None)[1] if k.endswith(".zip")]
     except Exception as e:
@@ -165,39 +171,63 @@ def one_symbol(sym: str, out: Path) -> dict:
     return info
 
 
+def point_in_time_union(um_1d: Path, top: int) -> set:
+    """Geçmişte herhangi bir gün, son 30 günün ort. kote hacmine göre ilk `top` içine girmiş semboller (hacmi sıfır
+    zombi günler hariç). Bugünün listesi değil: batan coinler de girer."""
+    import pandas as pd
+    qv = {}
+    for f in sorted(um_1d.glob("*.csv.gz")):
+        d = pd.read_csv(f, usecols=["ts_ms", "quote_volume", "trades"])
+        d = d[(d["quote_volume"] > 0) & (d["trades"] > 0)]
+        qv[f.name[:-7]] = pd.Series(d["quote_volume"].to_numpy(float), index=pd.to_datetime(d["ts_ms"], unit="ms"))
+    W = pd.DataFrame(qv)
+    tr = W.rolling(30, min_periods=10).mean()
+    rk = tr.rank(axis=1, ascending=False)
+    keep = set(rk.columns[(rk <= top).any()])
+    print(f"evren: geçmişte ilk {top} içine girmiş {len(keep)} sembol", flush=True)
+    return keep
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="binance")
     ap.add_argument("--limit", type=int, default=0, help="deneme için ilk N sembol")
     ap.add_argument("--workers", type=int, default=24)
+    ap.add_argument("--interval", default="1d", help="mum aralığı: 1d, 4h, 1h, 15m ...")
+    ap.add_argument("--evren-dir", default=None, help="um_1d klasörü: verilirse yalnız geçmişte herhangi bir gün hacme göre "
+                                                       "ilk --evren-top içine girmiş coinler indirilir (batanlar dahil)")
+    ap.add_argument("--evren-top", type=int, default=30)
     a = ap.parse_args(argv)
     out = Path(a.out)
     t0 = time.time()
     dirs, _ = s3_list("data/futures/um/monthly/klines/")
     syms = sorted({d.rstrip("/").split("/")[-1] for d in dirs})
     syms = [s for s in syms if SYM_OK.match(s)]
+    if a.evren_dir:
+        keep = point_in_time_union(Path(a.evren_dir), a.evren_top)
+        syms = [s for s in syms if s in keep]
     if a.limit:
         syms = [s for s in syms if s in ("BTCUSDT", "ETHUSDT")] + [s for s in syms if s not in ("BTCUSDT", "ETHUSDT")][: max(0, a.limit - 2)]
     print(f"{len(syms)} USDT-M sembol (batanlar dahil)", flush=True)
     sys.stdout.reconfigure(line_buffering=True)
     res = []
     with ThreadPoolExecutor(a.workers) as ex:
-        for i, info in enumerate(ex.map(lambda s: one_symbol(s, out), syms), 1):
+        for i, info in enumerate(ex.map(lambda s: one_symbol(s, out, a.interval), syms), 1):
             res.append(info)
             if i % 25 == 0 or i == len(syms):
                 print(f"  {i}/{len(syms)} · {time.time() - t0:.0f} sn", flush=True)
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     last = max((r.get("son_gun", "") for r in res), default=today)
     for r in res:                           # en yeni günden 3 günden fazla geride biten = listeden çıkmış
-        r["batti"] = bool(r.get("son_gun")) and (
-            datetime.strptime(last, "%Y-%m-%d") - datetime.strptime(r["son_gun"], "%Y-%m-%d")).days > 3
+        son = r.get("son_islem_gunu") or r.get("son_gun")
+        r["batti"] = bool(son) and (datetime.strptime(last, "%Y-%m-%d") - datetime.strptime(son, "%Y-%m-%d")).days > 3
     man = {"olusturuldu": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"), "kaynak": "data.binance.vision (MIT)",
            "sembol": len(res), "veri_olan": sum(1 for r in res if r.get("gun")),
            "batan": sum(1 for r in res if r.get("batti")), "en_yeni_gun": last,
            "atlanan_dosya": sum(len(r["atlanan"]) for r in res), "sure_sn": round(time.time() - t0),
            "semboller": sorted(res, key=lambda r: r["sembol"])}
     out.mkdir(parents=True, exist_ok=True)
-    (out / "manifest.json").write_text(json.dumps(man, ensure_ascii=False, indent=1), encoding="utf-8")
+    (out / ("manifest.json" if a.interval == "1d" else f"manifest_{a.interval}.json")).write_text(json.dumps(man, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"✓ {man['veri_olan']} sembol · {man['batan']} batmış · atlanan dosya {man['atlanan_dosya']} · {man['sure_sn']} sn")
     return 0
 

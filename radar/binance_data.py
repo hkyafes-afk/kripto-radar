@@ -27,8 +27,25 @@ def _read(path: Path) -> pd.DataFrame:
         df = pd.read_csv(fh)
     df.index = pd.to_datetime(df["ts_ms"], unit="ms", utc=True)
     df = df[~df.index.duplicated(keep="last")].sort_index()
-    out = df[["open", "high", "low", "close", "volume", "quote_volume"]].astype(float)
+    # Zombi satırlar: arşiv, listeden çıkan coinler için çıkıştan sonra da fiyatı donmuş, hacmi/işlem sayısı sıfır satır
+    # üretiyor (ör. FTT 2022-11'den bugüne). Bunlar işlem günü değil: atılır, böylece çıkış günü ve batanlar doğru bulunur.
+    live = (df["quote_volume"].astype(float) > 0) & (df["trades"].astype(float) > 0 if "trades" in df else True)
+    out = df.loc[live, ["open", "high", "low", "close", "volume", "quote_volume"]].astype(float)
     return out[(out["close"] > 0) & (out["high"] >= out["low"])]
+
+
+# Kripto olmayan kontratlar (Binance TradFi hisse/emtia/endeks vadelileri ve stabil): açık liste + hafta sonu testi
+NON_CRYPTO = {"USDCUSDT", "BUSDUSDT", "TUSDUSDT", "FDUSDUSDT", "USDPUSDT", "BTCDOMUSDT", "DEFIUSDT", "FOOTBALLUSDT",
+              "BLUEBIRDUSDT", "XAUUSDT", "XAUTUSDT", "XAGUSDT", "XPTUSDT", "XPDUSDT", "PAXGUSDT", "CLUSDT", "NATGASUSDT",
+              "COPPERUSDT"}
+
+
+def _weekend_ratio(df: pd.DataFrame) -> float:
+    """Hafta sonu ort. |getiri| / hafta içi. Hisse/emtia dayanaklıda hafta sonu dayanak kapalı → oran çok düşük."""
+    r = np.log(df["close"]).diff().abs()
+    wk = r.index.dayofweek
+    wd = r[wk < 5].mean()
+    return float(r[wk >= 5].mean() / wd) if wd and wd == wd else 1.0
 
 
 def load(veri_dir: str | Path, top_n: int = 100, min_days: int = 260, only: list[str] | None = None):
@@ -40,7 +57,11 @@ def load(veri_dir: str | Path, top_n: int = 100, min_days: int = 260, only: list
         s = _sym(f.name[: -len(".csv.gz")])
         if only and s not in only and s != "BTC":
             continue
+        if f.name[: -len(".csv.gz")] in NON_CRYPTO:
+            continue
         df = _read(f)
+        if len(df) >= 90 and _weekend_ratio(df) < 0.45:          # hisse/emtia/endeks vadelisi
+            continue
         if len(df) >= min_days or s == "BTC":
             frames[s] = df
     if "BTC" not in frames:
