@@ -65,3 +65,4 @@
 {"olay": "yol", "yol": "geri_cekilme|short|seviye+uyusmazlik|btc:yatay", "karar": "kacin", "n": 5, "ort_R": -1.001, "ts": 1793281260174}
 {"olay": "yol", "yol": "geri_test|short|formasyon+uyusmazlik|btc:yatay", "karar": "kacin", "n": 5, "ort_R": -0.588, "ts": 1793283471772}
 {"olay": "yol", "yol": "geri_test|long|momentum+uyusmazlik|btc:yatay", "karar": null, "n": 6, "ort_R": -0.299, "ts": 1793285275481}
+{"olay": "yol", "yol": "trend_cizgisi_kirilim_15m|long|akis+momentum|btc:yatay", "karar": "benimse", "n": 5, "ort_R": 0.713, "ts": 1793285316284}
