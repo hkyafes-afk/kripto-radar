@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.334R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.336R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 1015 | %45.1 | -0.334 | -338.94 |
+| polat_tum_sinyaller | 1017 | %45.0 | -0.336 | -341.86 |
 | polat_girilen | 5 | %40.0 | -0.772 | -3.86 |
-| polat_girilmeyen | 1010 | %45.1 | -0.332 | -335.08 |
-| rastgele | 1019 | %42.7 | -0.4 | -407.13 |
-| trend_naif | 1010 | %39.3 | -0.459 | -463.78 |
+| polat_girilmeyen | 1012 | %45.1 | -0.334 | -338.0 |
+| rastgele | 1022 | %42.8 | -0.398 | -406.79 |
+| trend_naif | 1014 | %39.4 | -0.457 | -463.81 |
 
-Polat özsermaye: %-3.54 · BTC al-tut: %-1.02
+Polat özsermaye: %-3.54 · BTC al-tut: %-1.01
 
 ## Öğrenme (walk-forward)
 
@@ -63,7 +63,7 @@ En az işe yarayan okumalar: momentum_1H ×0.49, obv_egim_1H ×0.538, psar_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 3364
+- ders: 3375
 - üst üste 3 zarar: 2345
 - gösterge aileleri aynı yönde değil: 1040
 - büyük zaman dilimi trendi ters: 810
@@ -119,7 +119,7 @@ En az işe yarayan okumalar: momentum_1H ×0.49, obv_egim_1H ×0.538, psar_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 3364
+- ders: 3375
 - üst üste 3 zarar: 2345
 - gösterge aileleri aynı yönde değil: 1040
 - büyük zaman dilimi trendi ters: 810
@@ -175,7 +175,7 @@ En az işe yarayan okumalar: momentum_1H ×0.49, obv_egim_1H ×0.538, psar_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 3364
+- ders: 3375
 - üst üste 3 zarar: 2345
 - gösterge aileleri aynı yönde değil: 1040
 - büyük zaman dilimi trendi ters: 810
