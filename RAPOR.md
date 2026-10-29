@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.298R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.299R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 1398 | %46.6 | -0.298 | -417.13 |
+| polat_tum_sinyaller | 1399 | %46.5 | -0.299 | -418.16 |
 | polat_girilen | 8 | %50.0 | -0.596 | -4.77 |
-| polat_girilmeyen | 1390 | %46.5 | -0.297 | -412.37 |
+| polat_girilmeyen | 1391 | %46.5 | -0.297 | -413.4 |
 | rastgele | 1405 | %43.6 | -0.362 | -508.76 |
-| trend_naif | 1400 | %38.6 | -0.471 | -659.88 |
+| trend_naif | 1401 | %38.5 | -0.472 | -660.91 |
 
-Polat özsermaye: %-4.26 · BTC al-tut: %0.01
+Polat özsermaye: %-4.22 · BTC al-tut: %0.07
 
 ## Öğrenme (walk-forward)
 
@@ -67,8 +67,8 @@ En az işe yarayan okumalar: momentum_1H ×0.534, obv_egim_1H ×0.543, psar_1H �
 - ders: 5222
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 1467
-- günlük işlem tavanı (8): 1416
-- gösterge aileleri aynı yönde değil: 1339
+- günlük işlem tavanı (8): 1417
+- gösterge aileleri aynı yönde değil: 1345
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
@@ -125,8 +125,8 @@ En az işe yarayan okumalar: momentum_1H ×0.534, obv_egim_1H ×0.543, psar_1H �
 - ders: 5222
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 1467
-- günlük işlem tavanı (8): 1416
-- gösterge aileleri aynı yönde değil: 1339
+- günlük işlem tavanı (8): 1417
+- gösterge aileleri aynı yönde değil: 1345
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
@@ -184,8 +184,8 @@ En az işe yarayan okumalar: momentum_1H ×0.534, obv_egim_1H ×0.543, psar_1H �
 - ders: 5222
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 1467
-- günlük işlem tavanı (8): 1416
-- gösterge aileleri aynı yönde değil: 1339
+- günlük işlem tavanı (8): 1417
+- gösterge aileleri aynı yönde değil: 1345
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
