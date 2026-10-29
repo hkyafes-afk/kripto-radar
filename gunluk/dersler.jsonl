@@ -35,3 +35,4 @@
 {"olay": "yol", "yol": "yapi_bozulmasi|short|momentum+seviye|btc:yukari", "karar": "kacin", "n": 5, "ort_R": -0.526, "ts": 1793240343970}
 {"olay": "yol", "yol": "yapi_bozulmasi|short|momentum+uyusmazlik|btc:yukari", "karar": null, "n": 19, "ort_R": 0.28, "ts": 1793242679144}
 {"olay": "yol", "yol": "yapi_bozulmasi|short|seviye+uyusmazlik|btc:yukari", "karar": "kacin", "n": 5, "ort_R": -0.544, "ts": 1793242691959}
+{"olay": "yol", "yol": "yapi_bozulmasi|short|momentum+seviye|btc:yukari", "karar": null, "n": 8, "ort_R": -0.336, "ts": 1793242799556}
