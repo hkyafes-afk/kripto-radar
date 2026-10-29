@@ -697,6 +697,10 @@ VARIANT_TEXT = {
     "cikis_iz_tp1": "kısmi kâr yok; ilk hedefe varınca stop başabaşa çekilir ve iz sürmeye başlar",
     "cikis_hedef": "tek hedef: ilk hedefte pozisyonun tamamı kapanır",
     "adx25": "trend gücü filtresi: ADX 25'in altındaysa girmez",
+    "cikis_ma_tampon": "kural çıkışı: kapanış MA50'nin 0,5 ATR ötesine geçmeden çıkma (tampon)",
+    "cikis_ma_2kapanis": "kural çıkışı: MA50'nin ters tarafında ardışık 2 kapanış şart",
+    "cikis_ma20": "kural çıkışı: MA50 yerine daha hızlı MA20",
+    "cikis_don20": "kural çıkışı: MA50 yerine 20 günlük dip/tepe kırılımı",
     "adx15": "ölü piyasa filtresi: ADX 15'in altındaysa girmez",
     "adx18": "ölü piyasa filtresi: ADX 18'in altındaysa girmez",
     "adx_up": "trend gücü yükseliyor: bugünkü ADX dünkünden büyük değilse girmez",
@@ -755,6 +759,16 @@ def apply_variant(idea: dict | None, ctx: dict, cfg: dict | None) -> dict | None
             if shift_tp1 is not None:
                 idea["tp1"] = lim + shift_tp1 * d
             notes.append(VARIANT_TEXT["retest"])
+    ex = idea.get("exit")
+    if ex and ex.get("type") == "ma":                    # yalnız MA çıkışlı yöneticiler (Kemal, Turbo); biri seçilir
+        for name, rule in (("cikis_ma_tampon", {"type": "ma", "n": ex["n"], "buf": 0.5}),
+                           ("cikis_ma_2kapanis", {"type": "ma", "n": ex["n"], "confirm": 2}),
+                           ("cikis_ma20", {"type": "ma", "n": 20}),
+                           ("cikis_don20", {"type": "chan", "n": 20})):
+            if name in V:
+                idea["exit"] = rule
+                notes.append(VARIANT_TEXT[name])
+                break
     pp = dict(idea.get("pp") or {})
     if "cikis_iz" in V:
         pp.update({"partial_frac": 0.0, "basabas": False, "trail_now": True, "trail_atr": pp.get("trail_atr") or 2.5})

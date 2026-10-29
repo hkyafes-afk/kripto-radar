@@ -31,9 +31,9 @@ from . import bt2, learn, quant, team
 from .config import ROOT, load_config
 
 FAMILY = {"cikis_iz": "çıkış", "cikis_iz_tp1": "çıkış", "cikis_hedef": "çıkış",
-          "retest": "giriş", "adx25": "giriş", "adx15": "giriş", "adx18": "giriş", "adx_up": "giriş", "ttm": "giriş", "fitil_stop": "stop"}
+          "retest": "giriş", "adx25": "giriş", "adx15": "giriş", "adx18": "giriş", "adx_up": "giriş", "cikis_ma_tampon": "çıkış kuralı", "cikis_ma_2kapanis": "çıkış kuralı", "cikis_ma20": "çıkış kuralı", "cikis_don20": "çıkış kuralı", "ttm": "giriş", "fitil_stop": "stop"}
 TRIALS = {
-    "kemal": [[], ["adx25"], ["adx15"], ["adx18"], ["adx_up"]],
+    "kemal": [[], ["adx25"], ["adx15"], ["adx18"], ["adx_up"], ["cikis_ma_tampon"], ["cikis_ma_2kapanis"], ["cikis_ma20"], ["cikis_don20"]],
     "kaan": [[], ["cikis_iz"], ["cikis_iz_tp1"], ["cikis_hedef"], ["retest"], ["fitil_stop"]],
     "selin": [[], ["cikis_iz"], ["cikis_iz_tp1"], ["cikis_hedef"], ["ttm"]],
     "murat": [[], ["cikis_iz"], ["cikis_iz_tp1"], ["cikis_hedef"]],

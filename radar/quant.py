@@ -75,6 +75,10 @@ def ctx_at(F: pd.DataFrame, i: int = -1) -> dict:
     ctx["below50_prev"] = bool(_f(prev["close"]) < _f(prev["sma50"]) and _f(prev["sma20"]) < _f(prev["sma100"]))
     if "adx" in F.columns:
         ctx["adx_prev"] = _f(prev["adx"]) if (i - 1) >= -len(F) and len(F) > 1 else None
+    ctx["close_prev1"] = _f(prev["close"])
+    for _n in (20, 50, 100):
+        if f"sma{_n}" in F.columns:
+            ctx[f"sma{_n}_prev1"] = _f(prev[f"sma{_n}"])
     ctx["ll3"] = float(F["low"].iloc[i - 2:i + 1 if i != -1 else None].min()) if len(F) >= 3 else ctx["low"]
     ctx["hh3"] = float(F["high"].iloc[i - 2:i + 1 if i != -1 else None].max()) if len(F) >= 3 else ctx["high"]
     return ctx
@@ -148,7 +152,13 @@ def exit_signal(rule: dict | None, ctx: dict, side: str) -> str | None:
     t = rule.get("type")
     if t == "ma":                       # trend bitti: kapanış N günlük ortalamanın ters tarafında
         ma = ctx.get(f"sma{rule['n']}")
-        if ma == ma and ma and sgn * (c - ma) < 0:
+        atr = ctx.get("atr")
+        buf = rule.get("buf", 0.0) * (atr if atr == atr and atr else 0.0)      # tampon (ATR katı); varsayılan 0 = eski davranış
+        if ma == ma and ma and sgn * (c - ma) < -buf:
+            if rule.get("confirm", 1) >= 2:                                      # ardışık 2 kapanış şartı
+                pc, pm = ctx.get("close_prev1"), ctx.get(f"sma{rule['n']}_prev1")
+                if not (pc is not None and pm is not None and pc == pc and pm == pm and sgn * (pc - pm) < -buf):
+                    return None
             return f"kapanış {rule['n']} günlük ortalamanın {'altında' if sgn > 0 else 'üstünde'} (trend bitti)"
     elif t == "chan":                   # kanal çıkışı (Turtle): N günlük dip/tepe kırıldı
         lvl = ctx.get(f"ll{rule['n']}") if sgn > 0 else ctx.get(f"hh{rule['n']}")

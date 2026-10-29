@@ -1,0 +1,59 @@
+name: Varyant yarışı (Binance)
+
+# Binance Vision arşivi (batan coinler dahil, gün gün evren) ile yarış. OKX yarışının (yaris.yml) sonuçlarını EZMEZ:
+# çıktı `binance-sonuc` dalında, coin sayısına göre ayrı dosyalara yazılır (aynı anda çalışan koşular çakışmaz).
+on:
+  workflow_dispatch:
+    inputs:
+      coins:
+        description: "Her gün hacme göre ilk kaç coin"
+        default: "30"
+      years:
+        description: "Kaç yıl (arşiv 2020-01'den başlar)"
+        default: "6"
+      managers:
+        description: "Yöneticiler (virgülle; boş = hepsi)"
+        default: "kemal"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: yaris-binance-${{ github.event.inputs.coins }}-${{ github.event.inputs.managers }}
+  cancel-in-progress: false
+
+jobs:
+  race:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Binance arşivini çek
+        run: |
+          git fetch -q --depth 1 origin binance-veri
+          git worktree add -q bv FETCH_HEAD
+      - name: Yarış
+        run: |
+          mkdir -p out
+          python -u -m radar yaris --binance bv --coins ${{ github.event.inputs.coins }} --years ${{ github.event.inputs.years }} \
+            ${{ github.event.inputs.managers != '' && format('--yoneticiler {0}', github.event.inputs.managers) || '' }} --cikti out
+      - name: Sonucu kaydet
+        run: |
+          git config --global user.name "kripto-radar"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          tag="top${{ github.event.inputs.coins }}-$(echo '${{ github.event.inputs.managers }}' | tr ',' '-' | sed 's/^$/hepsi/')"
+          if git fetch -q origin binance-sonuc:binance-sonuc 2>/dev/null; then
+            git worktree add -q sonuc binance-sonuc
+          else
+            git worktree add -q --detach sonuc
+            cd sonuc && git checkout -q --orphan binance-sonuc && git rm -rqf . && cd ..
+          fi
+          cp out/race.json "sonuc/race_${tag}.json"
+          cp out/YARIS.md "sonuc/YARIS_${tag}.md"
+          cd sonuc && git add -A && git commit -qm "🏁 binance yarışı ${tag}" || exit 0
+          for i in 1 2 3 4 5; do git push -q origin binance-sonuc && break; git pull -q --rebase origin binance-sonuc || true; sleep $((RANDOM % 8 + 2)); done
