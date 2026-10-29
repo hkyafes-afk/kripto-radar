@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 915 | %43.2 | -0.374 | -342.6 |
 | trend_naif | 909 | %39.1 | -0.451 | -409.91 |
 
-Polat özsermaye: %-2.74 · BTC al-tut: %-1.17
+Polat özsermaye: %-2.3 · BTC al-tut: %-1.29
 
 ## Öğrenme (walk-forward)
 
@@ -57,13 +57,13 @@ En az işe yarayan okumalar: obv_egim_1H ×0.576, ema_4H ×0.722, momentum_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 2743
+- ders: 2760
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 940
-- büyük zaman dilimi trendi ters: 774
+- gösterge aileleri aynı yönde değil: 941
+- büyük zaman dilimi trendi ters: 775
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- bu coinde zaten pozisyon var: 143
+- bu coinde zaten pozisyon var: 152
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.127 eşiğin (0.25) altında: 75
 - puan -0.122 eşiğin (0.25) altında: 74
@@ -107,13 +107,13 @@ En az işe yarayan okumalar: obv_egim_1H ×0.576, ema_4H ×0.722, momentum_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 2743
+- ders: 2760
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 940
-- büyük zaman dilimi trendi ters: 774
+- gösterge aileleri aynı yönde değil: 941
+- büyük zaman dilimi trendi ters: 775
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- bu coinde zaten pozisyon var: 143
+- bu coinde zaten pozisyon var: 152
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.127 eşiğin (0.25) altında: 75
 - puan -0.122 eşiğin (0.25) altında: 74
@@ -157,13 +157,13 @@ En az işe yarayan okumalar: obv_egim_1H ×0.576, ema_4H ×0.722, momentum_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 2743
+- ders: 2760
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 940
-- büyük zaman dilimi trendi ters: 774
+- gösterge aileleri aynı yönde değil: 941
+- büyük zaman dilimi trendi ters: 775
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
-- bu coinde zaten pozisyon var: 143
+- bu coinde zaten pozisyon var: 152
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.127 eşiğin (0.25) altında: 75
 - puan -0.122 eşiğin (0.25) altında: 74
