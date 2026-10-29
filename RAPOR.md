@@ -14,14 +14,14 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 1661 | %44.0 | -0.329 | -546.54 |
 | trend_naif | 1650 | %41.3 | -0.37 | -611.31 |
 
-Polat özsermaye: %-4.4 · BTC al-tut: %-3.58
+Polat özsermaye: %-4.4 · BTC al-tut: %-3.64
 
 ## Öğrenme (walk-forward)
 
-Örnek 1640 (eğitim 1148, doğrulama 492) · uygulanan katsayı 63 · doğrulamada tutmadığı için reddedilen 33
+Örnek 1647 (eğitim 1152, doğrulama 495) · uygulanan katsayı 64 · doğrulamada tutmadığı için reddedilen 32
 
-En çok işe yarayan okumalar: macd_hist_15m ×1.46, tetik_psar_donus_15m ×1.404, momentum_5m ×1.395, cci_5m ×1.389, uyusmazlik_rsi_15m ×1.388, tetik_yapi_bozulmasi_15m ×1.363, oi_fiyat ×1.349, obv_egim_15m ×1.349, hacim_oran_1H ×1.334, rsi_5m ×1.303
-En az işe yarayan okumalar: obv_egim_1H ×0.461, momentum_1H ×0.501, psar_1H ×0.567, btc_1H ×0.567, ultimate_1H ×0.608, adx_di_1H ×0.635, tetik_geri_test_1H ×0.638, willr_1H ×0.656, uyusmazlik_macd_1H ×0.709, supertrend_1H ×0.713
+En çok işe yarayan okumalar: macd_hist_15m ×1.458, tetik_psar_donus_15m ×1.404, momentum_5m ×1.392, uyusmazlik_rsi_15m ×1.388, cci_5m ×1.386, tetik_yapi_bozulmasi_15m ×1.362, obv_egim_15m ×1.349, oi_fiyat ×1.347, hacim_oran_1H ×1.332, rsi_5m ×1.301
+En az işe yarayan okumalar: obv_egim_1H ×0.465, momentum_1H ×0.505, btc_1H ×0.567, psar_1H ×0.572, ultimate_1H ×0.606, tetik_geri_test_1H ×0.635, adx_di_1H ×0.641, willr_1H ×0.656, uyusmazlik_macd_1H ×0.711, supertrend_1H ×0.715
 
 ## Son 1 gün
 
@@ -63,11 +63,11 @@ En az işe yarayan okumalar: obv_egim_1H ×0.461, momentum_1H ×0.501, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 6952
-- günlük işlem tavanı (8): 4616
+- ders: 6962
+- günlük işlem tavanı (8): 4653
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 1720
-- gösterge aileleri aynı yönde değil: 1592
+- büyük zaman dilimi trendi ters: 1726
+- gösterge aileleri aynı yönde değil: 1597
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
@@ -118,11 +118,11 @@ En az işe yarayan okumalar: obv_egim_1H ×0.461, momentum_1H ×0.501, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 6952
-- günlük işlem tavanı (8): 4616
+- ders: 6962
+- günlük işlem tavanı (8): 4653
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 1720
-- gösterge aileleri aynı yönde değil: 1592
+- büyük zaman dilimi trendi ters: 1726
+- gösterge aileleri aynı yönde değil: 1597
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
@@ -178,11 +178,11 @@ En az işe yarayan okumalar: obv_egim_1H ×0.461, momentum_1H ×0.501, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 6952
-- günlük işlem tavanı (8): 4616
+- ders: 6962
+- günlük işlem tavanı (8): 4653
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 1720
-- gösterge aileleri aynı yönde değil: 1592
+- büyük zaman dilimi trendi ters: 1726
+- gösterge aileleri aynı yönde değil: 1597
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
