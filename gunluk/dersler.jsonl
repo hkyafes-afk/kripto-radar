@@ -50,3 +50,4 @@
 {"olay": "geri_alindi", "ogrenilmis_ort_R": -0.433, "temel_ort_R": -0.324, "neden": "öğrenilmiş katsayılar temel halden kötü sonuç verdi", "ts": 1793255403619}
 {"olay": "yol", "yol": "geri_test|short|akis+seviye|btc:yatay", "karar": null, "n": 8, "ort_R": -0.333, "ts": 1793256812517}
 {"olay": "yol", "yol": "geri_test|short|piyasa+seviye|btc:yatay", "karar": "kacin", "n": 7, "ort_R": -0.443, "ts": 1793261511514}
+{"olay": "yol", "yol": "geri_test|short|momentum+seviye|btc:yatay", "karar": "kacin", "n": 5, "ort_R": -0.625, "ts": 1793264164785}
