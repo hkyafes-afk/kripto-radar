@@ -11,10 +11,10 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 1459 | %47.1 | -0.292 | -426.54 |
 | polat_girilen | 8 | %50.0 | -0.596 | -4.77 |
 | polat_girilmeyen | 1451 | %47.1 | -0.291 | -421.77 |
-| rastgele | 1464 | %44.0 | -0.359 | -525.39 |
+| rastgele | 1465 | %44.0 | -0.359 | -526.58 |
 | trend_naif | 1460 | %39.2 | -0.461 | -673.05 |
 
-Polat özsermaye: %-4.4 · BTC al-tut: %-0.24
+Polat özsermaye: %-4.4 · BTC al-tut: %-0.3
 
 ## Öğrenme (walk-forward)
 
@@ -63,16 +63,16 @@ En az işe yarayan okumalar: momentum_1H ×0.518, obv_egim_1H ×0.519, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 5243
+- ders: 5245
 - üst üste 3 zarar: 2345
-- günlük işlem tavanı (8): 1904
+- günlük işlem tavanı (8): 1953
 - büyük zaman dilimi trendi ters: 1523
-- gösterge aileleri aynı yönde değil: 1502
+- gösterge aileleri aynı yönde değil: 1508
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
-- puan +0.123 eşiğin (0.25) altında: 109
+- puan +0.123 eşiğin (0.25) altında: 110
 
 ## Son 50 gün
 
@@ -118,16 +118,16 @@ En az işe yarayan okumalar: momentum_1H ×0.518, obv_egim_1H ×0.519, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 5243
+- ders: 5245
 - üst üste 3 zarar: 2345
-- günlük işlem tavanı (8): 1904
+- günlük işlem tavanı (8): 1953
 - büyük zaman dilimi trendi ters: 1523
-- gösterge aileleri aynı yönde değil: 1502
+- gösterge aileleri aynı yönde değil: 1508
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
-- puan +0.123 eşiğin (0.25) altında: 109
+- puan +0.123 eşiğin (0.25) altında: 110
 
 **Hata sınıfları**
 
@@ -178,16 +178,16 @@ En az işe yarayan okumalar: momentum_1H ×0.518, obv_egim_1H ×0.519, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 5243
+- ders: 5245
 - üst üste 3 zarar: 2345
-- günlük işlem tavanı (8): 1904
+- günlük işlem tavanı (8): 1953
 - büyük zaman dilimi trendi ters: 1523
-- gösterge aileleri aynı yönde değil: 1502
+- gösterge aileleri aynı yönde değil: 1508
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 330
 - aynı yönde pozisyon tavanı: 270
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
-- puan +0.123 eşiğin (0.25) altında: 109
+- puan +0.123 eşiğin (0.25) altında: 110
 
 **Hata sınıfları**
 
