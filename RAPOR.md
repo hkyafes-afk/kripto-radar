@@ -63,15 +63,15 @@ En az işe yarayan okumalar: momentum_1H ×0.5, obv_egim_1H ×0.514, psar_1H ×0
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 3762
+- ders: 3776
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 1068
-- büyük zaman dilimi trendi ters: 953
+- gösterge aileleri aynı yönde değil: 1076
+- büyük zaman dilimi trendi ters: 955
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 274
 - aynı yönde pozisyon tavanı: 270
-- yüksek etkili ABD verisi yakın (takvim sessizliği): 149
+- yüksek etkili ABD verisi yakın (takvim sessizliği): 160
 - puan -0.121 eşiğin (0.25) altında: 90
 
 **Hata sınıfları**
@@ -119,15 +119,15 @@ En az işe yarayan okumalar: momentum_1H ×0.5, obv_egim_1H ×0.514, psar_1H ×0
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 3762
+- ders: 3776
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 1068
-- büyük zaman dilimi trendi ters: 953
+- gösterge aileleri aynı yönde değil: 1076
+- büyük zaman dilimi trendi ters: 955
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 274
 - aynı yönde pozisyon tavanı: 270
-- yüksek etkili ABD verisi yakın (takvim sessizliği): 149
+- yüksek etkili ABD verisi yakın (takvim sessizliği): 160
 - puan -0.121 eşiğin (0.25) altında: 90
 
 **Hata sınıfları**
@@ -175,15 +175,15 @@ En az işe yarayan okumalar: momentum_1H ×0.5, obv_egim_1H ×0.514, psar_1H ×0
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 3762
+- ders: 3776
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 1068
-- büyük zaman dilimi trendi ters: 953
+- gösterge aileleri aynı yönde değil: 1076
+- büyük zaman dilimi trendi ters: 955
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 274
 - aynı yönde pozisyon tavanı: 270
-- yüksek etkili ABD verisi yakın (takvim sessizliği): 149
+- yüksek etkili ABD verisi yakın (takvim sessizliği): 160
 - puan -0.121 eşiğin (0.25) altında: 90
 
 **Hata sınıfları**
