@@ -68,6 +68,25 @@ Bileşik puan = düşük oynaklık + yaş + düşük funding + 20g zirveye yakı
   maliyetten sonra para kaybettirdi; araştırmadaki "günlük al-sat maliyeti karşılamaz" bulgusuyla tutarlı.
 - Kripto Radar canlı/gölge: 3 günlük örnek, karar için yetersiz. Kapanan işlemlerde zirvedeki kârın küçük kısmı cebe giriyor.
 
+## 5. Gün içi (saatlik) kurallar
+
+Binance 1 saatlik mumlar; her gün önceki günün bilgisiyle hacme göre ilk 30 coin (batanlar dahil, geçmişte ilk 30'a girmiş
+429 coin). 9 kural veriye bakmadan sabitlendi; seçim yalnız eğitimle (işlem başına net > 0, t > 2, 2021–24'ün ≥3 yılında artı).
+Maliyet gidiş-dönüş ~14–20 bp. Sonuç dosyaları: `arastirma-sonuc` dalı, `gun_ici/`.
+
+| Kural | Eğitim net bp/işlem (brüt) | Seçildi | Saklı test net bp/işlem | Test yıllık % / düşüş % |
+|---|---|---|---|---|
+| Akşam momentumu (00→20 yönünde 20→24) | −6,0 (+12,0) | — | −23,2 | −58 / −80 |
+| Saatlik dip al (≤ −%3, hacim ≥ 2 kat, 4 saat) | +6,7 (+24,9) | ✅ tek geçen | **−81,3** | **−78 / −97** |
+| Saatlik pompa sat (≥ +%3, hacim ≥ 2 kat, 4 saat) | −8,6 (+9,6) | — | −22,6 | — |
+| Önceki gün zirvesi kırılımı, long | −29,2 (−11,1) | — | −46,0 | −100 / −100 |
+| Önceki gün dibi kırılımı, short | −36,4 (−18,3) | — | +15,9 | −84 / −97 |
+| Zirve kırılımı + günlük filtreler | +14,6 (+31,2), günlere göre kararsız | — | +19,6 | −28 / −50 |
+
+- Eğitimde birçok kuralın brüt kenarı var (10–30 bp) ama maliyet bunu siliyor; testte brüt kenar da çoğunlukla eksi.
+- Eğitimi geçen tek kural testte çöktü. 2 kat maliyetle hiçbir kural eğitimi bile geçmiyor.
+- **Gün içi al-sat bu veriyle para kazandırmıyor.** Polat'ın canlı sonucu (−0,27R) ile aynı yönde.
+
 ## Sonuç: tek ajan nasıl olmalı
 
 1. **Sıfırdan yeni teknik değil, mevcut tekniklerin tek elde birleşimi** (Turbo fikri). Giriş tipleri: Kemal trend, Selin
@@ -78,13 +97,16 @@ Bileşik puan = düşük oynaklık + yaş + düşük funding + 20g zirveye yakı
    yükselmiş coine giriş yok (pompa kovalamama).
 3. **Açığa satış yalnız Kemal'in stoplu trend short'ları** (OKX yarışında artı); sürekli/naif short yok.
 4. **Risk:** işlem başına sermayenin %0,5–1'i, stoplu. A gibi tam maruziyet düşüşü −%30'lara çıkarıyor.
-5. **Günlük al-sat değil;** pozisyonlar günler/haftalar tutulur, ama çıkışlar her gün kontrol edilir.
+5. **Günlük ve gün içi al-sat değil;** pozisyonlar günler/haftalar tutulur, ama çıkışlar her gün kontrol edilir.
+   Günlük dengeleme getiriyi yarıya indirdi, test edilen 9 gün içi kuralın hiçbiri saklı testte kazandırmadı.
 
 ## Sınırlar
 
 - Saklı test 22 ay ve büyük ölçüde altcoinlerin düştüğü bir dönem. Ekip bileşenlerinin test sonuçları artık görüldüğü
   için, birleşik ajanın gerçek sınavı **canlı gölge** olmalı (100+ işlem, güven aralığı sıfırın üstünde).
 - Binance fiyatları OKX'e yakın ama aynı değil; küçük coinlerde gerçek kayma modelden kötü olabilir.
-- OI ve gün içi (saatlik) veri bu çalışmada yok; ikisi de indiriliyor (gün içi araştırma ayrı yapılacak).
+- OI (açık pozisyon) bu çalışmada yok; metrik indirmesi sürüyor. Not: metrik evreni bugünkü hacme göre ilk 100 coin
+  seçildi, yani o veriyle yapılacak OI testi hayatta kalma yanlılığı taşır.
+- Gün içi testte yalnız 9 basit kural denendi; emir defteri/likidasyon akışı gibi gün içi veriler arşivde yok.
 
 Kod: `tools/arastirma/` (README'de tekrar üretme adımları).
