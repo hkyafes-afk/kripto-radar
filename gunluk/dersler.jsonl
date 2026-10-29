@@ -61,3 +61,4 @@
 {"olay": "yol", "yol": "anlik_kirilim|short|akis+seviye|btc:yatay", "karar": "kacin", "n": 5, "ort_R": -1.343, "ts": 1793277562764}
 {"olay": "yol", "yol": "geri_cekilme|short|akis+seviye|btc:yatay", "karar": "kacin", "n": 5, "ort_R": -0.798, "ts": 1793280983296}
 {"olay": "yol", "yol": "yapi_bozulmasi|long|akis+uyusmazlik|btc:yatay", "karar": null, "n": 8, "ort_R": 0.227, "ts": 1793281051202}
+{"olay": "yol", "yol": "geri_test|long|momentum+uyusmazlik|btc:yatay", "karar": "kacin", "n": 5, "ort_R": -0.62, "ts": 1793281103618}
