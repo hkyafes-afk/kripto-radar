@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.327R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.318R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 662 | %46.4 | -0.327 | -216.42 |
+| polat_tum_sinyaller | 671 | %47.1 | -0.318 | -213.67 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
-| polat_girilmeyen | 660 | %46.4 | -0.326 | -215.22 |
-| rastgele | 667 | %42.3 | -0.431 | -287.38 |
-| trend_naif | 668 | %37.4 | -0.51 | -340.68 |
+| polat_girilmeyen | 669 | %47.1 | -0.318 | -212.47 |
+| rastgele | 672 | %42.7 | -0.425 | -285.53 |
+| trend_naif | 676 | %38.2 | -0.501 | -338.42 |
 
-Polat özsermaye: %-2.57 · BTC al-tut: %-0.14
+Polat özsermaye: %-2.57 · BTC al-tut: %-0.04
 
 ## Öğrenme (walk-forward)
 
@@ -61,8 +61,8 @@ En az işe yarayan okumalar: yapi_1D ×0.796, stoch_5m ×0.818, ema_1D ×0.856, 
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 535
-- üst üste 3 zarar: 438
-- büyük zaman dilimi trendi ters: 376
+- üst üste 3 zarar: 450
+- büyük zaman dilimi trendi ters: 380
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.123 eşiğin (0.25) altında: 61
@@ -111,8 +111,8 @@ En az işe yarayan okumalar: yapi_1D ×0.796, stoch_5m ×0.818, ema_1D ×0.856, 
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 535
-- üst üste 3 zarar: 438
-- büyük zaman dilimi trendi ters: 376
+- üst üste 3 zarar: 450
+- büyük zaman dilimi trendi ters: 380
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.123 eşiğin (0.25) altında: 61
@@ -161,8 +161,8 @@ En az işe yarayan okumalar: yapi_1D ×0.796, stoch_5m ×0.818, ema_1D ×0.856, 
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 535
-- üst üste 3 zarar: 438
-- büyük zaman dilimi trendi ters: 376
+- üst üste 3 zarar: 450
+- büyük zaman dilimi trendi ters: 380
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.123 eşiğin (0.25) altında: 61
