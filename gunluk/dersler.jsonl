@@ -70,3 +70,4 @@
 {"olay": "yol", "yol": "yapi_bozulmasi|long|hacim+momentum|btc:yatay", "karar": "benimse", "n": 5, "ort_R": 0.552, "ts": 1793287063395}
 {"olay": "yol", "yol": "geri_test|short|formasyon+uyusmazlik|btc:yatay", "karar": null, "n": 6, "ort_R": -0.393, "ts": 1793288310680}
 {"olay": "yol", "yol": "anlik_kirilim|long|akis+uyusmazlik|btc:yatay", "karar": "benimse", "n": 6, "ort_R": 0.658, "ts": 1793288645019}
+{"olay": "yol", "yol": "uyusmazlik_donus_rsi|short|akis+uyusmazlik|btc:yatay", "karar": "kacin", "n": 5, "ort_R": -1.314, "ts": 1793290017678}
