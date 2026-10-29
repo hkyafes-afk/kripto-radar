@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.368R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.367R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 1252 | %43.9 | -0.368 | -460.91 |
+| polat_tum_sinyaller | 1260 | %44.0 | -0.367 | -462.89 |
 | polat_girilen | 6 | %50.0 | -0.631 | -3.78 |
-| polat_girilmeyen | 1246 | %43.9 | -0.367 | -457.12 |
-| rastgele | 1263 | %43.1 | -0.39 | -492.18 |
-| trend_naif | 1266 | %37.8 | -0.503 | -636.54 |
+| polat_girilmeyen | 1254 | %43.9 | -0.366 | -459.1 |
+| rastgele | 1275 | %43.0 | -0.392 | -499.38 |
+| trend_naif | 1279 | %37.5 | -0.509 | -650.56 |
 
-Polat özsermaye: %-3.45 · BTC al-tut: %-0.17
+Polat özsermaye: %-3.45 · BTC al-tut: %0.22
 
 ## Öğrenme (walk-forward)
 
@@ -62,10 +62,10 @@ En az işe yarayan okumalar: momentum_1H ×0.471, obv_egim_1H ×0.532, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 4418
+- ders: 4483
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 1130
-- büyük zaman dilimi trendi ters: 1082
+- gösterge aileleri aynı yönde değil: 1138
+- büyük zaman dilimi trendi ters: 1124
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 274
@@ -118,10 +118,10 @@ En az işe yarayan okumalar: momentum_1H ×0.471, obv_egim_1H ×0.532, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 4418
+- ders: 4483
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 1130
-- büyük zaman dilimi trendi ters: 1082
+- gösterge aileleri aynı yönde değil: 1138
+- büyük zaman dilimi trendi ters: 1124
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 274
@@ -175,10 +175,10 @@ En az işe yarayan okumalar: momentum_1H ×0.471, obv_egim_1H ×0.532, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 4418
+- ders: 4483
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 1130
-- büyük zaman dilimi trendi ters: 1082
+- gösterge aileleri aynı yönde değil: 1138
+- büyük zaman dilimi trendi ters: 1124
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
 - bu coinde zaten pozisyon var: 274
