@@ -84,3 +84,6 @@
 {"olay": "yol", "yol": "yapi_bozulmasi|short|hacim+trend|btc:yatay", "karar": null, "n": 6, "ort_R": -0.36, "ts": 1793307934443}
 {"olay": "yol", "yol": "yapi_bozulmasi|short|akis+momentum|btc:yatay", "karar": "kacin", "n": 9, "ort_R": -0.475, "ts": 1793308528925}
 {"olay": "yol", "yol": "yapi_bozulmasi|short|momentum+seviye|btc:yatay", "karar": "benimse", "n": 21, "ort_R": 0.403, "ts": 1793308529660}
+{"olay": "yol", "yol": "anlik_kirilim|short|akis+seviye|btc:yatay", "karar": null, "n": 13, "ort_R": -0.212, "ts": 1793308610929}
+{"olay": "yol", "yol": "yapi_bozulmasi|short|seviye+trend|btc:yatay", "karar": "benimse", "n": 6, "ort_R": 0.907, "ts": 1793308622332}
+{"olay": "yol", "yol": "yapi_bozulmasi|short|momentum+trend|btc:yatay", "karar": "kacin", "n": 10, "ort_R": -0.381, "ts": 1793308647614}
