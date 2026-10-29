@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.337R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.338R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 1018 | %45.0 | -0.337 | -343.08 |
+| polat_tum_sinyaller | 1019 | %44.9 | -0.338 | -344.26 |
 | polat_girilen | 5 | %40.0 | -0.772 | -3.86 |
-| polat_girilmeyen | 1013 | %45.0 | -0.335 | -339.21 |
-| rastgele | 1023 | %42.7 | -0.399 | -408.01 |
-| trend_naif | 1017 | %39.6 | -0.455 | -462.81 |
+| polat_girilmeyen | 1014 | %45.0 | -0.336 | -340.4 |
+| rastgele | 1024 | %42.7 | -0.4 | -409.19 |
+| trend_naif | 1018 | %39.6 | -0.456 | -464.0 |
 
-Polat özsermaye: %-3.54 · BTC al-tut: %-1.09
+Polat özsermaye: %-3.54 · BTC al-tut: %-1.08
 
 ## Öğrenme (walk-forward)
 
@@ -63,9 +63,9 @@ En az işe yarayan okumalar: momentum_1H ×0.49, obv_egim_1H ×0.538, psar_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 3408
+- ders: 3428
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 1040
+- gösterge aileleri aynı yönde değil: 1041
 - büyük zaman dilimi trendi ters: 813
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
@@ -119,9 +119,9 @@ En az işe yarayan okumalar: momentum_1H ×0.49, obv_egim_1H ×0.538, psar_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 3408
+- ders: 3428
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 1040
+- gösterge aileleri aynı yönde değil: 1041
 - büyük zaman dilimi trendi ters: 813
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
@@ -175,9 +175,9 @@ En az işe yarayan okumalar: momentum_1H ×0.49, obv_egim_1H ×0.538, psar_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 3408
+- ders: 3428
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 1040
+- gösterge aileleri aynı yönde değil: 1041
 - büyük zaman dilimi trendi ters: 813
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
