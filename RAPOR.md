@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.303R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.304R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 880 | %45.8 | -0.303 | -266.57 |
+| polat_tum_sinyaller | 881 | %45.7 | -0.304 | -267.63 |
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
-| polat_girilmeyen | 878 | %45.8 | -0.302 | -265.37 |
+| polat_girilmeyen | 879 | %45.7 | -0.303 | -266.43 |
 | rastgele | 852 | %41.8 | -0.415 | -353.26 |
-| trend_naif | 863 | %37.4 | -0.493 | -425.58 |
+| trend_naif | 864 | %37.4 | -0.494 | -426.63 |
 
-Polat özsermaye: %-2.57 · BTC al-tut: %-0.86
+Polat özsermaye: %-2.57 · BTC al-tut: %-0.87
 
 ## Öğrenme (walk-forward)
 
@@ -57,9 +57,9 @@ En az işe yarayan okumalar: uyusmazlik_macd_1H ×0.549, obv_egim_1H ×0.582, mo
 
 **Girilmeyen kurulumlar (engel)**
 
-- üst üste 3 zarar: 2322
-- ders: 2298
-- gösterge aileleri aynı yönde değil: 926
+- ders: 2331
+- üst üste 3 zarar: 2326
+- gösterge aileleri aynı yönde değil: 927
 - büyük zaman dilimi trendi ters: 768
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
@@ -107,9 +107,9 @@ En az işe yarayan okumalar: uyusmazlik_macd_1H ×0.549, obv_egim_1H ×0.582, mo
 
 **Girilmeyen kurulumlar (engel)**
 
-- üst üste 3 zarar: 2322
-- ders: 2298
-- gösterge aileleri aynı yönde değil: 926
+- ders: 2331
+- üst üste 3 zarar: 2326
+- gösterge aileleri aynı yönde değil: 927
 - büyük zaman dilimi trendi ters: 768
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
@@ -157,9 +157,9 @@ En az işe yarayan okumalar: uyusmazlik_macd_1H ×0.549, obv_egim_1H ×0.582, mo
 
 **Girilmeyen kurulumlar (engel)**
 
-- üst üste 3 zarar: 2322
-- ders: 2298
-- gösterge aileleri aynı yönde değil: 926
+- ders: 2331
+- üst üste 3 zarar: 2326
+- gösterge aileleri aynı yönde değil: 927
 - büyük zaman dilimi trendi ters: 768
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
