@@ -12,9 +12,9 @@ _Yatırım tavsiyesi değildir._
 | polat_girilen | 2 | %50.0 | -0.601 | -1.2 |
 | polat_girilmeyen | 695 | %46.8 | -0.325 | -225.79 |
 | rastgele | 705 | %42.0 | -0.441 | -310.69 |
-| trend_naif | 712 | %36.9 | -0.527 | -375.5 |
+| trend_naif | 715 | %36.9 | -0.528 | -377.35 |
 
-Polat özsermaye: %-2.57 · BTC al-tut: %-1.2
+Polat özsermaye: %-2.57 · BTC al-tut: %-1.28
 
 ## Öğrenme (walk-forward)
 
@@ -58,11 +58,11 @@ En az işe yarayan okumalar: yapi_1D ×0.764, adx_di_1D ×0.822, ema_1D ×0.834,
 **Girilmeyen kurulumlar (engel)**
 
 - ders: 1347
-- üst üste 3 zarar: 1024
+- üst üste 3 zarar: 1093
+- gösterge aileleri aynı yönde değil: 637
 - günlük işlem tavanı (8): 635
-- gösterge aileleri aynı yönde değil: 624
 - emir defteri doğrulanmadı: 593
-- büyük zaman dilimi trendi ters: 525
+- büyük zaman dilimi trendi ters: 543
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.123 eşiğin (0.25) altında: 63
@@ -108,11 +108,11 @@ En az işe yarayan okumalar: yapi_1D ×0.764, adx_di_1D ×0.822, ema_1D ×0.834,
 **Girilmeyen kurulumlar (engel)**
 
 - ders: 1347
-- üst üste 3 zarar: 1024
+- üst üste 3 zarar: 1093
+- gösterge aileleri aynı yönde değil: 637
 - günlük işlem tavanı (8): 635
-- gösterge aileleri aynı yönde değil: 624
 - emir defteri doğrulanmadı: 593
-- büyük zaman dilimi trendi ters: 525
+- büyük zaman dilimi trendi ters: 543
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.123 eşiğin (0.25) altında: 63
@@ -158,11 +158,11 @@ En az işe yarayan okumalar: yapi_1D ×0.764, adx_di_1D ×0.822, ema_1D ×0.834,
 **Girilmeyen kurulumlar (engel)**
 
 - ders: 1347
-- üst üste 3 zarar: 1024
+- üst üste 3 zarar: 1093
+- gösterge aileleri aynı yönde değil: 637
 - günlük işlem tavanı (8): 635
-- gösterge aileleri aynı yönde değil: 624
 - emir defteri doğrulanmadı: 593
-- büyük zaman dilimi trendi ters: 525
+- büyük zaman dilimi trendi ters: 543
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.123 eşiğin (0.25) altında: 63
