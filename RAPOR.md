@@ -11,17 +11,17 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 960 | %46.6 | -0.299 | -287.11 |
 | polat_girilen | 4 | %50.0 | -0.607 | -2.43 |
 | polat_girilmeyen | 956 | %46.5 | -0.298 | -284.68 |
-| rastgele | 961 | %43.1 | -0.384 | -369.08 |
-| trend_naif | 956 | %40.0 | -0.44 | -420.74 |
+| rastgele | 964 | %43.3 | -0.381 | -367.69 |
+| trend_naif | 957 | %40.0 | -0.439 | -420.17 |
 
-Polat özsermaye: %-3.03 · BTC al-tut: %-1.22
+Polat özsermaye: %-3.03 · BTC al-tut: %-1.24
 
 ## Öğrenme (walk-forward)
 
-Örnek 941 (eğitim 658, doğrulama 283) · uygulanan katsayı 33 · doğrulamada tutmadığı için reddedilen 53
+Örnek 960 (eğitim 672, doğrulama 288) · uygulanan katsayı 37 · doğrulamada tutmadığı için reddedilen 49
 
-En çok işe yarayan okumalar: oi_fiyat ×1.327, ultimate_5m ×1.308, tetik_yapi_bozulmasi_15m ×1.297, demand_15m ×1.273, macd_hist_15m ×1.266, momentum_5m ×1.258, cci_5m ×1.238, rsi_5m ×1.224, uyusmazlik_macd_15m ×1.217, mfi_15m ×1.156
-En az işe yarayan okumalar: obv_egim_1H ×0.589, momentum_1H ×0.733, mfi_1H ×0.745, ema_4H ×0.746, tetik_geri_test_1H ×0.804, ema200_1H ×0.842, psar_1H ×0.851, cci_1H ×0.855, willr_1H ×0.867, macd_hist_1H ×0.876
+En çok işe yarayan okumalar: oi_fiyat ×1.341, ultimate_5m ×1.319, tetik_yapi_bozulmasi_15m ×1.307, macd_hist_15m ×1.281, momentum_5m ×1.276, demand_15m ×1.273, cci_5m ×1.246, rsi_5m ×1.232, stoch_15m ×1.154, mfi_15m ×1.152
+En az işe yarayan okumalar: obv_egim_1H ×0.585, momentum_1H ×0.712, ema_4H ×0.743, mfi_1H ×0.757, tetik_geri_test_1H ×0.8, uyusmazlik_rsi_1H ×0.815, psar_1H ×0.829, ema200_1H ×0.835, cci_1H ×0.853, willr_1H ×0.862
 
 ## Son 1 gün
 
@@ -62,9 +62,9 @@ En az işe yarayan okumalar: obv_egim_1H ×0.589, momentum_1H ×0.733, mfi_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 3160
+- ders: 3174
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 1000
+- gösterge aileleri aynı yönde değil: 1007
 - büyük zaman dilimi trendi ters: 795
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
@@ -117,9 +117,9 @@ En az işe yarayan okumalar: obv_egim_1H ×0.589, momentum_1H ×0.733, mfi_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 3160
+- ders: 3174
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 1000
+- gösterge aileleri aynı yönde değil: 1007
 - büyük zaman dilimi trendi ters: 795
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
@@ -172,9 +172,9 @@ En az işe yarayan okumalar: obv_egim_1H ×0.589, momentum_1H ×0.733, mfi_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 3160
+- ders: 3174
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 1000
+- gösterge aileleri aynı yönde değil: 1007
 - büyük zaman dilimi trendi ters: 795
 - günlük işlem tavanı (8): 635
 - emir defteri doğrulanmadı: 593
