@@ -62,7 +62,7 @@ En az işe yarayan okumalar: yapi_1D ×0.796, stoch_5m ×0.818, ema_1D ×0.856, 
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 529
 - üst üste 3 zarar: 411
-- büyük zaman dilimi trendi ters: 358
+- büyük zaman dilimi trendi ters: 360
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.123 eşiğin (0.25) altında: 60
@@ -112,7 +112,7 @@ En az işe yarayan okumalar: yapi_1D ×0.796, stoch_5m ×0.818, ema_1D ×0.856, 
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 529
 - üst üste 3 zarar: 411
-- büyük zaman dilimi trendi ters: 358
+- büyük zaman dilimi trendi ters: 360
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.123 eşiğin (0.25) altında: 60
@@ -162,7 +162,7 @@ En az işe yarayan okumalar: yapi_1D ×0.796, stoch_5m ×0.818, ema_1D ×0.856, 
 - emir defteri doğrulanmadı: 593
 - gösterge aileleri aynı yönde değil: 529
 - üst üste 3 zarar: 411
-- büyük zaman dilimi trendi ters: 358
+- büyük zaman dilimi trendi ters: 360
 - bu coinde zaten pozisyon var: 135
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 120
 - puan +0.123 eşiğin (0.25) altında: 60
