@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 2354 | %49.3 | -0.224 | -526.18 |
+| polat_tum_sinyaller | 2355 | %49.3 | -0.224 | -527.26 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 2341 | %49.3 | -0.222 | -520.81 |
-| rastgele | 2347 | %43.9 | -0.34 | -797.54 |
+| polat_girilmeyen | 2342 | %49.2 | -0.223 | -521.9 |
+| rastgele | 2348 | %43.9 | -0.34 | -798.62 |
 | trend_naif | 2369 | %44.4 | -0.324 | -766.54 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-5.58
+Polat özsermaye: %-4.71 · BTC al-tut: %-5.44
 
 ## Öğrenme (walk-forward)
 
@@ -61,10 +61,10 @@ En az işe yarayan okumalar: momentum_1H ×0.423, psar_1H ×0.461, obv_egim_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 11138
-- günlük işlem tavanı (8): 6471
+- ders: 11156
+- günlük işlem tavanı (8): 6476
 - üst üste 3 zarar: 1951
-- gösterge aileleri aynı yönde değil: 1731
+- gösterge aileleri aynı yönde değil: 1742
 - büyük zaman dilimi trendi ters: 1585
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 659
@@ -127,10 +127,10 @@ En az işe yarayan okumalar: momentum_1H ×0.423, psar_1H ×0.461, obv_egim_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 12485
-- günlük işlem tavanı (8): 7106
+- ders: 12503
+- günlük işlem tavanı (8): 7111
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 2240
+- gösterge aileleri aynı yönde değil: 2251
 - büyük zaman dilimi trendi ters: 1939
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
@@ -194,10 +194,10 @@ En az işe yarayan okumalar: momentum_1H ×0.423, psar_1H ×0.461, obv_egim_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 12485
-- günlük işlem tavanı (8): 7106
+- ders: 12503
+- günlük işlem tavanı (8): 7111
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 2240
+- gösterge aileleri aynı yönde değil: 2251
 - büyük zaman dilimi trendi ters: 1939
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
