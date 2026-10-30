@@ -19,6 +19,8 @@ from .models import DecisionMode, ExecutionMode
 DEFAULTS: dict[str, Any] = {
     "karar_modu": "legacy",
     "yurutme_modu": "paper",
+    "golge_aralik_sn": 300,            # gölge modunda birleşik motor en sık bu aralıkla çalışır
+    "gunluk_saklama_gun": 14,          # karar günlüğü (site/birlesik/kararlar-*.jsonl) bu kadar gün tutulur
     "kapsam": {"min_oran": 0.8},
     "maliyet": {
         # Belirsizlik tamponu (bp, nominalin). Maliyet sonrası avantaj bundan küçükse SHADOW. Kısa ufukta daha sıkı:
