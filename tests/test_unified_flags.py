@@ -15,7 +15,8 @@ from radar.unified.models import DecisionMode, ExecutionMode  # noqa: E402
 
 def test_gercek_config_varsayilanlari_guvenli():
     cfg = load_config()
-    assert F.decision_mode(cfg) is DecisionMode.LEGACY
+    # 30.10.2026 kullanıcı kararı: gölge modu (yalnız karar kaydı). unified (işlem açan) mod onaysız açılmamalı.
+    assert F.decision_mode(cfg) is DecisionMode.SHADOW
     assert F.execution_mode(cfg) == (ExecutionMode.PAPER, None)
 
 

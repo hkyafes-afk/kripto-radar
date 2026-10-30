@@ -326,7 +326,7 @@ function render(){
     <div class="kpi"><div class="l">Rejim</div><div class="v">${reg}</div><div class="s">EMA200 ${fp(b.ema200)}</div></div>
     <div class="kpi"><div class="l">Güçlü sinyal</div><div class="v num">${D.counts.strong}</div><div class="s">${D.counts.scanned} coin tarandı</div></div>
     <div class="kpi"><div class="l">Demo bakiye</div><div class="v num" id="kpiEq">${money(DM.equity,false)}</div><div class="s num ${cls(DM.return_pct)}" id="kpiRet">${pct(DM.return_pct,2)} · ${D.ledger.open.filter(t=>!t.shadow).length} açık</div></div>`;
-  const tabs = (D.bas ? [["bas","👑 Baş Trader",(D.bas.open||[]).length]] : []).concat(D.team ? [["team","Ekip",Object.keys(D.team).length]] : []).concat([["demo","İşlemler",D.ledger.open.filter(t=>!t.shadow).length]]).concat(D.team ? [["shadow","Gölge",D.ledger.open.filter(t=>t.shadow).length]] : []).concat([["sig","Sinyaller",D.counts.strong]]).concat([["led","Karne",L.n||0],["fund","Funding",D.harvest.length],["coins","Coinler",D.coins.length]]);
+  const tabs = (D.bas ? [["bas","👑 Baş Trader",(D.bas.open||[]).length]] : []).concat(D.team ? [["team","Ekip",Object.keys(D.team).length]] : []).concat([["demo","İşlemler",D.ledger.open.filter(t=>!t.shadow).length]]).concat(D.team ? [["shadow","Gölge",D.ledger.open.filter(t=>t.shadow).length]] : []).concat([["sig","Sinyaller",D.counts.strong]]).concat([["led","Karne",(D.karne&&D.karne.bas_trader&&D.karne.bas_trader.n)||L.n||0],["fund","Funding",D.harvest.length],["coins","Coinler",D.coins.length]]);
   tabs.push(["old","Eski sürüm",(D.old||{open:[]}).open.length]);
   if (BT) tabs.push(["bt","Backtest",""]);
   tabs.push(["guide","Rehber",""]);
@@ -429,7 +429,30 @@ function spark(eq){
     <path d="${d}" fill="none" stroke="${last>=0?"var(--green)":"var(--red)"}" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>`;
 }
 
+function kStat(s){
+  if (!s || !s.n) return `<p class="note">Veri yok.</p>`;
+  const ga = s.ga_alt == null ? "–" : `${s.ga_alt>0?"+":""}${s.ga_alt.toFixed(2)} … ${s.ga_ust>0?"+":""}${s.ga_ust.toFixed(2)}`;
+  return `<div class="stat"><div><div class="k">İşlem</div><div class="x">${s.n}</div></div><div><div class="k">İsabet</div><div class="x">%${s.isabet}</div></div>
+    <div><div class="k">Ort. R</div><div class="x ${cls(s.ort_r)}">${s.ort_r.toFixed(2)}</div></div><div><div class="k">Toplam R</div><div class="x ${cls(s.toplam_r)}">${s.toplam_r.toFixed(1)}</div></div>
+    <div><div class="k">PF</div><div class="x">${s.pf ?? "–"}</div></div><div><div class="k">%95 GA</div><div class="x">${ga}</div></div></div>
+    <p class="note">${esc(s.durum)}</p>`;
+}
+function kCard(title, s, sub){
+  return `<div class="card"><div class="hd"><div><div class="sym" style="font-size:15px">${esc(title)}</div><div class="lbl">${esc(sub||"")}</div></div></div>${kStat(s)}</div>`;
+}
+function renderKarne(){
+  const K = D.karne;
+  let h = `<p class="note">Tek karar verici <b>Baş Trader</b>. Aşağıdaki adlar bağımsız ajan değil, strateji / sinyal kaynağı etiketidir. <a href="birlesik.html">Ayrıntılı panel →</a></p>`;
+  h += `<div class="grid">${kCard("👑 Baş Trader · gerçek", K.bas_trader, "bütün gerçek (paper) işlemler")}${kCard("👻 Baş Trader · gölge", K.bas_trader_golge, "sermayesiz izlenen fikirler")}</div>`;
+  h += `<h2>Strateji / sinyal kaynağı</h2><div class="grid">` + (K.kaynaklar||[]).map(r =>
+    kCard(r.etiket + " · gerçek", r.gercek, "") + kCard(r.etiket + " · gölge", r.golge, "")).join("") + `</div>`;
+  h += `<h2>Filtre karnesi</h2><p class="note">Gölgeye gönderilen fikirler. Elenenler kaybettirdiyse filtre haklıdır.</p><div class="grid">` +
+    ((K.filtreler||[]).length ? K.filtreler.map(r => kCard(r.filtre, r, r.karar)).join("") : `<p class="note">Veri yok.</p>`) + `</div>`;
+  $("#ledBody").innerHTML = h;
+}
+
 function renderLedger(){
+  if (D.karne) return renderKarne();
   const S = D.ledger.stats, O = S.overall, vb = {good:"b-green",bad:"b-red",meh:"b-amber",collect:"b-dim"};
   let h = `<div class="card"><div class="hd"><div><div class="sym">Genel karne</div><div class="lbl">${O.n||0} kapanmış · ${D.ledger.open.length} açık</div></div>
     <div class="score"><span class="badge ${vb[O.verdict.code]}">${esc(O.verdict.text)}</span></div></div>

@@ -89,7 +89,9 @@ def _hook(cfg, site, ctxs):
 
 
 def test_motor_kancasi_legacy_modda_calismaz(tmp_path):
-    fe = _hook(CFG, tmp_path, [kemal_ctx()])
+    cfg = copy.deepcopy(CFG)
+    cfg["birlesik"]["karar_modu"] = "legacy"
+    fe = _hook(cfg, tmp_path, [kemal_ctx()])
     assert not hasattr(fe, "unified_shadow") and not (tmp_path / "birlesik").exists()
 
 

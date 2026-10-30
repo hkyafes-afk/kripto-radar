@@ -24,7 +24,7 @@ _AUTH = {StrategyAuthority.PAPER: 2, StrategyAuthority.SHADOW_ONLY: 1, StrategyA
 _TRAD = {Tradability.PASS: 2, Tradability.SHADOW: 1, Tradability.REJECT: 0}
 STRATEGY_TR = {"swing_trend": "günlük trend", "compression_breakout": "sıkışmadan patlama",
                "controlled_breakout": "kontrollü kırılım", "panic_reversal": "panik dönüşü", "short_trend": "trend short'u",
-               "intraday_trend": "gün içi trend", "microstructure": "mikro yapı", "legacy_murat": "Murat (legacy)"}
+               "intraday_trend": "gün içi trend", "microstructure": "mikro yapı", "legacy_murat": "geri çekilme sinyali (eski)"}
 DECISION_TR = {Decision.OPEN: "AÇ (paper)", Decision.REDUCE_SIZE: "KÜÇÜK BOYUTLA AÇ (paper)",
                Decision.SHADOW: "GÖLGEDE ÖLÇ", Decision.REJECT: "REDDET"}
 REASON_TR = (
