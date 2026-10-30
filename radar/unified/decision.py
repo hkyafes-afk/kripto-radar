@@ -226,7 +226,9 @@ class UnifiedDecisionEngine:
         lg_ = o.legacy or {}
         c = ctx.candles.get(o.timeframe) if ctx.candles else None
         atr = lg_.get("atr") if isinstance(lg_.get("atr"), (int, float)) else (c.atr if c else None)
+        rg = ctx.regime.regime if getattr(ctx, "regime", None) is not None else None
         return {"inst": o.inst, "horizon": o.horizon.value, "timeframe": o.timeframe, "entry_type": o.entry_type.value,
+                "rejim": rg.value if rg is not None else None,
                 "limit_price": o.limit_price, "max_holding_hours": o.max_holding_hours, "atr": atr,
                 "exit_rule": dict(lg_["exit"]) if isinstance(lg_.get("exit"), dict) else None,
                 "pp": dict(lg_["pp"]) if isinstance(lg_.get("pp"), dict) else None,

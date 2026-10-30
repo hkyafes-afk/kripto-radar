@@ -26,6 +26,7 @@ from .exits import evaluate_exits
 from .factors import FactorEngine
 from .flags import execution_mode, unified_cfg
 from .journal import DecisionJournal
+from . import hazirlik
 from .models import (Decision, DecisionResult, ExecutionIntent, ExecutionMode, OrderStatus, OrderType, Regime, Side,
                      to_jsonable)
 from .risk import MarketRisk, OpenPosition, PortfolioState, RiskGate
@@ -323,7 +324,7 @@ class UnifiedTrader:
         out = dict(summary)
         out["pozisyonlar"] = [{k: p.get(k) for k in (
             "symbol", "inst", "side", "qty", "entry", "current_price", "stop", "stop_init", "targets", "strategy",
-            "strategies", "opened_ts", "updated_ts", "realized_usd", "fees_usd", "funding_usd", "slip_usd", "risk_usd",
+            "inst", "strategies", "opened_ts", "updated_ts", "realized_usd", "fees_usd", "funding_usd", "slip_usd", "risk_usd",
             "leverage", "unrealized_usd", "unrealized_pct", "unrealized_r", "peak_r", "costs", "exit_plan",
             "explanation_tr", "risk_text", "hist")} for p in self.adapter.positions.values()]
         out["kapananlar"] = [{k: c.get(k) for k in (
@@ -341,6 +342,10 @@ class UnifiedTrader:
             t2 = self.journal_root / "ozet.tmp"
             t2.write_text(json.dumps(to_jsonable(oz), ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
             t2.replace(self.journal_root / "ozet.json")
+            try:                                             # İşleme hazır olma özeti (yalnız izleme)
+                hazirlik.write_summary(self.journal_root, int(summary["ts"]))
+            except Exception as e:  # noqa: BLE001
+                self.engine.errors.append(f"hazırlık özeti: {type(e).__name__}: {e}")
 
     def halt(self, reason: str | None) -> None:
         """Elle durdurma (None → devam)."""
