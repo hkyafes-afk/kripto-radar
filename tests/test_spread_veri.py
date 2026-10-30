@@ -55,4 +55,75 @@ def test_motor_defterinden_bbo_okunur():
     fe.book = {"X-USDT-SWAP": (100.0, 99.5, 100.5, __import__("time").time() - 2.0)}
     b = fe._book_ctx("X-USDT-SWAP")
     assert b["bid"] == 99.5 and b["ask"] == 100.5 and 1.5 < b["book_age_s"] < 10
-    assert fe._book_ctx("YOK-USDT-SWAP") == {"bid": None, "ask": None, "book_age_s": None}
+    y = fe._book_ctx("YOK-USDT-SWAP")
+    assert y["bid"] is None and y["ask"] is None and y["book_age_s"] is None and y["bbo_kaynak"] == "yok"
+
+
+def _fe_rest(site, tickers, book=None):
+    from types import SimpleNamespace as NS
+    import time as _t
+    from test_golge_portfoy import fake_engine
+    fe = fake_engine(site)
+    fe.book = dict(book or {})
+    fe.feeds = {}
+    fe.client = NS(tickers=lambda t: tickers)               # YALNIZ public tickers; başka çağrı varsa hata
+    fe.bbo_rest = {}
+    return fe
+
+
+def test_ws_defteri_bayatsa_rest_anlik_bbo_kullanilir(tmp_path):
+    import time as _t
+    fe = _fe_rest(tmp_path, [{"instId": "X-USDT-SWAP", "bidPx": "100.9", "askPx": "101.1"}],
+                  book={"X-USDT-SWAP": (100.0, 99.0, 101.0, _t.time() - 60)})   # 60 sn bayat WS
+    fe._bbo_snapshot({"X-USDT-SWAP"})
+    b = fe._book_ctx("X-USDT-SWAP")
+    assert b["bbo_kaynak"] == "rest" and b["bid"] == 100.9 and b["ask"] == 101.1 and b["book_age_s"] < 5
+
+
+def test_bayat_ws_ve_rest_yoksa_spread_gecmez(tmp_path):
+    import time as _t
+    fe = _fe_rest(tmp_path, [], book={"X-USDT-SWAP": (100.0, 99.0, 101.0, _t.time() - 60)})
+    fe._bbo_snapshot({"X-USDT-SWAP"})
+    b = fe._book_ctx("X-USDT-SWAP")
+    assert b["bid"] is None and b["ask"] is None and b["bbo_kaynak"] in ("yok", "ws_eski")
+
+
+def test_tanilama_dosyasi_yazilir(tmp_path):
+    import json as _j
+    import time as _t
+    from test_unified_strategies import kemal_ctx as _k
+    fe = _fe_rest(tmp_path, [{"instId": "X-USDT-SWAP", "bidPx": "100.9", "askPx": "101.1"}])
+    fe._unified_shadow([_k()])
+    t = _j.loads((tmp_path / "birlesik" / "golge" / "tanilama.json").read_text(encoding="utf-8"))
+    for k in ("ws_healthy", "tick_count", "last_tick_age", "feed_symbols", "decision_coins", "book_entries",
+              "spread_durum_sayim", "ornek"):
+        assert k in t, k
+    r = t["ornek"][0]
+    for k in ("decision_inst", "feed_inst", "book_exists", "ws_bid", "ws_ask", "ws_book_age", "bid", "ask",
+              "book_age", "bbo_kaynak", "spread_status"):
+        assert k in r, k
+
+
+def test_sentetik_shadow_open_ve_exit_zinciri(tmp_path):
+    """spread_ok (REST anlık BBO) → operational PASS → RiskGate PASS → sanal OPEN → WS fiyatıyla stop → EXIT kaydı."""
+    import json as _j
+    import time as _t
+    from test_golge_portfoy import golge, tick
+    from test_unified_strategies import kemal_ctx as _k
+    fe = _fe_rest(tmp_path, [{"instId": "X-USDT-SWAP", "bidPx": "100.9", "askPx": "101.1"}])
+    fe._unified_shadow([_k()])                               # emir (limit) sanal defterde
+    fe._unified_shadow([_k()])                               # REST BBO ile dolum
+    d = golge(tmp_path)
+    assert len(d["pozisyonlar"]) == 1, d.get("kararlar")
+    p = d["pozisyonlar"][0]
+    stop = p["stop"]
+    fe.bbo_rest = {}
+    tick(fe, stop * (1.02 if p["side"] == "short" else 0.98))   # stop'u geçen canlı WS fiyatı
+    fe._unified_shadow([_k()])
+    d = golge(tmp_path)
+    kap = d.get("kapananlar") or []
+    assert kap, "EXIT/kapanış kaydı yok"
+    k = kap[-1]
+    assert k["exit_reason"] and k["exit_px"] and k["closed_ts"] and k["net_usd"] is not None
+    assert k["exit_reason"] and k["net_usd"] is not None
+
