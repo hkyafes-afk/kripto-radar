@@ -56,6 +56,13 @@ def main(argv=None) -> int:
     p.add_argument("--demo", action="store_true")
     p.add_argument("--config", default=None)
 
+    p = sub.add_parser("etkinlik", help="birleşik etkinlik raporu: defter ve/veya yarış işlemleri → etkinlik.json")
+    p.add_argument("--defter", default=None, help="legacy ledger.json (kapanmış işlemler)")
+    p.add_argument("--birlesik", default=None, help="birleşik paper defteri yurutme.json")
+    p.add_argument("--yaris", default=None, help="race_islemler.csv (geçmiş test işlemleri)")
+    p.add_argument("--cikti", default="data/etkinlik.json")
+    p.add_argument("--config", default=None)
+
     p = sub.add_parser("hakem", help="v9 Analist-Hakem modeli eğitimi (5 yıllık test + canlı/gölge işlemler)")
     p.add_argument("--coins", type=int, default=30)
     p.add_argument("--years", type=float, default=5.0)
@@ -84,6 +91,31 @@ def main(argv=None) -> int:
         out_dir = (Path("site") / "yaris_demo") if a.demo else (Path(a.cikti) if a.cikti else None)
         race.run(client=client, cfg_path=a.config, n_coins=a.coins, years=a.years, out_dir=out_dir,
                  binance_dir=a.binance, only_mgrs=[x for x in (a.yoneticiler or "").split(",") if x] or None)
+        return 0
+
+    if a.cmd == "etkinlik":
+        import json as _json
+        from .config import load_config
+        from .unified import effectiveness as eff
+        cfg = load_config(a.config)
+        reports = {}
+        if a.yaris:
+            reports["yaris"] = eff.audit_race(a.yaris, cfg)
+        if a.defter or a.birlesik:
+            lc = (_json.loads(Path(a.defter).read_text(encoding="utf-8")).get("closed") or []) if a.defter else []
+            uc = (_json.loads(Path(a.birlesik).read_text(encoding="utf-8")).get("closed") or []) if a.birlesik else []
+            reports["canli"] = eff.EffectivenessAuditor(cfg).audit(lc, uc)
+        if not reports:
+            print("en az biri gerekli: --defter, --birlesik, --yaris")
+            return 2
+        out = Path(a.cikti)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(_json.dumps(reports, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+        for name, rep in reports.items():
+            print(f"[{name}] {rep['ozet']}")
+            for k, v in rep["kapsamlar"].items():
+                if k.startswith("strateji:"):
+                    print(f"  {k}: n={v['n_trades']} ort={v['avg_r']} GA=[{v['ci_low_r']}, {v['ci_high_r']}] → {v['karar']}")
         return 0
 
     if a.cmd == "hakem":

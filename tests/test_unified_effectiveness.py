@@ -79,3 +79,28 @@ def test_gecersiz_r_atlanir_ve_yazim(tmp_path):
     rep = a.audit([{"mgr": "kemal", "r": None}, {"mgr": "kemal", "r": float("nan")}], now_ms=NOW)
     assert rep["ozet"]["islem_sayisi"] == 0
     assert a.write(rep).exists()
+
+
+def test_sentetik_yaris_csv_ve_komut(tmp_path):
+    import json
+
+    import pandas as pd
+
+    from radar import race
+    from radar.__main__ import main
+    from radar.unified.effectiveness import audit_race
+    split = pd.Timestamp("2024-01-01")
+    trades = {"kemal": [{"sym": "X", "side": "long", "entry_ts": pd.Timestamp("2023-06-01") + pd.Timedelta(days=i),
+                         "exit_ts": pd.Timestamp("2023-06-05") + pd.Timedelta(days=i), "r": r, "hours": 96,
+                         "why": "sentetik"} for i, r in enumerate(sentetik_r(40, 0.3, seed=11))],
+              "kaan": [{"sym": "Y", "side": "short", "entry_ts": pd.Timestamp("2024-03-01"), "exit_ts": pd.Timestamp("2024-03-02"),
+                        "r": -1.0, "hours": 24}]}
+    p = tmp_path / "race_islemler.csv"
+    assert race.write_trades_csv(p, trades, split) == 41
+    rep = audit_race(p)
+    assert rep["kapsamlar"]["strateji:swing_trend:legacy:paper"]["n_trades"] == 40
+    assert "rejim:egitim:legacy:paper" in rep["kapsamlar"] and "rejim:dogrulama:legacy:paper" in rep["kapsamlar"]
+    out = tmp_path / "etkinlik.json"
+    assert main(["etkinlik", "--yaris", str(p), "--cikti", str(out)]) == 0
+    assert json.loads(out.read_text())["yaris"]["ozet"]["islem_sayisi"] == 41
+    assert main(["etkinlik", "--cikti", str(out)]) == 2

@@ -100,16 +100,13 @@ def test_quote_from_book_bayat():
     assert quote_from_book(INST, None) is None
 
 
-class _FakeEngine:
-    def __init__(self, cfg, site):
-        self.cfg, self.site, self.meta, self.book, self.halt = cfg, site, dict(META), {}, None
-
-
 def test_sentetik_motor_kancasi_unified_modu_ayri_defter(tmp_path):
     from radar.engine import Engine
     cfg = copy.deepcopy(CFG)
     cfg["birlesik"]["karar_modu"] = "unified"
-    fe = _FakeEngine(cfg, tmp_path)
-    Engine._unified_shadow(fe, [kemal_ctx()])
+    fe = Engine.__new__(Engine)                                          # ağ/defter kurmadan
+    fe.cfg, fe.site, fe.meta, fe.book, fe.halt, fe.ledger = cfg, tmp_path, dict(META), {}, None, {"closed": []}
+    fe._unified_shadow([kemal_ctx()])
     assert fe.unified_shadow["mod"] == "unified" and (tmp_path / "birlesik" / "durum.json").exists()
     assert not (tmp_path / "ledger.json").exists()                       # legacy deftere dokunulmaz
+    assert fe.unified_audit["islem_sayisi"] == 0

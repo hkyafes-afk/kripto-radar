@@ -225,6 +225,7 @@ def run(client=None, cfg_path=None, n_coins=30, years=5.0, out_dir: Path | None 
     d.mkdir(parents=True, exist_ok=True)
     (d / "race.json").write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
     (d / "YARIS.md").write_text(report_md(out), encoding="utf-8")
+    write_trades_csv(d / "race_islemler.csv", all_trades, split)
     print(report_md(out))
     return out
 
@@ -253,3 +254,22 @@ def report_md(o: dict) -> str:
            if str(o.get("kaynak", "okx")).startswith("binance") else
            "Uyarı: coin evreni bugün hâlâ işlem gören coinler (batanlar yok) → sonuçlar iyimser tarafta."), ""]
     return "\n".join(L)
+
+
+def write_trades_csv(path, all_trades: dict, split=None) -> int:
+    """İşlem başına çıktı (taban kurallar): etkinlik denetçisi ve dış inceleme için. Döner: satır sayısı.
+    Sütunlar: yonetici, coin, yon, giris, cikis, r, saat, sinif, sebep, donem (egitim | dogrulama)."""
+    import csv
+    n = 0
+    with open(path, "w", newline="", encoding="utf-8") as fh:
+        w = csv.writer(fh)
+        w.writerow(["yonetici", "coin", "yon", "giris", "cikis", "r", "saat", "sinif", "sebep", "donem"])
+        for mid, trs in sorted(all_trades.items()):
+            for t in trs:
+                et = t.get("entry_ts")
+                donem = "" if split is None or et is None else ("egitim" if et < split else "dogrulama")
+                w.writerow([mid, t.get("sym") or t.get("inst") or "", t.get("side"), str(et), str(t.get("exit_ts")),
+                            round(float(t.get("r") or 0.0), 6), t.get("hours"), t.get("coin_class") or "",
+                            t.get("why") or "", donem])
+                n += 1
+    return n

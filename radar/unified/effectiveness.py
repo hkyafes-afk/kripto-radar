@@ -241,3 +241,28 @@ class EffectivenessAuditor:
         tmp.write_text(json.dumps(to_jsonable(report), ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
         tmp.replace(p)
         return p
+
+
+def race_rows_from_csv(path: str | Path) -> list[dict]:
+    """`race_islemler.csv` (radar/race.write_trades_csv) → legacy işlem sözlükleri (yalnız R; dolar yok)."""
+    import csv
+    out = []
+    with open(path, encoding="utf-8") as fh:
+        for row in csv.DictReader(fh):
+            try:
+                r = float(row["r"])
+            except (TypeError, ValueError):
+                continue
+            out.append({"mgr": row["yonetici"], "r": r, "pnl_usd": 0.0, "fee_usd": 0.0, "tf": "1D",
+                        "regime": row.get("donem") or "?", "exit_ts": 0, "shadow": False})
+    return out
+
+
+def audit_race(path: str | Path, cfg: Mapping | None = None, root: str | Path | None = None,
+               now_ms: int | None = None) -> dict:
+    """Geçmiş test (yarış) işlemlerinin etkinlik raporu. `rejim` kapsamı burada DÖNEM'i (egitim/dogrulama) taşır.
+    Dolar tutarları yoktur (yalnız R); maliyet yarışta zaten R'ye işlenmiştir."""
+    rep = EffectivenessAuditor(cfg, root).audit(race_rows_from_csv(path), now_ms=now_ms)
+    rep["kaynak"] = f"yarış: {Path(path).name}"
+    rep["notlar"].append("geçmiş test: 'rejim:*' kapsamları dönemi gösterir (egitim / dogrulama)")
+    return rep
