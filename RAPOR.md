@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 2060 | %48.7 | -0.218 | -449.7 |
+| polat_tum_sinyaller | 2062 | %48.7 | -0.218 | -450.45 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 2047 | %48.7 | -0.217 | -444.34 |
-| rastgele | 2063 | %44.2 | -0.328 | -675.91 |
-| trend_naif | 2067 | %42.5 | -0.348 | -718.57 |
+| polat_girilmeyen | 2049 | %48.7 | -0.217 | -445.09 |
+| rastgele | 2064 | %44.1 | -0.328 | -677.2 |
+| trend_naif | 2068 | %42.6 | -0.347 | -718.13 |
 
-Polat özsermaye: %-4.34 · BTC al-tut: %-4.37
+Polat özsermaye: %-4.22 · BTC al-tut: %-4.56
 
 ## Öğrenme (walk-forward)
 
@@ -65,12 +65,12 @@ En az işe yarayan okumalar: btc_1H ×0.407, tetik_geri_test_1H ×0.545, psar_1H
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 8652
-- günlük işlem tavanı (8): 5057
+- ders: 8697
+- günlük işlem tavanı (8): 5066
 - üst üste 3 zarar: 1951
 - büyük zaman dilimi trendi ters: 1544
 - aynı yönde pozisyon tavanı: 1426
-- gösterge aileleri aynı yönde değil: 1387
+- gösterge aileleri aynı yönde değil: 1389
 - bu coinde zaten pozisyon var: 659
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 138
 - puan -0.221 eşiğin (0.25) altında: 95
@@ -130,11 +130,11 @@ En az işe yarayan okumalar: btc_1H ×0.407, tetik_geri_test_1H ×0.545, psar_1H
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 9999
-- günlük işlem tavanı (8): 5692
+- ders: 10044
+- günlük işlem tavanı (8): 5701
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 1898
-- gösterge aileleri aynı yönde değil: 1896
+- gösterge aileleri aynı yönde değil: 1898
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
@@ -196,11 +196,11 @@ En az işe yarayan okumalar: btc_1H ×0.407, tetik_geri_test_1H ×0.545, psar_1H
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 9999
-- günlük işlem tavanı (8): 5692
+- ders: 10044
+- günlük işlem tavanı (8): 5701
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 1898
-- gösterge aileleri aynı yönde değil: 1896
+- gösterge aileleri aynı yönde değil: 1898
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
