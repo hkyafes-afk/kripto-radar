@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.194R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.192R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 1670 | %50.0 | -0.194 | -323.27 |
+| polat_tum_sinyaller | 1674 | %50.1 | -0.192 | -321.8 |
 | polat_girilen | 9 | %55.6 | -0.477 | -4.29 |
-| polat_girilmeyen | 1661 | %50.0 | -0.192 | -318.98 |
-| rastgele | 1691 | %43.9 | -0.329 | -556.72 |
-| trend_naif | 1673 | %41.8 | -0.361 | -603.45 |
+| polat_girilmeyen | 1665 | %50.0 | -0.191 | -317.51 |
+| rastgele | 1694 | %43.9 | -0.331 | -559.97 |
+| trend_naif | 1677 | %41.8 | -0.36 | -604.49 |
 
-Polat özsermaye: %-3.72 · BTC al-tut: %-4.36
+Polat özsermaye: %-3.34 · BTC al-tut: %-4.67
 
 ## Öğrenme (walk-forward)
 
@@ -63,13 +63,13 @@ En az işe yarayan okumalar: obv_egim_1H ×0.465, momentum_1H ×0.505, btc_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 5714
+- ders: 5799
 - günlük işlem tavanı (8): 4028
 - üst üste 3 zarar: 1951
-- büyük zaman dilimi trendi ters: 1373
+- büyük zaman dilimi trendi ters: 1377
 - gösterge aileleri aynı yönde değil: 1097
-- aynı yönde pozisyon tavanı: 405
-- bu coinde zaten pozisyon var: 316
+- aynı yönde pozisyon tavanı: 575
+- bu coinde zaten pozisyon var: 363
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 138
 - puan -0.141 eşiğin (0.25) altında: 71
 - puan -0.169 eşiğin (0.25) altında: 67
@@ -118,14 +118,14 @@ En az işe yarayan okumalar: obv_egim_1H ×0.465, momentum_1H ×0.505, btc_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 7061
+- ders: 7146
 - günlük işlem tavanı (8): 4663
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 1727
+- büyük zaman dilimi trendi ters: 1731
 - gösterge aileleri aynı yönde değil: 1606
 - emir defteri doğrulanmadı: 593
-- bu coinde zaten pozisyon var: 451
-- aynı yönde pozisyon tavanı: 405
+- aynı yönde pozisyon tavanı: 575
+- bu coinde zaten pozisyon var: 498
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
 - puan +0.123 eşiğin (0.25) altında: 112
 
@@ -178,14 +178,14 @@ En az işe yarayan okumalar: obv_egim_1H ×0.465, momentum_1H ×0.505, btc_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 7061
+- ders: 7146
 - günlük işlem tavanı (8): 4663
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 1727
+- büyük zaman dilimi trendi ters: 1731
 - gösterge aileleri aynı yönde değil: 1606
 - emir defteri doğrulanmadı: 593
-- bu coinde zaten pozisyon var: 451
-- aynı yönde pozisyon tavanı: 405
+- aynı yönde pozisyon tavanı: 575
+- bu coinde zaten pozisyon var: 498
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
 - puan +0.123 eşiğin (0.25) altında: 112
 
