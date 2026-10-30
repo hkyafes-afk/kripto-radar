@@ -403,6 +403,7 @@ class LiquidityContext:
     est_slippage_bp: float | None = None
     book_ts_ms: int | None = None
     book_age_s: float | None = None
+    spread_durum: str | None = None           # spread_ok / spread_missing / spread_stale / spread_invalid
     ws_healthy: bool | None = None
     seq_gap: bool | None = None
 

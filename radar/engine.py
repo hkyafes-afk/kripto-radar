@@ -743,8 +743,23 @@ class Engine:
         self.stats_counter["live_coins"] = len(ctxs)
         self._unified_shadow(ctxs)
 
+    def _book_ctx(self, inst: str) -> dict:
+        """Motorun public BBO defteri (WS tick veya REST tickers) → karar bağlamı: bid, ask, yaş (sn)."""
+        b = self.book.get(inst)
+        if not b:
+            return {"bid": None, "ask": None, "book_age_s": None}
+        _last, bid, ask, ts = b
+        return {"bid": bid if bid and bid > 0 else None, "ask": ask if ask and ask > 0 else None,
+                "book_age_s": round(time.time() - ts, 3) if ts else None}
+
     def _unified_shadow(self, ctxs: list[dict]):
         """Birleşik Baş Trader kancası (karar/işlem) + etkinlik denetçisi."""
+        try:                                                  # BBO zenginleştirme: hata yutulur, kararı durdurmaz
+            for c in ctxs or []:
+                if c.get("inst"):
+                    c.update(self._book_ctx(c["inst"]))
+        except Exception:  # noqa: BLE001
+            pass
         self._unified_step(ctxs)
         self._unified_audit()
 

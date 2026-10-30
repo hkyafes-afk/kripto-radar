@@ -45,9 +45,10 @@ COST = SimpleNamespace(missing_inputs=(), tradability=Tradability.PASS, net_edge
 
 
 def test_operasyonel_uygunluk_tek_engel_ve_zama():
-    op = UnifiedDecisionEngine._operational(_opp(), COST, Decision.SHADOW, ("YETKI_GOLGE",))
+    op = UnifiedDecisionEngine._operational(_opp(), COST, Decision.SHADOW, ("YETKI_GOLGE",), "spread_ok")
     assert op["uygun"] is True and op["hedef_tipi"] == "yok" and op["cikis_politikasi"] == "stop + iz + zaman"
     assert op["reddedilen"] == [-0.0504194] and op["mekanik"] == [0.0264135]
+    assert UnifiedDecisionEngine._operational(_opp(), COST, Decision.SHADOW, ("YETKI_GOLGE",), "spread_stale")["uygun"] is False
 
 
 def test_operasyonel_engeller_ve_spread_eksikliği_acmaz():
@@ -109,6 +110,7 @@ def test_operasyonel_golge_acilir_ve_tekrar_acmaz(tmp_path, monkeypatch):
     p = d["pozisyonlar"][0]
     assert p["operational"] is True and p["karar"] == "YETKI_GOLGE"
     assert p["target_type"] == "yok" and not [t for t in (p.get("targets") or []) if not t > 0]
+    assert any(x.get("operasyonel") for x in (d.get("risk") or []))                 # operasyonel aday RiskGate'e ulaştı
     tick(fe, 103.0)
     fe._unified_shadow([kemal_ctx()])
     assert len(golge(tmp_path)["pozisyonlar"]) == 1                                  # aynı fırsat tekrar açılmaz

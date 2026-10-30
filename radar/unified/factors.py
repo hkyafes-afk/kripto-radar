@@ -38,6 +38,17 @@ def trend_from_ctx(ctx: Mapping[str, Any]) -> Trend:
     return Trend.RANGE
 
 
+def _liquidity(ctx, ws_healthy) -> LiquidityContext:
+    """Motorun public BBO verisi (bid/ask/yaş) → likidite bağlamı. Durum spread_ok değilse bid/ask verilmez."""
+    from .liquidity import spread_status
+    bid, ask, age = ctx.get("bid"), ctx.get("ask"), ctx.get("book_age_s")
+    st, _ = spread_status(bid, ask, age)
+    if st != "spread_ok":
+        return LiquidityContext(ws_healthy=ws_healthy, spread_durum=st, book_age_s=_num(age))
+    return LiquidityContext(bid=float(bid), ask=float(ask), book_age_s=float(age), spread_durum=st,
+                            ws_healthy=ws_healthy)
+
+
 class FactorEngine:
     def __init__(self, cfg: Mapping | None = None):
         self.cfg = cfg or {}
@@ -87,6 +98,6 @@ class FactorEngine:
         coverage = cov.compute_coverage(cov.SWING_SPECS, factors, now_ms=now_ms, min_ratio=self.min_ratio)
         return MarketContext(symbol=str(ctx.get("sym") or ""), inst=str(ctx.get("inst") or ""), ts_ms=int(now_ms),
                              timeframe=tf, candles={tf: candle}, structure={tf: structure}, volume=volume,
-                             liquidity=LiquidityContext(ws_healthy=ws_healthy), derivatives=deriv, regime=regime,
+                             liquidity=_liquidity(ctx, ws_healthy), derivatives=deriv, regime=regime,
                              data_quality=dq, coin_class=cls, coin_age_days=age_days, factors=factors,
                              coverage=coverage, raw=dict(ctx))

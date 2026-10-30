@@ -222,10 +222,12 @@ class UnifiedDecisionEngine:
             reason_codes=codes, explanation_tr=self._explain(ctx, o, cost, decision, codes, strategies, ev_for,
                                                               ev_against, missing),
             ts_ms=now, idempotency_key=o.idempotency_key, strategies=strategies,
-            plan={**self._plan(ctx, o), "operasyonel": self._operational(o, cost, decision, codes)})
+            plan={**self._plan(ctx, o), "operasyonel": self._operational(o, cost, decision, codes,
+                                                                          ctx.liquidity.spread_durum)})
 
     @staticmethod
-    def _operational(o: Opportunity, cost: CostEstimate, decision: Decision, codes: tuple) -> dict:
+    def _operational(o: Opportunity, cost: CostEstimate, decision: Decision, codes: tuple,
+                     spread_durum: str | None = None) -> dict:
         """YETKI_GOLGE → operasyonel shadow açılışı için uygunluk. Yalnız tek engel YETKI_GOLGE ise ve diğer tüm
         kapılar geçtiyse uygundur. PAPER/gerçek yetki VERİLMEZ; yalnız gölge sanal portföyde kullanılır."""
         neden = []
@@ -233,8 +235,8 @@ class UnifiedDecisionEngine:
             neden.append("karar gölge değil")
         if set(codes) != {"YETKI_GOLGE"}:
             neden.append("diğer engeller var: " + ", ".join(c for c in codes if c != "YETKI_GOLGE") if codes else "engel yok")
-        if "spread" in (cost.missing_inputs or ()):
-            neden.append("public bid/ask spread eksik")
+        if spread_durum != "spread_ok":                          # yalnız gerçek public BBO spread'i kabul edilir
+            neden.append(spread_durum or "spread_missing")
         if cost.tradability is not Tradability.PASS:
             neden.append("maliyet kapısı geçmedi")
         if cost.net_edge_bp is None or cost.net_edge_bp <= 0:
