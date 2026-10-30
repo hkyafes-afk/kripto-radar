@@ -99,3 +99,4 @@
 {"olay": "geri_alindi", "ogrenilmis_ort_R": 0.065, "temel_ort_R": 0.218, "neden": "öğrenilmiş katsayılar temel halden kötü sonuç verdi", "ts": 1793368153523}
 {"olay": "yol", "yol": "yapi_bozulmasi|short|btc:yatay", "karar": "kacin", "n": 353, "ort_R": -0.258, "ts": 1793390503030}
 {"olay": "yol", "yol": "yapi_bozulmasi|short|btc:yatay", "karar": null, "n": 355, "ort_R": -0.256, "ts": 1793399418860}
+{"olay": "yol", "yol": "uyusmazlik_donus_rsi|short|btc:yatay", "karar": "kacin", "n": 25, "ort_R": -0.356, "ts": 1793401858236}
