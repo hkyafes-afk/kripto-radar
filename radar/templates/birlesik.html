@@ -312,7 +312,7 @@ function olasilik(h) {
   if (!h || !h.grup) return "Veri yok";
   const H = S.data.haz, g = (H.gruplar || {})[h.grup], n = g ? g.n : 0, esik = H.esik || 30;
   if (n < esik) return `kanıt yetersiz (${n}/${esik})`;
-  return `%${Math.round(g.acik / n * 100)} (${g.acik}/${n} benzer karar açıldı)`;
+  return `%${Math.round(g.acik / n * 100)} (${g.acik}/${n} benzer kararın sonradan açılması; kârlılık değildir)`;
 }
 function hzBlock(d) {
   const h = d.hazirlik;
@@ -324,7 +324,7 @@ function hzBlock(d) {
   const eng = h.engel_metni ? `<div class="hb">${esc(h.engel_metni)}</div>` : "";
   const nd = (h.nedenler || []).length ? `<div class="note">${(h.nedenler || []).map(esc).join(" · ")}</div>` : "";
   const ol = d.decision === "OPEN" || d.decision === "REDUCE_SIZE" ? "" :
-    `<div class="note">İşlem açılma olasılığı (tarihsel): ${esc(olasilik(h))}</div>`;
+    `<div class="note">Tarihsel geçiş oranı (kârlılık değil): ${esc(olasilik(h))}</div>`;
   return `<div class="hz"><div class="hzbar"><i style="width:${skor}%"></i></div>${top}${eng}${nd}<div class="gts">${gates}</div>${ol}</div>`;
 }
 function engelOzet(H) {
