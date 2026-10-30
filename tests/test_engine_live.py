@@ -300,3 +300,15 @@ if __name__ == "__main__":
         if name.startswith("test_"):
             fn()
             print("✓", name)
+
+
+def test_risk_tick_ekip_setupinda_cokmez():
+    """Regresyon (30.10.2026 canlı döngü çöküşü): 30+ kapanmış ekip işleminin setup'ı yönetici kimliği ('kemal') ve
+    beklentisi negatifken risk_tick SETUP_LABELS KeyError ile çöküyordu. Kill switch yalnız eski sinyal setup'larına bakar.
+    İşlemler SENTETİKTİR."""
+    with tempfile.TemporaryDirectory() as d:
+        e = _engine(d)
+        e.ledger["closed"] += [{"real": True, "setup": "kemal", "tf": "1D", "r": -0.5, "exit_ts": i, "mgr": "kemal"}
+                               for i in range(40)]
+        e.risk_tick()                                   # KeyError olmamalı
+        assert ("kemal", "1D") not in e.blocked
