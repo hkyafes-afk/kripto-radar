@@ -738,7 +738,7 @@ function liveConnect(){
   try { if (LIVE.ws) LIVE.ws.close(); } catch(e){}
   LIVE.want = key;
   let ws;
-  try { ws = new WebSocket("wss://ws.okx.com:8443/ws/v5/public"); } catch(e){ return; }
+  try { ws = new WebSocket("wss://ws.okx.com/ws/v5/public"); } catch(e){ return; }
   LIVE.ws = ws;
   ws.onopen = () => { LIVE.tries = 0; ws.send(JSON.stringify({op:"subscribe", args: want.map(i => ({channel:"tickers", instId:i}))})); };
   ws.onmessage = ev => {

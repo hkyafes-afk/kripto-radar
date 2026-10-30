@@ -274,8 +274,8 @@ def _f(x):
 
 class OKXFeed(Feed):
     name_ = "okx-ws"
-    urls = ["wss://ws.okx.com:8443/ws/v5/public", "wss://wsaws.okx.com:8443/ws/v5/public",
-            "wss://wsus.okx.com:8443/ws/v5/public"]
+    urls = ["wss://ws.okx.com/ws/v5/public", "wss://wsaws.okx.com/ws/v5/public",
+            "wss://wsus.okx.com/ws/v5/public"]
     ping_every = 20.0
 
     def sub_messages(self, symbols, op="subscribe"):

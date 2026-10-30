@@ -458,7 +458,7 @@ $("menuBtn").onclick = () => $("tabs").scrollIntoView({behavior: "smooth", block
 $("bellBtn").onclick = () => scrollTo({top: 0, behavior: "smooth"});
 
 /* ── Canlı fiyat: yalnız OKX PUBLIC WebSocket (API anahtarı, login, private kanal yok) ── */
-const WS_URL = "wss://ws.okx.com:8443/ws/v5/public";
+const WS_URL = "wss://ws.okx.com/ws/v5/public";
 const TC = Object.assign({pingMs: 25000, pongMs: 10000, staleMs: 60000, maxBackoffMs: 30000, retryMs: 1000, watchMs: 1000}, (window.__BT_CFG || {}));
 const LIVE = {px: {}, hist: {}, ws: null, open: false, lastMsg: 0, pingAt: 0, subs: new Set(), retry: 0, rafOn: false};
 function instIds() {
