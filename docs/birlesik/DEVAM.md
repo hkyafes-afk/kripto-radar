@@ -21,7 +21,7 @@
 
 PR 1 — ortak modeller, veri kapsamı, CostEngine, testler (dal: feat/unified-trader-foundation)
 - [x] Dal açıldı, görev ve devam notu yüklendi
-- [ ] Araştırma denetimi dokümanı (docs/birlesik/ARASTIRMA_DENETIMI.md) — kontroller yapıldı, sonuçlar aşağıda
+- [x] Araştırma denetimi dokümanı (docs/birlesik/ARASTIRMA_DENETIMI.md)
 - [ ] Uygulama planı (docs/birlesik/PLAN.md)
 - [x] radar/unified/models.py — enum + dataclass'lar (MarketContext … EffectivenessSnapshot), eski fikir → Opportunity adaptörü
 - [x] radar/unified/coverage.py — FactorValue/FactorSpec/FactorCoverage (zorunlu/bayat/eksik/geçersiz, paper'a yeterlilik)
