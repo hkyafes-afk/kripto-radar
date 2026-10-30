@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.238R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.239R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 2436 | %48.6 | -0.238 | -580.32 |
+| polat_tum_sinyaller | 2443 | %48.7 | -0.239 | -583.28 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 2423 | %48.6 | -0.237 | -574.96 |
-| rastgele | 2421 | %44.0 | -0.339 | -821.32 |
-| trend_naif | 2452 | %43.8 | -0.337 | -827.4 |
+| polat_girilmeyen | 2430 | %48.6 | -0.238 | -577.92 |
+| rastgele | 2432 | %44.0 | -0.34 | -827.09 |
+| trend_naif | 2460 | %43.7 | -0.34 | -836.21 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-5.15
+Polat özsermaye: %-4.71 · BTC al-tut: %-5.02
 
 ## Öğrenme (walk-forward)
 
@@ -61,10 +61,10 @@ En az işe yarayan okumalar: momentum_1H ×0.494, obv_egim_1H ×0.51, psar_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 11994
+- ders: 12023
 - günlük işlem tavanı (8): 6532
 - üst üste 3 zarar: 1951
-- gösterge aileleri aynı yönde değil: 1782
+- gösterge aileleri aynı yönde değil: 1783
 - büyük zaman dilimi trendi ters: 1585
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 659
@@ -127,10 +127,10 @@ En az işe yarayan okumalar: momentum_1H ×0.494, obv_egim_1H ×0.51, psar_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 13341
+- ders: 13370
 - günlük işlem tavanı (8): 7167
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 2291
+- gösterge aileleri aynı yönde değil: 2292
 - büyük zaman dilimi trendi ters: 1939
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
@@ -194,10 +194,10 @@ En az işe yarayan okumalar: momentum_1H ×0.494, obv_egim_1H ×0.51, psar_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 13341
+- ders: 13370
 - günlük işlem tavanı (8): 7167
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 2291
+- gösterge aileleri aynı yönde değil: 2292
 - büyük zaman dilimi trendi ters: 1939
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
