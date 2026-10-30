@@ -166,7 +166,7 @@ ekip:
   # maks. düşüş −%43 → −%14. Baş Trader ve Turbo dahil herkese uygulanır.
   kurallar:                    # (radar/policy.py)
     aktif: true
-    max_atr_yuzde: 12.5         # günlük ATR fiyatın %5'inden büyükse gölge (bu kovada 5 yılda kazanç yok)
+    max_atr_yuzde: 12.5         # günlük ATR fiyatın %12.5'inden büyükse gölge (bu kovada 5 yılda kazanç yok)
     max_stop_yuzde: 15.0       # giriş–stop uzaklığı bu %'yi aşarsa gölgede (v10.1)
     kalabalik_long: 30         # funding yıllık %30 üstündeyken long gölge
     kalabalik_short: -20       # funding yıllık −%20 altındayken short gölge
