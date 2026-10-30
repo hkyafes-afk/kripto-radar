@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 2271 | %48.8 | -0.227 | -515.85 |
+| polat_tum_sinyaller | 2273 | %48.8 | -0.227 | -516.22 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 2258 | %48.8 | -0.226 | -510.49 |
-| rastgele | 2266 | %43.9 | -0.337 | -764.02 |
-| trend_naif | 2287 | %43.3 | -0.34 | -778.29 |
+| polat_girilmeyen | 2260 | %48.8 | -0.226 | -510.86 |
+| rastgele | 2267 | %43.9 | -0.338 | -765.21 |
+| trend_naif | 2289 | %43.3 | -0.34 | -778.66 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-4.65
+Polat özsermaye: %-4.71 · BTC al-tut: %-4.61
 
 ## Öğrenme (walk-forward)
 
@@ -63,8 +63,8 @@ En az işe yarayan okumalar: btc_1H ×0.336, momentum_1H ×0.409, obv_egim_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 10483
-- günlük işlem tavanı (8): 5899
+- ders: 10502
+- günlük işlem tavanı (8): 5901
 - üst üste 3 zarar: 1951
 - gösterge aileleri aynı yönde değil: 1624
 - büyük zaman dilimi trendi ters: 1568
@@ -72,7 +72,7 @@ En az işe yarayan okumalar: btc_1H ×0.336, momentum_1H ×0.409, obv_egim_1H ×
 - bu coinde zaten pozisyon var: 659
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 138
 - puan -0.221 eşiğin (0.25) altında: 106
-- puan -0.141 eşiğin (0.25) altında: 100
+- puan -0.141 eşiğin (0.25) altında: 101
 
 **Hata sınıfları**
 
@@ -129,8 +129,8 @@ En az işe yarayan okumalar: btc_1H ×0.336, momentum_1H ×0.409, obv_egim_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 11830
-- günlük işlem tavanı (8): 6534
+- ders: 11849
+- günlük işlem tavanı (8): 6536
 - üst üste 3 zarar: 2345
 - gösterge aileleri aynı yönde değil: 2133
 - büyük zaman dilimi trendi ters: 1922
@@ -196,8 +196,8 @@ En az işe yarayan okumalar: btc_1H ×0.336, momentum_1H ×0.409, obv_egim_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 11830
-- günlük işlem tavanı (8): 6534
+- ders: 11849
+- günlük işlem tavanı (8): 6536
 - üst üste 3 zarar: 2345
 - gösterge aileleri aynı yönde değil: 2133
 - büyük zaman dilimi trendi ters: 1922
