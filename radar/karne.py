@@ -31,6 +31,12 @@ SOURCE = {
 MIN_KANIT = 30
 
 
+def _label(key: str) -> str:
+    lab = {v[0]: v[1] for v in SOURCE.values()}
+    lab.update({"short_trend": "Short trend", "intraday_trend": "Gün içi trend", "microstructure": "Mikro yapı"})
+    return lab.get(key, key)
+
+
 def source_of(t: Mapping) -> tuple[str, str]:
     if t.get("carry"):
         return SOURCE["elif"]
@@ -84,13 +90,23 @@ def filter_verdict(s: Mapping) -> str:
     return "belirsiz"
 
 
-def build(closed: Iterable[Mapping], unified_closed: Iterable[Mapping] = (), now_ms: int | None = None) -> dict:
+def build(closed: Iterable[Mapping], unified_closed: Iterable[Mapping] = (), now_ms: int | None = None,
+          golge_closed: Iterable[Mapping] = ()) -> dict:
+    """closed: LEGACY defter (eski sistem; yeni Baş Trader performansı DEĞİLDİR). golge_closed: yeni Baş Trader'ın
+    gölge sanal defterinde kapanan işlemler (net USD / net R, maliyetler düşülmüş)."""
     closed = list(closed)
+    gcl = [dict(c, pnl_usd=c.get("net_usd")) for c in golge_closed]
     real = [t for t in closed if not t.get("shadow")]
     shadow = [t for t in closed if t.get("shadow")]
     ucl = [dict(c, strategy=c.get("strategy"), pnl_usd=c.get("net_usd")) for c in unified_closed]
     out: dict[str, Any] = {"ts": now_ms, "bas_trader": stats(real + ucl), "bas_trader_golge": stats(shadow),
-                           "kaynaklar": [], "filtreler": []}
+                           "yeni_golge": stats(gcl), "yeni_kaynaklar": [], "kaynaklar": [], "filtreler": []}
+    gk: dict[str, list] = {}
+    for c in gcl:
+        for s_ in (c.get("strategies") or [c.get("strategy") or "?"]):
+            gk.setdefault(str(s_), []).append(c)
+    out["yeni_kaynaklar"] = sorted(({"kaynak": k, "etiket": _label(k), "golge_sanal": stats(v)} for k, v in gk.items()),
+                                   key=lambda r: -r["golge_sanal"]["n"])
     keys: dict[str, str] = {}
     for t in closed + ucl:
         k, label = source_of(t)
@@ -123,9 +139,14 @@ def _row(s: Mapping) -> str:
 def to_md(k: Mapping, title: str) -> str:
     H = "| İşlem | İsabet | Ort. R | Toplam R | PF | %95 GA (ort. R) | Durum |"
     L = [f"# {title}", "", "Tek karar verici **Baş Trader**. Aşağıdaki adlar bağımsız ajan değil, strateji / sinyal kaynağı "
-         "etiketidir.", "", "## Baş Trader toplamı", "", "| Kapsam " + H, "|---" * 8 + "|",
-         f"| Gerçek (paper) | {_row(k['bas_trader'])} |", f"| Gölge (izlenen) | {_row(k['bas_trader_golge'])} |", "",
-         "## Strateji / sinyal kaynağı", "", "| Kaynak | Tür " + H, "|---" * 9 + "|"]
+         "etiketidir.", "", "## Yeni Baş Trader — gölge sanal portföy (gerçek emir yok, maliyetler düşülmüş)", "",
+         "| Kapsam " + H, "|---" * 8 + "|", f"| Gölge sanal (net) | {_row(k.get('yeni_golge') or {})} |"]
+    for r in k.get("yeni_kaynaklar") or []:
+        L.append(f"| ↳ {r['etiket']} | {_row(r['golge_sanal'])} |")
+    L += ["", "## Eski sistem (legacy defter) — yeni Baş Trader performansı DEĞİLDİR", "", "| Kapsam " + H,
+          "|---" * 8 + "|", f"| Legacy gerçek (paper) | {_row(k['bas_trader'])} |",
+          f"| Legacy gölge | {_row(k['bas_trader_golge'])} |", "",
+          "## Legacy: strateji / sinyal kaynağı", "", "| Kaynak | Tür " + H, "|---" * 9 + "|"]
     for r in k["kaynaklar"]:
         L.append(f"| {r['etiket']} | gerçek | {_row(r['gercek'])} |")
         L.append(f"| {r['etiket']} | gölge | {_row(r['golge'])} |")
@@ -149,8 +170,9 @@ def _tg_row(s: Mapping) -> str:
 
 
 def to_telegram(k: Mapping, esc=lambda s: s) -> str:
-    L = ["📒 <b>Karne · Baş Trader</b>", f"👑 Gerçek: {_tg_row(k['bas_trader'])}",
-         f"👻 Gölge: {_tg_row(k['bas_trader_golge'])}", "", "<b>Strateji / sinyal kaynağı</b>"]
+    L = ["📒 <b>Karne · Baş Trader</b>", f"👑 Yeni Baş Trader (gölge sanal, net): {_tg_row(k.get('yeni_golge') or {})}",
+         "", "<b>Eski sistem (legacy)</b>", f"Gerçek: {_tg_row(k['bas_trader'])}",
+         f"Gölge: {_tg_row(k['bas_trader_golge'])}", "", "<b>Legacy strateji / sinyal kaynağı</b>"]
     for r in k["kaynaklar"][:10]:
         L.append(f"• {esc(r['etiket'])}: gerçek {_tg_row(r['gercek'])} | gölge {_tg_row(r['golge'])}")
     if k["filtreler"]:

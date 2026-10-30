@@ -129,6 +129,7 @@ class Engine:
         self.bg_book: dict[str, tuple] = {}     # baz coin → Bitget (last, bid, ask, an)
         self.fund_cur: dict[str, tuple] = {}    # inst → (oran, kesim_ms, kaynak)
         self.fund_events: list[tuple] = []      # (inst, oran, kesim_ms) geçmiş kesimler
+        self.golge_fund_events: list[tuple] = []  # aynı kesimler, gölge sanal defter için
         self.bg_fund: dict[str, float] = {}
         self.watch: dict[str, tuple] = {}       # inst → ((id, side, sl, tp, liq_first, tp1), ...)
         self.hw: dict[str, list] = {}           # inst → [en yüksek, en düşük] (iz süren stop için)
@@ -265,6 +266,8 @@ class Engine:
         prev = self.fund_cur.get(inst)
         if prev and ftime > prev[1] and prev[1] <= time.time() * 1000 + 60_000:
             self.fund_events.append((inst, prev[0], prev[1]))   # önceki dönem kesildi
+            if hasattr(self, "golge_fund_events"):
+                self.golge_fund_events.append((inst, prev[0], prev[1]))   # gölge sanal defter için ayrı kopya
         if not prev or ftime >= prev[1]:
             self.fund_cur[inst] = (rate, ftime, src)
 
@@ -748,7 +751,8 @@ class Engine:
     def _unified_step(self, ctxs: list[dict]):
         """Birleşik Baş Trader kancası. `birlesik.karar_modu`:
           legacy  → hiçbir şey yapmaz (varsayılan)
-          shadow  → yalnız karar günlüğü yazar
+          shadow  → karar günlüğü + AYRI gölge sanal defter (site/birlesik/golge/): Baş Trader'ın açma kararları canlı
+                    fiyatla sanal pozisyon olur; gerçek emir YOK, legacy/demo/unified paper defterleri değişmez
           unified → ayrı bir PAPER defterinde (site/birlesik/yurutme.json) birleşik motorla işlem açar/yönetir.
         Legacy defter, emirler ve legacy yöneticiler hiçbir modda etkilenmez. Her hata yutulur."""
         try:
@@ -757,17 +761,25 @@ class Engine:
             mode = decision_mode(self.cfg)
             if mode is DecisionMode.LEGACY:
                 return
-            if mode is DecisionMode.SHADOW:
-                runner = getattr(self, "_shadow_runner", None)
-                if runner is None:
-                    from .unified.shadow import ShadowRunner
-                    runner = self._shadow_runner = ShadowRunner(self.cfg, self.site / "birlesik")
-                out = runner.run(ctxs, meta=self.meta)
-                if out:
-                    self.unified_shadow = out
-                    print(f"[birleşik gölge] {out['coin']} coin · {out['karar']} · {out['yeni_satir']} yeni satır")
-                return
             from .unified.trader import UnifiedTrader, quote_from_book
+            if mode is DecisionMode.SHADOW:
+                tr = getattr(self, "_golge_trader", None)
+                if tr is None:
+                    tr = self._golge_trader = UnifiedTrader(self.cfg, self.site / "birlesik" / "golge",
+                                                            journal_root=self.site / "birlesik", mode="shadow")
+                now = time.time()
+                insts = {c.get("inst") for c in ctxs} | set(tr.adapter.positions) | \
+                    {o["intent"]["inst"] for o in tr.adapter.open_orders()}
+                book = getattr(self, "book", {}) or {}
+                quotes = {i: q for i in insts if i and (q := quote_from_book(i, book.get(i), now))}
+                ev, self.golge_fund_events = list(getattr(self, "golge_fund_events", [])), []
+                okx = (getattr(self, "feeds", {}) or {}).get("okx")
+                out = tr.step(ctxs, quotes, meta=self.meta, closed_bars=getattr(self, "unified_closed_bars", {}),
+                              ws_healthy=okx.healthy() if okx else None, funding_events=ev)
+                self.unified_shadow = out
+                print(f"[birleşik gölge] {out['coin']} coin · açık {out['acik']} · açılan {len(out['acilan'])} · "
+                      f"çıkış {len(out['cikislar'])} · {out['karar']}")
+                return
             tr = getattr(self, "_unified_trader", None)
             if tr is None:
                 tr = self._unified_trader = UnifiedTrader(self.cfg, self.site / "birlesik")
@@ -800,7 +812,8 @@ class Engine:
             tr = getattr(self, "_unified_trader", None)
             aud = EffectivenessAuditor(self.cfg, self.site / "birlesik")
             rep = aud.audit((getattr(self, "ledger", None) or {}).get("closed") or [],
-                            tr.adapter.closed if tr else [])
+                            (tr.adapter.closed if tr else []) +
+                            (self._golge_trader.adapter.closed if getattr(self, "_golge_trader", None) else []))
             aud.write(rep)
             self.unified_audit = rep.get("ozet")
         except Exception as e:  # noqa: BLE001
@@ -1870,7 +1883,9 @@ class Engine:
         try:
             from . import karne
             tr = getattr(self, "_unified_trader", None)
-            return karne.build(self.ledger["closed"], tr.adapter.closed if tr else [], now_ms)
+            gt = getattr(self, "_golge_trader", None)
+            return karne.build(self.ledger["closed"], tr.adapter.closed if tr else [], now_ms,
+                               golge_closed=gt.adapter.closed if gt else [])
         except Exception as e:  # noqa: BLE001
             print("[karne] hata:", type(e).__name__, e)
             return None
