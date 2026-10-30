@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.22R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.219R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 2234 | %49.1 | -0.22 | -491.4 |
+| polat_tum_sinyaller | 2236 | %49.2 | -0.219 | -490.68 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 2221 | %49.1 | -0.219 | -486.04 |
-| rastgele | 2224 | %43.8 | -0.34 | -755.29 |
-| trend_naif | 2243 | %43.1 | -0.344 | -772.16 |
+| polat_girilmeyen | 2223 | %49.1 | -0.218 | -485.32 |
+| rastgele | 2227 | %43.7 | -0.34 | -756.35 |
+| trend_naif | 2248 | %43.2 | -0.342 | -769.06 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-4.48
+Polat özsermaye: %-4.71 · BTC al-tut: %-4.22
 
 ## Öğrenme (walk-forward)
 
@@ -25,7 +25,7 @@ En az işe yarayan okumalar: btc_1H ×0.365, obv_egim_1H ×0.476, momentum_1H ×
 
 ## Son 1 gün
 
-İşlem 11 · kazanma %54.5 · ort. -0.235R · toplam -2.59R · net -1268.96$ · maks. düşüş -1436.56$ · kâr faktörü 0.54
+İşlem 10 · kazanma %50.0 · ort. -0.293R · toplam -2.94R · net -1436.56$ · maks. düşüş -1436.56$ · kâr faktörü 0.47
 
 **Kuruluma göre**
 
@@ -35,7 +35,6 @@ En az işe yarayan okumalar: btc_1H ×0.365, obv_egim_1H ×0.476, momentum_1H ×
 | macd_kesisim_15m | 1 | %100.0 | 0.643 | 306.57 |
 | obv_kirilim_15m | 1 | %100.0 | 0.619 | 300.12 |
 | sikisma_cikisi+yapi_bozulmasi_15m+geri_test_15m | 1 | %0.0 | -1.088 | -516.67 |
-| supurme+yapi_bozulmasi_15m+uyusmazlik_donus_mfi | 1 | %100.0 | 0.347 | 167.6 |
 | yapi_bozulmasi_15m | 1 | %0.0 | -1.087 | -525.67 |
 | yapi_bozulmasi_15m+formasyon_bayrak_15m | 1 | %100.0 | 0.494 | 236.29 |
 | yapi_bozulmasi_15m+geri_test_15m | 1 | %100.0 | 0.592 | 283.13 |
@@ -46,13 +45,13 @@ En az işe yarayan okumalar: btc_1H ×0.365, obv_egim_1H ×0.476, momentum_1H ×
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
-| stop | 11 | %54.5 | -0.235 | -1268.96 |
+| stop | 10 | %50.0 | -0.293 | -1436.56 |
 
 **Seansa göre**
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
-| ABD | 3 | %33.3 | -0.661 | -959.19 |
+| ABD | 2 | %0.0 | -1.165 | -1126.79 |
 | Asya | 5 | %60.0 | -0.093 | -245.91 |
 | Avrupa | 3 | %66.7 | -0.046 | -63.86 |
 
@@ -60,15 +59,15 @@ En az işe yarayan okumalar: btc_1H ×0.365, obv_egim_1H ×0.476, momentum_1H ×
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
-| 7 | 6 | %66.7 | -0.047 | -130.65 |
+| 7 | 5 | %60.0 | -0.125 | -298.25 |
 | 8 | 5 | %40.0 | -0.462 | -1138.31 |
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 9960
+- ders: 9996
 - günlük işlem tavanı (8): 5888
 - üst üste 3 zarar: 1951
-- gösterge aileleri aynı yönde değil: 1585
+- gösterge aileleri aynı yönde değil: 1590
 - büyük zaman dilimi trendi ters: 1567
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 659
@@ -131,10 +130,10 @@ En az işe yarayan okumalar: btc_1H ×0.365, obv_egim_1H ×0.476, momentum_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 11307
+- ders: 11343
 - günlük işlem tavanı (8): 6523
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 2094
+- gösterge aileleri aynı yönde değil: 2099
 - büyük zaman dilimi trendi ters: 1921
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
@@ -198,10 +197,10 @@ En az işe yarayan okumalar: btc_1H ×0.365, obv_egim_1H ×0.476, momentum_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 11307
+- ders: 11343
 - günlük işlem tavanı (8): 6523
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 2094
+- gösterge aileleri aynı yönde değil: 2099
 - büyük zaman dilimi trendi ters: 1921
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
