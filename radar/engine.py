@@ -1334,7 +1334,9 @@ class Engine:
         if rc["otomatik_kapat"]:
             groups: dict = {}
             for t in self.ledger["closed"]:
-                if t.get("real"):
+                # Yalnız eski sinyal setup'ları (Trend/Dönüş): ekip işlemlerinin setup'ı yönetici kimliğidir (kemal…) ve
+                # onların kendi denetimi var. Eskiden bu döngü 'kemal' setup'ında SETUP_LABELS KeyError ile döngüyü çökertiyordu.
+                if t.get("real") and t.get("setup") in sg.SETUP_LABELS:
                     groups.setdefault((t["setup"], t.get("tf", "4H")), []).append(t["r"])
             newly = []
             for k, rs_ in groups.items():
@@ -1343,7 +1345,7 @@ class Engine:
                         newly.append((k, sum(rs_) / len(rs_), len(rs_)))
                     self.blocked.add(k)
             for (setup, tf), avg, n in newly:
-                self._notify(f"🚫 <b>{sg.SETUP_LABELS[setup]} ({sg.TF_LABEL.get(tf, tf)})</b> kapatıldı: "
+                self._notify(f"🚫 <b>{sg.SETUP_LABELS.get(setup, setup)} ({sg.TF_LABEL.get(tf, tf)})</b> kapatıldı: "
                              f"{n} işlemde ortalama {avg:+.2f}R. Para kaybettiren setup'a artık işlem açılmayacak.")
             rs["blocked"] = [f"{a}|{b}" for a, b in sorted(self.blocked)]
         # özsermaye geçmişi (5 dk'da bir)
