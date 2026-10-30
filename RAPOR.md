@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 1965 | %43.7 | -0.332 | -653.18 |
 | trend_naif | 1968 | %42.2 | -0.35 | -687.82 |
 
-Polat özsermaye: %-4.28 · BTC al-tut: %-4.19
+Polat özsermaye: %-4.47 · BTC al-tut: %-4.14
 
 ## Öğrenme (walk-forward)
 
@@ -62,16 +62,16 @@ En az işe yarayan okumalar: trix_1H ×0.542, tetik_geri_test_1H ×0.587, psar_1
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 7541
-- günlük işlem tavanı (8): 4028
+- ders: 7577
+- günlük işlem tavanı (8): 4104
 - üst üste 3 zarar: 1951
 - büyük zaman dilimi trendi ters: 1541
 - aynı yönde pozisyon tavanı: 1426
-- gösterge aileleri aynı yönde değil: 1217
-- bu coinde zaten pozisyon var: 658
+- gösterge aileleri aynı yönde değil: 1221
+- bu coinde zaten pozisyon var: 659
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 138
-- puan -0.141 eşiğin (0.25) altında: 83
-- puan -0.221 eşiğin (0.25) altında: 83
+- puan -0.141 eşiğin (0.25) altında: 84
+- puan -0.221 eşiğin (0.25) altında: 84
 
 **Hata sınıfları**
 
@@ -125,13 +125,13 @@ En az işe yarayan okumalar: trix_1H ×0.542, tetik_geri_test_1H ×0.587, psar_1
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 8888
-- günlük işlem tavanı (8): 4663
+- ders: 8924
+- günlük işlem tavanı (8): 4739
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 1895
-- gösterge aileleri aynı yönde değil: 1726
+- gösterge aileleri aynı yönde değil: 1730
 - aynı yönde pozisyon tavanı: 1426
-- bu coinde zaten pozisyon var: 793
+- bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
 - puan +0.123 eşiğin (0.25) altında: 132
@@ -189,13 +189,13 @@ En az işe yarayan okumalar: trix_1H ×0.542, tetik_geri_test_1H ×0.587, psar_1
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 8888
-- günlük işlem tavanı (8): 4663
+- ders: 8924
+- günlük işlem tavanı (8): 4739
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 1895
-- gösterge aileleri aynı yönde değil: 1726
+- gösterge aileleri aynı yönde değil: 1730
 - aynı yönde pozisyon tavanı: 1426
-- bu coinde zaten pozisyon var: 793
+- bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
 - puan +0.123 eşiğin (0.25) altında: 132
