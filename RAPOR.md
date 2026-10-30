@@ -11,10 +11,10 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 2316 | %48.8 | -0.23 | -533.74 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
 | polat_girilmeyen | 2303 | %48.8 | -0.229 | -528.38 |
-| rastgele | 2310 | %43.7 | -0.343 | -791.51 |
-| trend_naif | 2325 | %43.7 | -0.336 | -781.38 |
+| rastgele | 2318 | %43.6 | -0.346 | -800.88 |
+| trend_naif | 2326 | %43.7 | -0.336 | -782.39 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-5.36
+Polat özsermaye: %-4.71 · BTC al-tut: %-5.65
 
 ## Öğrenme (walk-forward)
 
@@ -61,16 +61,16 @@ En az işe yarayan okumalar: momentum_1H ×0.396, obv_egim_1H ×0.436, cci_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 10865
-- günlük işlem tavanı (8): 6180
+- ders: 10902
+- günlük işlem tavanı (8): 6252
 - üst üste 3 zarar: 1951
-- gösterge aileleri aynı yönde değil: 1677
+- gösterge aileleri aynı yönde değil: 1681
 - büyük zaman dilimi trendi ters: 1578
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 659
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 138
 - puan -0.221 eşiğin (0.25) altında: 109
-- puan -0.141 eşiğin (0.25) altında: 105
+- puan -0.141 eşiğin (0.25) altında: 106
 
 **Hata sınıfları**
 
@@ -127,10 +127,10 @@ En az işe yarayan okumalar: momentum_1H ×0.396, obv_egim_1H ×0.436, cci_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 12212
-- günlük işlem tavanı (8): 6815
+- ders: 12249
+- günlük işlem tavanı (8): 6887
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 2186
+- gösterge aileleri aynı yönde değil: 2190
 - büyük zaman dilimi trendi ters: 1932
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
@@ -194,10 +194,10 @@ En az işe yarayan okumalar: momentum_1H ×0.396, obv_egim_1H ×0.436, cci_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 12212
-- günlük işlem tavanı (8): 6815
+- ders: 12249
+- günlük işlem tavanı (8): 6887
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 2186
+- gösterge aileleri aynı yönde değil: 2190
 - büyük zaman dilimi trendi ters: 1932
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
