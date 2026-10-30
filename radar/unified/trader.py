@@ -256,6 +256,11 @@ class UnifiedTrader:
                 opened.append({"sym": d.symbol, "durum": res.status.value, "dolan": res.filled_qty, "fiyat": res.avg_price,
                                "operasyonel": operational})
         self.last_risk = risk_log[-20:]
+        op_neden: dict[str, int] = {}                          # YETKI_GOLGE adaylarının uygunsuzluk sebepleri (tanılama)
+        for d in decisions:
+            if d.decision is Decision.SHADOW and set(d.reason_codes or ()) == {"YETKI_GOLGE"}:
+                for n in (((d.plan or {}).get("operasyonel") or {}).get("neden") or ["uygun"]):
+                    op_neden[n] = op_neden.get(n, 0) + 1
         # 6) portföy
         pf = self.portfolio(now, prices)
         self._history(now, pf.equity, (raw_by_inst.get("BTC-USDT-SWAP") or {}).get("price")
@@ -272,7 +277,8 @@ class UnifiedTrader:
                    "gun_kayip_yuzde": round(pf.day_loss_pct, 2), "kayip_serisi": pf.loss_streak,
                    "acik": len(self.adapter.positions), "acilan": opened, "cikislar": exits_done,
                    "dolumlar": len(fills), "risk": self.last_risk, "kararlar": len(decisions),
-                   "hatalar": self.engine.errors[-5:], "kurtarma": self.recovery_notes}
+                   "hatalar": self.engine.errors[-5:], "kurtarma": self.recovery_notes,
+                   "operasyonel_nedenler": op_neden}
         self.engine.errors.clear()
         self.recovery_notes = []
         self._write_status(summary)
