@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 1825 | %49.6 | -0.193 | -352.3 |
+| polat_tum_sinyaller | 1827 | %49.6 | -0.193 | -352.67 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 1812 | %49.6 | -0.191 | -346.93 |
-| rastgele | 1827 | %43.7 | -0.329 | -601.1 |
+| polat_girilmeyen | 1814 | %49.6 | -0.191 | -347.31 |
+| rastgele | 1831 | %43.7 | -0.328 | -601.22 |
 | trend_naif | 1849 | %41.4 | -0.359 | -664.47 |
 
-Polat özsermaye: %-4.65 · BTC al-tut: %-3.06
+Polat özsermaye: %-4.65 · BTC al-tut: %-3.08
 
 ## Öğrenme (walk-forward)
 
@@ -67,12 +67,12 @@ En az işe yarayan okumalar: btc_1H ×0.466, obv_egim_1H ×0.521, ultimate_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 6821
+- ders: 6834
 - günlük işlem tavanı (8): 4028
 - üst üste 3 zarar: 1951
 - büyük zaman dilimi trendi ters: 1521
 - aynı yönde pozisyon tavanı: 1426
-- gösterge aileleri aynı yönde değil: 1147
+- gösterge aileleri aynı yönde değil: 1148
 - bu coinde zaten pozisyon var: 580
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 138
 - puan +0.141 eşiğin (0.25) altında: 74
@@ -130,11 +130,11 @@ En az işe yarayan okumalar: btc_1H ×0.466, obv_egim_1H ×0.521, ultimate_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 8168
+- ders: 8181
 - günlük işlem tavanı (8): 4663
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 1875
-- gösterge aileleri aynı yönde değil: 1656
+- gösterge aileleri aynı yönde değil: 1657
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 715
 - emir defteri doğrulanmadı: 593
@@ -194,11 +194,11 @@ En az işe yarayan okumalar: btc_1H ×0.466, obv_egim_1H ×0.521, ultimate_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 8168
+- ders: 8181
 - günlük işlem tavanı (8): 4663
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 1875
-- gösterge aileleri aynı yönde değil: 1656
+- gösterge aileleri aynı yönde değil: 1657
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 715
 - emir defteri doğrulanmadı: 593
