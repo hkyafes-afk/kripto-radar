@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.195R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.193R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 1830 | %49.6 | -0.195 | -355.96 |
+| polat_tum_sinyaller | 1837 | %49.7 | -0.193 | -353.65 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 1817 | %49.5 | -0.193 | -350.6 |
-| rastgele | 1833 | %43.8 | -0.328 | -601.84 |
-| trend_naif | 1851 | %41.3 | -0.36 | -666.61 |
+| polat_girilmeyen | 1824 | %49.7 | -0.191 | -348.29 |
+| rastgele | 1839 | %43.9 | -0.326 | -600.12 |
+| trend_naif | 1861 | %41.6 | -0.356 | -662.67 |
 
-Polat özsermaye: %-4.65 · BTC al-tut: %-3.09
+Polat özsermaye: %-4.65 · BTC al-tut: %-2.95
 
 ## Öğrenme (walk-forward)
 
@@ -67,7 +67,7 @@ En az işe yarayan okumalar: btc_1H ×0.466, obv_egim_1H ×0.521, ultimate_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 6870
+- ders: 6899
 - günlük işlem tavanı (8): 4028
 - üst üste 3 zarar: 1951
 - büyük zaman dilimi trendi ters: 1521
@@ -130,7 +130,7 @@ En az işe yarayan okumalar: btc_1H ×0.466, obv_egim_1H ×0.521, ultimate_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 8217
+- ders: 8246
 - günlük işlem tavanı (8): 4663
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 1875
@@ -139,7 +139,7 @@ En az işe yarayan okumalar: btc_1H ×0.466, obv_egim_1H ×0.521, ultimate_1H ×
 - bu coinde zaten pozisyon var: 715
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
-- puan +0.123 eşiğin (0.25) altında: 127
+- puan +0.123 eşiğin (0.25) altında: 128
 
 **Hata sınıfları**
 
@@ -194,7 +194,7 @@ En az işe yarayan okumalar: btc_1H ×0.466, obv_egim_1H ×0.521, ultimate_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 8217
+- ders: 8246
 - günlük işlem tavanı (8): 4663
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 1875
@@ -203,7 +203,7 @@ En az işe yarayan okumalar: btc_1H ×0.466, obv_egim_1H ×0.521, ultimate_1H ×
 - bu coinde zaten pozisyon var: 715
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
-- puan +0.123 eşiğin (0.25) altında: 127
+- puan +0.123 eşiğin (0.25) altında: 128
 
 **Hata sınıfları**
 
