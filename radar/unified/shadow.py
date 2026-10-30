@@ -67,4 +67,18 @@ class ShadowRunner:
                                     "ozet": d.explanation_tr.split("\n")[0]} for d in live[:8]],
                    "hatalar": self.engine.errors[-5:]}
         self.engine.errors.clear()
+        self._write_summary(summary)
         return summary
+
+    def _write_summary(self, summary: dict) -> None:
+        """Panel (birlesik.html) için son gölge turunun özeti: site/birlesik/ozet.json. Hata yutulur."""
+        try:
+            import json
+            root = self.journal.root
+            root.mkdir(parents=True, exist_ok=True)
+            tmp = root / "ozet.tmp"
+            tmp.write_text(json.dumps({**summary, "mod": "shadow"}, ensure_ascii=False, separators=(",", ":"),
+                                      default=str), encoding="utf-8")
+            tmp.replace(root / "ozet.json")
+        except OSError as e:
+            print("[birleşik gölge] özet yazılamadı:", e)

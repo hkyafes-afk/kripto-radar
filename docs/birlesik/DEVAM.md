@@ -58,10 +58,21 @@ Dal: `feat/unified-decision-engine` (PR 1 dalından). PR base: `feat/unified-tra
       (n ≥ 100 ve GA alt sınırı > 0) + testler  ✅ (commit edildi)
 - [x] Motor kancası: shadow/unified modda saatte bir `site/birlesik/etkinlik.json` + test
 - [x] Yarış: işlem başına çıktı (`race_islemler.csv`) + `python -m radar etkinlik` komutu (yarış/defter → etkinlik raporu)
-- [ ] Tam paket + push + PR (taban: feat/unified-risk-execution)
+- [x] Tam paket (262 test geçti) + push + PR #5 (https://github.com/hkyafes-afk/kripto-radar/pull/5, taban: feat/unified-risk-execution)
 - [ ] Karne düzeltmesi KULLANICI ONAYI bekliyor (gölge işlemleri karneye ekleme) — onaysız yapma
 
-### PR 5 — `feat/unified-dashboard`: panelde kararlar, kapsam, maliyet, risk, etkinlik (telefonda okunur)
+### PR 5 — `feat/unified-dashboard` (PR 4 dalından)
+
+- [x] `radar/templates/birlesik.html` (kararlar + filtre, Türkçe açıklama, maliyet dökümü, eksik veri, açık pozisyonlar,
+      risk kapısı, etkinlik tablosu, kapananlar; telefonda yatay kayma yok — Playwright ile 390 px kontrol edildi)
+- [x] `dashboard.write_site` paneli kopyalar; ana sayfada "👑 Baş Trader" bağlantısı; gölge modu `ozet.json` yazar + test
+- [x] Tam paket (265 test geçti) + push + PR #6 (taban: feat/unified-effectiveness)
+
+### Hepsi bittikten sonra (kullanıcıya bırakılanlar)
+
+- PR'ları sırayla incele/merge et: #2 → #3 → #4 → #5 → #6. Merge sonrası `karar_modu: shadow` ile en az 2 hafta gölge,
+  sonra kullanıcı onayıyla `unified` (ayrı paper defteri; legacy etkilenmez).
+- Karne düzeltmesi kullanıcı onayı bekliyor.
 
 ## Sıradaki adım
 
