@@ -635,7 +635,8 @@ class CostEstimate:
     uncertainty_buffer_bp: float
     total_cost_bp: float
     gross_edge_bp: float | None
-    net_edge_bp: float | None
+    net_edge_bp: float | None                 # brüt − maliyetler − belirsizlik tamponu (GOREV formülü)
+    edge_after_costs_bp: float | None = None  # brüt − maliyetler (tampon hariç); ≤ 0 → REJECT
     fill_ratio: float = 1.0
     unfilled_ratio: float = 0.0
     confidence: float = 1.0

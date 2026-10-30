@@ -234,3 +234,24 @@ bildirim:
 dashboard:
   # Boş bırakırsan otomatik: https://KULLANICI.github.io/REPO/
   url: ""
+
+# ── BİRLEŞİK BAŞ TRADER (geliştirme, docs/birlesik/PLAN.md) ──
+# Tek merkezden karar veren yeni yapı. Bu blok yalnız EKLENDİ; yukarıdaki hiçbir ayar değişmedi.
+# Varsayılanlar güvenli: legacy ajan sistemi çalışmaya devam eder, yeni motor canlı akışa bağlanmaz.
+birlesik:
+  karar_modu: legacy          # legacy | shadow | unified  (shadow/unified, PR 2–3 tamamlanıp onaylanmadan açılmamalı)
+  yurutme_modu: paper         # yalnız paper izinli; okx_demo / okx_live istense bile reddedilir (gerçek emir yok)
+  kapsam:
+    min_oran: 0.8             # beklenen faktörlerin en az bu oranı kullanılabilir olmalı (zorunlular her zaman şart)
+  maliyet:                    # radar/unified/costs.py — ücretler yukarıdaki `ucret` bloğundan okunur
+    belirsizlik_tamponu_bp: {micro: 30, intraday: 20, swing: 10, position: 10, carry: 10}   # kısa ufukta daha sıkı
+    eksik_veri_tampon_bp: 5   # eksik her maliyet girdisi tampona eklenir
+    min_guven: 0.6            # maliyet hesabı güveni bunun altındaysa işlem en iyi ihtimalle gölgede ölçülür
+    stop_olasiligi: 0.5       # beklenen stop kayması = olasılık × stop'ta kayma
+    kacirma_tamponu_bp: 5     # limit / IOC girişte kaçırma ve kısmi dolum tamponu
+    kismi_dolum_shadow_orani: 0.5
+    varsayilan_spread_bp: {micro: 4, intraday: 6, swing: 8, position: 8, carry: 8}      # spread bilinmiyorsa
+    varsayilan_kayma_bp: {micro: 5, intraday: 8, swing: 10, position: 10, carry: 10}    # emir defteri yoksa
+    varsayilan_tutma_saat: {micro: 0.25, intraday: 6, swing: 72, position: 336, carry: 720}
+    varsayilan_funding_yillik_yuzde: 11   # funding bilinmiyorsa (long öder)
+    funding_gelir_kredisi: false          # yönlü işlemde funding gelirini avantaja sayma
