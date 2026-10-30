@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.212R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.21R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 1924 | %48.8 | -0.212 | -407.54 |
+| polat_tum_sinyaller | 1931 | %48.9 | -0.21 | -405.66 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 1911 | %48.8 | -0.21 | -402.18 |
-| rastgele | 1923 | %43.4 | -0.339 | -652.04 |
-| trend_naif | 1929 | %41.5 | -0.361 | -696.3 |
+| polat_girilmeyen | 1918 | %48.9 | -0.209 | -400.3 |
+| rastgele | 1927 | %43.5 | -0.337 | -649.39 |
+| trend_naif | 1937 | %41.7 | -0.358 | -693.92 |
 
-Polat özsermaye: %-4.56 · BTC al-tut: %-3.69
+Polat özsermaye: %-4.75 · BTC al-tut: %-3.56
 
 ## Öğrenme (walk-forward)
 
@@ -25,14 +25,13 @@ En az işe yarayan okumalar: trix_1H ×0.557, psar_1H ×0.567, tetik_geri_test_1
 
 ## Son 1 gün
 
-İşlem 11 · kazanma %45.5 · ort. -0.435R · toplam -4.78R · net -2321.2$ · maks. düşüş -2321.2$ · kâr faktörü 0.32
+İşlem 10 · kazanma %50.0 · ort. -0.356R · toplam -3.56R · net -1729.91$ · maks. düşüş -1729.91$ · kâr faktörü 0.39
 
 **Kuruluma göre**
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
 | geri_cekilme+geri_test_1H+macd_kesisim_15m | 1 | %100.0 | 0.201 | 96.95 |
-| geri_test_1H+formasyon_cift_tepe_1H+obv_kirilim_15m | 1 | %0.0 | -1.223 | -591.29 |
 | obv_kirilim_15m | 1 | %100.0 | 0.619 | 300.12 |
 | supurme+yapi_bozulmasi_15m+uyusmazlik_donus_mfi | 1 | %100.0 | 0.347 | 167.6 |
 | trend_cizgisi_kirilim_15m+geri_test_1H+formasyon_cift_tepe_1H | 1 | %0.0 | -1.311 | -621.76 |
@@ -46,7 +45,7 @@ En az işe yarayan okumalar: trix_1H ×0.557, psar_1H ×0.567, tetik_geri_test_1
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
-| stop | 11 | %45.5 | -0.435 | -2321.2 |
+| stop | 10 | %50.0 | -0.356 | -1729.91 |
 
 **Seansa göre**
 
@@ -54,7 +53,7 @@ En az işe yarayan okumalar: trix_1H ×0.557, psar_1H ×0.567, tetik_geri_test_1
 |---|---|---|---|---|
 | ABD | 4 | %50.0 | -0.446 | -862.24 |
 | Asya | 5 | %60.0 | -0.093 | -245.91 |
-| Avrupa | 2 | %0.0 | -1.267 | -1213.05 |
+| Avrupa | 1 | %0.0 | -1.311 | -621.76 |
 
 **Teyit sayısına göre**
 
@@ -62,20 +61,20 @@ En az işe yarayan okumalar: trix_1H ×0.557, psar_1H ×0.567, tetik_geri_test_1
 |---|---|---|---|---|
 | 7 | 6 | %83.3 | 0.168 | 482.97 |
 | 8 | 3 | %0.0 | -1.086 | -1591.12 |
-| 9 | 2 | %0.0 | -1.267 | -1213.05 |
+| 9 | 1 | %0.0 | -1.311 | -621.76 |
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 7290
+- ders: 7296
 - günlük işlem tavanı (8): 4028
 - üst üste 3 zarar: 1951
 - büyük zaman dilimi trendi ters: 1541
 - aynı yönde pozisyon tavanı: 1426
-- gösterge aileleri aynı yönde değil: 1193
-- bu coinde zaten pozisyon var: 586
+- gösterge aileleri aynı yönde değil: 1198
+- bu coinde zaten pozisyon var: 591
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 138
-- puan -0.141 eşiğin (0.25) altında: 77
-- puan -0.221 eşiğin (0.25) altında: 77
+- puan -0.141 eşiğin (0.25) altında: 78
+- puan -0.169 eşiğin (0.25) altında: 78
 
 **Hata sınıfları**
 
@@ -129,13 +128,13 @@ En az işe yarayan okumalar: trix_1H ×0.557, psar_1H ×0.567, tetik_geri_test_1
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 8637
+- ders: 8643
 - günlük işlem tavanı (8): 4663
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 1895
-- gösterge aileleri aynı yönde değil: 1702
+- gösterge aileleri aynı yönde değil: 1707
 - aynı yönde pozisyon tavanı: 1426
-- bu coinde zaten pozisyon var: 721
+- bu coinde zaten pozisyon var: 726
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
 - puan +0.123 eşiğin (0.25) altında: 130
@@ -193,13 +192,13 @@ En az işe yarayan okumalar: trix_1H ×0.557, psar_1H ×0.567, tetik_geri_test_1
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 8637
+- ders: 8643
 - günlük işlem tavanı (8): 4663
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 1895
-- gösterge aileleri aynı yönde değil: 1702
+- gösterge aileleri aynı yönde değil: 1707
 - aynı yönde pozisyon tavanı: 1426
-- bu coinde zaten pozisyon var: 721
+- bu coinde zaten pozisyon var: 726
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
 - puan +0.123 eşiğin (0.25) altında: 130
