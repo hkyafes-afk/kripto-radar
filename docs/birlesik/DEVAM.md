@@ -66,11 +66,11 @@ Dal: `feat/unified-decision-engine` (PR 1 dalından). PR base: `feat/unified-tra
 - [x] `radar/templates/birlesik.html` (kararlar + filtre, Türkçe açıklama, maliyet dökümü, eksik veri, açık pozisyonlar,
       risk kapısı, etkinlik tablosu, kapananlar; telefonda yatay kayma yok — Playwright ile 390 px kontrol edildi)
 - [x] `dashboard.write_site` paneli kopyalar; ana sayfada "👑 Baş Trader" bağlantısı; gölge modu `ozet.json` yazar + test
-- [ ] Tam paket + push + PR (taban: feat/unified-effectiveness)
+- [x] Tam paket (265 test geçti) + push + PR #6 (taban: feat/unified-effectiveness)
 
 ### Hepsi bittikten sonra (kullanıcıya bırakılanlar)
 
-- PR'ları sırayla incele/merge et: #2 → #3 → #4 → #5 → PR5. Merge sonrası `karar_modu: shadow` ile en az 2 hafta gölge,
+- PR'ları sırayla incele/merge et: #2 → #3 → #4 → #5 → #6. Merge sonrası `karar_modu: shadow` ile en az 2 hafta gölge,
   sonra kullanıcı onayıyla `unified` (ayrı paper defteri; legacy etkilenmez).
 - Karne düzeltmesi kullanıcı onayı bekliyor.
 
