@@ -219,7 +219,18 @@ class UnifiedDecisionEngine:
             evidence_for=ev_for, evidence_against=ev_against, missing_factors=missing, stale_factors=stale,
             reason_codes=codes, explanation_tr=self._explain(ctx, o, cost, decision, codes, strategies, ev_for,
                                                               ev_against, missing),
-            ts_ms=now, idempotency_key=o.idempotency_key, strategies=strategies)
+            ts_ms=now, idempotency_key=o.idempotency_key, strategies=strategies, plan=self._plan(ctx, o))
+
+    @staticmethod
+    def _plan(ctx: MarketContext, o: Opportunity) -> dict:
+        lg_ = o.legacy or {}
+        c = ctx.candles.get(o.timeframe) if ctx.candles else None
+        atr = lg_.get("atr") if isinstance(lg_.get("atr"), (int, float)) else (c.atr if c else None)
+        return {"inst": o.inst, "horizon": o.horizon.value, "timeframe": o.timeframe, "entry_type": o.entry_type.value,
+                "limit_price": o.limit_price, "max_holding_hours": o.max_holding_hours, "atr": atr,
+                "exit_rule": dict(lg_["exit"]) if isinstance(lg_.get("exit"), dict) else None,
+                "pp": dict(lg_["pp"]) if isinstance(lg_.get("pp"), dict) else None,
+                "bar_ts_ms": o.bar_ts_ms, "coin_class": ctx.coin_class.value if ctx.coin_class else None}
 
     def _explain(self, ctx, o, cost, decision, codes, strategies, ev_for, ev_against, missing) -> str:
         side = "LONG" if o.side is Side.LONG else "SHORT"

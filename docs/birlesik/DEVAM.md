@@ -34,13 +34,35 @@ Dal: `feat/unified-decision-engine` (PR 1 dalından). PR base: `feat/unified-tra
 - [x] `radar/unified/decision.py` UnifiedDecisionEngine (birleştirme, kapsam kapısı, maliyet kapısı, çelişki çözümü, Türkçe açıklama) + testler
 - [x] `radar/unified/journal.py` karar günlüğü (günlük döndürülen jsonl, değişmeyen karar tekrar yazılmaz, 14 gün budama) + `radar/unified/shadow.py` ShadowRunner (5 dk aralık) + testler (tests/test_unified_journal.py)
 - [x] Motor kancası: `Engine._unified_shadow` (`scan_live_daily` sonunda; yalnız shadow modda; site/birlesik/ altına yazar; hata yutulur) + test
-- [ ] Tam paket + push + PR
+- [x] Tam paket (216 test geçti) + push + PR #3 (https://github.com/hkyafes-afk/kripto-radar/pull/3, taban: feat/unified-trader-foundation)
 
-### PR 3–5: plan bölüm 4, 9, 11.
+### PR 3 — `feat/unified-risk-execution` (PR 2 dalından)
+
+- [x] `radar/unified/risk.py` RiskGate (devre kesiciler, coin/tekrar, toplam/yön/küme sınırları, nominal tavanı, en düşük
+      yeterli kaldıraç, likidasyon tamponu, lot yuvarlama, kayıp serisi) + `tests/test_unified_risk.py`
+- [x] `radar/unified/execution/` base (Quote, sözleşme), paper (durum makinesi, reduce-only, idempotency, olay günlüğü,
+      kalıcılık, uzlaştırma, funding), okx_demo (stub → ExecutionModeError) + `tests/test_unified_paper.py`
+- [x] `radar/unified/exits.py` (stop, kısmi kâr, başabaş, kâr kilidi, iz stop, hedef, kural, zaman, rejim, veri sorunu)
+- [x] `radar/unified/trader.py` UnifiedTrader + motor kancası `unified` modu (AYRI paper defteri `site/birlesik/yurutme.json`;
+      legacy defter/yöneticiler etkilenmez) + `tests/test_unified_trader.py`
+- [x] `DecisionResult.plan` (inst, giriş tipi, çıkış kuralı, ATR) — decision.py doldurur
+- [x] config `birlesik.risk/cikis/paper` yeni anahtarlar (belgeli; mevcut değer değişmedi)
+- [ ] Tam paket + push + PR (taban: feat/unified-decision-engine)
+- Ertelendi (bilinçli): carry stratejisinin birleşik sürümü (legacy harvest çalışmaya devam eder); legacy deftere yeni
+  alan migrasyonu gerekmedi çünkü birleşik pozisyonlar ayrı defterde.
+
+### PR 4 — `feat/unified-effectiveness` (PR 1 dalından; plan bölüm 11)
+
+- [ ] `radar/unified/effectiveness.py` EffectivenessAuditor: strateji/rejim/ufuk bazında EffectivenessSnapshot (bootstrap
+      GA, yoğunlaşma, maliyet payı), legacy–birleşik ve gölge–paper karşılaştırması, deneme sayısı kaydı, terfi ölçütü
+      (n ≥ 100 ve GA alt sınırı > 0) + testler
+- [ ] Karne düzeltmesi KULLANICI ONAYI bekliyor (gölge işlemleri karneye ekleme) — onaysız yapma
+
+### PR 5 — `feat/unified-dashboard`: panelde kararlar, kapsam, maliyet, risk, etkinlik (telefonda okunur)
 
 ## Sıradaki adım
 
-PR 2 listesinde işaretlenmemiş ilk madde.
+İşaretlenmemiş ilk madde (yukarıdan aşağı).
 
 ## Bağlam (kaybolmasın)
 

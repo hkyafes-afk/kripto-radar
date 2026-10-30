@@ -109,6 +109,7 @@ class Engine:
         self.spot_vol: dict[str, float] = {}
         self.prices: dict[str, float] = {}
         self.meta: dict[str, dict] = {}
+        self.unified_closed_bars: dict[str, dict] = {}   # birleşik Baş Trader: son tamamlanmış günlük bağlamlar
         self.funding: dict[str, dict] = {}
         self.oi_chg: dict[str, float] = {}
         self.oi_src = "-"
@@ -609,6 +610,8 @@ class Engine:
                     continue
                 c["peers"] = self._peers(c["inst"])
                 self._queue_rule_exits(c)
+                if tf == "1D":                            # birleşik mod kural çıkışları tamamlanmış günlük mumla
+                    self.unified_closed_bars[c["inst"]] = c
                 if c.get("suspect"):
                     continue
                 for idea in team.ideas_for(c, self.desk.mgrs, self.cfg):
@@ -738,23 +741,43 @@ class Engine:
         self._unified_shadow(ctxs)
 
     def _unified_shadow(self, ctxs: list[dict]):
-        """Birleşik Baş Trader gölge kancası (birlesik.karar_modu: shadow). Yalnız karar günlüğü yazar; defter, emir ve
-        legacy akışına dokunmaz. Her hata yutulur — legacy işlemler hiçbir koşulda etkilenmez."""
+        """Birleşik Baş Trader kancası. `birlesik.karar_modu`:
+          legacy  → hiçbir şey yapmaz (varsayılan)
+          shadow  → yalnız karar günlüğü yazar
+          unified → ayrı bir PAPER defterinde (site/birlesik/yurutme.json) birleşik motorla işlem açar/yönetir.
+        Legacy defter, emirler ve legacy yöneticiler hiçbir modda etkilenmez. Her hata yutulur."""
         try:
             from .unified.flags import decision_mode
             from .unified.models import DecisionMode
-            if decision_mode(self.cfg) is not DecisionMode.SHADOW:
+            mode = decision_mode(self.cfg)
+            if mode is DecisionMode.LEGACY:
                 return
-            runner = getattr(self, "_shadow_runner", None)
-            if runner is None:
-                from .unified.shadow import ShadowRunner
-                runner = self._shadow_runner = ShadowRunner(self.cfg, self.site / "birlesik")
-            out = runner.run(ctxs, meta=self.meta)
-            if out:
-                self.unified_shadow = out
-                print(f"[birleşik gölge] {out['coin']} coin · {out['karar']} · {out['yeni_satir']} yeni satır")
+            if mode is DecisionMode.SHADOW:
+                runner = getattr(self, "_shadow_runner", None)
+                if runner is None:
+                    from .unified.shadow import ShadowRunner
+                    runner = self._shadow_runner = ShadowRunner(self.cfg, self.site / "birlesik")
+                out = runner.run(ctxs, meta=self.meta)
+                if out:
+                    self.unified_shadow = out
+                    print(f"[birleşik gölge] {out['coin']} coin · {out['karar']} · {out['yeni_satir']} yeni satır")
+                return
+            from .unified.trader import UnifiedTrader, quote_from_book
+            tr = getattr(self, "_unified_trader", None)
+            if tr is None:
+                tr = self._unified_trader = UnifiedTrader(self.cfg, self.site / "birlesik")
+            now = time.time()
+            insts = {c.get("inst") for c in ctxs} | set(tr.adapter.positions) | \
+                {o["intent"]["inst"] for o in tr.adapter.open_orders()}
+            book = getattr(self, "book", {}) or {}
+            quotes = {i: q for i in insts if i and (q := quote_from_book(i, book.get(i), now))}
+            out = tr.step(ctxs, quotes, meta=self.meta, closed_bars=getattr(self, "unified_closed_bars", {}),
+                          global_issue=getattr(self, "halt", None))
+            self.unified_shadow = out
+            print(f"[birleşik paper] bakiye {out['bakiye']} · açık {out['acik']} · açılan {len(out['acilan'])} · "
+                  f"çıkış {len(out['cikislar'])}")
         except Exception as e:  # noqa: BLE001
-            print("[birleşik gölge] hata:", type(e).__name__, e)
+            print("[birleşik] hata:", type(e).__name__, e)
 
     def _peers(self, inst: str) -> dict:
         """Baş Trader bütün kulvarları izler: diğer yöneticilerin bu coindeki gerçek pozisyonları."""
