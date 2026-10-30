@@ -11,10 +11,10 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 1763 | %50.0 | -0.187 | -329.51 |
 | polat_girilen | 11 | %63.6 | -0.288 | -3.17 |
 | polat_girilmeyen | 1752 | %49.9 | -0.186 | -326.34 |
-| rastgele | 1769 | %44.2 | -0.321 | -567.38 |
+| rastgele | 1770 | %44.2 | -0.32 | -566.97 |
 | trend_naif | 1766 | %42.3 | -0.343 | -606.53 |
 
-Polat özsermaye: %-4.45 · BTC al-tut: %-4.28
+Polat özsermaye: %-4.23 · BTC al-tut: %-4.5
 
 ## Öğrenme (walk-forward)
 
@@ -66,12 +66,12 @@ En az işe yarayan okumalar: obv_egim_1H ×0.451, momentum_1H ×0.493, ultimate_
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 6514
+- ders: 6533
 - günlük işlem tavanı (8): 4028
 - üst üste 3 zarar: 1951
 - aynı yönde pozisyon tavanı: 1426
-- büyük zaman dilimi trendi ters: 1391
-- gösterge aileleri aynı yönde değil: 1133
+- büyük zaman dilimi trendi ters: 1392
+- gösterge aileleri aynı yönde değil: 1134
 - bu coinde zaten pozisyon var: 580
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 138
 - puan -0.141 eşiğin (0.25) altında: 72
@@ -128,11 +128,11 @@ En az işe yarayan okumalar: obv_egim_1H ×0.451, momentum_1H ×0.493, ultimate_
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 7861
+- ders: 7880
 - günlük işlem tavanı (8): 4663
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 1745
-- gösterge aileleri aynı yönde değil: 1642
+- büyük zaman dilimi trendi ters: 1746
+- gösterge aileleri aynı yönde değil: 1643
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 715
 - emir defteri doğrulanmadı: 593
@@ -191,11 +191,11 @@ En az işe yarayan okumalar: obv_egim_1H ×0.451, momentum_1H ×0.493, ultimate_
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 7861
+- ders: 7880
 - günlük işlem tavanı (8): 4663
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 1745
-- gösterge aileleri aynı yönde değil: 1642
+- büyük zaman dilimi trendi ters: 1746
+- gösterge aileleri aynı yönde değil: 1643
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 715
 - emir defteri doğrulanmadı: 593
