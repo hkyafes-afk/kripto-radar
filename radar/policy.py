@@ -42,7 +42,7 @@ REJIM_TEXT = {"boga": "boğa", "ayi": "ayı", "yatay": "yatay"}
 
 DEFAULTS = {
     "aktif": True,
-    "max_atr_yuzde": 5.0,          # günlük ATR / fiyat (%) üstü → gölge
+    "max_atr_yuzde": 12.5,          # günlük ATR / fiyat (%) üstü → gölge
     "max_stop_yuzde": 15.0,        # giriş–stop uzaklığı fiyatın bu %'sinden fazlaysa → gölge (v10.1: geniş stop zararlı)
     "kalabalik_long": 30.0,        # funding yıllık % üstünde long → gölge
     "kalabalik_short": -20.0,      # funding yıllık % altında short → gölge
