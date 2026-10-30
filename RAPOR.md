@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.241R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.24R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 2450 | %48.6 | -0.241 | -589.91 |
+| polat_tum_sinyaller | 2453 | %48.6 | -0.24 | -588.57 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 2437 | %48.5 | -0.24 | -584.55 |
-| rastgele | 2438 | %43.9 | -0.342 | -834.65 |
+| polat_girilmeyen | 2440 | %48.6 | -0.239 | -583.21 |
+| rastgele | 2441 | %44.0 | -0.342 | -833.73 |
 | trend_naif | 2469 | %43.6 | -0.342 | -845.15 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-5.06
+Polat özsermaye: %-4.71 · BTC al-tut: %-5.03
 
 ## Öğrenme (walk-forward)
 
@@ -61,10 +61,10 @@ En az işe yarayan okumalar: momentum_1H ×0.493, obv_egim_1H ×0.51, psar_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 12095
+- ders: 12101
 - günlük işlem tavanı (8): 6532
 - üst üste 3 zarar: 1951
-- gösterge aileleri aynı yönde değil: 1804
+- gösterge aileleri aynı yönde değil: 1806
 - büyük zaman dilimi trendi ters: 1585
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 659
@@ -127,10 +127,10 @@ En az işe yarayan okumalar: momentum_1H ×0.493, obv_egim_1H ×0.51, psar_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 13442
+- ders: 13448
 - günlük işlem tavanı (8): 7167
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 2313
+- gösterge aileleri aynı yönde değil: 2315
 - büyük zaman dilimi trendi ters: 1939
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
@@ -194,10 +194,10 @@ En az işe yarayan okumalar: momentum_1H ×0.493, obv_egim_1H ×0.51, psar_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 13442
+- ders: 13448
 - günlük işlem tavanı (8): 7167
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 2313
+- gösterge aileleri aynı yönde değil: 2315
 - büyük zaman dilimi trendi ters: 1939
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
