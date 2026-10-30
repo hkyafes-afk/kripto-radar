@@ -4,15 +4,15 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.239R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.24R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 2446 | %48.7 | -0.239 | -584.6 |
+| polat_tum_sinyaller | 2448 | %48.6 | -0.24 | -587.48 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 2433 | %48.6 | -0.238 | -579.24 |
-| rastgele | 2435 | %43.9 | -0.341 | -830.86 |
-| trend_naif | 2463 | %43.7 | -0.34 | -837.53 |
+| polat_girilmeyen | 2435 | %48.6 | -0.239 | -582.12 |
+| rastgele | 2436 | %43.9 | -0.342 | -832.32 |
+| trend_naif | 2466 | %43.6 | -0.341 | -841.58 |
 
 Polat özsermaye: %-4.71 · BTC al-tut: %-5.02
 
@@ -61,10 +61,10 @@ En az işe yarayan okumalar: momentum_1H ×0.493, obv_egim_1H ×0.51, psar_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 12072
+- ders: 12083
 - günlük işlem tavanı (8): 6532
 - üst üste 3 zarar: 1951
-- gösterge aileleri aynı yönde değil: 1802
+- gösterge aileleri aynı yönde değil: 1804
 - büyük zaman dilimi trendi ters: 1585
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 659
@@ -127,10 +127,10 @@ En az işe yarayan okumalar: momentum_1H ×0.493, obv_egim_1H ×0.51, psar_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 13419
+- ders: 13430
 - günlük işlem tavanı (8): 7167
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 2311
+- gösterge aileleri aynı yönde değil: 2313
 - büyük zaman dilimi trendi ters: 1939
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
@@ -194,10 +194,10 @@ En az işe yarayan okumalar: momentum_1H ×0.493, obv_egim_1H ×0.51, psar_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 13419
+- ders: 13430
 - günlük işlem tavanı (8): 7167
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 2311
+- gösterge aileleri aynı yönde değil: 2313
 - büyük zaman dilimi trendi ters: 1939
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
