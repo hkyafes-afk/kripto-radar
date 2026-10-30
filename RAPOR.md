@@ -11,10 +11,10 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 1862 | %49.6 | -0.196 | -364.06 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
 | polat_girilmeyen | 1849 | %49.5 | -0.194 | -358.7 |
-| rastgele | 1863 | %43.8 | -0.329 | -612.27 |
-| trend_naif | 1884 | %41.4 | -0.361 | -679.42 |
+| rastgele | 1864 | %43.8 | -0.328 | -611.89 |
+| trend_naif | 1885 | %41.4 | -0.36 | -679.16 |
 
-Polat özsermaye: %-4.65 · BTC al-tut: %-3.05
+Polat özsermaye: %-4.65 · BTC al-tut: %-2.95
 
 ## Öğrenme (walk-forward)
 
@@ -67,7 +67,7 @@ En az işe yarayan okumalar: psar_1H ×0.537, tetik_geri_test_1H ×0.564, ultima
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 6994
+- ders: 7009
 - günlük işlem tavanı (8): 4028
 - üst üste 3 zarar: 1951
 - büyük zaman dilimi trendi ters: 1534
@@ -75,8 +75,8 @@ En az işe yarayan okumalar: psar_1H ×0.537, tetik_geri_test_1H ×0.564, ultima
 - gösterge aileleri aynı yönde değil: 1152
 - bu coinde zaten pozisyon var: 580
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 138
+- puan +0.141 eşiğin (0.25) altında: 75
 - puan -0.141 eşiğin (0.25) altında: 75
-- puan +0.141 eşiğin (0.25) altında: 74
 
 **Hata sınıfları**
 
@@ -130,7 +130,7 @@ En az işe yarayan okumalar: psar_1H ×0.537, tetik_geri_test_1H ×0.564, ultima
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 8341
+- ders: 8356
 - günlük işlem tavanı (8): 4663
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 1888
@@ -194,7 +194,7 @@ En az işe yarayan okumalar: psar_1H ×0.537, tetik_geri_test_1H ×0.564, ultima
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 8341
+- ders: 8356
 - günlük işlem tavanı (8): 4663
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 1888
