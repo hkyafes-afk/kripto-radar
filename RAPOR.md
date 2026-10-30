@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.223R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.224R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 2248 | %49.0 | -0.223 | -501.78 |
+| polat_tum_sinyaller | 2249 | %49.0 | -0.224 | -502.93 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 2235 | %48.9 | -0.222 | -496.41 |
-| rastgele | 2243 | %43.8 | -0.338 | -757.14 |
+| polat_girilmeyen | 2236 | %48.9 | -0.223 | -497.56 |
+| rastgele | 2244 | %43.8 | -0.338 | -758.29 |
 | trend_naif | 2266 | %43.1 | -0.343 | -777.33 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-4.4
+Polat özsermaye: %-4.71 · BTC al-tut: %-4.37
 
 ## Öğrenme (walk-forward)
 
@@ -63,7 +63,7 @@ En az işe yarayan okumalar: btc_1H ×0.35, momentum_1H ×0.473, obv_egim_1H ×0
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 10213
+- ders: 10236
 - günlük işlem tavanı (8): 5892
 - üst üste 3 zarar: 1951
 - gösterge aileleri aynı yönde değil: 1594
@@ -129,7 +129,7 @@ En az işe yarayan okumalar: btc_1H ×0.35, momentum_1H ×0.473, obv_egim_1H ×0
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 11560
+- ders: 11583
 - günlük işlem tavanı (8): 6527
 - üst üste 3 zarar: 2345
 - gösterge aileleri aynı yönde değil: 2103
@@ -138,7 +138,7 @@ En az işe yarayan okumalar: btc_1H ×0.35, momentum_1H ×0.473, obv_egim_1H ×0
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
-- puan +0.123 eşiğin (0.25) altında: 151
+- puan +0.123 eşiğin (0.25) altında: 153
 
 **Hata sınıfları**
 
@@ -196,7 +196,7 @@ En az işe yarayan okumalar: btc_1H ×0.35, momentum_1H ×0.473, obv_egim_1H ×0
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 11560
+- ders: 11583
 - günlük işlem tavanı (8): 6527
 - üst üste 3 zarar: 2345
 - gösterge aileleri aynı yönde değil: 2103
@@ -205,7 +205,7 @@ En az işe yarayan okumalar: btc_1H ×0.35, momentum_1H ×0.473, obv_egim_1H ×0
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
-- puan +0.123 eşiğin (0.25) altında: 151
+- puan +0.123 eşiğin (0.25) altında: 153
 
 **Hata sınıfları**
 
