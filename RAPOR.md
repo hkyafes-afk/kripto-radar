@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 2346 | %43.9 | -0.339 | -796.2 |
 | trend_naif | 2367 | %44.5 | -0.323 | -764.05 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-5.55
+Polat özsermaye: %-4.71 · BTC al-tut: %-5.7
 
 ## Öğrenme (walk-forward)
 
@@ -61,10 +61,10 @@ En az işe yarayan okumalar: momentum_1H ×0.423, psar_1H ×0.461, obv_egim_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 11045
-- günlük işlem tavanı (8): 6392
+- ders: 11072
+- günlük işlem tavanı (8): 6409
 - üst üste 3 zarar: 1951
-- gösterge aileleri aynı yönde değil: 1688
+- gösterge aileleri aynı yönde değil: 1695
 - büyük zaman dilimi trendi ters: 1585
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 659
@@ -127,10 +127,10 @@ En az işe yarayan okumalar: momentum_1H ×0.423, psar_1H ×0.461, obv_egim_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 12392
-- günlük işlem tavanı (8): 7027
+- ders: 12419
+- günlük işlem tavanı (8): 7044
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 2197
+- gösterge aileleri aynı yönde değil: 2204
 - büyük zaman dilimi trendi ters: 1939
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
@@ -194,10 +194,10 @@ En az işe yarayan okumalar: momentum_1H ×0.423, psar_1H ×0.461, obv_egim_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 12392
-- günlük işlem tavanı (8): 7027
+- ders: 12419
+- günlük işlem tavanı (8): 7044
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 2197
+- gösterge aileleri aynı yönde değil: 2204
 - büyük zaman dilimi trendi ters: 1939
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
