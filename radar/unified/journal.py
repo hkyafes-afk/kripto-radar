@@ -15,6 +15,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterable
 
+from . import hazirlik
 from .models import DecisionResult, to_jsonable
 
 DAY_MS = 86_400_000
@@ -64,6 +65,10 @@ class DecisionJournal:
             self._last[key] = [sig, now]
             rec = to_jsonable(d)
             rec["kayit_ms"] = now
+            try:                                              # yalnız izleme alanı; kapı kararını etkilemez
+                rec["hazirlik"] = hazirlik.evaluate(rec)
+            except Exception:  # noqa: BLE001
+                rec["hazirlik"] = None
             lines.append(json.dumps(rec, ensure_ascii=False, separators=(",", ":")))
         if lines:
             self.root.mkdir(parents=True, exist_ok=True)

@@ -113,6 +113,19 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;paddin
 .bnav button{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12px;color:var(--muted);padding:4px 0}
 .bnav svg{width:22px;height:22px}
 .bnav button.on{color:var(--blue)}
+.fresh{display:flex;gap:6px 14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin:-4px 2px 10px}
+.fresh b{color:var(--text);font-weight:700}
+.hz{grid-column:1 / 4;margin-top:6px;min-width:0;overflow-wrap:anywhere}
+.hzbar{height:6px;border-radius:6px;background:var(--card2);overflow:hidden;margin-top:6px}
+.hzbar i{display:block;height:100%;background:var(--blue)}
+.hzt{font-size:12.5px;margin-top:4px;color:#c9d3e2;font-weight:700}
+.hb{font-size:12.5px;color:#fcd38d;margin-top:5px;font-weight:700}
+.gts{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.gt{font-size:11px;padding:2px 7px;border-radius:7px;border:1px solid var(--line2);color:#c9d3e2;white-space:nowrap}
+.gt-ok{color:var(--green);border-color:rgba(34,197,94,.45)} .gt-golge{color:var(--amber);border-color:rgba(245,158,11,.45)}
+.gt-red{color:var(--red);border-color:rgba(239,68,68,.45)} .gt-yok{color:var(--muted)}
+.dpre{white-space:pre-wrap;overflow-wrap:anywhere}
+.lvst{font-size:12px;margin-top:3px}
 .foot{color:var(--dim);font-size:12px;line-height:1.5;margin:6px 2px 16px}
 </style>
 </head>
@@ -126,6 +139,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;paddin
         <button class="ib" id="bellBtn" aria-label="Uyarılar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="dot" id="bellDot"></span></button>
       </div>
       <div class="tag">Gerçek emir yok • Canlı piyasa • Sanal işlemler</div>
+      <div class="fresh" id="fresh"></div>
       <div id="warn"></div>
       <div class="kpis" id="kpis"></div>
       <div class="card" id="btc"></div>
@@ -238,13 +252,13 @@ function render() {
   const tot = isNum(eq) && isNum(start) ? eq - start : null, dpl = isNum(eq) && isNum(dstart) ? eq - dstart : null;
   const win = pos.filter(p => (p.unrealized_usd || 0) > 0).length, lose = pos.filter(p => (p.unrealized_usd || 0) < 0).length;
   const c = decs.reduce((a, x) => (a[x.decision] = (a[x.decision] || 0) + 1, a), {});
-  const k = (l, v, s, vc = "") => `<div class="kpi"><div class="l">${l}</div><div class="v num ${vc}">${v}</div><div class="s">${s}</div></div>`;
+  const k = (l, v, s, vc = "", id = "") => `<div class="kpi"><div class="l">${l}</div><div class="v num ${vc}" ${id ? `id="${id}"` : ""}>${v}</div><div class="s" ${id ? `id="${id}S"` : ""}>${s}</div></div>`;
   $("kpis").innerHTML =
-    k("Toplam Değer (Sanal)", isNum(eq) ? "$" + fmt(eq) : "—", isNum(tot) ? `<span class="${cls(tot)}">${usd(tot)} (${sgn(tot / start * 100, 2, "%")})</span>` : badge(st.durum)) +
+    k("Toplam Değer (Sanal)", isNum(eq) ? "$" + fmt(eq) : "—", isNum(tot) ? `<span class="${cls(tot)}">${usd(tot)} (${sgn(tot / start * 100, 2, "%")})</span>` : badge(st.durum), "", "kEq") +
     k("Açık İşlemler", durum ? pos.length : "—", durum ? `<span class="up">+${win}</span> / <span class="down">-${lose}</span>` : badge(st.durum)) +
     k("Bugünkü Karar", decs.length ? decs.length : (st.dec === "ok" ? 0 : "—"), decs.length ? `Aç: <b class="up">${(c.OPEN || 0) + (c.REDUCE_SIZE || 0)}</b> &nbsp;Gölge: <b>${c.SHADOW || 0}</b> &nbsp;Red: <b class="down">${c.REJECT || 0}</b>` : badge(st.dec)) +
     k("Günlük Gölge K/Z", isNum(dpl) ? usd(dpl) : "—", isNum(dpl) && dstart ? `<span class="${cls(dpl)}">${sgn(dpl / dstart * 100, 2, "%")}</span>` : badge(st.durum), cls(dpl));
-  renderBtc(data, durum); renderSys(data, durum, st); renderTabs(pos, closed, decs, data, st, durum, ozet); renderPf(durum, tot, dpl, start, st);
+  renderBtc(data, durum); renderSys(data, durum, st); renderTabs(pos, closed, decs, data, st, durum, ozet); renderPf(durum, tot, dpl, start, st); applyLive();
 }
 
 function renderBtc(data, durum) {
@@ -253,7 +267,7 @@ function renderBtc(data, durum) {
   const h = ((durum && durum.btc_hist) || []).filter(p => p[0] >= Date.now() - S.range * 3600e3);
   const reg = w.trend === "boga" ? ["Boğa", "up"] : w.trend === "ayi" ? ["Ayı", "down"] : w.trend === "yatay" ? ["Yatay", ""] : ["—", ""];
   $("btc").innerHTML = `<div class="btch">${coinIcon("BTC")}<div style="min-width:0"><div style="font-weight:700">BTC/USDT</div>
-      <div class="px num">${b ? fmt(b.price, 1) : "—"} <span style="font-size:15px" class="${cls(b && b.chg24)}">${b ? sgn(b.chg24, 1, "%") : ""}</span></div></div>
+      <div class="px num"><span id="btcpx">${b ? fmt(b.price, 1) : "—"}</span> <span style="font-size:15px" class="${cls(b && b.chg24)}">${b ? sgn(b.chg24, 1, "%") : ""}</span></div></div>
       <div class="sel">${[6, 12, 24, 48].map(r => `<button data-r="${r}" class="${S.range === r ? "on" : ""}">${r}s</button>`).join("")}</div></div>
     ${areaChart(h, 170, v => fmt(v, 0), null)}
     <div class="cells">
@@ -279,17 +293,60 @@ function renderSys(data, durum, st) {
   bindGo($("sys"));
 }
 
+const INSTS_BTC = "BTC-USDT-SWAP";
+const instOf = p => p.inst || (p.symbol + "-USDT-SWAP");
+function calcLive(p, price) {
+  const sg = p.side === "long" ? 1 : -1;
+  const unreal = sg * (price - p.entry) * p.qty + (p.realized_usd || 0) - (p.fees_usd || 0) + (p.funding_usd || 0);
+  const risk = p.risk_usd > 0 ? p.risk_usd : null;
+  return {unreal, pct: sg * (price / p.entry - 1) * 100, r: risk ? unreal / risk : null};
+}
+function chartHist(p) {
+  const base = (p.hist || []).slice(), lv = LIVE.hist[instOf(p)] || [];
+  if (!lv.length) return base;
+  const t0 = lv[0][0];
+  return base.filter(x => x[0] < t0).concat(lv);
+}
+function olasilik(h) {
+  if (!S.data || !S.data.haz) return "Veri yok";
+  if (!h || !h.grup) return "Veri yok";
+  const H = S.data.haz, g = (H.gruplar || {})[h.grup], n = g ? g.n : 0, esik = H.esik || 30;
+  if (n < esik) return `kanıt yetersiz (${n}/${esik})`;
+  return `%${Math.round(g.acik / n * 100)} (${g.acik}/${n} benzer karar açıldı)`;
+}
+function hzBlock(d) {
+  const h = d.hazirlik;
+  if (!h) return `<div class="hz"><div class="note">Hazırlık bilgisi yok (bu kayıt eski sürümle yazıldı).</div></div>`;
+  const GC = {"GEÇTİ": "gt-ok", "GÖLGE": "gt-golge", "RED": "gt-red", "VERİ YOK": "gt-yok"};
+  const gates = (h.kapilar || []).map(k => `<span class="gt ${GC[k.durum] || "gt-yok"}">${esc(k.etiket)}: ${esc(k.durum)}</span>`).join("");
+  const skor = isNum(h.skor) ? h.skor : 0;
+  const top = `<div class="hzt num">Hazırlık: ${isNum(h.skor) ? "%" + h.skor : "—"} · ${h.gecen}/${h.olculen} ölçülebilir kapı geçti</div>`;
+  const eng = h.engel_metni ? `<div class="hb">${esc(h.engel_metni)}</div>` : "";
+  const nd = (h.nedenler || []).length ? `<div class="note">${(h.nedenler || []).map(esc).join(" · ")}</div>` : "";
+  const ol = d.decision === "OPEN" || d.decision === "REDUCE_SIZE" ? "" :
+    `<div class="note">İşlem açılma olasılığı (tarihsel): ${esc(olasilik(h))}</div>`;
+  return `<div class="hz"><div class="hzbar"><i style="width:${skor}%"></i></div>${top}${eng}${nd}<div class="gts">${gates}</div>${ol}</div>`;
+}
+function engelOzet(H) {
+  if (!H || !H.engel_24s) return `<div class="card empty">Son 24 saat engel özeti: Veri yok.</div>`;
+  const e = H.engel_24s;
+  const items = [["YETKI_GOLGE", e.YETKI_GOLGE], ["POLITIKA", e.POLITIKA], ["MALIYET", e.MALIYET], ["VERI", e.VERI], ["RED", e.RED]];
+  return `<div class="card"><div class="hrow"><h2>Son 24 saat engel özeti</h2></div>
+    <div class="note">Karar kaydı sayısı · toplam ${e.toplam ?? 0}. Bir kayıt birden fazla engel taşıyabilir; sayılar ayrı ayrı okunur.</div>
+    <div class="sg">${items.map(([k, v]) => `<div><div class="l">${k}</div><div class="v num">${isNum(v) ? v : "—"}</div></div>`).join("")}</div></div>`;
+}
 function tradeCard(p) {
-  const L = p.side === "long", t = (p.targets || []).slice(-1)[0];
-  return `<div class="tr">${coinIcon(p.symbol)}
+  const L = p.side === "long", t = (p.targets || []).slice(-1)[0], id = instOf(p);
+  return `<div class="tr" data-inst="${esc(id)}">${coinIcon(p.symbol)}
     <div style="min-width:0"><div class="sym">${esc(p.symbol)}</div>
       <div class="sd ${L ? "up" : "down"}">${L ? "LONG" : "SHORT"} · ${isNum(p.leverage) ? fmt(p.leverage, 0) + "x" : "—"}</div>
-      <div class="ln num">${px(p.entry)} → ${px(p.current_price)}</div>
+      <div class="ln num">${px(p.entry)} → <span data-lv="px">${px(p.current_price)}</span></div>
       <div class="sm">Stop: <span class="num">${px(p.stop)}</span> &nbsp; Hedef: <span class="num">${t ? px(t) : "kural çıkışı"}</span></div>
-      <div class="sm num"><span class="${cls(p.unrealized_pct)}">${sgn(p.unrealized_pct, 2, "%")}</span> · tepe ${sgn(p.peak_r, 2, "R")}</div></div>
-    <div class="rt"><div class="usd num ${cls(p.unrealized_usd)}">${usd(p.unrealized_usd)}</div>
-      <div class="r num ${cls(p.unrealized_r)}">${sgn(p.unrealized_r, 2, "R")}</div>
-      ${spark(p.hist, (p.unrealized_usd || 0) >= 0 ? "#22c55e" : "#ef4444")}
+      <div class="sm num"><span data-lv="pct" class="${cls(p.unrealized_pct)}">${sgn(p.unrealized_pct, 2, "%")}</span> · tepe <span data-lv="peak">${sgn(p.peak_r, 2, "R")}</span></div>
+      <div class="lvst" data-lv="state"></div></div>
+    <div class="rt"><div class="usd num ${cls(p.unrealized_usd)}" data-lv="usd">${usd(p.unrealized_usd)}</div>
+      <div class="r num ${cls(p.unrealized_r)}" data-lv="r">${sgn(p.unrealized_r, 2, "R")}</div>
+      <span data-lv="spark">${spark(p.hist, (p.unrealized_usd || 0) >= 0 ? "#22c55e" : "#ef4444")}</span>
       <div class="sm">${dur(Date.now() - p.opened_ts)}</div></div>
     <div class="chips">${(p.strategies || [p.strategy]).map(s => `<span class="chip">${esc(sname(s))}</span>`).join("")}</div></div>`;
 }
@@ -311,11 +368,21 @@ function decRow(d) {
   const L = d.side === "long", why = ((d.explanation_tr || "").split("\n").find(l => l.startsWith("Neden:")) || "").replace("Neden: ", "");
   const src = (d.strategies || [d.strategy]).map(sname).join(" + ");
   const dc = d.decision === "REJECT" ? "background:var(--red)" : d.decision === "SHADOW" ? "background:var(--amber)" : "";
+  const c = d.costs || {}, n = v => isNum(v) ? v.toFixed(1) + " bp" : "—";
+  const extra = [
+    `Tüm sebep kodları: ${(d.reason_codes || []).join(", ") || "—"}`,
+    `Maliyetler: giriş ücreti ${n(c.entry_fee_bp)}, çıkış ücreti ${n(c.exit_fee_bp)}, spread ${n(c.spread_bp)}, giriş kayması ${n(c.entry_slippage_bp)}, çıkış kayması ${n(c.exit_slippage_bp)}, stop kayması (olasılıklı) ${n(c.stop_slippage_bp)}, funding ${n(c.funding_bp)}, dolum tamponu ${n(c.missed_fill_buffer_bp)}, belirsizlik tamponu ${n(c.uncertainty_buffer_bp)}; toplam ${n(c.total_cost_bp)}; brüt ${n(c.gross_edge_bp)}; net ${n(d.net_edge_bp)}`,
+    `Eksik faktörler: ${(d.missing_factors || []).join(", ") || "yok"} · Bayat faktörler: ${(d.stale_factors || []).join(", ") || "yok"}`,
+    `Destekleyen kanıt: ${(d.evidence_for || []).join(" · ") || "yok"}`,
+    `Karşı kanıt: ${(d.evidence_against || []).join(" · ") || "yok"}`,
+    `Plan: giriş ${px(d.entry)} · stop ${px(d.stop)} · hedefler ${(d.targets || []).map(px).join(", ") || "yok"} · beklenen süre ${isNum(d.expected_holding_hours) ? d.expected_holding_hours + " sa" : "—"}`,
+  ].join("\n");
   return `<div class="dr">${coinIcon(d.symbol)}<div style="min-width:0"><div class="t1"><b>${esc(d.symbol)}</b>
       ${d.side ? `<span class="sp ${L ? "sp-l" : "sp-s"}">${L ? "LONG" : "SHORT"}</span>` : ""}<span class="dp dp-${esc(d.decision)}">${DEC[d.decision] || esc(d.decision)}</span></div>
       <div class="t2">${esc(src)} · Net avantaj: <span class="num ${cls(d.net_edge_bp)}">${isNum(d.net_edge_bp) ? sgn(d.net_edge_bp, 1, " bp") : "—"}</span>${why ? " · " + esc(why) : ""}</div></div>
     <div class="tm">${hm(d.kayit_ms || d.ts_ms)}<span class="gd" style="${dc}"></span></div>
-    <details><summary>Ayrıntı</summary><pre>${esc(d.explanation_tr)}</pre></details></div>`;
+    ${hzBlock(d)}
+    <details><summary>Ayrıntı</summary><pre class="dpre">${esc(d.explanation_tr)}\n\n${esc(extra)}</pre></details></div>`;
 }
 
 function statBox(s, title, sub) {
@@ -358,7 +425,7 @@ function renderTabs(pos, closed, decs, data, st, durum, ozet) {
   if (S.tab === "acik") h = pos.length ? pos.map(tradeCard).join("")
       : `<div class="card empty">${durum ? "Açık sanal işlem yok. Baş Trader açma kararı verdiğinde burada görünür." : (STL[st.durum] || STL.yok)[0] + "."}</div>`;
   else if (S.tab === "kapanan") h = closed.length ? closed.map(closedCard).join("") : `<div class="card empty">${durum ? "Henüz kapanan sanal işlem yok." : (STL[st.durum] || STL.yok)[0] + "."}</div>`;
-  else if (S.tab === "karar") h = `<div class="hrow" style="margin:0 2px 8px"><h2>Son Kararlar (${decs.length})</h2>${badge(st.dec)}</div>` +
+  else if (S.tab === "karar") h = engelOzet(S.data && S.data.haz) + `<div class="hrow" style="margin:0 2px 8px"><h2>Son Kararlar (${decs.length})</h2>${badge(st.dec)}</div>` +
       (decs.length ? `<div class="card dl">${decs.slice(0, 80).map(decRow).join("")}</div>` : `<div class="card empty">${(STL[st.dec] || STL.yok)[0]}.</div>`);
   else if (S.tab === "karne") h = renderKarne(data && data.karne, st.data);
   else h = renderSysTab(data, durum, ozet, st);
@@ -371,6 +438,7 @@ function renderPf(durum, tot, dpl, start, st) {
       <div class="s num ${cls(dpl)}">${isNum(dpl) && durum.gun_basi ? sgn(dpl / durum.gun_basi * 100, 2, "%") : badge(st.durum)}</div></div>
       <div><div class="l">Toplam K/Z</div><div class="v num ${cls(tot)}">${usd(tot)}</div>
       <div class="s num ${cls(tot)}">${isNum(tot) && start ? sgn(tot / start * 100, 2, "%") : ""}</div></div></div>
+    <div class="note" id="pfLive"></div>
     ${areaChart((durum && durum.eq_hist) || [], 150, v => "$" + fmt(v, 0), isNum(start) ? start : null)}`;
   bindGo($("pf"));
 }
@@ -389,9 +457,134 @@ document.querySelectorAll(".bnav button").forEach(b => b.onclick = () => {
 $("menuBtn").onclick = () => $("tabs").scrollIntoView({behavior: "smooth", block: "start"});
 $("bellBtn").onclick = () => scrollTo({top: 0, behavior: "smooth"});
 
+/* ── Canlı fiyat: yalnız OKX PUBLIC WebSocket (API anahtarı, login, private kanal yok) ── */
+const WS_URL = "wss://ws.okx.com:8443/ws/v5/public";
+const TC = Object.assign({pingMs: 25000, pongMs: 10000, staleMs: 60000, maxBackoffMs: 30000, retryMs: 1000, watchMs: 1000}, (window.__BT_CFG || {}));
+const LIVE = {px: {}, hist: {}, ws: null, open: false, lastMsg: 0, pingAt: 0, subs: new Set(), retry: 0, rafOn: false};
+function instIds() {
+  const ids = new Set([INSTS_BTC]);
+  ((S.data && S.data.durum && S.data.durum.pozisyonlar) || []).forEach(p => ids.add(instOf(p)));
+  return [...ids];
+}
+function subscribeAll() {
+  if (!LIVE.open || !LIVE.ws) return;
+  const fresh = instIds().filter(i => !LIVE.subs.has(i));
+  if (!fresh.length) return;
+  try { LIVE.ws.send(JSON.stringify({op: "subscribe", args: fresh.map(instId => ({channel: "tickers", instId}))})); } catch (e) {}
+  fresh.forEach(i => LIVE.subs.add(i));
+}
+function wsRetry() {
+  LIVE.retry = LIVE.retry ? Math.min(LIVE.retry * 2, TC.maxBackoffMs) : TC.retryMs;
+  setTimeout(wsConnect, LIVE.retry);
+}
+function wsConnect() {
+  if (LIVE.ws && LIVE.ws.readyState <= 1) return;
+  let ws;
+  try { ws = new WebSocket(WS_URL); } catch (e) { LIVE.open = false; applyLiveSoon(); return wsRetry(); }
+  LIVE.ws = ws; LIVE.open = false; LIVE.subs = new Set();
+  ws.onopen = () => { LIVE.open = true; LIVE.retry = 0; LIVE.lastMsg = Date.now(); LIVE.pingAt = 0; subscribeAll(); applyLiveSoon(); };
+  ws.onmessage = ev => {
+    LIVE.lastMsg = Date.now(); LIVE.pingAt = 0;
+    if (ev.data === "pong") return;
+    let m; try { m = JSON.parse(ev.data); } catch (e) { return; }
+    onTick(m);
+  };
+  ws.onclose = () => { if (LIVE.ws === ws) LIVE.ws = null; LIVE.open = false; applyLiveSoon(); wsRetry(); };
+  ws.onerror = () => { try { ws.close(); } catch (e) {} };
+}
+function wsWatch() {
+  if (LIVE.open && LIVE.ws) {
+    const now = Date.now();
+    if (!LIVE.pingAt && now - LIVE.lastMsg > TC.pingMs) { LIVE.pingAt = now; try { LIVE.ws.send("ping"); } catch (e) {} }
+    else if (LIVE.pingAt && now - LIVE.pingAt > TC.pongMs) { LIVE.pingAt = 0; try { LIVE.ws.close(); } catch (e) {} }
+  }
+  applyLiveSoon();
+}
+function onTick(m) {
+  if (!m || !m.arg || m.arg.channel !== "tickers" || !Array.isArray(m.data)) return;
+  const now = Date.now();
+  for (const d of m.data) {
+    const v = Number(d.last), id = d.instId || m.arg.instId;
+    if (!isFinite(v) || v <= 0 || !id) continue;
+    const L = LIVE.px[id] || (LIVE.px[id] = {last: v, t: now});
+    L.last = v; L.t = now;
+    const h = LIVE.hist[id] || (LIVE.hist[id] = []);
+    if (!h.length || now - h[h.length - 1][0] >= 5000) { h.push([now, v]); if (h.length > 288) h.splice(0, h.length - 288); }
+  }
+  applyLiveSoon();
+}
+function applyLiveSoon() {
+  if (LIVE.rafOn) return;
+  LIVE.rafOn = true;
+  requestAnimationFrame(() => { LIVE.rafOn = false; applyLive(); });
+}
+function cardState(p, now) {
+  const L = LIVE.px[instOf(p)];
+  if (!L) return {mode: "srv", price: p.current_price, usd: p.unrealized_usd, pct: p.unrealized_pct, r: p.unrealized_r, t: p.updated_ts, peak: p.peak_r};
+  if (!LIVE.open) return {mode: "down", t: L.t};
+  if (now - L.t > TC.staleMs) return {mode: "stale", t: L.t};
+  const c = calcLive(p, L.last);
+  const peak = Math.max(isNum(p.peak_r) ? p.peak_r : -Infinity, isNum(c.r) ? c.r : -Infinity);
+  return {mode: "live", price: L.last, t: L.t, usd: c.unreal, pct: c.pct, r: c.r, calc: c, peak: isFinite(peak) ? peak : p.peak_r};
+}
+function setLv(el, k, text, cl) {
+  const e = el.querySelector(`[data-lv="${k}"]`); if (!e) return;
+  e.textContent = text;
+  if (cl !== undefined) e.className = e.className.replace(/\b(up|down)\b/g, "").replace(/\s+/g, " ").trim() + (cl ? " " + cl : "");
+}
+function paintCard(el, p, st) {
+  const na = st.mode === "down" || st.mode === "stale";
+  const pxv = st.mode === "srv" ? p.current_price : st.price;
+  setLv(el, "px", na ? "—" : px(pxv));
+  setLv(el, "usd", na ? "—" : usd(st.usd), na ? "" : cls(st.usd));
+  setLv(el, "pct", na ? "—" : sgn(st.pct, 2, "%"), na ? "" : cls(st.pct));
+  setLv(el, "r", na ? "—" : sgn(st.r, 2, "R"), na ? "" : cls(st.r));
+  setLv(el, "peak", na ? "—" : sgn(st.peak, 2, "R"));
+  const sp = el.querySelector('[data-lv="spark"]');
+  if (sp) sp.innerHTML = spark(chartHist(p), (na ? 0 : st.usd || 0) >= 0 ? "#22c55e" : "#ef4444");
+  const se = el.querySelector('[data-lv="state"]');
+  if (se) se.innerHTML = st.mode === "live" ? `<span class="st st-ok">Canlı · ${Math.max(0, Math.round((Date.now() - st.t) / 1000))} sn önce</span>`
+    : st.mode === "srv" ? `<span class="st st-yok">Sunucu yayını · ${ago(st.t)}</span>`
+    : st.mode === "down" ? `<span class="st st-kesik">Bağlantı kesik</span> <span class="mut">son canlı fiyat ${ago(st.t)}</span>`
+    : `<span class="st st-bayat">Bayat</span> <span class="mut">son canlı fiyat ${ago(st.t)}</span>`;
+}
+function applyLive() {
+  const D = S.data; if (!D || !D.durum) return;
+  const now = Date.now();
+  const pos = D.durum.pozisyonlar || [];
+  let openTot = 0, allLive = pos.length > 0, adj = 0;
+  for (const p of pos) {
+    const st = cardState(p, now);
+    if (st.mode === "live") { openTot += st.usd; adj += st.usd - (isNum(p.unrealized_usd) ? p.unrealized_usd : 0); }
+    else { allLive = false; openTot += isNum(p.unrealized_usd) ? p.unrealized_usd : 0; }
+    document.querySelectorAll(`[data-inst="${CSS.escape(instOf(p))}"]`).forEach(el => paintCard(el, p, st));
+  }
+  const eq = D.durum.bakiye, start = D.durum.baslangic;
+  if (isNum(eq) && isNum(start) && $("kEq")) {
+    const e2 = eq + adj, tot = e2 - start;
+    $("kEq").textContent = "$" + fmt(e2);
+    $("kEqS").innerHTML = `<span class="${cls(tot)}">${usd(tot)} (${sgn(tot / start * 100, 2, "%")})</span>`;
+  }
+  if ($("pfLive")) $("pfLive").innerHTML = pos.length ? `Açık K/Z ${allLive ? "(canlı)" : "(kısmen sunucu verisi)"}: <b class="num ${cls(openTot)}">${usd(openTot)}</b>` : "";
+  const b = LIVE.px[INSTS_BTC];
+  if (b && LIVE.open && now - b.t <= TC.staleMs && $("btcpx")) $("btcpx").textContent = fmt(b.last, 1);
+  const ticks = Object.values(LIVE.px).map(x => x.t);
+  const lastT = ticks.length ? Math.max(...ticks) : 0;
+  const fr = $("fresh");
+  if (fr) {
+    const fl = !LIVE.open ? `<span class="st st-kesik">Bağlantı kesik</span> yeniden bağlanılıyor`
+      : !lastT ? `<span class="st st-yok">Bağlanıyor</span>`
+      : now - lastT <= TC.staleMs ? `<span class="st st-ok">Canlı</span> <b>${now - lastT < 1000 ? (now - lastT) + " ms" : Math.round((now - lastT) / 1000) + " sn"} önce</b>`
+      : `<span class="st st-bayat">Bayat</span> son tik ${ago(lastT)}`;
+    const dk = D.ozet && D.ozet.ts ? `Karar motoru: <b>${ago(D.ozet.ts)}</b>` : "Karar motoru: Veri yok";
+    fr.innerHTML = `<span>Fiyat akışı: ${fl}</span><span>${dk}</span>`;
+  }
+}
+window.__BT = {calcLive, cardState, instIds};
+
 async function load() {
-  const [D, du, oz, t0, t1] = await Promise.all([get("data.json"), get("birlesik/golge/durum.json"), get("birlesik/ozet.json"),
-    get(`birlesik/kararlar-${day(0)}.jsonl`, true), get(`birlesik/kararlar-${day(1)}.jsonl`, true)]);
+  const [D, du, oz, t0, t1, hz] = await Promise.all([get("data.json"), get("birlesik/golge/durum.json"), get("birlesik/ozet.json"),
+    get(`birlesik/kararlar-${day(0)}.jsonl`, true), get(`birlesik/kararlar-${day(1)}.jsonl`, true), get("birlesik/hazirlik.json")]);
   const data = D.v, durum = du.v, ozet = oz.v;
   const okx = data && data.feeds && data.feeds.okx;
   const st = {data: fresh(D.st, data && data.generated_at, LIM.data), ozet: fresh(oz.st, ozet && ozet.ts, LIM.ozet),
@@ -401,12 +594,15 @@ async function load() {
   for (const r of [...t1.v, ...t0.v]) seen.set(r.idempotency_key || (r.symbol + r.strategy + r.side), r);
   const decs = [...seen.values()].filter(r => (r.kayit_ms || r.ts_ms || 0) > Date.now() - 24 * 3600e3)
     .sort((a, b) => (b.kayit_ms || b.ts_ms) - (a.kayit_ms || a.ts_ms));
-  S.data = {data, durum, ozet, decs, st};
+  S.data = {data, durum, ozet, decs, st, haz: hz.v};
   $("modePill").textContent = (durum && durum.mod === "unified") ? "PAPER" : "SHADOW";
   render();
+  subscribeAll();
 }
+wsConnect();
 load();
 setInterval(load, 60000);
+setInterval(wsWatch, TC.watchMs);
 </script>
 </body>
 </html>
