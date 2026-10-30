@@ -38,10 +38,12 @@ def _day(ms: int) -> str:
 
 
 class UnifiedTrader:
-    def __init__(self, cfg: Mapping | None, root: str | Path, engine: UnifiedDecisionEngine | None = None):
+    def __init__(self, cfg: Mapping | None, root: str | Path, engine: UnifiedDecisionEngine | None = None,
+                 journal_root: str | Path | None = None, mode: str = "unified"):
+        """mode="shadow": aynı paper bileşenleriyle AYRI bir gölge sanal defter (site/birlesik/golge/); gerçek emir yok."""
         self.cfg = dict(cfg or {})
-        mode, warn = execution_mode(self.cfg)
-        assert mode is ExecutionMode.PAPER                    # flags paper dışını zaten reddeder
+        ex_mode, warn = execution_mode(self.cfg)
+        assert ex_mode is ExecutionMode.PAPER                    # flags paper dışını zaten reddeder
         self.warning = warn
         self.root = Path(root)
         u = unified_cfg(self.cfg)
@@ -51,7 +53,9 @@ class UnifiedTrader:
         self.engine = engine or UnifiedDecisionEngine(self.cfg)
         self.risk = RiskGate(self.cfg)
         self.adapter = PaperExecutionAdapter(self.cfg, root=self.root)
-        self.journal = DecisionJournal(self.root, keep_days=int(u.get("gunluk_saklama_gun", 14)))
+        self.mode = mode
+        self.journal_root = Path(journal_root) if journal_root else self.root
+        self.journal = DecisionJournal(self.journal_root, keep_days=int(u.get("gunluk_saklama_gun", 14)))
         self.state_path = self.root / "portfoy.json"
         self.st = self._load()
         self.last_risk: list[dict] = []
@@ -136,7 +140,7 @@ class UnifiedTrader:
     def step(self, ctxs: Iterable[Mapping[str, Any]], quotes: Mapping[str, Quote], *, now_ms: int | None = None,
              meta: Mapping[str, Mapping] | None = None, ws_healthy: bool | None = None,
              global_issue: str | None = None, closed_bars: Mapping[str, Mapping] | None = None,
-             clusters: Mapping[str, str] | None = None) -> dict:
+             clusters: Mapping[str, str] | None = None, funding_events: Iterable[tuple] = ()) -> dict:
         now = int(now_ms if now_ms is not None else time.time() * 1000)
         ctxs = list(ctxs)
         raw_by_inst = {c.get("inst"): c for c in ctxs}
@@ -163,6 +167,16 @@ class UnifiedTrader:
                 issues.setdefault(inst, now)
             else:
                 issues.pop(inst, None)
+        for inst, rate, settle in funding_events:              # funding kesimleri (pozisyon açıkken olanlar)
+            pos = self.adapter.positions.get(inst)
+            if pos and settle > pos["opened_ts"] and settle not in pos.setdefault("fund_done", []):
+                q = quotes.get(inst)
+                self.adapter.apply_funding(inst, float(rate), q.last if q else pos.get("last") or pos["entry"], now)
+                pos["fund_done"].append(settle)
+        for inst, pos in self.adapter.positions.items():
+            q = quotes.get(inst)
+            if q is not None and q.valid:
+                self._mark(pos, q.last, now)
         # 3) çıkışlar
         exits_done = []
         for inst, pos in list(self.adapter.positions.items()):
@@ -223,9 +237,16 @@ class UnifiedTrader:
         self.last_risk = risk_log[-20:]
         # 6) portföy
         pf = self.portfolio(now, prices)
+        self._history(now, pf.equity, (raw_by_inst.get("BTC-USDT-SWAP") or {}).get("price")
+                      or prices.get("BTC-USDT-SWAP"))
         self._save()
         self.adapter.save()
-        summary = {"ts": now, "mod": "unified", "yurutme": "paper", "bakiye": round(pf.equity, 2),
+        counts: dict[str, int] = {}
+        for d in decisions:
+            counts[d.decision.value] = counts.get(d.decision.value, 0) + 1
+        summary = {"ts": now, "mod": self.mode, "yurutme": "paper", "bakiye": round(pf.equity, 2),
+                   "baslangic": self.start_equity, "gun_basi": round(float(self.st.get("day_start") or pf.equity), 2),
+                   "karar": counts, "coin": len(mctxs),
                    "zirve": round(pf.peak_equity, 2), "dusus_yuzde": round(pf.drawdown_pct, 2),
                    "gun_kayip_yuzde": round(pf.day_loss_pct, 2), "kayip_serisi": pf.loss_streak,
                    "acik": len(self.adapter.positions), "acilan": opened, "cikislar": exits_done,
@@ -243,7 +264,8 @@ class UnifiedTrader:
             otype, price, exp = OrderType.LIMIT, float(plan["limit_price"]), now + 4 * 3_600_000
         else:
             otype, price, exp = OrderType.MARKET, None, None
-        md = {"strategy": d.strategy, "stop": d.stop, "targets": list(d.targets), "risk_usd": rd.risk_usd,
+        md = {"strategy": d.strategy, "strategies": list(d.strategies or (d.strategy,)), "stop": d.stop,
+              "targets": list(d.targets), "risk_usd": rd.risk_usd,
               "leverage": rd.leverage, "horizon": plan.get("horizon"), "max_holding_hours": plan.get("max_holding_hours"),
               "cluster": cluster, "timeframe": d.timeframe}
         it = ExecutionIntent(idempotency_key=d.idempotency_key, symbol=d.symbol, inst=inst, side=d.side, action="open",
@@ -258,6 +280,11 @@ class UnifiedTrader:
             pos["legacy_exits"] = bool(plan.get("exit_rule") or plan.get("pp"))
             pos["explanation_tr"] = d.explanation_tr
             pos["risk_text"] = rd.explanation_tr
+            pos["strategies"] = list(d.strategies or (d.strategy,))
+            pos["costs"] = to_jsonable(d.costs) if d.costs else None
+            pos["exit_plan"] = next((l for l in d.explanation_tr.split("\n") if l.startswith("Çıkış planı")), None)
+            if q is not None and q.valid:
+                self._mark(pos, q.last, now)
             if d.stop and pos["entry"] and abs(pos["entry"] - (d.entry or pos["entry"])) > 0:
                 shift = pos["entry"] - d.entry                       # dolum farkı: stop/hedef aynı mesafede kalır
                 pos["stop"] = pos["stop_init"] = d.stop + shift
@@ -267,19 +294,53 @@ class UnifiedTrader:
             self._protect(pos, now, q)
         return res
 
+    def _mark(self, pos: dict, price: float, now: int) -> None:
+        """Canlı fiyatla pozisyonun anlık değerleri (net: ücret + funding dahil) ve fiyat geçmişi (sparkline)."""
+        sg = 1 if pos["side"] == "long" else -1
+        risk0 = float(pos.get("risk_usd") or 0) or None
+        gross = sg * (price - pos["entry"]) * pos["qty"]
+        unreal = gross + pos["realized_usd"] - pos["fees_usd"] + pos["funding_usd"]
+        pos.update(current_price=price, last=price, updated_ts=now, unrealized_usd=unreal,
+                   unrealized_pct=sg * (price / pos["entry"] - 1) * 100,
+                   unrealized_r=(unreal / risk0) if risk0 else None)
+        if pos["unrealized_r"] is not None:
+            pos["peak_r"] = max(float(pos.get("peak_r") or 0.0), pos["unrealized_r"])
+        h = pos.setdefault("hist", [])
+        if not h or now - h[-1][0] >= 300_000:                 # 5 dakikada bir nokta, en fazla 288 (24 saat)
+            h.append([now, price])
+            del h[:-288]
+
+    def _history(self, now: int, equity: float, btc: float | None) -> None:
+        for key, val in (("eq_hist", equity), ("btc_hist", btc)):
+            if val is None:
+                continue
+            h = self.st.setdefault(key, [])
+            if not h or now - h[-1][0] >= 300_000:
+                h.append([now, round(float(val), 6)])
+                del h[:-576]                                   # 48 saat
+
     def _write_status(self, summary: dict) -> None:
         out = dict(summary)
-        out["pozisyonlar"] = [{k: p.get(k) for k in ("symbol", "side", "qty", "entry", "stop", "targets", "strategy",
-                                                      "opened_ts", "realized_usd", "fees_usd", "funding_usd", "last",
-                                                      "risk_usd", "leverage", "explanation_tr", "risk_text")}
-                              for p in self.adapter.positions.values()]
-        out["kapananlar"] = [{k: c.get(k) for k in ("symbol", "side", "strategy", "entry", "exit_px", "net_usd", "r",
-                                                     "opened_ts", "closed_ts", "exit_reason")}
-                             for c in self.adapter.closed[-50:]]
+        out["pozisyonlar"] = [{k: p.get(k) for k in (
+            "symbol", "inst", "side", "qty", "entry", "current_price", "stop", "stop_init", "targets", "strategy",
+            "strategies", "opened_ts", "updated_ts", "realized_usd", "fees_usd", "funding_usd", "slip_usd", "risk_usd",
+            "leverage", "unrealized_usd", "unrealized_pct", "unrealized_r", "peak_r", "costs", "exit_plan",
+            "explanation_tr", "risk_text", "hist")} for p in self.adapter.positions.values()]
+        out["kapananlar"] = [{k: c.get(k) for k in (
+            "symbol", "side", "strategy", "strategies", "entry", "exit_px", "qty", "leverage", "net_usd", "r",
+            "fees_usd", "slip_usd", "funding_usd", "realized_usd", "opened_ts", "closed_ts", "exit_reason")}
+            for c in self.adapter.closed[-100:]]
+        out["eq_hist"] = self.st.get("eq_hist") or []
+        out["btc_hist"] = self.st.get("btc_hist") or []
         self.root.mkdir(parents=True, exist_ok=True)
         tmp = self.root / "durum.tmp"
         tmp.write_text(json.dumps(to_jsonable(out), ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
         tmp.replace(self.root / "durum.json")
+        if self.journal_root != self.root:                    # gölge özeti (karar turu) karar günlüğünün yanında
+            oz = {k: summary.get(k) for k in ("ts", "mod", "coin", "karar", "hatalar")}
+            t2 = self.journal_root / "ozet.tmp"
+            t2.write_text(json.dumps(to_jsonable(oz), ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+            t2.replace(self.journal_root / "ozet.json")
 
     def halt(self, reason: str | None) -> None:
         """Elle durdurma (None → devam)."""

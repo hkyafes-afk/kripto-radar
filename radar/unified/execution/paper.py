@@ -133,9 +133,11 @@ class PaperExecutionAdapter(ExecutionAdapter):
         return Side.parse(it["side"]), it["action"], OrderType(it["order_type"])
 
     # ── pozisyon defteri ─────────────────────────────────────────
-    def _apply_fill(self, o: dict, qty: float, px: float, fee: float, now: int, maker: bool) -> None:
+    def _apply_fill(self, o: dict, qty: float, px: float, fee: float, now: int, maker: bool,
+                    ref: float | None = None) -> None:
         if qty <= 0:
             return
+        slip = abs(px - ref) * qty if ref else 0.0             # referansa (orta fiyat / stop) göre kayma, USD
         side, action, _ = self._intent(o)
         it = o["intent"]
         inst = it["inst"]
@@ -157,12 +159,14 @@ class PaperExecutionAdapter(ExecutionAdapter):
                     "risk_usd": meta.get("risk_usd"), "leverage": meta.get("leverage"), "horizon": meta.get("horizon"),
                     "max_holding_hours": meta.get("max_holding_hours"), "best_px": px, "partials": [],
                     "notional_usd": qty * px, "margin_usd": qty * px / float(meta.get("leverage") or 1.0),
-                    "cluster": meta.get("cluster"), "timeframe": meta.get("timeframe")}
+                    "cluster": meta.get("cluster"), "timeframe": meta.get("timeframe"), "slip_usd": slip,
+                    "strategies": meta.get("strategies")}
             else:
                 tot = pos["qty"] + qty
                 pos["entry"] = (pos["entry"] * pos["qty"] + px * qty) / tot
                 pos["qty"], pos["qty_init"] = tot, pos["qty_init"] + qty
                 pos["fees_usd"] += fee
+                pos["slip_usd"] = pos.get("slip_usd", 0.0) + slip
                 pos["notional_usd"] = tot * pos["entry"]
             return
         # kapatma / azaltma
@@ -172,6 +176,7 @@ class PaperExecutionAdapter(ExecutionAdapter):
         pnl = sg * (px - pos["entry"]) * take
         pos["realized_usd"] += pnl
         pos["fees_usd"] += fee
+        pos["slip_usd"] = pos.get("slip_usd", 0.0) + slip
         pos["qty"] -= take
         pos["partials"].append({"ts": now, "qty": take, "px": px, "pnl_usd": pnl, "why": (it.get("metadata") or {}).get("why")})
         pos["notional_usd"] = pos["qty"] * pos["entry"]
@@ -221,7 +226,7 @@ class PaperExecutionAdapter(ExecutionAdapter):
                 px, got = limit, qty                          # kayma tahmini limiti aşıyor: limitten dolar
         if not px or got <= 0:
             return 0.0
-        self._apply_fill(o, got, px, got * px * self.taker, now, maker=False)
+        self._apply_fill(o, got, px, got * px * self.taker, now, maker=False, ref=q.mid)
         return got
 
     # ── API ──────────────────────────────────────────────────────
@@ -328,7 +333,7 @@ class PaperExecutionAdapter(ExecutionAdapter):
         px = base * (1 - slip) if not buy else base * (1 + slip)
         qty = self._remaining(o)
         self._event(o, "triggered", now, price=last)
-        self._apply_fill(o, qty, px, qty * px * self.taker, now, maker=False)
+        self._apply_fill(o, qty, px, qty * px * self.taker, now, maker=False, ref=trig)
         if OrderStatus(o["status"]) is not OrderStatus.CANCELLED:
             self._set(o, OrderStatus.FILLED, now)
         return True

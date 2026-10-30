@@ -326,7 +326,7 @@ function render(){
     <div class="kpi"><div class="l">Rejim</div><div class="v">${reg}</div><div class="s">EMA200 ${fp(b.ema200)}</div></div>
     <div class="kpi"><div class="l">Güçlü sinyal</div><div class="v num">${D.counts.strong}</div><div class="s">${D.counts.scanned} coin tarandı</div></div>
     <div class="kpi"><div class="l">Demo bakiye</div><div class="v num" id="kpiEq">${money(DM.equity,false)}</div><div class="s num ${cls(DM.return_pct)}" id="kpiRet">${pct(DM.return_pct,2)} · ${D.ledger.open.filter(t=>!t.shadow).length} açık</div></div>`;
-  const tabs = (D.bas ? [["bas","👑 Baş Trader",(D.bas.open||[]).length]] : []).concat(D.team ? [["team","Ekip",Object.keys(D.team).length]] : []).concat([["demo","İşlemler",D.ledger.open.filter(t=>!t.shadow).length]]).concat(D.team ? [["shadow","Gölge",D.ledger.open.filter(t=>t.shadow).length]] : []).concat([["sig","Sinyaller",D.counts.strong]]).concat([["led","Karne",(D.karne&&D.karne.bas_trader&&D.karne.bas_trader.n)||L.n||0],["fund","Funding",D.harvest.length],["coins","Coinler",D.coins.length]]);
+  const tabs = (D.bas ? [["bas","👑 Baş Trader",(D.bas.open||[]).length]] : []).concat(D.team ? [["team","Ekip",Object.keys(D.team).length]] : []).concat([["demo","İşlemler",D.ledger.open.filter(t=>!t.shadow).length]]).concat(D.team ? [["shadow","Gölge",D.ledger.open.filter(t=>t.shadow).length]] : []).concat([["sig","Sinyaller",D.counts.strong]]).concat([["led","Karne",(D.karne&&D.karne.yeni_golge&&D.karne.yeni_golge.n)||0],["fund","Funding",D.harvest.length],["coins","Coinler",D.coins.length]]);
   tabs.push(["old","Eski sürüm",(D.old||{open:[]}).open.length]);
   if (BT) tabs.push(["bt","Backtest",""]);
   tabs.push(["guide","Rehber",""]);
@@ -443,8 +443,9 @@ function kCard(title, s, sub){
 function renderKarne(){
   const K = D.karne;
   let h = `<p class="note">Tek karar verici <b>Baş Trader</b>. Aşağıdaki adlar bağımsız ajan değil, strateji / sinyal kaynağı etiketidir. <a href="birlesik.html">Ayrıntılı panel →</a></p>`;
-  h += `<div class="grid">${kCard("👑 Baş Trader · gerçek", K.bas_trader, "bütün gerçek (paper) işlemler")}${kCard("👻 Baş Trader · gölge", K.bas_trader_golge, "sermayesiz izlenen fikirler")}</div>`;
-  h += `<h2>Strateji / sinyal kaynağı</h2><div class="grid">` + (K.kaynaklar||[]).map(r =>
+  h += `<div class="grid">${kCard("👑 Yeni Baş Trader · gölge sanal", K.yeni_golge, "canlı fiyatla sanal işlemler, maliyetler düşülmüş; gerçek emir yok")}</div>`;
+  h += `<h2>Eski sistem (legacy) — yeni Baş Trader performansı değildir</h2><div class="grid">${kCard("Legacy · gerçek", K.bas_trader, "eski defterin paper işlemleri")}${kCard("Legacy · gölge", K.bas_trader_golge, "eski sistemin izlenen fikirleri")}</div>`;
+  h += `<h2>Legacy: strateji / sinyal kaynağı</h2><div class="grid">` + (K.kaynaklar||[]).map(r =>
     kCard(r.etiket + " · gerçek", r.gercek, "") + kCard(r.etiket + " · gölge", r.golge, "")).join("") + `</div>`;
   h += `<h2>Filtre karnesi</h2><p class="note">Gölgeye gönderilen fikirler. Elenenler kaybettirdiyse filtre haklıdır.</p><div class="grid">` +
     ((K.filtreler||[]).length ? K.filtreler.map(r => kCard(r.filtre, r, r.karar)).join("") : `<p class="note">Veri yok.</p>`) + `</div>`;
