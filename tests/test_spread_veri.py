@@ -59,6 +59,9 @@ def test_motor_defterinden_bbo_okunur():
     assert y["bid"] is None and y["ask"] is None and y["book_age_s"] is None and y["bbo_kaynak"] == "yok"
 
 
+INST_T = "X-USDT-SWAP"
+
+
 def _fe_rest(site, tickers, book=None):
     from types import SimpleNamespace as NS
     import time as _t
@@ -68,6 +71,7 @@ def _fe_rest(site, tickers, book=None):
     fe.feeds = {}
     fe.client = NS(tickers=lambda t: tickers)               # YALNIZ public tickers; başka çağrı varsa hata
     fe.bbo_rest = {}
+    fe.meta[INST_T] = {**fe.meta.get(INST_T, {}), "ct_val": 1.0, "lot_sz": 0.001, "min_sz": 0.001, "max_lev": 20.0}
     return fe
 
 
@@ -94,7 +98,7 @@ def test_tanilama_dosyasi_yazilir(tmp_path):
     from test_unified_strategies import kemal_ctx as _k
     fe = _fe_rest(tmp_path, [{"instId": "X-USDT-SWAP", "bidPx": "100.9", "askPx": "101.1"}])
     fe._unified_shadow([_k()])
-    t = _j.loads((tmp_path / "birlesik" / "golge" / "tanilama.json").read_text(encoding="utf-8"))
+    t = _j.loads((tmp_path / "birlesik" / "golge" / "durum.json").read_text(encoding="utf-8"))["tanilama"]
     for k in ("ws_healthy", "tick_count", "last_tick_age", "feed_symbols", "decision_coins", "book_entries",
               "spread_durum_sayim", "ornek"):
         assert k in t, k
@@ -127,3 +131,34 @@ def test_sentetik_shadow_open_ve_exit_zinciri(tmp_path):
     assert k["exit_reason"] and k["exit_px"] and k["closed_ts"] and k["net_usd"] is not None
     assert k["exit_reason"] and k["net_usd"] is not None
 
+
+
+def test_yetki_golge_operasyonel_open_uctan_uca(tmp_path, monkeypatch):
+    """YETKI_GOLGE (politika engeli YOK, deterministik) → spread_ok (REST anlık BBO) → operational PASS →
+    RiskGate PASS → sanal OPEN (operasyonel) → EXIT. Gerçek emir/private çağrı yok (client yalnız tickers)."""
+    import json as _j
+    from radar.unified import decision as _dec
+    from test_golge_portfoy import golge, tick
+    from test_unified_strategies import kemal_ctx as _k
+    from dataclasses import replace as _rep
+    from radar.unified.models import StrategyAuthority as _SA
+    monkeypatch.setattr(_dec.UnifiedDecisionEngine, "_policy", lambda self, ctx, o: None)
+    orig_gates = _dec.UnifiedDecisionEngine._gates
+    def gates_yetki(self, ctx, o, cost, ops):              # test: fırsatlar YETKI_GOLGE (SHADOW_ONLY) sayılır
+        return orig_gates(self, ctx, _rep(o, authority=_SA.SHADOW_ONLY),
+                          cost, [_rep(x, authority=_SA.SHADOW_ONLY) for x in ops])
+    monkeypatch.setattr(_dec.UnifiedDecisionEngine, "_gates", gates_yetki)
+    fe = _fe_rest(tmp_path, [{"instId": "X-USDT-SWAP", "bidPx": "100.9", "askPx": "101.1"}])
+    for _ in range(3):
+        fe._unified_shadow([_k()])
+    d = golge(tmp_path)
+    ops = [p for p in d["pozisyonlar"] if p.get("operational")]
+    assert ops, {"karar": d.get("karar"), "kararlar": d.get("kararlar"), "acilan": d.get("acilan")}
+    p = ops[0]
+    assert p["karar"] == "YETKI_GOLGE" and p["stop"] and p["qty"] and p["risk_usd"] > 0
+    fe.bbo_rest = {}
+    tick(fe, p["stop"] * (1.02 if p["side"] == "short" else 0.98))
+    fe._unified_shadow([_k()])
+    d = golge(tmp_path)
+    kap = [c for c in d.get("kapananlar") or [] if c.get("operational")]
+    assert kap and kap[-1]["exit_reason"] and kap[-1]["net_usd"] is not None

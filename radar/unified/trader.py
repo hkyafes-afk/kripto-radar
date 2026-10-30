@@ -231,7 +231,13 @@ class UnifiedTrader:
             if d.decision is Decision.SHADOW and not operational:
                 continue
             if operational:
-                d_use = replace(d, decision=Decision.OPEN, targets=tuple(op.get("hedef") or ()))   # yalnız RiskGate kuru çalışma
+                # SHADOW kararının boyut çarpanı 0'dır; operasyonel yol OPEN ile aynı eşlemeyi (1.0) kullanır, yoksa
+                # RiskGate boyutu 0 hesaplayıp LOT kuralıyla reddeder. Eşikler değişmez.
+                rp = dict(d.risk_proposal or {})
+                taban = float(rp.get("taban_risk_yuzde") or 0.5)
+                rp.update({"boyut_carpani": 1.0, "risk_yuzde": round(taban * 1.0, 4),
+                           "not": "operasyonel shadow: OPEN ile aynı boyut eşlemesi"})
+                d_use = replace(d, decision=Decision.OPEN, targets=tuple(op.get("hedef") or ()), risk_proposal=rp)
             else:
                 tv = classify_targets(d.side, d.entry, d.stop, d.targets)     # geçersiz (negatif/NaN) hedef asla yazılmaz
                 d_use = replace(d, targets=tuple(tv["hedef"] + tv["mekanik"]))
@@ -358,6 +364,8 @@ class UnifiedTrader:
 
     def _write_status(self, summary: dict) -> None:
         out = dict(summary)
+        if getattr(self, "diag", None):                       # BBO/WS tanılaması canlı durum.json içinde yayınlanır
+            out["tanilama"] = self.diag
         out["pozisyonlar"] = [{k: p.get(k) for k in (
             "symbol", "inst", "side", "qty", "entry", "current_price", "stop", "stop_init", "targets", "strategy",
             "inst", "strategies", "opened_ts", "updated_ts", "realized_usd", "fees_usd", "funding_usd", "slip_usd", "risk_usd",

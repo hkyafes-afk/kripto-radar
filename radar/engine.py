@@ -795,7 +795,7 @@ class Engine:
             self._bbo_err = f"{type(e).__name__}: {e}"
 
     def _bbo_tanilama(self, ctxs: list[dict]) -> None:
-        """Her karar turunda WS/BBO tanılamasını site/birlesik/golge/tanilama.json'a yazar (salt okunur gözlem)."""
+        """Her karar turunda WS/BBO tanılaması (salt okunur) → self._bbo_diag; shadow durum.json'a gömülür."""
         try:
             from .unified.liquidity import spread_status
             now = time.time()
@@ -807,34 +807,21 @@ class Engine:
                 if not inst:
                     continue
                 bid, ask, age = self._ws_bbo(inst)
-                ctx_b = {k: c.get(k) for k in ("bid", "ask", "book_age_s", "bbo_kaynak")}
-                st, _ = spread_status(ctx_b["bid"], ctx_b["ask"], ctx_b["book_age_s"])
+                st, _ = spread_status(c.get("bid"), c.get("ask"), c.get("book_age_s"))
                 durum[st] = durum.get(st, 0) + 1
                 if len(rows) < 12:
                     rows.append({"decision_inst": inst, "feed_inst": inst in feed_syms, "book_exists": inst in self.book,
-                                 "ws_bid": bid, "ws_ask": ask, "ws_book_age": age, "bid": ctx_b["bid"],
-                                 "ask": ctx_b["ask"], "book_age": ctx_b["book_age_s"], "bbo_kaynak": ctx_b["bbo_kaynak"],
-                                 "spread_status": st})
-            out = {"ts": int(now * 1000), "ws_healthy": self.okx_live(),
-                   "tick_count": getattr(f, "ticks", None),
-                   "last_tick_age": round(now - f.last_msg, 1) if f is not None and getattr(f, "last_msg", 0) else None,
-                   "feed_symbols": len(feed_syms), "decision_coins": len(ctxs or []),
-                   "book_entries": len(self.book), "spread_durum_sayim": durum,
-                   "bbo_rest_hata": getattr(self, "_bbo_err", None), "ornek": rows}
-            d = Path(self.site) / "birlesik" / "golge"
-            d.mkdir(parents=True, exist_ok=True)
-            tmp = d / "tanilama.json.tmp"
-            tmp.write_text(json.dumps(out, ensure_ascii=False), encoding="utf-8")
-            tmp.replace(d / "tanilama.json")
-        except Exception as e:  # noqa: BLE001 — tanılama karar akışını durdurmaz; hata dosyaya yazılır
-            try:
-                d = Path(self.site) / "birlesik" / "golge"
-                d.mkdir(parents=True, exist_ok=True)
-                (d / "tanilama.json").write_text(json.dumps({"ts": int(time.time() * 1000),
-                                                              "hata": f"{type(e).__name__}: {e}"}, ensure_ascii=False),
-                                                 encoding="utf-8")
-            except Exception:  # noqa: BLE001
-                pass
+                                 "ws_bid": bid, "ws_ask": ask, "ws_book_age": age, "bid": c.get("bid"),
+                                 "ask": c.get("ask"), "book_age": c.get("book_age_s"),
+                                 "bbo_kaynak": c.get("bbo_kaynak"), "spread_status": st})
+            self._bbo_diag = {"ts": int(now * 1000), "ws_healthy": self.okx_live(),
+                              "tick_count": getattr(f, "ticks", None),
+                              "last_tick_age": round(now - f.last_msg, 1) if f is not None and getattr(f, "last_msg", 0) else None,
+                              "feed_symbols": len(feed_syms), "decision_coins": len(ctxs or []),
+                              "book_entries": len(self.book), "spread_durum_sayim": durum,
+                              "bbo_rest_hata": getattr(self, "_bbo_err", None), "ornek": rows}
+        except Exception as e:  # noqa: BLE001 — tanılama karar akışını durdurmaz; hata durum.json'a yazılır
+            self._bbo_diag = {"hata": f"{type(e).__name__}: {e}"}
 
     def _unified_shadow(self, ctxs: list[dict]):
         """Birleşik Baş Trader kancası (karar/işlem) + etkinlik denetçisi."""
@@ -868,6 +855,7 @@ class Engine:
                 if tr is None:
                     tr = self._golge_trader = UnifiedTrader(self.cfg, self.site / "birlesik" / "golge",
                                                             journal_root=self.site / "birlesik", mode="shadow")
+                tr.diag = getattr(self, "_bbo_diag", None)
                 now = time.time()
                 insts = {c.get("inst") for c in ctxs} | set(tr.adapter.positions) | \
                     {o["intent"]["inst"] for o in tr.adapter.open_orders()}
