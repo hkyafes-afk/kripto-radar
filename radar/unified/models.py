@@ -516,9 +516,10 @@ class MarketContext:
     coin_age_days: float | None = None
     factors: Mapping[str, FactorValue] = field(default_factory=dict)
     coverage: FactorCoverage | None = None
+    raw: Mapping[str, Any] = field(default_factory=dict)   # legacy bağlam (salt okunur); yalnız legacy sarmalayıcılar okur
 
     def __post_init__(self):
-        for f_ in ("candles", "structure", "factors"):
+        for f_ in ("candles", "structure", "factors", "raw"):
             object.__setattr__(self, f_, _frozen_map(getattr(self, f_)))
 
     def factor(self, name: str) -> FactorValue | None:
