@@ -12,9 +12,9 @@ _Yatırım tavsiyesi değildir._
 | polat_girilen | 12 | %58.3 | -0.357 | -4.29 |
 | polat_girilmeyen | 1761 | %49.9 | -0.186 | -327.95 |
 | rastgele | 1778 | %44.2 | -0.321 | -570.58 |
-| trend_naif | 1777 | %42.3 | -0.343 | -610.3 |
+| trend_naif | 1778 | %42.4 | -0.343 | -609.81 |
 
-Polat özsermaye: %-4.54 · BTC al-tut: %-4.5
+Polat özsermaye: %-4.57 · BTC al-tut: %-4.38
 
 ## Öğrenme (walk-forward)
 
@@ -67,11 +67,11 @@ En az işe yarayan okumalar: obv_egim_1H ×0.46, momentum_1H ×0.499, ultimate_1
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 6576
+- ders: 6578
 - günlük işlem tavanı (8): 4028
 - üst üste 3 zarar: 1951
 - aynı yönde pozisyon tavanı: 1426
-- büyük zaman dilimi trendi ters: 1398
+- büyük zaman dilimi trendi ters: 1404
 - gösterge aileleri aynı yönde değil: 1137
 - bu coinde zaten pozisyon var: 580
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 138
@@ -130,16 +130,16 @@ En az işe yarayan okumalar: obv_egim_1H ×0.46, momentum_1H ×0.499, ultimate_1
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 7923
+- ders: 7925
 - günlük işlem tavanı (8): 4663
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 1752
+- büyük zaman dilimi trendi ters: 1758
 - gösterge aileleri aynı yönde değil: 1646
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 715
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
-- puan +0.123 eşiğin (0.25) altında: 117
+- puan +0.123 eşiğin (0.25) altında: 118
 
 **Hata sınıfları**
 
@@ -194,16 +194,16 @@ En az işe yarayan okumalar: obv_egim_1H ×0.46, momentum_1H ×0.499, ultimate_1
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 7923
+- ders: 7925
 - günlük işlem tavanı (8): 4663
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 1752
+- büyük zaman dilimi trendi ters: 1758
 - gösterge aileleri aynı yönde değil: 1646
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 715
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
-- puan +0.123 eşiğin (0.25) altında: 117
+- puan +0.123 eşiğin (0.25) altında: 118
 
 **Hata sınıfları**
 
