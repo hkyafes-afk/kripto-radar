@@ -3,6 +3,12 @@
 > Bu dosya kullanıcıyla birlikte alınan kararların kalıcı kaydıdır. Her yeni çalışma oturumunda **önce bu dosya okunur**.
 > Son güncelleme: 27 Ekim 2026 (v10 uygulandı)
 
+## Birleşik Baş Trader (30.10.2026, geliştirme dalı)
+
+Çok ajanlı yapıdan tek merkezden karar veren yapıya geçiş planı ve durumu: `docs/birlesik/PLAN.md` (plan),
+`docs/birlesik/DEVAM.md` (yarıda kalırsa devam), `docs/birlesik/GOREV.md` (kullanıcı talimatı). Dal:
+`feat/unified-trader-foundation`. Varsayılan `birlesik.karar_modu: legacy` → mevcut sistem aynen çalışır.
+
 ## 0. Nihai hedef
 
 Önce demo parayla, **masraflar düştükten sonra işlem başına beklenen kârı (R) kanıtlanmış şekilde pozitif** bir ajan
