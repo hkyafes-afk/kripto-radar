@@ -232,3 +232,4 @@
 {"olay": "nabiz_gonderilemedi", "seri": 2, "hata": "      \nremote: Request ID 4102:31C831:1079F:14A35:6AE4A867        \nremote: Time 2026-10-30T14:23:37Z\nTo https://github.com/hkyafes-afk/kripto-radar.git\n ! [remote rejected] HEAD -> polat-veri (Internal Server Error)\nerror: failed to push some refs to 'https://github.com/hkyafes-afk/kripto-radar.git'", "ts": 1793370217270}
 {"olay": "ogrenme", "durum": "güncellendi", "uygulanan": 58, "reddedilen": 48, "ts": 1793371684683}
 {"olay": "halef_cagrildi", "ok": true, "sonuc": "HTTP 204", "ts": 1793372332299}
+{"olay": "durdu", "neden": "süre doldu", "veri": {"mesaj": 41570624, "gecikme_ms_p50": 112, "gecikme_ms_p95": 159, "isleme_us_p50": 12.4, "isleme_us_p95": 260.1}, "ts": 1793373225163}
