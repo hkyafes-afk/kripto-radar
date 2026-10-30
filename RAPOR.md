@@ -11,10 +11,10 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 1855 | %49.5 | -0.195 | -362.44 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
 | polat_girilmeyen | 1842 | %49.5 | -0.194 | -357.08 |
-| rastgele | 1860 | %43.9 | -0.327 | -608.77 |
-| trend_naif | 1879 | %41.4 | -0.361 | -678.43 |
+| rastgele | 1861 | %43.8 | -0.328 | -609.89 |
+| trend_naif | 1880 | %41.3 | -0.361 | -679.55 |
 
-Polat özsermaye: %-4.65 · BTC al-tut: %-3.01
+Polat özsermaye: %-4.65 · BTC al-tut: %-3.04
 
 ## Öğrenme (walk-forward)
 
@@ -67,10 +67,10 @@ En az işe yarayan okumalar: psar_1H ×0.538, ultimate_1H ×0.563, tetik_geri_te
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 6958
+- ders: 6971
 - günlük işlem tavanı (8): 4028
 - üst üste 3 zarar: 1951
-- büyük zaman dilimi trendi ters: 1529
+- büyük zaman dilimi trendi ters: 1530
 - aynı yönde pozisyon tavanı: 1426
 - gösterge aileleri aynı yönde değil: 1151
 - bu coinde zaten pozisyon var: 580
@@ -130,16 +130,16 @@ En az işe yarayan okumalar: psar_1H ×0.538, ultimate_1H ×0.563, tetik_geri_te
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 8305
+- ders: 8318
 - günlük işlem tavanı (8): 4663
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 1883
+- büyük zaman dilimi trendi ters: 1884
 - gösterge aileleri aynı yönde değil: 1660
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 715
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
-- puan +0.123 eşiğin (0.25) altında: 129
+- puan +0.123 eşiğin (0.25) altında: 130
 
 **Hata sınıfları**
 
@@ -194,16 +194,16 @@ En az işe yarayan okumalar: psar_1H ×0.538, ultimate_1H ×0.563, tetik_geri_te
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 8305
+- ders: 8318
 - günlük işlem tavanı (8): 4663
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 1883
+- büyük zaman dilimi trendi ters: 1884
 - gösterge aileleri aynı yönde değil: 1660
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 715
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
-- puan +0.123 eşiğin (0.25) altında: 129
+- puan +0.123 eşiğin (0.25) altında: 130
 
 **Hata sınıfları**
 
