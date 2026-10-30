@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 1843 | %49.7 | -0.192 | -353.89 |
+| polat_tum_sinyaller | 1845 | %49.7 | -0.192 | -354.2 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 1830 | %49.7 | -0.19 | -348.53 |
-| rastgele | 1845 | %43.8 | -0.327 | -602.91 |
-| trend_naif | 1866 | %41.5 | -0.357 | -666.79 |
+| polat_girilmeyen | 1832 | %49.7 | -0.19 | -348.84 |
+| rastgele | 1848 | %43.8 | -0.327 | -604.47 |
+| trend_naif | 1869 | %41.5 | -0.358 | -668.34 |
 
-Polat özsermaye: %-4.65 · BTC al-tut: %-3.02
+Polat özsermaye: %-4.65 · BTC al-tut: %-2.94
 
 ## Öğrenme (walk-forward)
 
@@ -67,12 +67,12 @@ En az işe yarayan okumalar: btc_1H ×0.466, obv_egim_1H ×0.521, ultimate_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 6913
+- ders: 6923
 - günlük işlem tavanı (8): 4028
 - üst üste 3 zarar: 1951
 - büyük zaman dilimi trendi ters: 1522
 - aynı yönde pozisyon tavanı: 1426
-- gösterge aileleri aynı yönde değil: 1148
+- gösterge aileleri aynı yönde değil: 1149
 - bu coinde zaten pozisyon var: 580
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 138
 - puan -0.141 eşiğin (0.25) altında: 75
@@ -130,11 +130,11 @@ En az işe yarayan okumalar: btc_1H ×0.466, obv_egim_1H ×0.521, ultimate_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 8260
+- ders: 8270
 - günlük işlem tavanı (8): 4663
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 1876
-- gösterge aileleri aynı yönde değil: 1657
+- gösterge aileleri aynı yönde değil: 1658
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 715
 - emir defteri doğrulanmadı: 593
@@ -194,11 +194,11 @@ En az işe yarayan okumalar: btc_1H ×0.466, obv_egim_1H ×0.521, ultimate_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 8260
+- ders: 8270
 - günlük işlem tavanı (8): 4663
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 1876
-- gösterge aileleri aynı yönde değil: 1657
+- gösterge aileleri aynı yönde değil: 1658
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 715
 - emir defteri doğrulanmadı: 593
