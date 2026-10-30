@@ -92,3 +92,4 @@
 {"olay": "hata_ayari", "inst": "SOL-USDT-SWAP", "hatalar": ["kayma > 10 bp"], "degisen": {"kayma_cezasi": "SOL-USDT-SWAP"}, "ts": 1793320664391}
 {"olay": "yol", "yol": "trend_cizgisi_kirilim_15m|short|btc:yatay", "karar": null, "n": 26, "ort_R": -0.257, "ts": 1793321426439}
 {"olay": "hata_ayari", "inst": "TRUMP-USDT-SWAP", "hatalar": ["kayma > 10 bp"], "degisen": {"kayma_cezasi": "TRUMP-USDT-SWAP"}, "ts": 1793329302606}
+{"olay": "yol", "yol": "stoch_kesisim|short|btc:yatay", "karar": "kacin", "n": 20, "ort_R": -0.475, "ts": 1793341166891}
