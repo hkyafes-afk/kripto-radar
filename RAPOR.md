@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.188R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.189R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 1805 | %49.9 | -0.188 | -338.48 |
+| polat_tum_sinyaller | 1810 | %49.8 | -0.189 | -342.35 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 1792 | %49.9 | -0.186 | -333.12 |
-| rastgele | 1807 | %43.9 | -0.325 | -587.69 |
-| trend_naif | 1823 | %41.8 | -0.351 | -640.46 |
+| polat_girilmeyen | 1797 | %49.8 | -0.188 | -336.99 |
+| rastgele | 1812 | %43.8 | -0.327 | -593.43 |
+| trend_naif | 1830 | %41.7 | -0.353 | -646.7 |
 
-Polat özsermaye: %-4.65 · BTC al-tut: %-3.63
+Polat özsermaye: %-4.65 · BTC al-tut: %-3.37
 
 ## Öğrenme (walk-forward)
 
@@ -67,10 +67,10 @@ En az işe yarayan okumalar: obv_egim_1H ×0.486, btc_1H ×0.521, momentum_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 6659
+- ders: 6671
 - günlük işlem tavanı (8): 4028
 - üst üste 3 zarar: 1951
-- büyük zaman dilimi trendi ters: 1474
+- büyük zaman dilimi trendi ters: 1478
 - aynı yönde pozisyon tavanı: 1426
 - gösterge aileleri aynı yönde değil: 1138
 - bu coinde zaten pozisyon var: 580
@@ -130,10 +130,10 @@ En az işe yarayan okumalar: obv_egim_1H ×0.486, btc_1H ×0.521, momentum_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 8006
+- ders: 8018
 - günlük işlem tavanı (8): 4663
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 1828
+- büyük zaman dilimi trendi ters: 1832
 - gösterge aileleri aynı yönde değil: 1647
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 715
@@ -194,10 +194,10 @@ En az işe yarayan okumalar: obv_egim_1H ×0.486, btc_1H ×0.521, momentum_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 8006
+- ders: 8018
 - günlük işlem tavanı (8): 4663
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 1828
+- büyük zaman dilimi trendi ters: 1832
 - gösterge aileleri aynı yönde değil: 1647
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 715
