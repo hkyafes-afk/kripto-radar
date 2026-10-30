@@ -65,11 +65,11 @@ En az işe yarayan okumalar: btc_1H ×0.407, psar_1H ×0.503, obv_egim_1H ×0.51
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 9855
-- günlük işlem tavanı (8): 5860
+- ders: 9862
+- günlük işlem tavanı (8): 5861
 - üst üste 3 zarar: 1951
 - gösterge aileleri aynı yönde değil: 1572
-- büyük zaman dilimi trendi ters: 1561
+- büyük zaman dilimi trendi ters: 1562
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 659
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 138
@@ -131,11 +131,11 @@ En az işe yarayan okumalar: btc_1H ×0.407, psar_1H ×0.503, obv_egim_1H ×0.51
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 11202
-- günlük işlem tavanı (8): 6495
+- ders: 11209
+- günlük işlem tavanı (8): 6496
 - üst üste 3 zarar: 2345
 - gösterge aileleri aynı yönde değil: 2081
-- büyük zaman dilimi trendi ters: 1915
+- büyük zaman dilimi trendi ters: 1916
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
@@ -198,11 +198,11 @@ En az işe yarayan okumalar: btc_1H ×0.407, psar_1H ×0.503, obv_egim_1H ×0.51
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 11202
-- günlük işlem tavanı (8): 6495
+- ders: 11209
+- günlük işlem tavanı (8): 6496
 - üst üste 3 zarar: 2345
 - gösterge aileleri aynı yönde değil: 2081
-- büyük zaman dilimi trendi ters: 1915
+- büyük zaman dilimi trendi ters: 1916
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
