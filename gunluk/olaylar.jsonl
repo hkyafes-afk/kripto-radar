@@ -207,3 +207,4 @@
 {"olay": "durdu", "neden": "süre doldu", "veri": {"mesaj": 49456832, "gecikme_ms_p50": 135, "gecikme_ms_p95": 190, "isleme_us_p50": 21.9, "isleme_us_p95": 291.9}, "ts": 1793334119306}
 {"olay": "devraldi", "bosluk_sn": 13.727, "pozisyon": 0, "ts": 1793334133022}
 {"olay": "ogrenme", "durum": "güncellendi", "uygulanan": 64, "reddedilen": 37, "ts": 1793335933272}
+{"olay": "ogrenme", "durum": "güncellendi", "uygulanan": 64, "reddedilen": 37, "ts": 1793337733518}
