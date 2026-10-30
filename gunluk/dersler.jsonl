@@ -90,3 +90,4 @@
 {"olay": "yol", "yol": "yapi_bozulmasi|short|piyasa+seviye|btc:yatay", "karar": "benimse", "n": 7, "ort_R": 0.439, "ts": 1793312527160}
 {"olay": "yol", "yol": "trend_cizgisi_kirilim_15m|short|btc:yatay", "karar": "kacin", "n": 20, "ort_R": -0.673, "ts": 1793319561662}
 {"olay": "hata_ayari", "inst": "SOL-USDT-SWAP", "hatalar": ["kayma > 10 bp"], "degisen": {"kayma_cezasi": "SOL-USDT-SWAP"}, "ts": 1793320664391}
+{"olay": "yol", "yol": "trend_cizgisi_kirilim_15m|short|btc:yatay", "karar": null, "n": 26, "ort_R": -0.257, "ts": 1793321426439}
