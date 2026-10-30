@@ -364,8 +364,8 @@ class UnifiedTrader:
 
     def _write_status(self, summary: dict) -> None:
         out = dict(summary)
-        if getattr(self, "diag", None):                       # BBO/WS tanılaması canlı durum.json içinde yayınlanır
-            out["tanilama"] = self.diag
+        # BBO/WS tanılaması her yayında durum.json içinde bulunur (anahtar hep yazılır: yoksa kod eski demektir)
+        out["tanilama"] = getattr(self, "diag", None) or {"hazir": False}
         out["pozisyonlar"] = [{k: p.get(k) for k in (
             "symbol", "inst", "side", "qty", "entry", "current_price", "stop", "stop_init", "targets", "strategy",
             "inst", "strategies", "opened_ts", "updated_ts", "realized_usd", "fees_usd", "funding_usd", "slip_usd", "risk_usd",
