@@ -743,23 +743,102 @@ class Engine:
         self.stats_counter["live_coins"] = len(ctxs)
         self._unified_shadow(ctxs)
 
-    def _book_ctx(self, inst: str) -> dict:
-        """Motorun public BBO defteri (WS tick veya REST tickers) → karar bağlamı: bid, ask, yaş (sn)."""
+    BBO_MAX_AGE_S = 15.0
+
+    def _ws_bbo(self, inst: str) -> tuple:
+        """WS defterindeki (bid, ask, yaş) — yoksa (None, None, None)."""
         b = self.book.get(inst)
         if not b:
-            return {"bid": None, "ask": None, "book_age_s": None}
+            return None, None, None
         _last, bid, ask, ts = b
-        return {"bid": bid if bid and bid > 0 else None, "ask": ask if ask and ask > 0 else None,
-                "book_age_s": round(time.time() - ts, 3) if ts else None}
+        bid = bid if bid and bid > 0 else None
+        ask = ask if ask and ask > 0 else None
+        return bid, ask, (round(time.time() - ts, 3) if ts else None)
+
+    def _book_ctx(self, inst: str) -> dict:
+        """Public BBO → karar bağlamı (bid, ask, yaş, kaynak). Öncelik: taze WS defteri; yoksa/bozuksa aynı turda
+        çekilmiş REST tickers anlık görüntüsü (gerçek public veri). Eski veri spread'i geçirmez."""
+        bid, ask, age = self._ws_bbo(inst)
+        src = "ws"
+        if not (bid and ask and age is not None and age <= self.BBO_MAX_AGE_S):
+            rb = (getattr(self, "bbo_rest", {}) or {}).get(inst)
+            if rb and rb[0] and rb[1] and time.time() - rb[2] <= self.BBO_MAX_AGE_S:
+                bid, ask, age, src = rb[0], rb[1], round(time.time() - rb[2], 3), "rest"
+            else:
+                src = "yok"
+                if bid and ask:
+                    src = "ws_eski"
+                return {"bid": None, "ask": None, "book_age_s": None, "bbo_kaynak": src}
+        return {"bid": bid, "ask": ask, "book_age_s": age, "bbo_kaynak": src}
+
+    def _bbo_snapshot(self, insts: set[str]) -> None:
+        """WS defteri eksik/bayat olan karar coinleri için TEK bir REST tickers çağrısı (public, anlık BBO)."""
+        need = set()
+        for i in insts:
+            bid, ask, age = self._ws_bbo(i) if i else (None, None, None)
+            if not (bid and ask and age is not None and age <= self.BBO_MAX_AGE_S):
+                need.add(i)
+        if not need:
+            return
+        try:
+            now = time.time()
+            rest = getattr(self, "bbo_rest", None)
+            if rest is None:
+                rest = self.bbo_rest = {}
+            for x in self.client.tickers("SWAP"):
+                iid = x.get("instId")
+                if iid in need:
+                    bid, ask = _f(x.get("bidPx"), 0.0), _f(x.get("askPx"), 0.0)
+                    if bid > 0 and ask > 0:
+                        rest[iid] = (bid, ask, now)
+        except Exception as e:  # noqa: BLE001
+            self._bbo_err = f"{type(e).__name__}: {e}"
+
+    def _bbo_tanilama(self, ctxs: list[dict]) -> None:
+        """Her karar turunda WS/BBO tanılamasını site/birlesik/golge/tanilama.json'a yazar (salt okunur gözlem)."""
+        try:
+            from .unified.liquidity import spread_status
+            now = time.time()
+            f = (getattr(self, "feeds", {}) or {}).get("okx")
+            feed_syms = set(getattr(f, "symbols", []) or [])
+            rows, durum = [], {}
+            for c in ctxs or []:
+                inst = c.get("inst")
+                if not inst:
+                    continue
+                bid, ask, age = self._ws_bbo(inst)
+                ctx_b = {k: c.get(k) for k in ("bid", "ask", "book_age_s", "bbo_kaynak")}
+                st, _ = spread_status(ctx_b["bid"], ctx_b["ask"], ctx_b["book_age_s"])
+                durum[st] = durum.get(st, 0) + 1
+                if len(rows) < 12:
+                    rows.append({"decision_inst": inst, "feed_inst": inst in feed_syms, "book_exists": inst in self.book,
+                                 "ws_bid": bid, "ws_ask": ask, "ws_book_age": age, "bid": ctx_b["bid"],
+                                 "ask": ctx_b["ask"], "book_age": ctx_b["book_age_s"], "bbo_kaynak": ctx_b["bbo_kaynak"],
+                                 "spread_status": st})
+            out = {"ts": int(now * 1000), "ws_healthy": self.okx_live(),
+                   "tick_count": getattr(f, "ticks", None),
+                   "last_tick_age": round(now - f.last_msg, 1) if f is not None and getattr(f, "last_msg", 0) else None,
+                   "feed_symbols": len(feed_syms), "decision_coins": len(ctxs or []),
+                   "book_entries": len(self.book), "spread_durum_sayim": durum,
+                   "bbo_rest_hata": getattr(self, "_bbo_err", None), "ornek": rows}
+            d = Path(self.site) / "birlesik" / "golge"
+            d.mkdir(parents=True, exist_ok=True)
+            tmp = d / "tanilama.json.tmp"
+            tmp.write_text(json.dumps(out, ensure_ascii=False), encoding="utf-8")
+            tmp.replace(d / "tanilama.json")
+        except Exception:  # noqa: BLE001 — tanılama asla karar akışını durdurmaz
+            pass
 
     def _unified_shadow(self, ctxs: list[dict]):
         """Birleşik Baş Trader kancası (karar/işlem) + etkinlik denetçisi."""
         try:                                                  # BBO zenginleştirme: hata yutulur, kararı durdurmaz
+            self._bbo_snapshot({c.get("inst") for c in ctxs or [] if c.get("inst")})
             for c in ctxs or []:
                 if c.get("inst"):
                     c.update(self._book_ctx(c["inst"]))
         except Exception:  # noqa: BLE001
             pass
+        self._bbo_tanilama(ctxs)
         self._unified_step(ctxs)
         self._unified_audit()
 
@@ -785,7 +864,14 @@ class Engine:
                 now = time.time()
                 insts = {c.get("inst") for c in ctxs} | set(tr.adapter.positions) | \
                     {o["intent"]["inst"] for o in tr.adapter.open_orders()}
-                book = getattr(self, "book", {}) or {}
+                book = dict(getattr(self, "book", {}) or {})
+                for i in insts:                                 # dolum fiyatı da karar BBO'suyla aynı kaynaktan
+                    if not i:
+                        continue
+                    ws_ok = (b := book.get(i)) and b[1] and b[2] and time.time() - b[3] <= self.BBO_MAX_AGE_S
+                    rb = (getattr(self, "bbo_rest", {}) or {}).get(i)
+                    if not ws_ok and rb and rb[0] and rb[1] and time.time() - rb[2] <= self.BBO_MAX_AGE_S:
+                        book[i] = ((rb[0] + rb[1]) / 2, rb[0], rb[1], rb[2])
                 quotes = {i: q for i in insts if i and (q := quote_from_book(i, book.get(i), now))}
                 ev, self.golge_fund_events = list(getattr(self, "golge_fund_events", [])), []
                 okx = (getattr(self, "feeds", {}) or {}).get("okx")
