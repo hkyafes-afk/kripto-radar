@@ -4,24 +4,24 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.192R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.191R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 1674 | %50.1 | -0.192 | -321.8 |
+| polat_tum_sinyaller | 1676 | %50.1 | -0.191 | -320.53 |
 | polat_girilen | 9 | %55.6 | -0.477 | -4.29 |
-| polat_girilmeyen | 1665 | %50.0 | -0.191 | -317.51 |
-| rastgele | 1694 | %43.9 | -0.331 | -559.97 |
-| trend_naif | 1677 | %41.8 | -0.36 | -604.49 |
+| polat_girilmeyen | 1667 | %50.1 | -0.19 | -316.24 |
+| rastgele | 1696 | %43.9 | -0.329 | -558.7 |
+| trend_naif | 1679 | %41.9 | -0.359 | -603.22 |
 
-Polat özsermaye: %-3.34 · BTC al-tut: %-4.67
+Polat özsermaye: %-2.93 · BTC al-tut: %-5.13
 
 ## Öğrenme (walk-forward)
 
-Örnek 1647 (eğitim 1152, doğrulama 495) · uygulanan katsayı 64 · doğrulamada tutmadığı için reddedilen 32
+Örnek 1675 (eğitim 1172, doğrulama 503) · uygulanan katsayı 62 · doğrulamada tutmadığı için reddedilen 35
 
-En çok işe yarayan okumalar: macd_hist_15m ×1.458, tetik_psar_donus_15m ×1.404, momentum_5m ×1.392, uyusmazlik_rsi_15m ×1.388, cci_5m ×1.386, tetik_yapi_bozulmasi_15m ×1.362, obv_egim_15m ×1.349, oi_fiyat ×1.347, hacim_oran_1H ×1.332, rsi_5m ×1.301
-En az işe yarayan okumalar: obv_egim_1H ×0.465, momentum_1H ×0.505, btc_1H ×0.567, psar_1H ×0.572, ultimate_1H ×0.606, tetik_geri_test_1H ×0.635, adx_di_1H ×0.641, willr_1H ×0.656, uyusmazlik_macd_1H ×0.711, supertrend_1H ×0.715
+En çok işe yarayan okumalar: macd_hist_15m ×1.458, tetik_psar_donus_15m ×1.397, uyusmazlik_rsi_15m ×1.394, momentum_5m ×1.384, cci_5m ×1.367, tetik_yapi_bozulmasi_15m ×1.363, obv_egim_15m ×1.35, oi_fiyat ×1.327, cci_15m ×1.317, hacim_oran_1H ×1.309
+En az işe yarayan okumalar: obv_egim_1H ×0.479, momentum_1H ×0.517, btc_1H ×0.542, psar_1H ×0.565, ultimate_1H ×0.604, tetik_geri_test_1H ×0.61, adx_di_1H ×0.639, willr_1H ×0.657, supertrend_1H ×0.703, cci_1H ×0.709
 
 ## Son 1 gün
 
@@ -63,16 +63,16 @@ En az işe yarayan okumalar: obv_egim_1H ×0.465, momentum_1H ×0.505, btc_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 5799
+- ders: 5834
 - günlük işlem tavanı (8): 4028
 - üst üste 3 zarar: 1951
-- büyük zaman dilimi trendi ters: 1377
-- gösterge aileleri aynı yönde değil: 1097
-- aynı yönde pozisyon tavanı: 575
-- bu coinde zaten pozisyon var: 363
+- büyük zaman dilimi trendi ters: 1379
+- gösterge aileleri aynı yönde değil: 1099
+- aynı yönde pozisyon tavanı: 697
+- bu coinde zaten pozisyon var: 387
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 138
 - puan -0.141 eşiğin (0.25) altında: 71
-- puan -0.169 eşiğin (0.25) altında: 67
+- puan -0.169 eşiğin (0.25) altında: 68
 
 ## Son 50 gün
 
@@ -118,14 +118,14 @@ En az işe yarayan okumalar: obv_egim_1H ×0.465, momentum_1H ×0.505, btc_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 7146
+- ders: 7181
 - günlük işlem tavanı (8): 4663
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 1731
-- gösterge aileleri aynı yönde değil: 1606
+- büyük zaman dilimi trendi ters: 1733
+- gösterge aileleri aynı yönde değil: 1608
+- aynı yönde pozisyon tavanı: 697
 - emir defteri doğrulanmadı: 593
-- aynı yönde pozisyon tavanı: 575
-- bu coinde zaten pozisyon var: 498
+- bu coinde zaten pozisyon var: 522
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
 - puan +0.123 eşiğin (0.25) altında: 112
 
@@ -178,14 +178,14 @@ En az işe yarayan okumalar: obv_egim_1H ×0.465, momentum_1H ×0.505, btc_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 7146
+- ders: 7181
 - günlük işlem tavanı (8): 4663
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 1731
-- gösterge aileleri aynı yönde değil: 1606
+- büyük zaman dilimi trendi ters: 1733
+- gösterge aileleri aynı yönde değil: 1608
+- aynı yönde pozisyon tavanı: 697
 - emir defteri doğrulanmadı: 593
-- aynı yönde pozisyon tavanı: 575
-- bu coinde zaten pozisyon var: 498
+- bu coinde zaten pozisyon var: 522
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
 - puan +0.123 eşiğin (0.25) altında: 112
 
