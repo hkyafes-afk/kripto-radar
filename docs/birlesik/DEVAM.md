@@ -24,7 +24,7 @@ PR 1 — ortak modeller, veri kapsamı, CostEngine, testler (dal: feat/unified-t
 - [ ] Araştırma denetimi dokümanı (docs/birlesik/ARASTIRMA_DENETIMI.md) — kontroller yapıldı, sonuçlar aşağıda
 - [ ] Uygulama planı (docs/birlesik/PLAN.md)
 - [x] radar/unified/models.py — enum + dataclass'lar (MarketContext … EffectivenessSnapshot), eski fikir → Opportunity adaptörü
-- [ ] radar/unified/coverage.py — FactorValue/FactorSpec/FactorCoverage (zorunlu/bayat/eksik/geçersiz, paper'a yeterlilik)
+- [x] radar/unified/coverage.py — FactorValue/FactorSpec/FactorCoverage (zorunlu/bayat/eksik/geçersiz, paper'a yeterlilik)
 - [ ] radar/unified/costs.py — CostEngine (ledger.fees_cfg, vwap_fill, stop_slip_bp yeniden kullanılır)
 - [ ] radar/unified/flags.py — karar_modu (legacy|shadow|unified), yürütme modu yalnız paper
 - [ ] config.yaml'a belgeli `birlesik:` bloğu (mevcut değerler değişmez)
