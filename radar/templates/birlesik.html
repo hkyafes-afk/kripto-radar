@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Baş Trader</title>
+<style>
+:root{
+  --bg:#0b0f14; --panel:#121820; --panel2:#18202a; --line:#232d39; --text:#e6edf3; --muted:#8b98a7; --dim:#5d6b7a;
+  --green:#34d399; --green-bg:rgba(52,211,153,.12); --red:#f87171; --red-bg:rgba(248,113,113,.12);
+  --amber:#fbbf24; --amber-bg:rgba(251,191,36,.12); --blue:#60a5fa; --blue-bg:rgba(96,165,250,.12);
+  --mono: ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+  --sans: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,"Helvetica Neue",Arial,sans-serif;
+  --r:14px; color-scheme:dark;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#f5f7fa; --panel:#ffffff; --panel2:#f0f3f7; --line:#e1e6ec; --text:#0f1720; --muted:#5b6876; --dim:#8a96a3;
+    --green:#059669; --green-bg:rgba(5,150,105,.10); --red:#dc2626; --red-bg:rgba(220,38,38,.09);
+    --amber:#b45309; --amber-bg:rgba(180,83,9,.10); --blue:#2563eb; --blue-bg:rgba(37,99,235,.09); color-scheme:light;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-text-size-adjust:100%}
+body{padding-bottom:calc(24px + env(safe-area-inset-bottom))}
+a{color:var(--blue);text-decoration:none}
+.wrap{max-width:980px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+header{padding:18px 0 10px;display:flex;align-items:center;gap:12px}
+h1{font-size:19px;margin:0}
+.sub{color:var(--muted);font-size:12.5px;margin-top:2px}
+.btn{margin-left:auto;background:var(--panel);border:1px solid var(--line);color:var(--muted);border-radius:10px;padding:7px 10px;font-size:13px}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:6px 0 14px}
+@media (max-width:640px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi,.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px 13px;min-width:0}
+.kpi .l{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.kpi .v{font-size:20px;font-weight:700;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi .s{font-size:12px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.up{color:var(--green)} .down{color:var(--red)}
+h2{font-size:14px;margin:18px 0 8px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+.card{margin-bottom:10px}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;color:var(--muted);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11.5px;font-weight:600}
+.b-green{background:var(--green-bg);color:var(--green)} .b-red{background:var(--red-bg);color:var(--red)}
+.b-amber{background:var(--amber-bg);color:var(--amber)} .b-blue{background:var(--blue-bg);color:var(--blue)}
+.b-dim{background:var(--panel2);color:var(--muted)}
+.dec{border-bottom:1px solid var(--line);padding:9px 0}
+.dec:last-child{border-bottom:0}
+.dec summary{list-style:none;cursor:pointer;display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13.5px}
+.dec summary::-webkit-details-marker{display:none}
+.why{color:var(--muted);font-size:12.5px;margin-top:3px;line-height:1.45}
+.dec pre{white-space:pre-wrap;font-family:var(--sans);font-size:13px;background:var(--panel2);border-radius:10px;padding:10px;margin:8px 0 0}
+.legs{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px;margin-top:8px}
+.leg{background:var(--panel2);border-radius:9px;padding:6px 8px;font-size:12px}
+.leg b{display:block;font-family:var(--mono);font-size:13px}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 8px}
+.chip{background:var(--panel);border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:5px 10px;font-size:12.5px;cursor:pointer}
+.chip.on{background:var(--blue-bg);color:var(--blue);border-color:transparent}
+.warn{padding:10px 12px;border-radius:12px;background:var(--amber-bg);color:var(--amber);font-size:13px;margin:8px 0}
+.empty{color:var(--muted);font-size:13px;padding:6px 0}
+.foot{color:var(--dim);font-size:12px;margin-top:16px;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>👑 Baş Trader (birleşik)</h1>
+      <div class="sub" id="sub">yükleniyor…</div>
+    </div>
+    <a class="btn" href="./">← Kripto Radar</a>
+  </header>
+  <div id="warn"></div>
+  <div class="kpis" id="kpis"></div>
+
+  <h2>Kararlar</h2>
+  <div class="filters" id="filters"></div>
+  <div class="card" id="decs"></div>
+
+  <h2>Açık pozisyonlar (birleşik paper)</h2>
+  <div class="card tw" id="pos"></div>
+
+  <h2>Risk kapısı (son kararlar)</h2>
+  <div class="card tw" id="risk"></div>
+
+  <h2>Etkinlik: hangi strateji gerçekten kazandırıyor?</h2>
+  <div class="card tw" id="eff"></div>
+
+  <h2>Kapanan işlemler (birleşik paper)</h2>
+  <div class="card tw" id="closed"></div>
+
+  <div class="foot">
+    Sanal (paper) işlemlerdir; gerçek emir verilmez. Kararlar maliyet (ücret, spread, kayma, funding) düşüldükten sonra
+    verilir. "Kanıt yetersiz" = örnek küçük ya da güven aralığı sıfırı içeriyor: kazanıyor gibi görünse de şans olabilir.
+  </div>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt = (v, d = 2) => (v === null || v === undefined || Number.isNaN(v)) ? "—" : Number(v).toFixed(d);
+const sgn = (v, d = 2) => (v === null || v === undefined) ? "—" : (v > 0 ? "+" : "") + Number(v).toFixed(d);
+const cls = v => v > 0 ? "up" : (v < 0 ? "down" : "");
+const tm = ms => ms ? new Date(ms).toLocaleString("tr-TR", {day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit"}) : "—";
+const DEC = {OPEN:["AÇ","b-green"], REDUCE_SIZE:["YARIM AÇ","b-blue"], SHADOW:["GÖLGE","b-amber"], REJECT:["RED","b-red"],
+             HOLD:["BEKLE","b-dim"], EXIT:["ÇIK","b-red"]};
+const VERD = {terfi_adayi:["terfi adayı","b-green"], kapat_adayi:["kapatma adayı","b-red"], kanit_yetersiz:["kanıt yetersiz","b-amber"]};
+const STR = {swing_trend:"Trend (Kemal)", compression_breakout:"Sıkışma kırılımı (Selin)", controlled_breakout:"Kontrollü kırılım (Kaan)",
+             panic_reversal:"Panik dönüşü (Ayşe)", short_trend:"Short trend", intraday_trend:"Gün içi trend",
+             microstructure:"Mikro yapı", legacy_murat:"Murat (legacy)", carry:"Carry (Elif)"};
+const strName = s => STR[s] || s;
+let FILTER = "hepsi";
+
+async function getJSON(p) { try { const r = await fetch(p, {cache:"no-store"}); return r.ok ? await r.json() : null; } catch { return null; } }
+async function getLines(p) {
+  try { const r = await fetch(p, {cache:"no-store"}); if (!r.ok) return [];
+        return (await r.text()).split("\n").filter(Boolean).map(l => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean);
+  } catch { return []; }
+}
+const day = off => new Date(Date.now() - off * 86400000).toISOString().slice(0, 10);
+
+function kpi(l, v, s = "", c = "") { return `<div class="kpi"><div class="l">${l}</div><div class="v num ${c}">${v}</div><div class="s">${s}</div></div>`; }
+
+function renderKpis(d, o, decs) {
+  const K = [];
+  if (d) {
+    const start = d.bakiye - (d.kapananlar || []).reduce((a, c) => a + (c.net_usd || 0), 0);
+    K.push(kpi("Bakiye", fmt(d.bakiye, 0) + " $", `zirve ${fmt(d.zirve, 0)} $`));
+    K.push(kpi("Zirveden düşüş", "%" + fmt(d.dusus_yuzde, 1), `bugün %${fmt(d.gun_kayip_yuzde, 1)}`, d.dusus_yuzde > 5 ? "down" : ""));
+    K.push(kpi("Açık", d.acik, `kayıp serisi ${d.kayip_serisi}`));
+  } else {
+    K.push(kpi("Mod", o ? "gölge" : "kapalı", o ? "yalnız karar kaydı" : "karar_modu: legacy"));
+  }
+  const c = decs.reduce((a, x) => (a[x.decision] = (a[x.decision] || 0) + 1, a), {});
+  K.push(kpi("Bugünkü kararlar", decs.length, `aç ${(c.OPEN||0)+(c.REDUCE_SIZE||0)} · gölge ${c.SHADOW||0} · red ${c.REJECT||0}`));
+  $("kpis").innerHTML = K.join("");
+}
+
+function legs(c) {
+  if (!c) return "";
+  const L = [["Giriş ücreti", c.entry_fee_bp], ["Çıkış ücreti", c.exit_fee_bp], ["Spread", c.spread_bp],
+             ["Giriş kayması", c.entry_slippage_bp], ["Çıkış kayması", c.exit_slippage_bp], ["Stop kayması", c.stop_slippage_bp],
+             ["Funding", c.funding_bp], ["Dolum tamponu", c.missed_fill_buffer_bp], ["Belirsizlik", c.uncertainty_buffer_bp]];
+  return `<div class="legs">${L.map(([n, v]) => `<div class="leg">${n}<b>${fmt(v, 1)} bp</b></div>`).join("")}
+    <div class="leg">Brüt avantaj<b>${fmt(c.gross_edge_bp, 1)} bp</b></div>
+    <div class="leg">Toplam maliyet<b>${fmt(c.total_cost_bp, 1)} bp</b></div>
+    <div class="leg">Net avantaj<b class="${cls(c.net_edge_bp)}">${fmt(c.net_edge_bp, 1)} bp</b></div></div>
+    ${(c.missing_inputs||[]).length ? `<div class="why">Eksik maliyet girdisi: ${esc(c.missing_inputs.join(", "))}</div>` : ""}`;
+}
+
+function renderDecs(all) {
+  const groups = {hepsi: all, ac: all.filter(d => d.decision === "OPEN" || d.decision === "REDUCE_SIZE"),
+                  golge: all.filter(d => d.decision === "SHADOW"), red: all.filter(d => d.decision === "REJECT")};
+  const names = {hepsi:"Hepsi", ac:"Açılanlar", golge:"Gölge", red:"Red"};
+  $("filters").innerHTML = Object.keys(groups).map(k => `<button class="chip ${k === FILTER ? "on" : ""}" data-f="${k}">${names[k]} (${groups[k].length})</button>`).join("");
+  $("filters").querySelectorAll(".chip").forEach(b => b.onclick = () => { FILTER = b.dataset.f; renderDecs(all); });
+  const rows = groups[FILTER].slice(0, 60);
+  if (!rows.length) { $("decs").innerHTML = `<div class="empty">Bugün bu türde karar yok.</div>`; return; }
+  $("decs").innerHTML = rows.map(d => {
+    const [lab, bc] = DEC[d.decision] || [d.decision, "b-dim"];
+    const side = d.side === "long" ? "▲ LONG" : (d.side === "short" ? "▼ SHORT" : "");
+    const first = (d.explanation_tr || "").split("\n")[1] || "";
+    const miss = (d.missing_factors || []).length ? `<div class="why">Eksik veri: ${esc(d.missing_factors.join(", "))}</div>` : "";
+    return `<details class="dec"><summary><span class="badge ${bc}">${lab}</span><b>${esc(d.symbol)}</b>
+      <span class="${d.side === "long" ? "up" : "down"}">${side}</span><span>${esc(strName(d.strategy))}</span>
+      <span class="num ${cls(d.net_edge_bp)}" style="margin-left:auto">${d.net_edge_bp == null ? "" : sgn(d.net_edge_bp, 0) + " bp"}</span></summary>
+      <div class="why">${esc(first)} · ${tm(d.kayit_ms || d.ts_ms)}</div>
+      <pre>${esc(d.explanation_tr)}</pre>${legs(d.costs)}${miss}</details>`;
+  }).join("");
+}
+
+function table(head, rows) {
+  return `<table><thead><tr>${head.map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>${rows.join("")}</tbody></table>`;
+}
+
+function renderPos(d) {
+  const P = (d && d.pozisyonlar) || [];
+  $("pos").innerHTML = P.length ? table(["Coin", "Yön", "Strateji", "Giriş", "Stop", "Risk", "Kaldıraç", "Açılış"],
+    P.map(p => `<tr><td><b>${esc(p.symbol)}</b></td><td class="${p.side === "long" ? "up" : "down"}">${p.side === "long" ? "LONG" : "SHORT"}</td>
+      <td>${esc(strName(p.strategy))}</td><td class="num">${fmt(p.entry, 4)}</td><td class="num">${fmt(p.stop, 4)}</td>
+      <td class="num">${fmt(p.risk_usd)} $</td><td class="num">${fmt(p.leverage, 0)}x</td><td>${tm(p.opened_ts)}</td></tr>`))
+    : `<div class="empty">${d ? "Açık pozisyon yok." : "Birleşik paper işlem modu kapalı (karar_modu: unified değil)."}</div>`;
+}
+
+function renderRisk(d) {
+  const R = (d && d.risk) || [];
+  $("risk").innerHTML = R.length ? table(["Coin", "Strateji", "Sonuç", "Açıklama"],
+    R.slice().reverse().map(r => { const [lab, bc] = DEC[r.karar] || [r.karar, "b-dim"];
+      return `<tr><td><b>${esc(r.sym)}</b></td><td>${esc(strName(r.strateji))}</td><td><span class="badge ${bc}">${lab}</span></td>
+        <td style="white-space:normal">${esc(r.aciklama)}</td></tr>`; }))
+    : `<div class="empty">Risk kapısına gelen karar yok.</div>`;
+}
+
+function renderEff(e) {
+  if (!e) { $("eff").innerHTML = `<div class="empty">Etkinlik raporu henüz yok (gölge/unified modda saatte bir üretilir).</div>`; return; }
+  const ks = Object.entries(e.kapsamlar || {}).filter(([k]) => k.startsWith("strateji:")).sort((a, b) => b[1].n_trades - a[1].n_trades);
+  $("eff").innerHTML = (ks.length ? table(["Strateji", "Kaynak", "n", "Ort. R", "%95 GA", "Kazanma", "Sonuç"],
+    ks.map(([k, v]) => { const [, s, src, mode] = k.split(":"); const [lab, bc] = VERD[v.karar] || [v.karar, "b-dim"];
+      return `<tr><td>${esc(strName(s))}</td><td>${esc(src)}${mode === "golge" ? " · gölge" : ""}</td><td class="num">${v.n_trades}</td>
+        <td class="num ${cls(v.avg_r)}">${sgn(v.avg_r)}</td><td class="num">${v.ci_low_r == null ? "—" : sgn(v.ci_low_r) + " … " + sgn(v.ci_high_r)}</td>
+        <td class="num">${v.win_rate == null ? "—" : "%" + fmt(v.win_rate * 100, 0)}</td>
+        <td><span class="badge ${bc}" title="${esc(v.karar_tr)}">${lab}</span></td></tr>`; }))
+    : `<div class="empty">Henüz kapanmış işlem yok.</div>`)
+    + ((e.notlar || []).length ? `<div class="why" style="margin-top:8px">${esc(e.notlar.join(" · "))}</div>` : "");
+}
+
+function renderClosed(d) {
+  const C = ((d && d.kapananlar) || []).slice().reverse();
+  $("closed").innerHTML = C.length ? table(["Coin", "Yön", "Strateji", "Sonuç", "R", "Sebep", "Kapanış"],
+    C.map(c => `<tr><td><b>${esc(c.symbol)}</b></td><td>${c.side === "long" ? "LONG" : "SHORT"}</td><td>${esc(strName(c.strategy))}</td>
+      <td class="num ${cls(c.net_usd)}">${sgn(c.net_usd)} $</td><td class="num ${cls(c.r)}">${sgn(c.r)}</td>
+      <td style="white-space:normal">${esc(c.exit_reason || "")}</td><td>${tm(c.closed_ts)}</td></tr>`))
+    : `<div class="empty">Henüz kapanan işlem yok.</div>`;
+}
+
+async function load() {
+  const [d, o, e, t0, t1] = await Promise.all([getJSON("birlesik/durum.json"), getJSON("birlesik/ozet.json"),
+    getJSON("birlesik/etkinlik.json"), getLines(`birlesik/kararlar-${day(0)}.jsonl`), getLines(`birlesik/kararlar-${day(1)}.jsonl`)]);
+  // aynı fırsatın yalnız son kararı (değişince yeni satır yazılır)
+  const seen = new Map();
+  for (const r of [...t1, ...t0]) seen.set(r.idempotency_key || (r.symbol + r.strategy + r.side), r);
+  const decs = [...seen.values()].filter(r => (r.kayit_ms || r.ts_ms || 0) > Date.now() - 36 * 3600e3)
+    .sort((a, b) => (b.kayit_ms || b.ts_ms) - (a.kayit_ms || a.ts_ms));
+  const mode = d ? "birleşik paper işlem" : (o || t0.length ? "gölge (yalnız karar kaydı)" : "kapalı");
+  $("sub").textContent = `mod: ${mode} · güncellendi ${tm((d && d.ts) || (o && o.ts) || (e && e.ts))}`;
+  $("warn").innerHTML = (!d && !o && !t0.length && !t1.length)
+    ? `<div class="warn">Birleşik Baş Trader henüz çalışmıyor (config: birlesik.karar_modu = legacy). Gölge ya da unified moda geçince burada kararlar görünür.</div>`
+    : ((d && (d.hatalar || []).length) ? `<div class="warn">Son hatalar: ${esc(d.hatalar.join(" · "))}</div>` : "");
+  renderKpis(d, o, decs); renderDecs(decs); renderPos(d); renderRisk(d); renderEff(e); renderClosed(d);
+}
+load();
+setInterval(load, 60000);
+</script>
+</body>
+</html>
