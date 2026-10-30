@@ -64,7 +64,7 @@ En az işe yarayan okumalar: btc_1H ×0.35, momentum_1H ×0.473, obv_egim_1H ×0
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 10155
+- ders: 10189
 - günlük işlem tavanı (8): 5892
 - üst üste 3 zarar: 1951
 - gösterge aileleri aynı yönde değil: 1594
@@ -130,7 +130,7 @@ En az işe yarayan okumalar: btc_1H ×0.35, momentum_1H ×0.473, obv_egim_1H ×0
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 11502
+- ders: 11536
 - günlük işlem tavanı (8): 6527
 - üst üste 3 zarar: 2345
 - gösterge aileleri aynı yönde değil: 2103
@@ -139,7 +139,7 @@ En az işe yarayan okumalar: btc_1H ×0.35, momentum_1H ×0.473, obv_egim_1H ×0
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
-- puan +0.123 eşiğin (0.25) altında: 150
+- puan +0.123 eşiğin (0.25) altında: 151
 
 **Hata sınıfları**
 
@@ -197,7 +197,7 @@ En az işe yarayan okumalar: btc_1H ×0.35, momentum_1H ×0.473, obv_egim_1H ×0
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 11502
+- ders: 11536
 - günlük işlem tavanı (8): 6527
 - üst üste 3 zarar: 2345
 - gösterge aileleri aynı yönde değil: 2103
@@ -206,7 +206,7 @@ En az işe yarayan okumalar: btc_1H ×0.35, momentum_1H ×0.473, obv_egim_1H ×0
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
-- puan +0.123 eşiğin (0.25) altında: 150
+- puan +0.123 eşiğin (0.25) altında: 151
 
 **Hata sınıfları**
 
