@@ -241,6 +241,8 @@ dashboard:
 birlesik:
   karar_modu: legacy          # legacy | shadow | unified  (shadow/unified, PR 2–3 tamamlanıp onaylanmadan açılmamalı)
   yurutme_modu: paper         # yalnız paper izinli; okx_demo / okx_live istense bile reddedilir (gerçek emir yok)
+  golge_aralik_sn: 300        # shadow modunda birleşik motor en sık 5 dakikada bir çalışır (yeni anahtar)
+  gunluk_saklama_gun: 14      # karar günlüğü site/birlesik/kararlar-YYYY-MM-DD.jsonl bu kadar gün tutulur (yeni anahtar)
   kapsam:
     min_oran: 0.8             # beklenen faktörlerin en az bu oranı kullanılabilir olmalı (zorunlular her zaman şart)
   maliyet:                    # radar/unified/costs.py — ücretler yukarıdaki `ucret` bloğundan okunur

@@ -735,6 +735,26 @@ class Engine:
             print("[canlı 1G] " + ", ".join(f"{i['mgr']}:{i['sym']} {i['side']}" for i in ideas[:12]))
         self.stats_counter["live_evals"] = self.stats_counter.get("live_evals", 0) + 1
         self.stats_counter["live_coins"] = len(ctxs)
+        self._unified_shadow(ctxs)
+
+    def _unified_shadow(self, ctxs: list[dict]):
+        """Birleşik Baş Trader gölge kancası (birlesik.karar_modu: shadow). Yalnız karar günlüğü yazar; defter, emir ve
+        legacy akışına dokunmaz. Her hata yutulur — legacy işlemler hiçbir koşulda etkilenmez."""
+        try:
+            from .unified.flags import decision_mode
+            from .unified.models import DecisionMode
+            if decision_mode(self.cfg) is not DecisionMode.SHADOW:
+                return
+            runner = getattr(self, "_shadow_runner", None)
+            if runner is None:
+                from .unified.shadow import ShadowRunner
+                runner = self._shadow_runner = ShadowRunner(self.cfg, self.site / "birlesik")
+            out = runner.run(ctxs, meta=self.meta)
+            if out:
+                self.unified_shadow = out
+                print(f"[birleşik gölge] {out['coin']} coin · {out['karar']} · {out['yeni_satir']} yeni satır")
+        except Exception as e:  # noqa: BLE001
+            print("[birleşik gölge] hata:", type(e).__name__, e)
 
     def _peers(self, inst: str) -> dict:
         """Baş Trader bütün kulvarları izler: diğer yöneticilerin bu coindeki gerçek pozisyonları."""
