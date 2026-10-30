@@ -11,10 +11,10 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 1944 | %49.0 | -0.209 | -405.63 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
 | polat_girilmeyen | 1931 | %49.0 | -0.207 | -400.26 |
-| rastgele | 1943 | %43.6 | -0.334 | -649.84 |
+| rastgele | 1944 | %43.6 | -0.335 | -651.05 |
 | trend_naif | 1955 | %42.0 | -0.352 | -687.7 |
 
-Polat özsermaye: %-4.65 · BTC al-tut: %-3.8
+Polat özsermaye: %-4.67 · BTC al-tut: %-3.79
 
 ## Öğrenme (walk-forward)
 
@@ -65,13 +65,13 @@ En az işe yarayan okumalar: trix_1H ×0.549, tetik_geri_test_1H ×0.571, psar_1
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 7407
+- ders: 7414
 - günlük işlem tavanı (8): 4028
 - üst üste 3 zarar: 1951
 - büyük zaman dilimi trendi ters: 1541
 - aynı yönde pozisyon tavanı: 1426
 - gösterge aileleri aynı yönde değil: 1211
-- bu coinde zaten pozisyon var: 600
+- bu coinde zaten pozisyon var: 606
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 138
 - puan -0.221 eşiğin (0.25) altında: 82
 - puan -0.141 eşiğin (0.25) altında: 81
@@ -128,13 +128,13 @@ En az işe yarayan okumalar: trix_1H ×0.549, tetik_geri_test_1H ×0.571, psar_1
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 8754
+- ders: 8761
 - günlük işlem tavanı (8): 4663
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 1895
 - gösterge aileleri aynı yönde değil: 1720
 - aynı yönde pozisyon tavanı: 1426
-- bu coinde zaten pozisyon var: 735
+- bu coinde zaten pozisyon var: 741
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
 - puan +0.123 eşiğin (0.25) altında: 131
@@ -192,13 +192,13 @@ En az işe yarayan okumalar: trix_1H ×0.549, tetik_geri_test_1H ×0.571, psar_1
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 8754
+- ders: 8761
 - günlük işlem tavanı (8): 4663
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 1895
 - gösterge aileleri aynı yönde değil: 1720
 - aynı yönde pozisyon tavanı: 1426
-- bu coinde zaten pozisyon var: 735
+- bu coinde zaten pozisyon var: 741
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
 - puan +0.123 eşiğin (0.25) altında: 131
