@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 2243 | %43.8 | -0.338 | -757.14 |
 | trend_naif | 2266 | %43.1 | -0.343 | -777.33 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-4.29
+Polat özsermaye: %-4.71 · BTC al-tut: %-4.4
 
 ## Öğrenme (walk-forward)
 
@@ -25,7 +25,7 @@ En az işe yarayan okumalar: btc_1H ×0.35, momentum_1H ×0.473, obv_egim_1H ×0
 
 ## Son 1 gün
 
-İşlem 10 · kazanma %50.0 · ort. -0.293R · toplam -2.94R · net -1436.56$ · maks. düşüş -1436.56$ · kâr faktörü 0.47
+İşlem 9 · kazanma %55.6 · ort. -0.188R · toplam -1.69R · net -835.44$ · maks. düşüş -1129.31$ · kâr faktörü 0.61
 
 **Kuruluma göre**
 
@@ -39,19 +39,18 @@ En az işe yarayan okumalar: btc_1H ×0.35, momentum_1H ×0.473, obv_egim_1H ×0
 | yapi_bozulmasi_15m+formasyon_bayrak_15m | 1 | %100.0 | 0.494 | 236.29 |
 | yapi_bozulmasi_15m+geri_test_15m | 1 | %100.0 | 0.592 | 283.13 |
 | yapi_bozulmasi_15m+geri_test_15m+psar_donus_15m | 2 | %0.0 | -1.086 | -1065.45 |
-| yapi_bozulmasi_15m+geri_test_15m+uyusmazlik_donus_mfi | 1 | %0.0 | -1.243 | -601.12 |
 
 **Çıkış nedenine göre**
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
-| stop | 10 | %50.0 | -0.293 | -1436.56 |
+| stop | 9 | %55.6 | -0.188 | -835.44 |
 
 **Seansa göre**
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
-| ABD | 2 | %0.0 | -1.165 | -1126.79 |
+| ABD | 1 | %0.0 | -1.087 | -525.67 |
 | Asya | 5 | %60.0 | -0.093 | -245.91 |
 | Avrupa | 3 | %66.7 | -0.046 | -63.86 |
 
@@ -59,12 +58,12 @@ En az işe yarayan okumalar: btc_1H ×0.35, momentum_1H ×0.473, obv_egim_1H ×0
 
 | | işlem | kazanma | ort. R | net $ |
 |---|---|---|---|---|
-| 7 | 5 | %60.0 | -0.125 | -298.25 |
+| 7 | 4 | %75.0 | 0.154 | 302.87 |
 | 8 | 5 | %40.0 | -0.462 | -1138.31 |
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 10189
+- ders: 10213
 - günlük işlem tavanı (8): 5892
 - üst üste 3 zarar: 1951
 - gösterge aileleri aynı yönde değil: 1594
@@ -130,7 +129,7 @@ En az işe yarayan okumalar: btc_1H ×0.35, momentum_1H ×0.473, obv_egim_1H ×0
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 11536
+- ders: 11560
 - günlük işlem tavanı (8): 6527
 - üst üste 3 zarar: 2345
 - gösterge aileleri aynı yönde değil: 2103
@@ -197,7 +196,7 @@ En az işe yarayan okumalar: btc_1H ×0.35, momentum_1H ×0.473, obv_egim_1H ×0
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 11536
+- ders: 11560
 - günlük işlem tavanı (8): 6527
 - üst üste 3 zarar: 2345
 - gösterge aileleri aynı yönde değil: 2103
