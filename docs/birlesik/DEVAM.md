@@ -31,7 +31,7 @@ Dal: `feat/unified-decision-engine` (PR 1 dalından). PR base: `feat/unified-tra
 - [x] `radar/unified/strategies/base.py` sözleşme + kayıt + "strateji yürütme modülü import etmez" testi
 - [x] Stratejiler (carry PR 3'e kaldı): swing_trend (team.a_kemal), compression_breakout (a_selin), controlled_breakout (a_kaan), panic_reversal (a_ayse, shadow), short_trend (yeni, shadow), intraday_trend (shadow), microstructure (shadow, veri yok), carry (harvest) + legacy eşleşme testleri
 - [x] `radar/unified/edge.py` brüt avantaj önselleri (Binance EĞİTİM dönemi beklentisi, n/(n+50) büzülme) + testler
-- [ ] `radar/unified/decision.py` UnifiedDecisionEngine (birleştirme, kapsam kapısı, maliyet kapısı, çelişki çözümü, Türkçe açıklama) + testler
+- [x] `radar/unified/decision.py` UnifiedDecisionEngine (birleştirme, kapsam kapısı, maliyet kapısı, çelişki çözümü, Türkçe açıklama) + testler
 - [ ] `radar/unified/journal.py` karar günlüğü (günlük döndürülen jsonl) + testler
 - [ ] Motor kancası: `karar_modu: shadow` iken `engine.scan_live_daily` sonunda birleşik motor çalışır, hata legacy'yi etkilemez + test
 - [ ] Tam paket + push + PR
