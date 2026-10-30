@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.218R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.217R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 2218 | %49.2 | -0.218 | -483.38 |
+| polat_tum_sinyaller | 2223 | %49.3 | -0.217 | -481.82 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 2205 | %49.2 | -0.217 | -478.01 |
-| rastgele | 2214 | %43.8 | -0.338 | -748.38 |
-| trend_naif | 2236 | %43.0 | -0.345 | -771.85 |
+| polat_girilmeyen | 2210 | %49.2 | -0.216 | -476.46 |
+| rastgele | 2216 | %43.8 | -0.338 | -749.14 |
+| trend_naif | 2238 | %43.1 | -0.344 | -769.8 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-3.72
+Polat özsermaye: %-4.71 · BTC al-tut: %-4.07
 
 ## Öğrenme (walk-forward)
 
@@ -65,11 +65,11 @@ En az işe yarayan okumalar: btc_1H ×0.407, psar_1H ×0.503, obv_egim_1H ×0.51
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 9877
-- günlük işlem tavanı (8): 5872
+- ders: 9893
+- günlük işlem tavanı (8): 5877
 - üst üste 3 zarar: 1951
 - gösterge aileleri aynı yönde değil: 1573
-- büyük zaman dilimi trendi ters: 1563
+- büyük zaman dilimi trendi ters: 1567
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 659
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 138
@@ -131,16 +131,16 @@ En az işe yarayan okumalar: btc_1H ×0.407, psar_1H ×0.503, obv_egim_1H ×0.51
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 11224
-- günlük işlem tavanı (8): 6507
+- ders: 11240
+- günlük işlem tavanı (8): 6512
 - üst üste 3 zarar: 2345
 - gösterge aileleri aynı yönde değil: 2082
-- büyük zaman dilimi trendi ters: 1917
+- büyük zaman dilimi trendi ters: 1921
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
-- puan +0.123 eşiğin (0.25) altında: 148
+- puan +0.123 eşiğin (0.25) altında: 149
 
 **Hata sınıfları**
 
@@ -198,16 +198,16 @@ En az işe yarayan okumalar: btc_1H ×0.407, psar_1H ×0.503, obv_egim_1H ×0.51
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 11224
-- günlük işlem tavanı (8): 6507
+- ders: 11240
+- günlük işlem tavanı (8): 6512
 - üst üste 3 zarar: 2345
 - gösterge aileleri aynı yönde değil: 2082
-- büyük zaman dilimi trendi ters: 1917
+- büyük zaman dilimi trendi ters: 1921
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
-- puan +0.123 eşiğin (0.25) altında: 148
+- puan +0.123 eşiğin (0.25) altında: 149
 
 **Hata sınıfları**
 
