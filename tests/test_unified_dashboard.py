@@ -20,7 +20,10 @@ NOW = 1_800_000_000_000
 def test_site_birlesik_panelini_kopyalar_ve_baglar(tmp_path):
     dashboard.write_site(tmp_path, {"x": 1})
     page = (tmp_path / "birlesik.html").read_text(encoding="utf-8")
-    assert "birlesik/durum.json" in page and "birlesik/etkinlik.json" in page and "kararlar-" in page
+    assert "birlesik/durum.json" in page and "data.json" in page and "kararlar-" in page
+    for word in ("Veri yok", "Bayat", "Bağlantı kesik"):                    # canlı veri durum etiketleri
+        assert word in page
+    assert "Kemal" not in page and "Selin" not in page and "Kaan" not in page   # yalnız strateji etiketi
     assert 'href="birlesik.html"' in (tmp_path / "index.html").read_text(encoding="utf-8")
     assert (tmp_path / "polat.html").exists()                             # mevcut Polat sayfası korunur
 

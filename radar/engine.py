@@ -1598,6 +1598,7 @@ class Engine:
                          "block": self.calendar.block()},
             "lease": {"holder": lease.run_id(), "handoff_s": self.state.get("handoff_s"),
                       "handoff_kind": self.state.get("handoff_kind"), "ok": self.lease_ok},
+            "karne": self._karne(now_ms),
             "ledger": {
                 "stats": lstats,
                 "open": sorted(self.ledger["open"], key=lambda t: t["entry_ts"], reverse=True),
@@ -1862,12 +1863,25 @@ class Engine:
             self.state["last_daily"] = today
             self.dirty = True
 
+    def _karne(self, now_ms: int) -> dict | None:
+        """Tek ajan (Baş Trader) karnesi: toplam + strateji/sinyal kaynağı (gerçek/gölge) + filtre karnesi."""
+        try:
+            from . import karne
+            tr = getattr(self, "_unified_trader", None)
+            return karne.build(self.ledger["closed"], tr.adapter.closed if tr else [], now_ms)
+        except Exception as e:  # noqa: BLE001
+            print("[karne] hata:", type(e).__name__, e)
+            return None
+
     def maybe_karne(self):
         if self.demo:
             return
         if time.time() * 1000 - (self.state.get("last_karne") or 0) > 7 * 86400 * 1000 and self.payload:
+            from . import karne
             (ROOT / "data").mkdir(exist_ok=True)
-            (ROOT / "data" / "KARNE.md").write_text(karne_md(self.payload), encoding="utf-8")
+            k = self.payload.get("karne")
+            md = karne.to_md(k, f"Haftalık karne — {self.payload.get('generated_local')}") if k else karne_md(self.payload)
+            (ROOT / "data" / "KARNE.md").write_text(md, encoding="utf-8")
             self.state["last_karne"] = int(time.time() * 1000)
 
     def load_smart_money(self):

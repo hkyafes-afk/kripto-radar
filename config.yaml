@@ -239,7 +239,8 @@ dashboard:
 # Tek merkezden karar veren yeni yapı. Bu blok yalnız EKLENDİ; yukarıdaki hiçbir ayar değişmedi.
 # Varsayılanlar güvenli: legacy ajan sistemi çalışmaya devam eder, yeni motor canlı akışa bağlanmaz.
 birlesik:
-  karar_modu: legacy          # legacy | shadow | unified  (shadow/unified, PR 2–3 tamamlanıp onaylanmadan açılmamalı)
+  karar_modu: shadow          # legacy | shadow | unified — 30.10.2026 kullanıcı kararı: 2 hafta GÖLGE (yalnız karar kaydı;
+                              # gerçek emir ve paper pozisyon açılmaz, legacy sistem aynen çalışır). Eski değer: legacy
   yurutme_modu: paper         # yalnız paper izinli; okx_demo / okx_live istense bile reddedilir (gerçek emir yok)
   golge_aralik_sn: 300        # shadow modunda birleşik motor en sık 5 dakikada bir çalışır (yeni anahtar)
   gunluk_saklama_gun: 14      # karar günlüğü site/birlesik/kararlar-YYYY-MM-DD.jsonl bu kadar gün tutulur (yeni anahtar)

@@ -5,7 +5,11 @@ yarışır. Canlı ve test aynı fonksiyonları kullanır (team.apply_variant): 
 
 Ölçü (kullanıcı hedefi "parayı katla, batmadan"): bileşik büyüme (yıllık %), en büyük düşüş ve ikisinin oranı (MAR),
 ayrıca işlem başına ortalama R. Benimseme şartları (hepsi birden):
-  1) Doğrulama döneminde (son %30, eğitimde görülmemiş) ort. R tabandan en az +0,02 iyi
+  1) Doğrulama döneminde (son %30, eğitimde görülmemiş) tabandan İYİ olduğu %95 güven aralığıyla gösterilmiş
+     (sabit +0,02R eşiği kaldırıldı). Yöntem varyanta göre seçilir:
+       - filtre (taban işlemlerinin alt kümesi): ELENEN işlemlerin ort. R'sinin GA üst sınırı < 0
+       - aynı girişler, farklı çıkış/stop: eşleştirilmiş işlem başına R farkının GA alt sınırı > 0
+       - diğer: bağımsız bootstrap ile ort. R farkının GA alt sınırı > 0
   2) Eğitim döneminde (ilk %70) tabandan kötü değil (−0,01R tolerans)
   3) 5 yılın bileşik büyümesi tabandan düşük değil ve MAR tabanın en az %90'ı
   4) Her iki dönemde de yeterli işlem (eğitim ≥ 30, doğrulama ≥ 15)
@@ -27,7 +31,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from . import bt2, learn, quant, team
+from . import bt2, ci, learn, quant, team
 from .config import ROOT, load_config
 
 FAMILY = {"cikis_iz": "çıkış", "cikis_iz_tp1": "çıkış", "cikis_hedef": "çıkış",
@@ -44,6 +48,13 @@ CLASS_MULT = {"A": 1.0, "B": 0.5, "C": 0.0}
 
 def _avg(trs):
     return float(np.mean([t["r"] for t in trs])) if trs else float("nan")
+
+
+def _ci_txt(r) -> str:
+    c = r.get("val_ci")
+    if not c or c[0] is None:
+        return "taban" if not r.get("variant") else "–"
+    return f"{c[0]:+.3f} … {c[1]:+.3f} ({r.get('ci_yontem')})"
 
 
 def _r(x, d=3):
@@ -128,14 +139,31 @@ def run(client=None, cfg_path=None, n_coins=30, years=5.0, out_dir: Path | None 
                 "val_r": _r(_avg(va)), "cagr_pct": p.get("cagr_pct"), "max_dd_pct": p.get("max_dd_pct"),
                 "sharpe": p.get("sharpe"), "mar": _r(mar, 2), "_sr": p.get("sr_daily"), "_T": p.get("T"),
                 "_skew": p.get("skew"), "_kurt": p.get("kurt"),
+                "_val": [((t.get("sym"), t["side"], str(t["entry_ts"])), float(t["r"])) for t in va],
                 "long_r": _r(_avg([t for t in trs if t["side"] == "long"])),
                 "short_r": _r(_avg([t for t in trs if t["side"] == "short"]))}
+
+    def val_ci(c, b):
+        """Doğrulama döneminde varyantın tabana üstünlüğü için güven aralığı. Döner: (yöntem, alt, üst, iyi_mi)."""
+        bv, cv = b.get("_val") or [], c.get("_val") or []
+        bmap, cmap = dict(bv), dict(cv)
+        if cmap and set(cmap) <= set(bmap) and all(abs(cmap[k] - bmap[k]) < 1e-12 for k in cmap):
+            lo, hi, n_rm = ci.subset_improvement_ci(bv, set(cmap))
+            return f"filtre (elenen {n_rm} işlem)", lo, hi, hi is not None and hi < 0
+        common = [k for k in cmap if k in bmap]
+        if cmap and len(common) >= 0.8 * max(len(cmap), len(bmap)):
+            lo, hi = ci.mean_ci([cmap[k] - bmap[k] for k in common])
+            return f"eşleştirilmiş ({len(common)} işlem)", lo, hi, lo is not None and lo > 0
+        lo, hi = ci.diff_ci([r for _, r in cv], [r for _, r in bv])
+        return "bağımsız", lo, hi, lo is not None and lo > 0
 
     def better(c, b):
         def v(x, d=-9.0):
             return d if x is None else x
-        return (c["n_train"] >= 30 and c["n_val"] >= 15
-                and v(c["val_r"]) >= v(b["val_r"]) + 0.02
+        how, lo, hi, ok = val_ci(c, b)
+        c["val_ci"] = [_r(lo), _r(hi)]
+        c["ci_yontem"] = how
+        return (c["n_train"] >= 30 and c["n_val"] >= 15 and ok
                 and v(c["train_r"]) >= v(b["train_r"]) - 0.01
                 and v(c["cagr_pct"]) >= v(b["cagr_pct"])
                 and v(c["mar"]) >= 0.9 * v(b["mar"]))
@@ -234,14 +262,16 @@ def report_md(o: dict) -> str:
     L = [f"# v9 Faz 1 — 5 yıllık varyant yarışı ({o['generated']})", "",
          f"{o['n_coins']} coin · {o['test_start']} → bugün · eğitim/doğrulama ayrımı {o['split']} · {o['n_trials']} deneme "
          f"(Deflated Sharpe bütün denemelere göre) · {o['duration_s']:.0f} sn", "",
-         "Benimseme: doğrulamada ≥ +0,02R iyi, eğitimde kötü değil, bileşik büyüme düşmüyor, MAR ≥ %90 taban, yeterli işlem.", ""]
+         "Benimseme: doğrulamada tabandan iyi olduğu %95 güven aralığıyla gösterilmiş (filtre: elenenlerin GA üst sınırı < 0; "
+         "eşleştirilmiş/bağımsız: farkın GA alt sınırı > 0), eğitimde kötü değil, bileşik büyüme düşmüyor, MAR ≥ %90 taban, "
+         "yeterli işlem.", ""]
     for mid, res in o["managers"].items():
-        L += [f"## {mid}", "", "| Varyant | İşlem | Ort. R | Eğitim R | Doğrulama R | Yıllık % | Maks. düşüş % | MAR | DSR |",
-              "|---|---|---|---|---|---|---|---|---|"]
+        L += [f"## {mid}", "", "| Varyant | İşlem | Ort. R | Eğitim R | Doğrulama R | Doğrulama GA | Yıllık % | Maks. düşüş % | MAR | DSR |",
+              "|---|---|---|---|---|---|---|---|---|---|"]
         for r in res["rows"]:
             name = "+".join(r["variant"]) or "taban (mevcut)"
             L.append(f"| {name}{' (birleşim)' if r.get('combo') else ''} | {r['n']} | {r['avg_r']} | {r['train_r']} | "
-                     f"{r['val_r']} | {r['cagr_pct']} | {r['max_dd_pct']} | {r['mar']} | {r.get('dsr')} |")
+                     f"{r['val_r']} | {_ci_txt(r)} | {r['cagr_pct']} | {r['max_dd_pct']} | {r['mar']} | {r.get('dsr')} |")
         L += ["", f"**Karar:** {res['why']}", ""]
     L += ["## Firma geneli kurallar (taban işlemleriyle, tek havuz)", "", "| Kural | Yıllık % | Maks. düşüş % | MAR | İşlem | Eğitim R | Doğrulama R |",
           "|---|---|---|---|---|---|---|"]

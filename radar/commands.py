@@ -106,6 +106,9 @@ def cmd_funding(d: dict) -> str:
 
 
 def cmd_karne(d: dict) -> str:
+    if d.get("karne"):
+        from .karne import to_telegram
+        return to_telegram(d["karne"], nt.esc)
     st = d["ledger"]["stats"]
     o = st["overall"]
     L = ["📒 <b>Karne</b> (setup ve periyot bazında)"]

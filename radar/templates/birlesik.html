@@ -62,39 +62,51 @@ td{padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
 .warn{padding:10px 12px;border-radius:12px;background:var(--amber-bg);color:var(--amber);font-size:13px;margin:8px 0}
 .empty{color:var(--muted);font-size:13px;padding:6px 0}
 .foot{color:var(--dim);font-size:12px;margin-top:16px;line-height:1.5}
+.st{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11.5px;font-weight:600;margin-left:6px;vertical-align:middle}
+.st-ok{background:var(--green-bg);color:var(--green)} .st-yok{background:var(--panel2);color:var(--muted)}
+.st-bayat{background:var(--amber-bg);color:var(--amber)} .st-kesik{background:var(--red-bg);color:var(--red)}
+.srcs{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 12px}
+.src{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px 9px;font-size:12px;color:var(--muted)}
+.src b{color:var(--text);font-weight:600}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <div>
-      <h1>👑 Baş Trader (birleşik)</h1>
+      <h1>👑 Baş Trader</h1>
       <div class="sub" id="sub">yükleniyor…</div>
     </div>
     <a class="btn" href="./">← Kripto Radar</a>
   </header>
+  <div class="srcs" id="srcs"></div>
   <div id="warn"></div>
   <div class="kpis" id="kpis"></div>
 
-  <h2>Kararlar</h2>
+  <h2>Kararlar <span id="st-dec"></span></h2>
   <div class="filters" id="filters"></div>
   <div class="card" id="decs"></div>
 
-  <h2>Açık pozisyonlar (birleşik paper)</h2>
+  <h2>Karne: Baş Trader <span id="st-karne"></span></h2>
+  <div class="card tw" id="karne"></div>
+
+  <h2>Strateji / sinyal kaynağı (gerçek ve gölge ayrı)</h2>
+  <div class="card tw" id="kaynak"></div>
+
+  <h2>Filtre karnesi (gölgeye gönderenler)</h2>
+  <div class="card tw" id="filtre"></div>
+
+  <h2>Açık pozisyonlar (birleşik) <span id="st-pos"></span></h2>
   <div class="card tw" id="pos"></div>
 
-  <h2>Risk kapısı (son kararlar)</h2>
+  <h2>Risk kapısı <span id="st-risk"></span></h2>
   <div class="card tw" id="risk"></div>
 
-  <h2>Etkinlik: hangi strateji gerçekten kazandırıyor?</h2>
-  <div class="card tw" id="eff"></div>
-
-  <h2>Kapanan işlemler (birleşik paper)</h2>
-  <div class="card tw" id="closed"></div>
-
   <div class="foot">
-    Sanal (paper) işlemlerdir; gerçek emir verilmez. Kararlar maliyet (ücret, spread, kayma, funding) düşüldükten sonra
-    verilir. "Kanıt yetersiz" = örnek küçük ya da güven aralığı sıfırı içeriyor: kazanıyor gibi görünse de şans olabilir.
+    Tek karar verici Baş Trader'dır: açma, red, bekleme, çıkış, pozisyon büyüklüğü ve sermaye dağılımını yalnız o belirler.
+    Trend, sıkışma kırılımı, kontrollü kırılım vb. yalnız strateji / sinyal kaynağı etiketidir, bağımsız ajan değildir.
+    Gölge modda yalnız karar kaydı tutulur; gerçek emir ve paper pozisyon açılmaz. Bu sayfa yalnız canlı sistemin
+    yayınladığı dosyaları okur; dosya yoksa "Veri yok", eskiyse "Bayat", ulaşılamıyorsa "Bağlantı kesik" yazar.
   </div>
 </div>
 <script>
@@ -104,39 +116,42 @@ const fmt = (v, d = 2) => (v === null || v === undefined || Number.isNaN(v)) ? "
 const sgn = (v, d = 2) => (v === null || v === undefined) ? "—" : (v > 0 ? "+" : "") + Number(v).toFixed(d);
 const cls = v => v > 0 ? "up" : (v < 0 ? "down" : "");
 const tm = ms => ms ? new Date(ms).toLocaleString("tr-TR", {day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit"}) : "—";
+const ago = ms => { if (!ms) return "—"; const m = (Date.now() - ms) / 60000;
+  return m < 1 ? "az önce" : m < 120 ? Math.round(m) + " dk önce" : m < 2880 ? Math.round(m / 60) + " sa önce" : Math.round(m / 1440) + " gün önce"; };
 const DEC = {OPEN:["AÇ","b-green"], REDUCE_SIZE:["YARIM AÇ","b-blue"], SHADOW:["GÖLGE","b-amber"], REJECT:["RED","b-red"],
              HOLD:["BEKLE","b-dim"], EXIT:["ÇIK","b-red"]};
-const VERD = {terfi_adayi:["terfi adayı","b-green"], kapat_adayi:["kapatma adayı","b-red"], kanit_yetersiz:["kanıt yetersiz","b-amber"]};
-const STR = {swing_trend:"Trend (Kemal)", compression_breakout:"Sıkışma kırılımı (Selin)", controlled_breakout:"Kontrollü kırılım (Kaan)",
-             panic_reversal:"Panik dönüşü (Ayşe)", short_trend:"Short trend", intraday_trend:"Gün içi trend",
-             microstructure:"Mikro yapı", legacy_murat:"Murat (legacy)", carry:"Carry (Elif)"};
+const STR = {swing_trend:"Trend", compression_breakout:"Sıkışma kırılımı", controlled_breakout:"Kontrollü kırılım",
+             panic_reversal:"Panik dönüşü", short_trend:"Short trend", intraday_trend:"Gün içi trend",
+             microstructure:"Mikro yapı", legacy_murat:"Geri çekilme sinyali", carry:"Funding carry"};
 const strName = s => STR[s] || s;
+// tazelik sınırları (dakika): canlı döngü en sık 6 dk'da bir yayınlar
+const LIM = {data: 25, dec: 60, durum: 25, karne: 25};
 let FILTER = "hepsi";
 
-async function getJSON(p) { try { const r = await fetch(p, {cache:"no-store"}); return r.ok ? await r.json() : null; } catch { return null; } }
+// durum: ok | yok (dosya yok) | bayat (eski) | kesik (ulaşılamıyor)
+async function getJSON(p) {
+  try { const r = await fetch(p + "?t=" + Date.now(), {cache: "no-store"});
+        if (r.status === 404) return {st: "yok"};
+        if (!r.ok) return {st: "kesik", err: "HTTP " + r.status};
+        return {st: "ok", v: await r.json()};
+  } catch (e) { return {st: "kesik", err: String(e)}; }
+}
 async function getLines(p) {
-  try { const r = await fetch(p, {cache:"no-store"}); if (!r.ok) return [];
-        return (await r.text()).split("\n").filter(Boolean).map(l => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean);
-  } catch { return []; }
+  try { const r = await fetch(p + "?t=" + Date.now(), {cache: "no-store"});
+        if (r.status === 404) return {st: "yok", v: []};
+        if (!r.ok) return {st: "kesik", v: []};
+        const v = (await r.text()).split("\n").filter(Boolean).map(l => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean);
+        return {st: "ok", v};
+  } catch (e) { return {st: "kesik", v: []}; }
 }
 const day = off => new Date(Date.now() - off * 86400000).toISOString().slice(0, 10);
+const fresh = (st, ts, lim) => st !== "ok" ? st : (!ts ? "yok" : ((Date.now() - ts) / 60000 > lim ? "bayat" : "ok"));
+const BADGE = {ok: ["Güncel", "st-ok"], yok: ["Veri yok", "st-yok"], bayat: ["Bayat", "st-bayat"], kesik: ["Bağlantı kesik", "st-kesik"]};
+const badge = s => { const [t, c] = BADGE[s] || BADGE.yok; return `<span class="st ${c}">${t}</span>`; };
+const empty = s => `<div class="empty">${s === "kesik" ? "Bağlantı kesik: veri alınamadı." : s === "bayat" ? "Bayat: son veri eski, aşağıdaki son bilinen durumdur." : "Veri yok."}</div>`;
 
 function kpi(l, v, s = "", c = "") { return `<div class="kpi"><div class="l">${l}</div><div class="v num ${c}">${v}</div><div class="s">${s}</div></div>`; }
-
-function renderKpis(d, o, decs) {
-  const K = [];
-  if (d) {
-    const start = d.bakiye - (d.kapananlar || []).reduce((a, c) => a + (c.net_usd || 0), 0);
-    K.push(kpi("Bakiye", fmt(d.bakiye, 0) + " $", `zirve ${fmt(d.zirve, 0)} $`));
-    K.push(kpi("Zirveden düşüş", "%" + fmt(d.dusus_yuzde, 1), `bugün %${fmt(d.gun_kayip_yuzde, 1)}`, d.dusus_yuzde > 5 ? "down" : ""));
-    K.push(kpi("Açık", d.acik, `kayıp serisi ${d.kayip_serisi}`));
-  } else {
-    K.push(kpi("Mod", o ? "gölge" : "kapalı", o ? "yalnız karar kaydı" : "karar_modu: legacy"));
-  }
-  const c = decs.reduce((a, x) => (a[x.decision] = (a[x.decision] || 0) + 1, a), {});
-  K.push(kpi("Bugünkü kararlar", decs.length, `aç ${(c.OPEN||0)+(c.REDUCE_SIZE||0)} · gölge ${c.SHADOW||0} · red ${c.REJECT||0}`));
-  $("kpis").innerHTML = K.join("");
-}
+function table(head, rows) { return `<table><thead><tr>${head.map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>${rows.join("")}</tbody></table>`; }
 
 function legs(c) {
   if (!c) return "";
@@ -147,88 +162,113 @@ function legs(c) {
     <div class="leg">Brüt avantaj<b>${fmt(c.gross_edge_bp, 1)} bp</b></div>
     <div class="leg">Toplam maliyet<b>${fmt(c.total_cost_bp, 1)} bp</b></div>
     <div class="leg">Net avantaj<b class="${cls(c.net_edge_bp)}">${fmt(c.net_edge_bp, 1)} bp</b></div></div>
-    ${(c.missing_inputs||[]).length ? `<div class="why">Eksik maliyet girdisi: ${esc(c.missing_inputs.join(", "))}</div>` : ""}`;
+    ${(c.missing_inputs || []).length ? `<div class="why">Eksik maliyet girdisi: ${esc(c.missing_inputs.join(", "))}</div>` : ""}`;
 }
 
-function renderDecs(all) {
+function renderDecs(all, st) {
+  $("st-dec").innerHTML = badge(st);
   const groups = {hepsi: all, ac: all.filter(d => d.decision === "OPEN" || d.decision === "REDUCE_SIZE"),
                   golge: all.filter(d => d.decision === "SHADOW"), red: all.filter(d => d.decision === "REJECT")};
-  const names = {hepsi:"Hepsi", ac:"Açılanlar", golge:"Gölge", red:"Red"};
+  const names = {hepsi: "Hepsi", ac: "Açardı", golge: "Gölge", red: "Red"};
   $("filters").innerHTML = Object.keys(groups).map(k => `<button class="chip ${k === FILTER ? "on" : ""}" data-f="${k}">${names[k]} (${groups[k].length})</button>`).join("");
-  $("filters").querySelectorAll(".chip").forEach(b => b.onclick = () => { FILTER = b.dataset.f; renderDecs(all); });
+  $("filters").querySelectorAll(".chip").forEach(b => b.onclick = () => { FILTER = b.dataset.f; renderDecs(all, st); });
   const rows = groups[FILTER].slice(0, 60);
-  if (!rows.length) { $("decs").innerHTML = `<div class="empty">Bugün bu türde karar yok.</div>`; return; }
+  if (!rows.length) { $("decs").innerHTML = all.length ? `<div class="empty">Bu türde karar yok.</div>` : empty(st); return; }
   $("decs").innerHTML = rows.map(d => {
     const [lab, bc] = DEC[d.decision] || [d.decision, "b-dim"];
     const side = d.side === "long" ? "▲ LONG" : (d.side === "short" ? "▼ SHORT" : "");
-    const first = (d.explanation_tr || "").split("\n")[1] || "";
+    const why = (d.explanation_tr || "").split("\n").find(l => l.startsWith("Neden:")) || "";
+    const src = (d.strategies || [d.strategy]).map(strName).join(" + ");
     const miss = (d.missing_factors || []).length ? `<div class="why">Eksik veri: ${esc(d.missing_factors.join(", "))}</div>` : "";
     return `<details class="dec"><summary><span class="badge ${bc}">${lab}</span><b>${esc(d.symbol)}</b>
-      <span class="${d.side === "long" ? "up" : "down"}">${side}</span><span>${esc(strName(d.strategy))}</span>
+      <span class="${d.side === "long" ? "up" : "down"}">${side}</span><span class="why" style="margin:0">sinyal: ${esc(src)}</span>
       <span class="num ${cls(d.net_edge_bp)}" style="margin-left:auto">${d.net_edge_bp == null ? "" : sgn(d.net_edge_bp, 0) + " bp"}</span></summary>
-      <div class="why">${esc(first)} · ${tm(d.kayit_ms || d.ts_ms)}</div>
+      <div class="why">${esc(why)} · ${tm(d.kayit_ms || d.ts_ms)}</div>
       <pre>${esc(d.explanation_tr)}</pre>${legs(d.costs)}${miss}</details>`;
   }).join("");
 }
 
-function table(head, rows) {
-  return `<table><thead><tr>${head.map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>${rows.join("")}</tbody></table>`;
+function krow(label, s, extra = "") {
+  if (!s || !s.n) return `<tr><td>${label}</td>${extra}<td class="num">0</td><td colspan="6" class="why">veri yok</td></tr>`;
+  const ga = s.ga_alt == null ? "—" : `${sgn(s.ga_alt)} … ${sgn(s.ga_ust)}`;
+  return `<tr><td>${label}</td>${extra}<td class="num">${s.n}</td><td class="num">%${fmt(s.isabet, 0)}</td>
+    <td class="num ${cls(s.ort_r)}">${sgn(s.ort_r)}</td><td class="num ${cls(s.toplam_r)}">${sgn(s.toplam_r, 1)}</td>
+    <td class="num">${s.pf ?? "—"}</td><td class="num">${ga}</td><td style="white-space:normal">${esc(s.durum || "")}</td></tr>`;
+}
+const KH = ["İşlem", "İsabet", "Ort. R", "Toplam R", "PF", "%95 GA", "Durum"];
+
+function renderKarne(k, st) {
+  $("st-karne").innerHTML = badge(st);
+  if (!k) { ["karne", "kaynak", "filtre"].forEach(id => $(id).innerHTML = empty(st)); return; }
+  $("karne").innerHTML = table(["Kapsam"].concat(KH), [krow("Gerçek (paper)", k.bas_trader), krow("Gölge (izlenen)", k.bas_trader_golge)]);
+  const ks = k.kaynaklar || [];
+  $("kaynak").innerHTML = ks.length ? table(["Kaynak", "Tür"].concat(KH),
+    ks.flatMap(r => [krow(esc(r.etiket), r.gercek, "<td>gerçek</td>"), krow(esc(r.etiket), r.golge, "<td>gölge</td>")])) : empty("yok");
+  const fs = k.filtreler || [];
+  $("filtre").innerHTML = fs.length ? table(["Filtre"].concat(KH).concat(["Filtre kararı"]),
+    fs.map(r => krow(esc(r.filtre), r).replace("</tr>", `<td style="white-space:normal">${esc(r.karar)}</td></tr>`))) : empty("yok");
 }
 
-function renderPos(d) {
+function renderPos(d, st, mode) {
+  $("st-pos").innerHTML = badge(mode === "shadow" ? "ok" : st);
   const P = (d && d.pozisyonlar) || [];
-  $("pos").innerHTML = P.length ? table(["Coin", "Yön", "Strateji", "Giriş", "Stop", "Risk", "Kaldıraç", "Açılış"],
+  if (mode === "shadow") { $("pos").innerHTML = `<div class="empty">Gölge modu: pozisyon açılmaz, yalnız karar kaydı tutulur.</div>`; return; }
+  $("pos").innerHTML = P.length ? table(["Coin", "Yön", "Sinyal", "Giriş", "Stop", "Risk", "Kaldıraç", "Açılış"],
     P.map(p => `<tr><td><b>${esc(p.symbol)}</b></td><td class="${p.side === "long" ? "up" : "down"}">${p.side === "long" ? "LONG" : "SHORT"}</td>
       <td>${esc(strName(p.strategy))}</td><td class="num">${fmt(p.entry, 4)}</td><td class="num">${fmt(p.stop, 4)}</td>
       <td class="num">${fmt(p.risk_usd)} $</td><td class="num">${fmt(p.leverage, 0)}x</td><td>${tm(p.opened_ts)}</td></tr>`))
-    : `<div class="empty">${d ? "Açık pozisyon yok." : "Birleşik paper işlem modu kapalı (karar_modu: unified değil)."}</div>`;
+    : (d ? `<div class="empty">Açık pozisyon yok.</div>` : empty(st));
 }
 
-function renderRisk(d) {
+function renderRisk(d, st, mode) {
+  $("st-risk").innerHTML = badge(mode === "shadow" ? "ok" : st);
+  if (mode === "shadow") { $("risk").innerHTML = `<div class="empty">Gölge modu: risk kapısı çalışmaz (pozisyon açılmadığı için).</div>`; return; }
   const R = (d && d.risk) || [];
-  $("risk").innerHTML = R.length ? table(["Coin", "Strateji", "Sonuç", "Açıklama"],
+  $("risk").innerHTML = R.length ? table(["Coin", "Sinyal", "Sonuç", "Açıklama"],
     R.slice().reverse().map(r => { const [lab, bc] = DEC[r.karar] || [r.karar, "b-dim"];
       return `<tr><td><b>${esc(r.sym)}</b></td><td>${esc(strName(r.strateji))}</td><td><span class="badge ${bc}">${lab}</span></td>
         <td style="white-space:normal">${esc(r.aciklama)}</td></tr>`; }))
-    : `<div class="empty">Risk kapısına gelen karar yok.</div>`;
-}
-
-function renderEff(e) {
-  if (!e) { $("eff").innerHTML = `<div class="empty">Etkinlik raporu henüz yok (gölge/unified modda saatte bir üretilir).</div>`; return; }
-  const ks = Object.entries(e.kapsamlar || {}).filter(([k]) => k.startsWith("strateji:")).sort((a, b) => b[1].n_trades - a[1].n_trades);
-  $("eff").innerHTML = (ks.length ? table(["Strateji", "Kaynak", "n", "Ort. R", "%95 GA", "Kazanma", "Sonuç"],
-    ks.map(([k, v]) => { const [, s, src, mode] = k.split(":"); const [lab, bc] = VERD[v.karar] || [v.karar, "b-dim"];
-      return `<tr><td>${esc(strName(s))}</td><td>${esc(src)}${mode === "golge" ? " · gölge" : ""}</td><td class="num">${v.n_trades}</td>
-        <td class="num ${cls(v.avg_r)}">${sgn(v.avg_r)}</td><td class="num">${v.ci_low_r == null ? "—" : sgn(v.ci_low_r) + " … " + sgn(v.ci_high_r)}</td>
-        <td class="num">${v.win_rate == null ? "—" : "%" + fmt(v.win_rate * 100, 0)}</td>
-        <td><span class="badge ${bc}" title="${esc(v.karar_tr)}">${lab}</span></td></tr>`; }))
-    : `<div class="empty">Henüz kapanmış işlem yok.</div>`)
-    + ((e.notlar || []).length ? `<div class="why" style="margin-top:8px">${esc(e.notlar.join(" · "))}</div>` : "");
-}
-
-function renderClosed(d) {
-  const C = ((d && d.kapananlar) || []).slice().reverse();
-  $("closed").innerHTML = C.length ? table(["Coin", "Yön", "Strateji", "Sonuç", "R", "Sebep", "Kapanış"],
-    C.map(c => `<tr><td><b>${esc(c.symbol)}</b></td><td>${c.side === "long" ? "LONG" : "SHORT"}</td><td>${esc(strName(c.strategy))}</td>
-      <td class="num ${cls(c.net_usd)}">${sgn(c.net_usd)} $</td><td class="num ${cls(c.r)}">${sgn(c.r)}</td>
-      <td style="white-space:normal">${esc(c.exit_reason || "")}</td><td>${tm(c.closed_ts)}</td></tr>`))
-    : `<div class="empty">Henüz kapanan işlem yok.</div>`;
+    : (d ? `<div class="empty">Risk kapısına gelen karar yok.</div>` : empty(st));
 }
 
 async function load() {
-  const [d, o, e, t0, t1] = await Promise.all([getJSON("birlesik/durum.json"), getJSON("birlesik/ozet.json"),
-    getJSON("birlesik/etkinlik.json"), getLines(`birlesik/kararlar-${day(0)}.jsonl`), getLines(`birlesik/kararlar-${day(1)}.jsonl`)]);
-  // aynı fırsatın yalnız son kararı (değişince yeni satır yazılır)
+  const [D, du, oz, t0, t1] = await Promise.all([getJSON("data.json"), getJSON("birlesik/durum.json"), getJSON("birlesik/ozet.json"),
+    getLines(`birlesik/kararlar-${day(0)}.jsonl`), getLines(`birlesik/kararlar-${day(1)}.jsonl`)]);
+  const data = D.v, durum = du.v, ozet = oz.v;
+  const sData = fresh(D.st, data && data.generated_at, LIM.data);
+  const okx = data && data.feeds && data.feeds.okx;
+  const sFeed = !data ? sData : (okx ? (okx.healthy ? "ok" : "kesik") : "yok");
+  const mode = durum ? "unified" : ((ozet || t0.v.length || t1.v.length) ? "shadow" : "kapali");
+  const sOz = fresh(oz.st, ozet && ozet.ts, LIM.dec);
+  const sDu = fresh(du.st, durum && durum.ts, LIM.durum);
+  $("srcs").innerHTML = [["Canlı döngü", sData, data && data.generated_at], ["Borsa akışı (OKX)", sFeed, null],
+    ["Gölge karar turu", mode === "unified" ? "yok" : sOz, ozet && ozet.ts], ["Birleşik paper", mode === "unified" ? sDu : "yok", durum && durum.ts]]
+    .map(([n, s, ts]) => `<div class="src"><b>${n}</b> ${badge(s)}${ts ? " · " + ago(ts) : ""}</div>`).join("");
+  // aynı fırsatın yalnız son kararı
   const seen = new Map();
-  for (const r of [...t1, ...t0]) seen.set(r.idempotency_key || (r.symbol + r.strategy + r.side), r);
+  for (const r of [...t1.v, ...t0.v]) seen.set(r.idempotency_key || (r.symbol + r.strategy + r.side), r);
   const decs = [...seen.values()].filter(r => (r.kayit_ms || r.ts_ms || 0) > Date.now() - 36 * 3600e3)
     .sort((a, b) => (b.kayit_ms || b.ts_ms) - (a.kayit_ms || a.ts_ms));
-  const mode = d ? "birleşik paper işlem" : (o || t0.length ? "gölge (yalnız karar kaydı)" : "kapalı");
-  $("sub").textContent = `mod: ${mode} · güncellendi ${tm((d && d.ts) || (o && o.ts) || (e && e.ts))}`;
-  $("warn").innerHTML = (!d && !o && !t0.length && !t1.length)
-    ? `<div class="warn">Birleşik Baş Trader henüz çalışmıyor (config: birlesik.karar_modu = legacy). Gölge ya da unified moda geçince burada kararlar görünür.</div>`
-    : ((d && (d.hatalar || []).length) ? `<div class="warn">Son hatalar: ${esc(d.hatalar.join(" · "))}</div>` : "");
-  renderKpis(d, o, decs); renderDecs(decs); renderPos(d); renderRisk(d); renderEff(e); renderClosed(d);
+  const sDec = t0.st === "kesik" ? "kesik" : (mode === "shadow" ? sOz : (mode === "unified" ? sDu : "yok"));
+  $("sub").textContent = `mod: ${mode === "shadow" ? "gölge (yalnız karar kaydı)" : mode === "unified" ? "birleşik paper" : "kapalı / veri yok"}`
+    + (data ? ` · site ${ago(data.generated_at)}` : "");
+  const W = [];
+  if (D.st === "kesik") W.push("Bağlantı kesik: site verisine ulaşılamadı.");
+  else if (sData === "bayat") W.push(`Bayat: canlı döngü ${ago(data.generated_at)} yayın yaptı; döngü yeniden başlıyor olabilir.`);
+  if (sFeed === "kesik" && sData === "ok") W.push("Bağlantı kesik: OKX canlı fiyat akışı sağlıksız.");
+  if (mode === "kapali" && D.st === "ok") W.push("Veri yok: Baş Trader henüz karar yayınlamadı (gölge modu ilk turunu bekliyor olabilir).");
+  if (ozet && (ozet.hatalar || []).length) W.push("Son hatalar: " + ozet.hatalar.join(" · "));
+  $("warn").innerHTML = W.map(w => `<div class="warn">${esc(w)}</div>`).join("");
+  const c = decs.reduce((a, x) => (a[x.decision] = (a[x.decision] || 0) + 1, a), {});
+  const K = [kpi("Mod", mode === "shadow" ? "Gölge" : mode === "unified" ? "Birleşik" : "—", mode === "shadow" ? "işlem açılmaz" : "")];
+  K.push(kpi("Kararlar (36 sa)", decs.length ? decs.length : "—", decs.length ? `açardı ${(c.OPEN || 0) + (c.REDUCE_SIZE || 0)} · gölge ${c.SHADOW || 0} · red ${c.REJECT || 0}` : "veri yok"));
+  K.push(kpi("Taranan coin", ozet ? ozet.coin : "—", ozet ? "son gölge turu " + ago(ozet.ts) : "veri yok"));
+  const kb = data && data.karne && data.karne.bas_trader;
+  K.push(kpi("Baş Trader ort. R", kb && kb.n ? sgn(kb.ort_r) : "—", kb && kb.n ? `${kb.n} gerçek işlem` : "veri yok", kb ? cls(kb.ort_r) : ""));
+  $("kpis").innerHTML = K.join("");
+  renderDecs(decs, sDec);
+  renderKarne(data && data.karne, D.st === "ok" ? (data.karne ? sData : "yok") : D.st);
+  renderPos(durum, sDu, mode); renderRisk(durum, sDu, mode);
 }
 load();
 setInterval(load, 60000);
