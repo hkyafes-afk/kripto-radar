@@ -61,10 +61,10 @@ En az işe yarayan okumalar: momentum_1H ×0.493, obv_egim_1H ×0.51, psar_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 12044
+- ders: 12072
 - günlük işlem tavanı (8): 6532
 - üst üste 3 zarar: 1951
-- gösterge aileleri aynı yönde değil: 1794
+- gösterge aileleri aynı yönde değil: 1802
 - büyük zaman dilimi trendi ters: 1585
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 659
@@ -127,10 +127,10 @@ En az işe yarayan okumalar: momentum_1H ×0.493, obv_egim_1H ×0.51, psar_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 13391
+- ders: 13419
 - günlük işlem tavanı (8): 7167
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 2303
+- gösterge aileleri aynı yönde değil: 2311
 - büyük zaman dilimi trendi ters: 1939
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
@@ -194,10 +194,10 @@ En az işe yarayan okumalar: momentum_1H ×0.493, obv_egim_1H ×0.51, psar_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 13391
+- ders: 13419
 - günlük işlem tavanı (8): 7167
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 2303
+- gösterge aileleri aynı yönde değil: 2311
 - büyük zaman dilimi trendi ters: 1939
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
