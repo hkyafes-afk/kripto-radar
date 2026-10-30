@@ -28,6 +28,8 @@ STRESS = 2.0 if "--stres" in sys.argv else 1.0
 import os
 K = int(os.environ.get("K", 10))
 REB = int(os.environ.get("REB", 7))
+LAG = int(os.environ.get("LAG", 0))
+PLACEBO = os.environ.get("PLACEBO") == "1"
 KINDS = os.environ.get("KINDS", "BTC,EW,A_rejimsiz,A,B,C").split(",")
 
 o, c = P["open"], P["close"]
@@ -41,6 +43,9 @@ def zr(x):
 
 
 score = (zr(-F["atr_pct"]) + zr(F["log_age"]) + zr(-F["funding_7"]) + zr(F["brk_20"])) / 4
+if PLACEBO:                                   # plasebo: aynı evrende rastgele puan (sabit tohum)
+    _rng = np.random.default_rng(int(os.environ.get("SEED", 12345)))
+    score = pd.DataFrame(_rng.random(score.shape), index=score.index, columns=score.columns).where(U)
 liq = D["tr30"].where(U).rank(axis=1, ascending=False)
 FEE = 0.0005
 
@@ -107,7 +112,7 @@ def run(kind):
                 PNL[(t1, j)] = PNL.get((t1, j), 0.0) + u * (po[j] - prevc[j])
         trades = {}
         if need:
-            tw = targets(kind, i)
+            tw = targets(kind, max(i - LAG, 0))
             last_reb, last_bull = k, bull
             for j in set(units) | set(tw):
                 px = po.get(j, O[i1, j])
