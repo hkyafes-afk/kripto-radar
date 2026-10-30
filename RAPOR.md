@@ -14,14 +14,14 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 2421 | %44.0 | -0.339 | -821.32 |
 | trend_naif | 2450 | %43.8 | -0.337 | -825.2 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-5.17
+Polat özsermaye: %-4.71 · BTC al-tut: %-5.11
 
 ## Öğrenme (walk-forward)
 
-Örnek 2429 (eğitim 1700, doğrulama 729) · uygulanan katsayı 53 · doğrulamada tutmadığı için reddedilen 53
+Örnek 2436 (eğitim 1705, doğrulama 731) · uygulanan katsayı 53 · doğrulamada tutmadığı için reddedilen 53
 
-En çok işe yarayan okumalar: uyusmazlik_rsi_15m ×1.516, uyusmazlik_cci_15m ×1.426, tetik_psar_donus_15m ×1.36, btc_dominans ×1.285, ultimate_5m ×1.25, uyusmazlik_macd_15m ×1.229, tetik_macd_kesisim_15m ×1.162, likidasyon_miknatisi ×1.157, mum_dis_mum_15m ×1.149, dow_1D ×1.116
-En az işe yarayan okumalar: momentum_1H ×0.487, obv_egim_1H ×0.501, psar_1H ×0.519, mfi_1H ×0.54, cift_dip_4H ×0.541, adx_di_1H ×0.567, cci_1H ×0.626, ultimate_1H ×0.647, demand_1H ×0.648, yapi_4H ×0.678
+En çok işe yarayan okumalar: uyusmazlik_rsi_15m ×1.521, uyusmazlik_cci_15m ×1.426, tetik_psar_donus_15m ×1.368, btc_dominans ×1.277, ultimate_5m ×1.248, uyusmazlik_macd_15m ×1.229, tetik_macd_kesisim_15m ×1.162, likidasyon_miknatisi ×1.156, mum_dis_mum_15m ×1.149, dow_1D ×1.111
+En az işe yarayan okumalar: momentum_1H ×0.494, obv_egim_1H ×0.51, psar_1H ×0.525, cift_dip_4H ×0.541, mfi_1H ×0.546, adx_di_1H ×0.574, cci_1H ×0.634, demand_1H ×0.651, ultimate_1H ×0.658, yapi_4H ×0.685
 
 ## Son 1 gün
 
@@ -61,7 +61,7 @@ En az işe yarayan okumalar: momentum_1H ×0.487, obv_egim_1H ×0.501, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 11908
+- ders: 11935
 - günlük işlem tavanı (8): 6532
 - üst üste 3 zarar: 1951
 - gösterge aileleri aynı yönde değil: 1782
@@ -127,7 +127,7 @@ En az işe yarayan okumalar: momentum_1H ×0.487, obv_egim_1H ×0.501, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 13255
+- ders: 13282
 - günlük işlem tavanı (8): 7167
 - üst üste 3 zarar: 2345
 - gösterge aileleri aynı yönde değil: 2291
@@ -194,7 +194,7 @@ En az işe yarayan okumalar: momentum_1H ×0.487, obv_egim_1H ×0.501, psar_1H �
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 13255
+- ders: 13282
 - günlük işlem tavanı (8): 7167
 - üst üste 3 zarar: 2345
 - gösterge aileleri aynı yönde değil: 2291
