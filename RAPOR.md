@@ -14,14 +14,14 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 1973 | %43.7 | -0.333 | -657.57 |
 | trend_naif | 1977 | %42.3 | -0.349 | -689.23 |
 
-Polat özsermaye: %-3.73 · BTC al-tut: %-4.45
+Polat özsermaye: %-3.61 · BTC al-tut: %-4.52
 
 ## Öğrenme (walk-forward)
 
-Örnek 1959 (eğitim 1371, doğrulama 588) · uygulanan katsayı 55 · doğrulamada tutmadığı için reddedilen 44
+Örnek 1970 (eğitim 1379, doğrulama 591) · uygulanan katsayı 56 · doğrulamada tutmadığı için reddedilen 44
 
-En çok işe yarayan okumalar: btc_dominans ×1.513, macd_hist_15m ×1.449, tetik_yapi_bozulmasi_15m ×1.394, uyusmazlik_rsi_15m ×1.389, obv_egim_15m ×1.366, cci_15m ×1.356, momentum_15m ×1.327, cci_5m ×1.314, momentum_5m ×1.292, oi_fiyat ×1.284
-En az işe yarayan okumalar: trix_1H ×0.542, tetik_geri_test_1H ×0.587, psar_1H ×0.595, ultimate_1H ×0.621, adx_di_1H ×0.626, supertrend_1H ×0.629, momentum_1H ×0.653, obv_egim_1H ×0.668, cci_1H ×0.668, willr_1H ×0.674
+En çok işe yarayan okumalar: btc_dominans ×1.507, macd_hist_15m ×1.449, tetik_yapi_bozulmasi_15m ×1.393, uyusmazlik_rsi_15m ×1.378, obv_egim_15m ×1.367, cci_15m ×1.355, momentum_15m ×1.326, cci_5m ×1.314, momentum_5m ×1.295, oi_fiyat ×1.283
+En az işe yarayan okumalar: trix_1H ×0.546, tetik_geri_test_1H ×0.586, psar_1H ×0.6, ultimate_1H ×0.624, adx_di_1H ×0.627, supertrend_1H ×0.634, momentum_1H ×0.659, cci_1H ×0.671, obv_egim_1H ×0.676, willr_1H ×0.677
 
 ## Son 1 gün
 
@@ -62,15 +62,15 @@ En az işe yarayan okumalar: trix_1H ×0.542, tetik_geri_test_1H ×0.587, psar_1
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 7749
-- günlük işlem tavanı (8): 4387
+- ders: 7787
+- günlük işlem tavanı (8): 4455
 - üst üste 3 zarar: 1951
 - büyük zaman dilimi trendi ters: 1541
 - aynı yönde pozisyon tavanı: 1426
-- gösterge aileleri aynı yönde değil: 1257
+- gösterge aileleri aynı yönde değil: 1267
 - bu coinde zaten pozisyon var: 659
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 138
-- puan -0.221 eşiğin (0.25) altında: 87
+- puan -0.221 eşiğin (0.25) altında: 88
 - puan -0.141 eşiğin (0.25) altında: 85
 
 **Hata sınıfları**
@@ -125,16 +125,16 @@ En az işe yarayan okumalar: trix_1H ×0.542, tetik_geri_test_1H ×0.587, psar_1
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 9096
-- günlük işlem tavanı (8): 5022
+- ders: 9134
+- günlük işlem tavanı (8): 5090
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 1895
-- gösterge aileleri aynı yönde değil: 1766
+- gösterge aileleri aynı yönde değil: 1776
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
-- puan +0.123 eşiğin (0.25) altında: 133
+- puan +0.123 eşiğin (0.25) altında: 135
 
 **Hata sınıfları**
 
@@ -189,16 +189,16 @@ En az işe yarayan okumalar: trix_1H ×0.542, tetik_geri_test_1H ×0.587, psar_1
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 9096
-- günlük işlem tavanı (8): 5022
+- ders: 9134
+- günlük işlem tavanı (8): 5090
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 1895
-- gösterge aileleri aynı yönde değil: 1766
+- gösterge aileleri aynı yönde değil: 1776
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
-- puan +0.123 eşiğin (0.25) altında: 133
+- puan +0.123 eşiğin (0.25) altında: 135
 
 **Hata sınıfları**
 
