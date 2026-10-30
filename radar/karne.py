@@ -77,6 +77,19 @@ def stats(trades: Iterable[Mapping]) -> dict[str, Any]:
             "pnl_usd": round(sum(_num(t.get("pnl_usd")) or 0.0 for t in trades), 2), "durum": durum}
 
 
+def guven(n: int) -> str:
+    """Örnek sayısına göre güven etiketi. Örnek sayısı işlem AÇILIŞINI ENGELLEMEZ; yalnız yorumu belirtir."""
+    if n < 5:
+        return "kanıt yok"
+    if n < 10:
+        return "çok düşük"
+    if n < 20:
+        return "ön eğilim"
+    if n < 30:
+        return "orta"
+    return "kullanılabilir örnek"
+
+
 def filter_verdict(s: Mapping) -> str:
     """Gölgeye gönderilen (elenen) işlemler için: kaybettirdilerse filtre haklıdır."""
     if not s.get("n"):
@@ -117,6 +130,8 @@ def build(closed: Iterable[Mapping], unified_closed: Iterable[Mapping] = (), now
         s = [t for t in shadow if source_of(t)[0] == k]
         out["kaynaklar"].append({"kaynak": k, "etiket": label, "gercek": stats(g + u), "golge": stats(s)})
     out["kaynaklar"].sort(key=lambda r: -(r["gercek"]["n"] + r["golge"]["n"]))
+    op = [c for c in gcl if c.get("operational")]                 # YETKI_GOLGE operasyonel shadow kapanışları
+    out["operasyonel_shadow"] = {**stats(op), "guven": guven(len(op)), "kaynak": "yalnız kapanmış sanal işlemlerin net R'si"}
     groups: dict[str, list] = {}
     for t in shadow:
         kind = t.get("filter_kind") or ("sınıf C / yetki gölgesi" if not t.get("filtered") else "diğer")
