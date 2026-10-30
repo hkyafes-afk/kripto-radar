@@ -686,6 +686,7 @@ class DecisionResult:
     ts_ms: int = 0
     idempotency_key: str = ""
     strategies: tuple[str, ...] = ()          # aynı fırsatı bulan bütün stratejiler (kanıt yoğunluğu)
+    plan: Mapping[str, Any] = field(default_factory=dict)   # yürütme planı: inst, ufuk, giriş tipi, çıkış kuralı, ATR (PR 3)
 
     def __post_init__(self):
         if self.side is not None:
@@ -694,6 +695,7 @@ class DecisionResult:
                    "strategies"):
             object.__setattr__(self, f_, _tuple(getattr(self, f_)))
         object.__setattr__(self, "risk_proposal", _frozen_map(self.risk_proposal))
+        object.__setattr__(self, "plan", _frozen_map(self.plan))
 
     @property
     def evidence_count(self) -> int:

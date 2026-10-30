@@ -257,3 +257,21 @@ birlesik:
     varsayilan_tutma_saat: {micro: 0.25, intraday: 6, swing: 72, position: 336, carry: 720}
     varsayilan_funding_yillik_yuzde: 11   # funding bilinmiyorsa (long öder)
     funding_gelir_kredisi: false          # yönlü işlemde funding gelirini avantaja sayma
+  # ── PR 3 (yeni anahtarlar; temel risk değerleri yukarıdaki `risk:` bloğundan okunur, orası değişmedi) ──
+  risk:                       # radar/unified/risk.py RiskGate
+    likidasyon_tampon_kat: 2.0          # likidasyon girişten en az 2 × stop mesafesi uzakta olmalı
+    max_kume: 2                         # aynı kümede (sektör/korelasyon grubu) en fazla açık pozisyon
+    yuksek_oynaklik_max_kaldirac: 2     # kriz / yüksek oynaklıkta kaldıraç tavanı
+    dusuk_likidite_usd: 20000000        # 24s hacim bunun altındaysa (ya da bilinmiyorsa) ...
+    dusuk_likidite_max_kaldirac: 2      # ... kaldıraç tavanı
+    min_risk_orani: 0.25                # sınırlar riski istenenin %25'inin altına indirirse açma
+    teminat_kullanim_orani: 0.8         # boştaki teminatın en fazla %80'i tek pozisyona
+  cikis:                      # radar/unified/exits.py
+    veri_sorunu_cikis_dk: 60            # coin verisi 60 dk'dan uzun güvenilmezse pozisyonu kapat
+    rejim_cikisi: true                  # long krizde / short boğada kapanır
+  paper:                      # radar/unified/execution/paper.py (birleşik paper defteri: site/birlesik/yurutme.json)
+    kote_max_yas_sn: 15                 # bundan eski fiyatla dolum varsayılmaz
+    varsayilan_kayma_bp: 10             # emir defteri derinliği yoksa piyasa emri kayması
+    stop_kayma_bp: 10                   # stop emri tetiklenince kayma
+    kapali_sakla: 500                   # durum dosyasında tutulan bitmiş emir / kapanmış pozisyon sayısı
+    # baslangic_bakiye verilmezse `demo.baslangic_bakiye` kullanılır
