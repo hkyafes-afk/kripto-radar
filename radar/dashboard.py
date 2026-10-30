@@ -24,6 +24,8 @@ def write_site(site: Path, payload: dict) -> None:
     html = html.replace("/*__DATA__*/null", data.replace("</", "<\\/"))
     (site / "index.html").write_text(html, encoding="utf-8")
     (site / ".nojekyll").write_text("", encoding="utf-8")
-    polat = TEMPLATE.parent / "polat.html"                 # Polat sayfası (bağımsız ajan; veriyi kendi dalından okur)
-    if polat.exists():
-        shutil.copyfile(polat, site / "polat.html")
+    for name in ("polat.html",                             # Polat sayfası (bağımsız ajan; veriyi kendi dalından okur)
+                 "birlesik.html"):                         # Birleşik Baş Trader paneli (veriyi site/birlesik/'ten okur)
+        src = TEMPLATE.parent / name
+        if src.exists():
+            shutil.copyfile(src, site / name)
