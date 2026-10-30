@@ -826,8 +826,15 @@ class Engine:
             tmp = d / "tanilama.json.tmp"
             tmp.write_text(json.dumps(out, ensure_ascii=False), encoding="utf-8")
             tmp.replace(d / "tanilama.json")
-        except Exception:  # noqa: BLE001 — tanılama asla karar akışını durdurmaz
-            pass
+        except Exception as e:  # noqa: BLE001 — tanılama karar akışını durdurmaz; hata dosyaya yazılır
+            try:
+                d = Path(self.site) / "birlesik" / "golge"
+                d.mkdir(parents=True, exist_ok=True)
+                (d / "tanilama.json").write_text(json.dumps({"ts": int(time.time() * 1000),
+                                                              "hata": f"{type(e).__name__}: {e}"}, ensure_ascii=False),
+                                                 encoding="utf-8")
+            except Exception:  # noqa: BLE001
+                pass
 
     def _unified_shadow(self, ctxs: list[dict]):
         """Birleşik Baş Trader kancası (karar/işlem) + etkinlik denetçisi."""
