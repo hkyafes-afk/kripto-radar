@@ -33,7 +33,7 @@ def test_yetki_golge_hard_block_ve_olculen_kapilar():
     h = hz.evaluate(_rec(["YETKI_GOLGE"]))
     st = {k["ad"]: k["durum"] for k in h["kapilar"]}
     assert st["yetki"] == "GÖLGE"
-    assert st["politika"] == "VERİ YOK" and st["sinif"] == "VERİ YOK"      # önceki kapıda engellendi → ölçülmedi
+    assert st["politika"] == "GEÇTİ" and st["sinif"] == "GEÇTİ"          # yetki engeline rağmen hesaplanır
     assert h["engel_metni"] == "İşlem açılamaz: YETKI_GOLGE"
     assert "Canlı kanıt/yetki yetersiz" in h["nedenler"]
     assert h["olculen"] == h["gecen"] + sum(1 for k in h["kapilar"] if k["durum"] == "GÖLGE")
@@ -60,7 +60,7 @@ def test_veri_sorunu_sonrasi_kapilar_olculmez():
     h = hz.evaluate(_rec(["VERI_SORUNU:bayat"]))
     st = {k["ad"]: k["durum"] for k in h["kapilar"]}
     assert st["veri_kalite"] == "GÖLGE"
-    assert st["veri_kapsam"] == st["yetki"] == st["politika"] == "VERİ YOK"
+    assert st["veri_kapsam"] == st["yetki"] == st["politika"] == "HESAPLANMADI"   # veri başarısız → hesaplanmadı
     assert h["engel_aile"] == "VERI"
 
 

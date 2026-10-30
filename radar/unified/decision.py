@@ -12,6 +12,7 @@ Risk miktarı burada yalnız ÖNERİDİR (risk_proposal); son söz PR 3'teki Ris
 """
 from __future__ import annotations
 
+import math
 from typing import Iterable, Mapping
 
 from .. import policy
@@ -19,6 +20,7 @@ from .costs import CostEngine
 from .models import (CostEstimate, Decision, DecisionResult, Horizon, MarketContext, Opportunity, OrderType, Regime,
                      Side, StrategyAuthority, Tradability, is_finite_number)
 from .strategies import Strategy, build_strategies
+from .targets import classify
 
 _AUTH = {StrategyAuthority.PAPER: 2, StrategyAuthority.SHADOW_ONLY: 1, StrategyAuthority.DISABLED: 0}
 _TRAD = {Tradability.PASS: 2, Tradability.SHADOW: 1, Tradability.REJECT: 0}
@@ -134,15 +136,15 @@ class UnifiedDecisionEngine:
         if ctx.coverage is not None and not ctx.coverage.sufficient_for_paper:
             codes += list(ctx.coverage.reason_codes)
             return Decision.SHADOW, codes + list(cost.reason_codes)
+        # YETKI_GOLGE ilk engel olsa da politika ve yaş sınıfı da hesaplanır (kararı değiştirmez; izleme için)
         if all(x.authority is not StrategyAuthority.PAPER for x in ops):
             codes.append("YETKI_GOLGE")
-            return Decision.SHADOW, codes + list(cost.reason_codes)
         why = self._policy(ctx, o)
         if why:
             codes.append(f"POLITIKA:{why}")
-            return Decision.SHADOW, codes + list(cost.reason_codes)
         if ctx.coin_class is not None and ctx.coin_class.value == "C":
             codes.append("SINIF_C")
+        if codes:
             return Decision.SHADOW, codes + list(cost.reason_codes)
         codes += list(cost.reason_codes)
         if cost.tradability is Tradability.REJECT:
@@ -219,7 +221,35 @@ class UnifiedDecisionEngine:
             evidence_for=ev_for, evidence_against=ev_against, missing_factors=missing, stale_factors=stale,
             reason_codes=codes, explanation_tr=self._explain(ctx, o, cost, decision, codes, strategies, ev_for,
                                                               ev_against, missing),
-            ts_ms=now, idempotency_key=o.idempotency_key, strategies=strategies, plan=self._plan(ctx, o))
+            ts_ms=now, idempotency_key=o.idempotency_key, strategies=strategies,
+            plan={**self._plan(ctx, o), "operasyonel": self._operational(o, cost, decision, codes)})
+
+    @staticmethod
+    def _operational(o: Opportunity, cost: CostEstimate, decision: Decision, codes: tuple) -> dict:
+        """YETKI_GOLGE → operasyonel shadow açılışı için uygunluk. Yalnız tek engel YETKI_GOLGE ise ve diğer tüm
+        kapılar geçtiyse uygundur. PAPER/gerçek yetki VERİLMEZ; yalnız gölge sanal portföyde kullanılır."""
+        neden = []
+        if decision is not Decision.SHADOW:
+            neden.append("karar gölge değil")
+        if set(codes) != {"YETKI_GOLGE"}:
+            neden.append("diğer engeller var: " + ", ".join(c for c in codes if c != "YETKI_GOLGE") if codes else "engel yok")
+        if "spread" in (cost.missing_inputs or ()):
+            neden.append("public bid/ask spread eksik")
+        if cost.tradability is not Tradability.PASS:
+            neden.append("maliyet kapısı geçmedi")
+        if cost.net_edge_bp is None or cost.net_edge_bp <= 0:
+            neden.append("net avantaj yok")
+        geo_ok = all(isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v) and v > 0
+                     for v in (o.entry, o.stop))
+        if not geo_ok or (o.entry == o.stop) or (o.side is Side.LONG and not o.stop < o.entry) \
+                or (o.side is Side.SHORT and not o.stop > o.entry):
+            neden.append("geçerli giriş/stop yok")
+        if not (o.max_holding_hours and o.max_holding_hours > 0):
+            neden.append("zaman çıkışı tanımlı değil")
+        cl = classify(o.side, o.entry, o.stop, o.targets) if geo_ok else {"hedef": [], "mekanik": [], "reddedilen": list(o.targets)}
+        return {"uygun": not neden, "neden": neden, "hedef": cl["hedef"], "mekanik": cl["mekanik"],
+                "reddedilen": cl["reddedilen"], "hedef_tipi": "yapısal" if cl["hedef"] else "yok",
+                "cikis_politikasi": "stop + iz + zaman" if (o.max_holding_hours and o.max_holding_hours > 0) else None}
 
     @staticmethod
     def _plan(ctx: MarketContext, o: Opportunity) -> dict:

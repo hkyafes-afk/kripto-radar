@@ -20,7 +20,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Mapping
 
-GEC, GOLGE, RED, YOK = "GEÇTİ", "GÖLGE", "RED", "VERİ YOK"
+GEC, GOLGE, RED, YOK, HES = "GEÇTİ", "GÖLGE", "RED", "VERİ YOK", "HESAPLANMADI"
 MIN_KANIT = 30
 DAY_MS = 86_400_000
 OPEN_DEC = ("OPEN", "REDUCE_SIZE")
@@ -121,23 +121,22 @@ def evaluate(rec: Mapping[str, Any]) -> dict:
     has = lambda *pre: any(c.startswith(pre) for c in codes)  # noqa: E731
     S: dict[str, str] = {"sinyal": GEC}
     stop = False
-    # 1) veri kalitesi → 2) kapsam → 3) yetki → 4) politika → 5) yaş sınıfı: karar motorunda sıralı ve kısa devreli
+    # 1) veri kalitesi / kapsam: başarısızsa sonrakiler HESAPLANMADI. Yetki/politika/sınıf artık her zaman hesaplanır.
     S["veri_kalite"] = fail if has("VERI_SORUNU") else GEC
     stop = has("VERI_SORUNU")
     if stop:
-        S["veri_kapsam"] = YOK
+        S["veri_kapsam"] = HES
     else:
         S["veri_kapsam"] = fail if has("KAPSAM", "ZORUNLU") else GEC
         stop = has("KAPSAM", "ZORUNLU")
     for key, cond in (("yetki", has("YETKI_GOLGE")), ("politika", has("POLITIKA")), ("sinif", has("SINIF_C"))):
         if stop:
-            S[key] = YOK
+            S[key] = HES
             continue
         if key == "sinif" and not plan.get("coin_class") and not cond:
             S[key] = YOK
         else:
             S[key] = fail if cond else GEC
-        stop = cond
     # 6–9) maliyet her zaman hesaplanır (kapılardan bağımsız); likidite, rejim/çelişki ve RiskGate
     S["maliyet"] = fail if has(*MALIYET_CODES) else (YOK if rec.get("net_edge_bp") is None else GEC)
     S["likidite"] = fail if has(*LIKIDITE_CODES) else (YOK if (rec.get("costs") or {}).get("notional_usd") is None else GEC)
@@ -145,9 +144,9 @@ def evaluate(rec: Mapping[str, Any]) -> dict:
         S["rejim"] = fail
     else:
         S["rejim"] = YOK if plan.get("rejim") is None else GEC
-    S["riskgate"] = GEC if dec in OPEN_DEC else YOK
+    S["riskgate"] = GEC if dec in OPEN_DEC else HES
     kapilar = [{"ad": name, "etiket": label, "durum": S[name]} for name, label in GATES]
-    olculen = [k for k in kapilar if k["durum"] != YOK]
+    olculen = [k for k in kapilar if k["durum"] not in (YOK, HES)]
     gecen = sum(1 for k in olculen if k["durum"] == GEC)
     skor = round(gecen / len(olculen) * 100) if olculen else None
     # hard block: ilk başarısız kapının ailesinden ilk sebep kodu

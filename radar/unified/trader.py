@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import json
 import time
+from dataclasses import replace
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable, Mapping
@@ -27,6 +28,7 @@ from .factors import FactorEngine
 from .flags import execution_mode, unified_cfg
 from .journal import DecisionJournal
 from . import hazirlik
+from .targets import classify as classify_targets
 from .models import (Decision, DecisionResult, ExecutionIntent, ExecutionMode, OrderStatus, OrderType, Regime, Side,
                      to_jsonable)
 from .risk import MarketRisk, OpenPosition, PortfolioState, RiskGate
@@ -216,25 +218,43 @@ class UnifiedTrader:
         opened, risk_log = [], []
         gi = global_issue or (None if ws_healthy is not False else "canlı veri akışı kopuk")
         for d in sorted(decisions, key=lambda x: -(x.net_edge_bp or 0)):
-            if d.decision not in (Decision.OPEN, Decision.REDUCE_SIZE):
+            op = (d.plan or {}).get("operasyonel") or {}
+            # YETKI_GOLGE operasyonel shadow: yalnız gölge modda, yalnız uygunluk kontrolünü geçen kararlar
+            operational = self.mode == "shadow" and d.decision is Decision.SHADOW and bool(op.get("uygun"))
+            if d.decision not in (Decision.OPEN, Decision.REDUCE_SIZE) and not operational:
                 continue
             inst = d.plan.get("inst") if d.plan else None
             if not inst:
                 continue
+            if operational and d.idempotency_key in (self.st.get("op_keys") or []):
+                continue                                             # aynı fırsat ikinci pozisyon açamaz
+            if d.decision is Decision.SHADOW and not operational:
+                continue
+            if operational:
+                d_use = replace(d, decision=Decision.OPEN, targets=tuple(op.get("hedef") or ()))   # yalnız RiskGate kuru çalışma
+            else:
+                tv = classify_targets(d.side, d.entry, d.stop, d.targets)     # geçersiz (negatif/NaN) hedef asla yazılmaz
+                d_use = replace(d, targets=tuple(tv["hedef"] + tv["mekanik"]))
             pf = self.portfolio(now, prices, data_issue=gi)
             raw = raw_by_inst.get(inst) or {}
             q = quotes.get(inst)
             mr = MarketRisk(inst=inst, price=q.last if q else None, vol24_usd=raw.get("vol24_usd"),
                             high_vol=bool(raw.get("high_vol")), cluster=(clusters or {}).get(inst),
                             meta=(meta or {}).get(inst))
-            rd = self.risk.evaluate(d, pf, mr)
+            rd = self.risk.evaluate(d_use, pf, mr)
             risk_log.append({"sym": d.symbol, "strateji": d.strategy, "karar": rd.decision.value,
-                             "kodlar": list(rd.reason_codes), "aciklama": rd.explanation_tr})
+                             "kodlar": list(rd.reason_codes), "aciklama": rd.explanation_tr,
+                             "operasyonel": operational})
             if not rd.approved:
                 continue
-            res = self._open(d, rd, inst, q, now, mr.cluster)
+            res = self._open(d_use, rd, inst, q, now, mr.cluster)
+            if operational and res is not None:
+                keys = self.st.setdefault("op_keys", [])
+                keys.append(d.idempotency_key)
+                del keys[:-500]
             if res is not None:
-                opened.append({"sym": d.symbol, "durum": res.status.value, "dolan": res.filled_qty, "fiyat": res.avg_price})
+                opened.append({"sym": d.symbol, "durum": res.status.value, "dolan": res.filled_qty, "fiyat": res.avg_price,
+                               "operasyonel": operational})
         self.last_risk = risk_log[-20:]
         # 6) portföy
         pf = self.portfolio(now, prices)
@@ -283,6 +303,11 @@ class UnifiedTrader:
             pos["risk_text"] = rd.explanation_tr
             pos["strategies"] = list(d.strategies or (d.strategy,))
             pos["costs"] = to_jsonable(d.costs) if d.costs else None
+            if self.mode == "shadow" and (plan.get("operasyonel") or {}).get("uygun"):
+                op = plan["operasyonel"]
+                pos.update(operational=True, karar="YETKI_GOLGE", stop_initial=pos["stop"], target_type=op.get("hedef_tipi"),
+                           mechanical_reference=list(op.get("mekanik") or []), rejected_targets=list(op.get("reddedilen") or []),
+                           exit_policy=op.get("cikis_politikasi"))
             pos["exit_plan"] = next((l for l in d.explanation_tr.split("\n") if l.startswith("Çıkış planı")), None)
             if q is not None and q.valid:
                 self._mark(pos, q.last, now)
@@ -305,7 +330,12 @@ class UnifiedTrader:
                    unrealized_pct=sg * (price / pos["entry"] - 1) * 100,
                    unrealized_r=(unreal / risk0) if risk0 else None)
         if pos["unrealized_r"] is not None:
-            pos["peak_r"] = max(float(pos.get("peak_r") or 0.0), pos["unrealized_r"])
+            r = pos["unrealized_r"]
+            pos["gross_r"] = gross / risk0
+            pos["peak_r"] = max(float(pos.get("peak_r") or 0.0), r)
+            pos["mfe_r"] = max(float(pos["mfe_r"]), r) if pos.get("mfe_r") is not None else r
+            pos["mae_r"] = min(float(pos["mae_r"]), r) if pos.get("mae_r") is not None else r
+            pos["giveback_r"] = max(0.0, pos["peak_r"] - r)
         h = pos.setdefault("hist", [])
         if not h or now - h[-1][0] >= 300_000:                 # 5 dakikada bir nokta, en fazla 288 (24 saat)
             h.append([now, price])
@@ -326,10 +356,13 @@ class UnifiedTrader:
             "symbol", "inst", "side", "qty", "entry", "current_price", "stop", "stop_init", "targets", "strategy",
             "inst", "strategies", "opened_ts", "updated_ts", "realized_usd", "fees_usd", "funding_usd", "slip_usd", "risk_usd",
             "leverage", "unrealized_usd", "unrealized_pct", "unrealized_r", "peak_r", "costs", "exit_plan",
-            "explanation_tr", "risk_text", "hist")} for p in self.adapter.positions.values()]
+            "explanation_tr", "risk_text", "hist", "operational", "karar", "stop_initial", "target_type",
+            "mechanical_reference", "rejected_targets", "exit_policy", "gross_r", "mfe_r", "mae_r", "giveback_r")}
+            for p in self.adapter.positions.values()]
         out["kapananlar"] = [{k: c.get(k) for k in (
             "symbol", "side", "strategy", "strategies", "entry", "exit_px", "qty", "leverage", "net_usd", "r",
-            "fees_usd", "slip_usd", "funding_usd", "realized_usd", "opened_ts", "closed_ts", "exit_reason")}
+            "fees_usd", "slip_usd", "funding_usd", "realized_usd", "opened_ts", "closed_ts", "exit_reason",
+            "operational", "karar", "exit_policy", "target_type", "mfe_r", "mae_r", "giveback_r", "peak_r")}
             for c in self.adapter.closed[-100:]]
         out["eq_hist"] = self.st.get("eq_hist") or []
         out["btc_hist"] = self.st.get("btc_hist") or []
