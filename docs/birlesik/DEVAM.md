@@ -25,10 +25,10 @@ PR 1 — ortak modeller, veri kapsamı, CostEngine, testler (dal: feat/unified-t
 - [ ] Uygulama planı (docs/birlesik/PLAN.md)
 - [x] radar/unified/models.py — enum + dataclass'lar (MarketContext … EffectivenessSnapshot), eski fikir → Opportunity adaptörü
 - [x] radar/unified/coverage.py — FactorValue/FactorSpec/FactorCoverage (zorunlu/bayat/eksik/geçersiz, paper'a yeterlilik)
-- [ ] radar/unified/costs.py — CostEngine (ledger.fees_cfg, vwap_fill, stop_slip_bp yeniden kullanılır)
-- [ ] radar/unified/flags.py — karar_modu (legacy|shadow|unified), yürütme modu yalnız paper
-- [ ] config.yaml'a belgeli `birlesik:` bloğu (mevcut değerler değişmez)
-- [ ] Testler: tests/test_unified_*.py (hepsi + eski testler geçmeli: `python3 -m pytest -q tests`)
+- [x] radar/unified/costs.py — CostEngine (ledger.fees_cfg, vwap_fill, stop_slip_bp yeniden kullanılır)
+- [x] radar/unified/flags.py — karar_modu (legacy|shadow|unified), yürütme modu yalnız paper
+- [x] config.yaml'a belgeli `birlesik:` bloğu (mevcut değerler değişmez)
+- [x] Testler: tests/test_unified_*.py (180 geçti: 134 eski + 46 yeni) (hepsi + eski testler geçmeli: `python3 -m pytest -q tests`)
 - [ ] Push + PR (REST ile: `gh api repos/hkyafes-afk/kripto-radar/pulls -f title=... -f head=feat/unified-trader-foundation -f base=main -f body=...`;
       GraphQL bu ortamda kapalı, `gh pr create` çalışmaz)
 
