@@ -741,6 +741,11 @@ class Engine:
         self._unified_shadow(ctxs)
 
     def _unified_shadow(self, ctxs: list[dict]):
+        """Birleşik Baş Trader kancası (karar/işlem) + etkinlik denetçisi."""
+        self._unified_step(ctxs)
+        self._unified_audit()
+
+    def _unified_step(self, ctxs: list[dict]):
         """Birleşik Baş Trader kancası. `birlesik.karar_modu`:
           legacy  → hiçbir şey yapmaz (varsayılan)
           shadow  → yalnız karar günlüğü yazar
@@ -778,6 +783,28 @@ class Engine:
                   f"çıkış {len(out['cikislar'])}")
         except Exception as e:  # noqa: BLE001
             print("[birleşik] hata:", type(e).__name__, e)
+
+    def _unified_audit(self, interval_s: float = 3600):
+        """Etkinlik denetçisi (shadow/unified modda saatte bir): legacy defter + birleşik paper defteri → etkinlik.json.
+        Yalnız okur ve rapor yazar; hiçbir işlemi açmaz/kapatmaz. Hata yutulur."""
+        try:
+            from .unified.flags import decision_mode
+            from .unified.models import DecisionMode
+            if decision_mode(self.cfg) is DecisionMode.LEGACY:
+                return
+            now = time.time()
+            if now - getattr(self, "_audit_at", 0.0) < interval_s:
+                return
+            self._audit_at = now
+            from .unified.effectiveness import EffectivenessAuditor
+            tr = getattr(self, "_unified_trader", None)
+            aud = EffectivenessAuditor(self.cfg, self.site / "birlesik")
+            rep = aud.audit((getattr(self, "ledger", None) or {}).get("closed") or [],
+                            tr.adapter.closed if tr else [])
+            aud.write(rep)
+            self.unified_audit = rep.get("ozet")
+        except Exception as e:  # noqa: BLE001
+            print("[birleşik etkinlik] hata:", type(e).__name__, e)
 
     def _peers(self, inst: str) -> dict:
         """Baş Trader bütün kulvarları izler: diğer yöneticilerin bu coindeki gerçek pozisyonları."""

@@ -74,16 +74,17 @@ def test_sentetik_golge_bozuk_baglam_digerlerini_durdurmaz(tmp_path):
     assert s is not None and s["coin"] >= 1
 
 
-class _FakeEngine:
-    """Engine._unified_shadow'u gerçek Engine kurmadan çağırmak için en küçük sahte nesne."""
-    def __init__(self, cfg, site):
-        self.cfg, self.site, self.meta = cfg, site, {}
+def _fake_engine(cfg, site):
+    """Gerçek Engine'i ağ/defter kurmadan oluşturur (yalnız kancanın kullandığı alanlar)."""
+    from radar.engine import Engine
+    fe = Engine.__new__(Engine)
+    fe.cfg, fe.site, fe.meta, fe.book, fe.halt, fe.ledger = cfg, site, {}, {}, None, {"closed": []}
+    return fe
 
 
 def _hook(cfg, site, ctxs):
-    from radar.engine import Engine
-    fe = _FakeEngine(cfg, site)
-    Engine._unified_shadow(fe, ctxs)
+    fe = _fake_engine(cfg, site)
+    fe._unified_shadow(ctxs)
     return fe
 
 
@@ -98,6 +99,7 @@ def test_sentetik_motor_kancasi_shadow_modda_gunluk_yazar(tmp_path):
     fe = _hook(cfg, tmp_path, [kemal_ctx()])
     assert fe.unified_shadow["coin"] == 1
     assert list((tmp_path / "birlesik").glob("kararlar-*.jsonl"))
+    assert (tmp_path / "birlesik" / "etkinlik.json").exists()            # etkinlik denetçisi de çalıştı
 
 
 def test_motor_kancasi_hata_yutar(tmp_path):

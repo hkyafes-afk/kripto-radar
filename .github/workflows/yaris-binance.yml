@@ -55,5 +55,7 @@ jobs:
           fi
           cp out/race.json "sonuc/race_${tag}.json"
           cp out/YARIS.md "sonuc/YARIS_${tag}.md"
+          cp out/race_islemler.csv "sonuc/islemler_${tag}.csv" 2>/dev/null || true
+          python -m radar etkinlik --yaris out/race_islemler.csv --cikti "sonuc/etkinlik_${tag}.json" || true
           cd sonuc && git add -A && git commit -qm "🏁 binance yarışı ${tag}" || exit 0
           for i in 1 2 3 4 5; do git push -q origin binance-sonuc && break; git pull -q --rebase origin binance-sonuc || true; sleep $((RANDOM % 8 + 2)); done

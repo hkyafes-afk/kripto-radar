@@ -47,15 +47,18 @@ Dal: `feat/unified-decision-engine` (PR 1 dalından). PR base: `feat/unified-tra
       legacy defter/yöneticiler etkilenmez) + `tests/test_unified_trader.py`
 - [x] `DecisionResult.plan` (inst, giriş tipi, çıkış kuralı, ATR) — decision.py doldurur
 - [x] config `birlesik.risk/cikis/paper` yeni anahtarlar (belgeli; mevcut değer değişmedi)
-- [ ] Tam paket + push + PR (taban: feat/unified-decision-engine)
+- [x] Tam paket (254 test geçti) + push + PR #4 (https://github.com/hkyafes-afk/kripto-radar/pull/4, taban: feat/unified-decision-engine)
 - Ertelendi (bilinçli): carry stratejisinin birleşik sürümü (legacy harvest çalışmaya devam eder); legacy deftere yeni
   alan migrasyonu gerekmedi çünkü birleşik pozisyonlar ayrı defterde.
 
-### PR 4 — `feat/unified-effectiveness` (PR 1 dalından; plan bölüm 11)
+### PR 4 — `feat/unified-effectiveness` (PR 3 dalından — DEVAM/config çakışmasın diye yığıldı; plan bölüm 11)
 
 - [ ] `radar/unified/effectiveness.py` EffectivenessAuditor: strateji/rejim/ufuk bazında EffectivenessSnapshot (bootstrap
       GA, yoğunlaşma, maliyet payı), legacy–birleşik ve gölge–paper karşılaştırması, deneme sayısı kaydı, terfi ölçütü
-      (n ≥ 100 ve GA alt sınırı > 0) + testler
+      (n ≥ 100 ve GA alt sınırı > 0) + testler  ✅ (commit edildi)
+- [x] Motor kancası: shadow/unified modda saatte bir `site/birlesik/etkinlik.json` + test
+- [x] Yarış: işlem başına çıktı (`race_islemler.csv`) + `python -m radar etkinlik` komutu (yarış/defter → etkinlik raporu)
+- [ ] Tam paket + push + PR (taban: feat/unified-risk-execution)
 - [ ] Karne düzeltmesi KULLANICI ONAYI bekliyor (gölge işlemleri karneye ekleme) — onaysız yapma
 
 ### PR 5 — `feat/unified-dashboard`: panelde kararlar, kapsam, maliyet, risk, etkinlik (telefonda okunur)
