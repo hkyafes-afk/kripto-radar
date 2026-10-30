@@ -11,10 +11,10 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 1969 | %49.0 | -0.209 | -412.15 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
 | polat_girilmeyen | 1956 | %49.0 | -0.208 | -406.79 |
-| rastgele | 1972 | %43.7 | -0.333 | -656.51 |
+| rastgele | 1973 | %43.7 | -0.333 | -657.57 |
 | trend_naif | 1976 | %42.4 | -0.348 | -688.02 |
 
-Polat özsermaye: %-4.57 · BTC al-tut: %-4.13
+Polat özsermaye: %-3.89 · BTC al-tut: %-4.33
 
 ## Öğrenme (walk-forward)
 
@@ -62,16 +62,16 @@ En az işe yarayan okumalar: trix_1H ×0.542, tetik_geri_test_1H ×0.587, psar_1
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 7649
-- günlük işlem tavanı (8): 4263
+- ders: 7677
+- günlük işlem tavanı (8): 4310
 - üst üste 3 zarar: 1951
 - büyük zaman dilimi trendi ters: 1541
 - aynı yönde pozisyon tavanı: 1426
-- gösterge aileleri aynı yönde değil: 1255
+- gösterge aileleri aynı yönde değil: 1256
 - bu coinde zaten pozisyon var: 659
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 138
+- puan -0.221 eşiğin (0.25) altında: 86
 - puan -0.141 eşiğin (0.25) altında: 85
-- puan -0.221 eşiğin (0.25) altında: 85
 
 **Hata sınıfları**
 
@@ -125,11 +125,11 @@ En az işe yarayan okumalar: trix_1H ×0.542, tetik_geri_test_1H ×0.587, psar_1
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 8996
-- günlük işlem tavanı (8): 4898
+- ders: 9024
+- günlük işlem tavanı (8): 4945
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 1895
-- gösterge aileleri aynı yönde değil: 1764
+- gösterge aileleri aynı yönde değil: 1765
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
@@ -189,11 +189,11 @@ En az işe yarayan okumalar: trix_1H ×0.542, tetik_geri_test_1H ×0.587, psar_1
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 8996
-- günlük işlem tavanı (8): 4898
+- ders: 9024
+- günlük işlem tavanı (8): 4945
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 1895
-- gösterge aileleri aynı yönde değil: 1764
+- gösterge aileleri aynı yönde değil: 1765
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
