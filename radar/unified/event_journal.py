@@ -88,8 +88,11 @@ class AppendOnlyEventJournal:
             if value is not None and (isinstance(value, bool) or not isinstance(value, int) or value < 0):
                 raise ValueError(f"{name} negatif olmayan integer veya None olmalı")
         # Validate JSON compatibility before taking the writer lock.
-        _canonical(payload)
-        _canonical(provenance or {})
+        try:
+            _canonical(payload)
+            _canonical(provenance or {})
+        except (TypeError, ValueError) as exc:
+            raise ValueError("payload ve provenance JSON uyumlu olmalı") from exc
         with self._lock:
             record = {
                 "seq": self._next_seq,
