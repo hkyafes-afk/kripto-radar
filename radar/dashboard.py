@@ -39,4 +39,7 @@ def write_site(site: Path, payload: dict) -> None:
     (site / "index.html").write_text(unified, encoding="utf-8")
     # Eski doğrudan bağlantıları kırmamak için alias dosyasını da koru.
     (site / "birlesik.html").write_text(unified, encoding="utf-8")
+    polat = TEMPLATES / "polat.html"
+    if polat.exists():
+        shutil.copyfile(polat, site / "polat.html")
     (site / ".nojekyll").write_text("", encoding="utf-8")
