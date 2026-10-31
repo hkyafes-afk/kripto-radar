@@ -26,6 +26,7 @@ def test_site_birlesik_panelini_kopyalar_ve_baglar(tmp_path):
     assert page == alias
     assert "Kripto Radar" in legacy and "/*__DATA__*/null" not in legacy
     assert "Veri yok" in page and "Bayat" in page and "Bağlantı kesik" in page and "PAPER · TEK OTORİTE" in page
+    assert 'id="modeTag"' in page and "Deneysel doğrulama sürüyor" in page
     assert (tmp_path / "polat.html").exists()
 
 

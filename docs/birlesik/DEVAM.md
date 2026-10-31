@@ -102,3 +102,10 @@ Kabul koşulları:
 - [ ] Unified CI ve tam test paketi yeşil.
 - [ ] Yeni main süreci eski nöbetçi döngüden kontrollü devraldı; yayınlanan durum baslangic: 100, mod: unified, yurutme: paper olarak doğrulandı.
 - [ ] Gerçek OKX emir/private API kapalı kaldı.
+
+## Performans ve strateji kapsamı — 2026-10-31
+
+- [ ] 2 hafta ve en az 100 karar karşılaştırması tamamlanmadan PAPER performansı kanıtlanmış sayılmaz; dashboard bu dönemi deneysel olarak etiketler.
+- [ ] Elif CarryStrategy: iki bacaklı spot+perp paper yürütme, atomik açılış/kapanış, ayrı muhasebe ve uzlaştırma testleri tamamlanana kadar yeni giriş kapalı.
+- [ ] SHADOW_ONLY intraday/microstructure/panic stratejileri, veri kapsamı ve örneklem şartları sağlanmadan PAPER'a yükseltilmez.
+- [ ] Canlı döngü eski commit'ten yeni main'e kontrollü devraldıktan sonra gh-pages üzerinde 100 USDT / unified / paper durumunu doğrula.

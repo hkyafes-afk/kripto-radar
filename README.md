@@ -1,4 +1,16 @@
-# 🛰 Kripto Radar
+# 🛰 Kripto Radar — Birleşik Baş Trader
+
+## Güncel ana sistem (31.10.2026)
+
+- Tek yeni-pozisyon yetkilisi: Birleşik Baş Trader.
+- Başlangıç sermayesi: 100 USDT PAPER; gerçek OKX emirleri ve private API kapalı.
+- Ana sayfa: birleşik dashboard; eski Radar ve Polat kayıtları/araştırmaları korunur.
+- Legacy Radar ve Polat yeni bağımsız pozisyon açmaz; eski sanal pozisyonları yönetme ve challenger/öğrenme rolleri ayrı tutulur.
+- Bu erken PAPER yayınıdır; performans doğrulaması sürer, kârlılık kanıtı değildir.
+- Elif carry stratejisi, iki bacaklı spot+perp paper yürütmesi tamamlanana kadar devre dışıdır.
+
+## Legacy Radar açıklaması (tarihsel)
+
 
 OKX perpetual piyasasını **canlı** izleyen (15dk / 1S / 4S mum kapanır kapanmaz tarar), sinyalleri
 anında **Telegram'a** gönderen, her güçlü sinyalde **20$'lık demo işlem** açıp stop/hedefte kendisi
@@ -105,7 +117,7 @@ Bütün kararlar ve araştırma kaynakları: **[PLAN.md](PLAN.md)**. 5 yıllık 
   - Önce limit (maker) giriş.
   - Kaldıraç her işlemde likidasyon stop'un ötesinde kalacak şekilde seçilir.
 
-## Yatırım ekibi (v7)
+## Legacy Radar yatırım ekibi v7 (arşiv / geçmiş davranış)
 
 1.000$ başlangıç sermayesi 7 yöneticiye eşit dağıtılır. Her yönetici kendi tarzıyla fikir üretir; risk müdürü onaylar.
 

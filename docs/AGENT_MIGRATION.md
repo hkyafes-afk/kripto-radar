@@ -67,3 +67,10 @@ Not: Legacy Radar'ın sanal işlem üretmeye devam etmesi shadow testinin karş�
 - canli.yml ve polat.yml veri akışı ile açık sanal pozisyonların yönetimi için çalışmaya devam eder. Workflow'un çalışıyor olması bağımsız yeni pozisyon yetkisi anlamına gelmez.
 - Eski 100.000 USDT shadow state, yalnızca paper emir/pozisyon/kapanmış işlem geçmişi yoksa 100 USDT'ye güvenli biçimde yeniden bazlanır. İşlem geçmişi varsa başlangıç sermayesi değişimi fail-closed olur; otomatik silme yapılmaz.
 - Ana dashboard en yeni Unified (birlesik/durum.json) veya eski Shadow (birlesik/golge/durum.json) durumunu seçer; iki portföyü tek hesap gibi toplamaz.
+
+## Açık güvenlik/strateji sınırları — 2026-10-31
+
+- Unified modu erken PAPER yayınıdır. Önceki planın 2 hafta ve en az 100 karar karşılaştırma kabul kapısı henüz tamamlanmış sayılmaz; bu performans kârlılık kanıtı değildir.
+- IntradayTrend, Microstructure ve PanicReversal gibi SHADOW_ONLY stratejiler, veri/örneklem koşulları sağlanmadan paper yetkisine yükseltilmez.
+- Elif CarryStrategy henüz UnifiedTrader strateji kayıtçısına ve iki bacaklı atomik spot+perp PAPER yürütmesine entegre değildir. Eski Elif yeni carry girişleri bu nedenle engellenmiştir; açık eski carry pozisyonları kendi legacy yönetiminde kapanır.
+- Polat, önceki negatif kanıt nedeniyle UnifiedTrader'a otomatik strateji olarak aktarılmamıştır; yeni pozisyon yetkisi kapalı challenger/öğrenme kaynağıdır.
