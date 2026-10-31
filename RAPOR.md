@@ -53,12 +53,12 @@ En az işe yarayan okumalar: cci_1H ×0.55, momentum_1H ×0.553, obv_egim_1H ×0
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 10453
+- ders: 10471
 - günlük işlem tavanı (8): 2524
 - aynı yönde pozisyon tavanı: 1156
 - gösterge aileleri aynı yönde değil: 858
 - bu coinde zaten pozisyon var: 464
-- büyük zaman dilimi trendi ters: 265
+- büyük zaman dilimi trendi ters: 266
 - puan -0.183 eşiğin (0.25) altında: 52
 - puan -0.213 eşiğin (0.25) altında: 52
 - puan -0.182 eşiğin (0.25) altında: 50
@@ -115,11 +115,11 @@ En az işe yarayan okumalar: cci_1H ×0.55, momentum_1H ×0.553, obv_egim_1H ×0
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 17420
+- ders: 17438
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2457
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 1992
+- büyük zaman dilimi trendi ters: 1993
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
@@ -182,11 +182,11 @@ En az işe yarayan okumalar: cci_1H ×0.55, momentum_1H ×0.553, obv_egim_1H ×0
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 17420
+- ders: 17438
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2457
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 1992
+- büyük zaman dilimi trendi ters: 1993
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
