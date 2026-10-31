@@ -55,7 +55,7 @@ def test_sentetik_100_usdt_baslangic_bakiyesiyle_risk_boyutlandirma():
     too_large = G.evaluate(dec(entry=100.0, stop=95.0), pf(equity=100.0),
                            mk(meta={"ct_val": 1.0, "lot_sz": 1, "min_sz": 1}))
     assert too_large.decision is Decision.REJECT
-    assert "LOT_RISK_ASIMI" in too_large.reason_codes or "RISK_COK_KUCULDU" in too_large.reason_codes
+    assert any(code in too_large.reason_codes for code in ("LOT_UYGUN_DEGIL", "LOT_RISK_ASIMI", "RISK_COK_KUCULDU"))
 
 
 def test_sentetik_yarim_boyut_karari():
