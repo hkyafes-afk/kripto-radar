@@ -37,3 +37,11 @@
 - Birleşik motor PAPER/SHADOW dışında çalışamaz.
 - Testler: veri kesintisi, bozuk state, restart/reconcile, duplicate signal, fee/funding/slippage, long/short, risk halt, stop koruması.
 - CI yeşil olmadan PR merge edilmez.
+
+
+## Uygulama notu — 2026-10-31
+- `site/index.html` tek ana giriş olarak birleşik Baş Trader panelini yükler.
+- Önceki Radar paneli `site/radar.html` altında arşivlenir; eski bağlantıların bozulmaması için `site/birlesik.html` alias'ı korunur.
+- `site/polat.html` korunur; Polat artık yeni pozisyon açmayan challenger modundadır.
+- Legacy ve birleşik veriler aynı panelde birleştirilmiş portföy gibi gösterilmez. Shadow kararları ayrı gölge defterinden okunur; legacy baseline ayrı kalır.
+- Panel üretim testi ana girişin birleşik şablon olduğunu, legacy sayfanın arşiv rotasında kaldığını ve Polat sayfasının korunduğunu doğrular.
