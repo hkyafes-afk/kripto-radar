@@ -7,7 +7,6 @@ it never changes strategy authority or promotes a strategy automatically.
 from __future__ import annotations
 
 import math
-from statistics import NormalDist
 from typing import Iterable, Mapping, Sequence
 
 
@@ -33,7 +32,7 @@ def _metrics(rows: Sequence[Mapping]) -> dict:
     return {
         "n": len(values),
         "mean_net_r": sum(values) / len(values),
-        "profit_factor": gains / losses if losses else (math.inf if gains else None),
+        "profit_factor": gains / losses if losses else None,
         "max_drawdown_r": max_dd,
     }
 
@@ -120,29 +119,41 @@ def evaluate_candidate(
     costs_complete: bool, data_provenance_complete: bool,
 ) -> dict:
     """Return evidence report and a conservative research-only eligibility flag."""
-    materialized = list(rows)
+    materialized = []
+    for row in rows:
+        if not isinstance(row, Mapping):
+            continue
+        if not all(_finite(row.get(k)) for k in ("entry_ts_ms", "exit_ts_ms", "net_r")):
+            continue
+        entry, exit_ = int(row["entry_ts_ms"]), int(row["exit_ts_ms"])
+        if entry <= 0 or exit_ <= entry:
+            continue
+        materialized.append({**row, "entry_ts_ms": entry, "exit_ts_ms": exit_,
+                             "net_r": float(row["net_r"])})
+    materialized.sort(key=lambda x: (x["entry_ts_ms"], x["exit_ts_ms"]))
     split = purged_walk_forward_splits(materialized, embargo_ms=embargo_ms)
-    valid_rows = [r for r in materialized if _finite(r.get("net_r"))]
     wf = split.get("folds", [])
     holdout = split.get("holdout", {})
-    holdout_values = [float(r["net_r"]) for r in sorted(
-        [r for r in materialized if _finite(r.get("entry_ts_ms")) and _finite(r.get("exit_ts_ms"))
-         and _finite(r.get("net_r"))],
-        key=lambda x: (int(x["entry_ts_ms"]), int(x["exit_ts_ms"]))
-    )[int(len(valid_rows) * 0.8):]]
+    holdout_start = int(len(materialized) * 0.8)
+    holdout_rows = materialized[holdout_start:]
+    holdout_values = [float(row["net_r"]) for row in holdout_rows]
     lower = _normal_lower_bound(holdout_values)
     fold_positive = bool(wf) and all((f["validation"]["mean_net_r"] or 0) > 0 for f in wf)
     holdout_positive = bool(holdout_values) and sum(holdout_values) / len(holdout_values) > 0
+    from .effectiveness import deflated_sharpe
+    dsr = deflated_sharpe([row["net_r"] for row in materialized], max(1, int(n_trials)))
+    dsr_pass = bool(dsr and dsr["dsr"] >= 0.95)
     eligible = (
-        split.get("valid") is True and len(valid_rows) >= 100 and n_trials >= 1
-        and fold_positive and holdout_positive and lower is not None and lower > 0
+        split.get("valid") is True and len(materialized) >= 100 and fold_positive
+        and holdout_positive and lower is not None and lower > 0 and dsr_pass
         and costs_complete and data_provenance_complete and holdout.get("n", 0) >= 20
     )
     reasons = []
-    if len(valid_rows) < 100: reasons.append("minimum_100_comparable_trades_not_met")
+    if len(materialized) < 100: reasons.append("minimum_100_comparable_trades_not_met")
     if not split.get("valid"): reasons.append(split.get("reason") or "walk_forward_invalid")
     if not fold_positive: reasons.append("all_walk_forward_validation_folds_not_positive")
     if not holdout_positive or lower is None or lower <= 0: reasons.append("untouched_holdout_not_proven_positive")
+    if not dsr_pass: reasons.append("deflated_sharpe_below_0_95_or_unavailable")
     if not costs_complete: reasons.append("costs_incomplete")
     if not data_provenance_complete: reasons.append("data_provenance_incomplete")
     if holdout.get("n", 0) < 20: reasons.append("holdout_sample_below_20")
@@ -150,10 +161,11 @@ def evaluate_candidate(
         "research_eligible": eligible,
         "automatic_promotion": False,
         "reasons": reasons,
-        "comparable_trades": len(valid_rows),
+        "comparable_trades": len(materialized),
         "walk_forward": split,
         "holdout_ci95_lower_net_r": lower,
         "holdout_positive": holdout_positive,
+        "deflated_sharpe": dsr,
         "costs_complete": bool(costs_complete),
         "data_provenance_complete": bool(data_provenance_complete),
         "multiple_testing_trials": max(1, int(n_trials)),
