@@ -52,3 +52,22 @@ def test_does_not_mutate_source_config():
     before = {"tarama": {"haric": ["USDC"]}}
     discover_settings(config)
     assert config == before
+
+
+
+def test_catalog_exposes_only_verified_schema_metadata_without_guessing():
+    result = discover_settings({"risk": {"risk_yuzde": 0.5}, "tarama": {"periyotlar": ["15m", "4H"]}})
+    values = {item["path"]: item for item in result["parameters"]}
+    risk = values["risk.risk_yuzde"]
+    periods = values["tarama.periyotlar"]
+
+    assert result["schema_version"] == 2
+    assert risk["description"].startswith("config.yaml parametresi:")
+    assert risk["schema"]["type"] == "number"
+    assert risk["schema"]["minimum"] is None and risk["schema"]["maximum"] is None
+    assert risk["schema"]["unit"] is None
+    assert risk["schema"]["restart_requirement"] == "unknown"
+    assert periods["schema"]["type"] == "array"
+    assert periods["schema"]["item_types"] == ["string"]
+    assert periods["schema"]["enum"] is None
+    assert all(not item["write_ready"] for item in values.values())
