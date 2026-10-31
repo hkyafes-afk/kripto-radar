@@ -220,9 +220,9 @@ class Polat:
             t.cancel()
         if self.feed:
             await self.feed.stop()
-        self.save()
         if self.market:
             self.market.close()
+        self.save()
         self.journal.write("olaylar", {"olay": "durdu", "neden": reason, "veri": self.market.stats() if self.market else {}})
         self.journal.flush()
 
