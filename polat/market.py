@@ -224,6 +224,8 @@ class Market:
                     c = self.coin(d["instId"])
                     ts, oi = int(d["ts"]), float(d.get("oiCcy") or 0) or float(d["oi"]) * c.ct
                     self._observe_quality(c.inst, "open-interest", ts or None, recv_ms)
+                    if self.quality_latest[(c.inst, "open-interest")].state is not QualityState.LIVE:
+                        continue
                     c.oi_hist.append((ts, oi))
                     hr = ts - ts % 3_600_000
                     if not c.oi_h1 or c.oi_h1[-1][0] < hr:
@@ -232,25 +234,41 @@ class Market:
                 for d in data:
                     c = self.coin(d["instId"])
                     self._observe_quality(c.inst, "funding-rate", int(d.get("ts") or 0) or None, recv_ms)
-                    c.funding = float(d["fundingRate"])
+                    if self.quality_latest[(c.inst, "funding-rate")].state is not QualityState.LIVE:
+                        continue
+                    funding = float(d["fundingRate"])
+                    if not (-1.0 <= funding <= 1.0):
+                        self._observe_quality(c.inst, "funding-rate", int(d.get("ts") or 0) or None,
+                                              recv_ms, valid=False)
+                        continue
+                    c.funding = funding
                     c.next_funding_ts = int(d.get("fundingTime") or 0)
             elif ch == "mark-price":
                 for d in data:
-                    self._observe_quality(d["instId"], "mark-price", int(d.get("ts") or 0) or None, recv_ms)
-                    self.coin(d["instId"]).mark = float(d["markPx"])
+                    inst = d["instId"]
+                    self._observe_quality(inst, "mark-price", int(d.get("ts") or 0) or None, recv_ms,
+                                          valid=float(d.get("markPx") or 0) > 0)
+                    if self.quality_latest[(inst, "mark-price")].state is QualityState.LIVE:
+                        self.coin(inst).mark = float(d["markPx"])
             elif ch == "index-tickers":
                 for d in data:
                     c = self.coins.get(d["instId"] + "-SWAP")
                     if c:
-                        self._observe_quality(c.inst, "index-tickers", int(d.get("ts") or 0) or None, recv_ms)
-                        c.index = float(d["idxPx"])
+                        self._observe_quality(c.inst, "index-tickers", int(d.get("ts") or 0) or None, recv_ms,
+                                              valid=float(d.get("idxPx") or 0) > 0)
+                        if self.quality_latest[(c.inst, "index-tickers")].state is QualityState.LIVE:
+                            c.index = float(d["idxPx"])
             elif ch == "liquidation-orders":
                 for d in data:
                     c = self.coins.get(d.get("instId", ""))
                     if not c:
                         continue
                     for x in d.get("details", ()):
-                        self._observe_quality(c.inst, "liquidation-orders", int(x.get("ts") or d.get("ts") or 0) or None, recv_ms)
+                        event_ts = int(x.get("ts") or d.get("ts") or 0) or None
+                        self._observe_quality(c.inst, "liquidation-orders", event_ts, recv_ms,
+                                              valid=float(x.get("sz") or 0) > 0)
+                        if self.quality_latest[(c.inst, "liquidation-orders")].state is not QualityState.LIVE:
+                            continue
                         side = "long" if (x.get("posSide") == "long" or (x.get("posSide") == "net" and x.get("side") == "sell")) else "short"
                         px = float(x.get("bkPx") or c.last or 0)
                         usd = float(x.get("sz") or 0) * c.ct * px
@@ -411,7 +429,7 @@ class Market:
             obs = original
             rule = self.quality.rules.get(channel)
             if (obs.state is QualityState.LIVE and rule and rule.max_age_ms is not None
-                    and obs.event_ts_ms is not None):
+                    and obs.event_ts_ms is not None and obs.receive_ts_ms >= 1_000_000_000_000):
                 age = now - obs.event_ts_ms
                 if age > rule.max_age_ms:
                     obs = self.quality.disconnected(symbol=symbol, channel=channel, receive_ts_ms=now)
