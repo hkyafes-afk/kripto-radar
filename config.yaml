@@ -271,6 +271,7 @@ birlesik:
     veri_sorunu_cikis_dk: 60            # coin verisi 60 dk'dan uzun güvenilmezse pozisyonu kapat
     rejim_cikisi: true                  # long krizde / short boğada kapanır
   paper:                      # radar/unified/execution/paper.py (birleşik paper defteri: site/birlesik/yurutme.json)
+    baslangic_bakiye: 100       # birleşik trader'ın hedef sanal sermayesi (USDT); legacy demo bakiyesinden bağımsız
     kote_max_yas_sn: 15                 # bundan eski fiyatla dolum varsayılmaz
     varsayilan_kayma_bp: 10             # emir defteri derinliği yoksa piyasa emri kayması
     stop_kayma_bp: 10                   # stop emri tetiklenince kayma
