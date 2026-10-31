@@ -50,7 +50,7 @@ def test_strategy_gate_isolates_unrelated_channel_requirements():
     observations = {"ticker": ticker, "funding": funding}
 
     ticker_only = strategy_data_gate({"ticker": 2_000}, observations, now_ms=10_100)
-    funding_strategy = strategy_data_gate({"ticker": 2_000, "funding": 60_000},
+    funding_strategy = strategy_data_gate({"ticker": 2_000, "funding": 5_000},
                                            observations, now_ms=10_100)
 
     assert ticker_only["eligible"] is True
