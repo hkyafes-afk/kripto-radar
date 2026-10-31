@@ -172,7 +172,7 @@ def test_panel_bayat_ve_baglanti_kesik():
 
 def test_sentetik_panel_kart_icerigi_ve_tasma():
     now = int(time.time() * 1000)
-    durum = {"ts": now, "mod": "shadow", "bakiye": 99950.0, "baslangic": 100000.0, "gun_basi": 100010.0, "hatalar": [],
+    durum = {"ts": now, "mod": "unified", "bakiye": 99.95, "baslangic": 100.0, "gun_basi": 100.01, "hatalar": [],
              "pozisyonlar": [{"symbol": "XYZ", "side": "short", "leverage": 3, "entry": 1.2345, "current_price": 1.2001,
                               "stop": 1.3, "targets": [1.1], "opened_ts": now - 7200_000, "unrealized_usd": 12.5,
                               "unrealized_pct": 2.8, "unrealized_r": 0.4, "peak_r": 0.6, "strategies": ["short_trend"],
@@ -180,10 +180,10 @@ def test_sentetik_panel_kart_icerigi_ve_tasma():
              "kapananlar": [{"symbol": "ABC", "side": "long", "leverage": 1, "entry": 10, "exit_px": 9.5, "net_usd": -5.2,
                              "r": -1.04, "fees_usd": 0.1, "slip_usd": 0.05, "funding_usd": -0.01, "exit_reason": "STOP: stop",
                              "opened_ts": now - 9e6, "closed_ts": now - 1e6, "strategies": ["swing_trend"]}],
-             "eq_hist": [[now - 600_000, 100000], [now - 300_000, 99980], [now, 99950]], "btc_hist": []}
+             "eq_hist": [[now - 600_000, 100.0], [now - 300_000, 99.98], [now, 99.95]], "btc_hist": []}
     data = {"generated_at": now, "feeds": {"okx": {"healthy": True, "last_msg_age_s": 0.2}}, "btc": {"price": 77000.5, "chg24": -1.2},
             "karne": karne.build([], [])}
-    o = _open({"/data.json": (200, json.dumps(data)), "/golge/durum.json": (200, json.dumps(durum))})
+    o = _open({"/data.json": (200, json.dumps(data)), "/birlesik/durum.json": (200, json.dumps(durum))})
     t = o["text"]
     assert "XYZ" in t and "SHORT · 3x" in t and "Short trend" in t and "+$12.50" in t and "+0.40R" in t and "tepe" in t
     assert "Kemal" not in t and "Selin" not in t and "Kaan" not in t
