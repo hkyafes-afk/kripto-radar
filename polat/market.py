@@ -257,12 +257,8 @@ class Market:
                                           valid=isfinite(funding) and -1.0 <= funding <= 1.0)
                     if self.quality_latest[(c.inst, "funding-rate")].state is not QualityState.LIVE:
                         continue
-                    if not (-1.0 <= funding <= 1.0):
-                        self._observe_quality(c.inst, "funding-rate", int(d.get("ts") or 0) or None,
-                                              recv_ms, valid=False)
-                        continue
                     c.funding = funding
-                    c.next_funding_ts = int(d.get("fundingTime") or 0)
+                    c.next_funding_ts = self._event_ts(d.get("fundingTime")) or 0
             elif ch == "mark-price":
                 for d in data:
                     inst = d["instId"]
@@ -302,9 +298,14 @@ class Market:
                         if self.quality_latest[(c.inst, "liquidation-orders")].state is not QualityState.LIVE:
                             continue
                         side = "long" if (x.get("posSide") == "long" or (x.get("posSide") == "net" and x.get("side") == "sell")) else "short"
-                        px = float(x.get("bkPx") or c.last or 0)
-                        usd = float(x.get("sz") or 0) * c.ct * px
-                        c.liqs.append((int(x.get("ts") or recv_ms), side, usd))
+                        try:
+                            px = float(x.get("bkPx") or c.last or 0)
+                            usd = liq_size * c.ct * px
+                        except (TypeError, ValueError, OverflowError):
+                            continue
+                        if not isfinite(px) or not isfinite(usd) or px <= 0 or usd <= 0:
+                            continue
+                        c.liqs.append((event_ts, side, usd))
                         if self.on_liq:
                             self.on_liq(c, side, usd, px)
         finally:
