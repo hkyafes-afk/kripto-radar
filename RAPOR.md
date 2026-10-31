@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.3R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.301R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 3166 | %46.9 | -0.3 | -950.41 |
+| polat_tum_sinyaller | 3168 | %46.8 | -0.301 | -952.61 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 3153 | %46.8 | -0.3 | -945.05 |
-| rastgele | 3147 | %43.7 | -0.37 | -1163.39 |
-| trend_naif | 3177 | %41.5 | -0.409 | -1300.38 |
+| polat_girilmeyen | 3155 | %46.8 | -0.3 | -947.25 |
+| rastgele | 3148 | %43.7 | -0.37 | -1164.46 |
+| trend_naif | 3179 | %41.5 | -0.409 | -1300.97 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-4.1
+Polat özsermaye: %-4.71 · BTC al-tut: %-4.14
 
 ## Öğrenme (walk-forward)
 
@@ -25,20 +25,20 @@ En az işe yarayan okumalar: cci_1H ×0.561, momentum_1H ×0.563, supertrend_1H 
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 35248, girilen: 8.
+Kapanmış işlem yok. Görülen kurulum: 35318, girilen: 8.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 11964
+- ders: 11996
 - günlük işlem tavanı (8): 2524
 - aynı yönde pozisyon tavanı: 1156
 - gösterge aileleri aynı yönde değil: 868
 - bu coinde zaten pozisyon var: 464
 - büyük zaman dilimi trendi ters: 284
 - puan +0.121 eşiğin (0.3) altında: 58
-- puan +0.131 eşiğin (0.3) altında: 57
+- puan +0.131 eşiğin (0.3) altında: 58
+- puan +0.123 eşiğin (0.3) altında: 52
 - puan -0.183 eşiğin (0.25) altında: 52
-- puan -0.213 eşiğin (0.25) altında: 52
 
 ## Son 50 gün
 
@@ -91,7 +91,7 @@ Kapanmış işlem yok. Görülen kurulum: 35248, girilen: 8.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 18931
+- ders: 18963
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2467
 - üst üste 3 zarar: 2345
@@ -158,7 +158,7 @@ Kapanmış işlem yok. Görülen kurulum: 35248, girilen: 8.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 18931
+- ders: 18963
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2467
 - üst üste 3 zarar: 2345
