@@ -841,16 +841,22 @@ class Engine:
                 bid, ask, age = self._ws_bbo(inst)
                 st, _ = spread_status(c.get("bid"), c.get("ask"), c.get("book_age_s"))
                 durum[st] = durum.get(st, 0) + 1
+                quality = getattr(self, "bbo_quality_latest", {}).get(("okx", inst))
                 if len(rows) < 12:
                     rows.append({"decision_inst": inst, "feed_inst": inst in feed_syms, "book_exists": inst in self.book,
                                  "ws_bid": bid, "ws_ask": ask, "ws_book_age": age, "bid": c.get("bid"),
                                  "ask": c.get("ask"), "book_age": c.get("book_age_s"),
-                                 "bbo_kaynak": c.get("bbo_kaynak"), "spread_status": st})
+                                 "bbo_kaynak": c.get("bbo_kaynak"), "spread_status": st,
+                                 "quality_state": quality.state.value if quality else "UNKNOWN",
+                                 "quality_reason": quality.reason_code if quality else "observation_missing"})
+            qstates = {}
+            for observation in getattr(self, "bbo_quality_latest", {}).values():
+                qstates[observation.state.value] = qstates.get(observation.state.value, 0) + 1
             self._bbo_diag = {"ts": int(now * 1000), "ws_healthy": self.okx_live(),
                               "tick_count": getattr(f, "ticks", None),
                               "last_tick_age": round(now - f.last_msg, 1) if f is not None and getattr(f, "last_msg", 0) else None,
                               "feed_symbols": len(feed_syms), "decision_coins": len(ctxs or []),
-                              "book_entries": len(self.book), "spread_durum_sayim": durum,
+                              "book_entries": len(self.book), "spread_durum_sayim": durum, "bbo_quality_states": qstates,
                               "bbo_rest_hata": getattr(self, "_bbo_err", None), "ornek": rows}
         except Exception as e:  # noqa: BLE001 — tanılama karar akışını durdurmaz; hata durum.json'a yazılır
             self._bbo_diag = {"hata": f"{type(e).__name__}: {e}"}
