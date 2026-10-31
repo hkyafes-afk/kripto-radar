@@ -53,6 +53,31 @@ def test_sentetik_tam_dongu_ac_koru_kapat(tmp_path):
     assert st["mod"] == "unified" and st["yurutme"] == "paper" and st["kapananlar"]
 
 
+def test_sentetik_100_usdt_butce_gercek_trader_entegrasyonu(tmp_path):
+    cfg = copy.deepcopy(CFG)
+    cfg.setdefault("birlesik", {}).setdefault("paper", {})["baslangic_bakiye"] = 100.0
+    t = trader(tmp_path, cfg)
+    assert t.start_equity == 100.0
+    # Küçük kontrat: 100 USDT hesabın %0,5 risk bütçesine göre emir açılabilir.
+    s = t.step([kemal_ctx()], {INST: q(101.0)}, now_ms=NOW,
+               meta={INST: {**META[INST], "ct_val": 0.001, "lot_sz": 1, "min_sz": 1}})
+    assert s["bakiye"] == 100.0 and s["acik"] == 1
+    pos = t.adapter.positions[INST]
+    assert pos["notional_usd"] < 20.0
+    assert pos["risk_usd"] <= 0.5 * 1.05
+
+
+def test_sentetik_100_usdt_minimum_kontrat_buyukse_islem_yok(tmp_path):
+    cfg = copy.deepcopy(CFG)
+    cfg.setdefault("birlesik", {}).setdefault("paper", {})["baslangic_bakiye"] = 100.0
+    t = trader(tmp_path, cfg)
+    s = t.step([kemal_ctx()], {INST: q(101.0)}, now_ms=NOW,
+               meta={INST: {**META[INST], "ct_val": 1.0, "lot_sz": 1, "min_sz": 1}})
+    assert s["bakiye"] == 100.0 and s["acik"] == 0
+    assert not t.adapter.positions
+    assert any("LOT_UYGUN_DEGIL" in r["kodlar"] for r in s["risk"])
+
+
 def test_sentetik_fiyat_yoksa_acilmaz(tmp_path):
     t = trader(tmp_path)
     s = t.step([kemal_ctx()], {}, now_ms=NOW, meta=META)
