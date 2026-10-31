@@ -464,5 +464,5 @@ class PaperExecutionAdapter(ExecutionAdapter):
     def summary(self) -> dict[str, Any]:
         cl = self.closed
         return {"acik": len(self.positions), "kapali": len(cl),
-                "net_usd": round(sum(c.get("net_usd") or 0.0 for c in cl), 4),
+                "net_usd": round(self.closed_net_usd, 4),
                 "bekleyen_emir": len(self.open_orders())}
