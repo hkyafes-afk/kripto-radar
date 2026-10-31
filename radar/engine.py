@@ -49,6 +49,7 @@ from . import signals as sg
 from . import store
 from .config import ROOT, load_config
 from .unified.quality import ChannelRule, MarketDataQualityEngine, QualityState
+from .unified.market_data import normalize_bbo
 from .scan import (VERSION, _f, _interval_h, btc_info, build_universe, fetch_funding, karne_md,
                    msg_daily, oi_changes, summary_md)
 
@@ -216,27 +217,31 @@ class Engine:
     def _on_tick(self, venue, key, last, bid, ask, ts):
         now = time.time()
         receive_ms = int(now * 1000)
-        event_ts_ms = int(ts) if ts not in (None, 0, "") else None
+        normalized = normalize_bbo(
+            venue=venue, symbol=key, last=last, bid=bid, ask=ask, event_ts_ms=ts,
+        )
         channel = "bitget_ticker" if venue == "bitget" else "ws_ticker"
         observation = self.bbo_quality.observe(
-            symbol=key, channel=channel, event_ts_ms=event_ts_ms, receive_ts_ms=receive_ms,
-            valid=last > 0 and bid > 0 and ask > 0 and bid < ask,
+            symbol=key, channel=channel, event_ts_ms=normalized.event_ts_ms,
+            receive_ts_ms=receive_ms, valid=normalized.valid,
         )
         self.bbo_quality_latest[(venue, key)] = observation
-        decision_ts = event_ts_ms or receive_ms
+        # Kaynağın timestamp'i veya BBO'su güvenilmezse fiyat; izleme, limit dolumu
+        # ya da strateji kararına hiçbir şekilde aktarılmaz.
+        if observation.state is not QualityState.LIVE:
+            return
+        decision_ts = normalized.event_ts_ms
         if venue == "bitget":
-            self.bg_book[key] = (last, bid, ask, now)
+            self.bg_book[key] = (normalized.last, normalized.bid, normalized.ask, now)
             return
-        if last <= 0:
-            return
-        self.book[key] = (last, bid, ask, now)
-        self.prices[key] = last
-        self._check_watch(key, last, bid, ask, decision_ts)
+        self.book[key] = (normalized.last, normalized.bid, normalized.ask, now)
+        self.prices[key] = normalized.last
+        self._check_watch(key, normalized.last, normalized.bid, normalized.ask, decision_ts)
         ow = self.order_watch.get(key)
         if ow:
             for oid, side, px in ow:
-                if oid not in self.order_hits and ((side == "long" and last < px) or (side == "short" and last > px)):
-                    self.order_hits[oid] = (px, decision_ts)  # limit emir: fiyat seviyenin içinden geçti → doldu
+                if oid not in self.order_hits and ((side == "long" and normalized.last < px) or (side == "short" and normalized.last > px)):
+                    self.order_hits[oid] = (px, decision_ts)  # limit emir: doğrulanmış fiyat seviyesi geçti → doldu
 
     def _check_watch(self, inst, last, bid, ask, ts):
         w = self.watch.get(inst)
