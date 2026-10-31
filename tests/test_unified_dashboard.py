@@ -23,6 +23,7 @@ def test_site_birlesik_panelini_kopyalar_ve_baglar(tmp_path):
     alias = (tmp_path / "birlesik.html").read_text(encoding="utf-8")
     legacy = (tmp_path / "radar.html").read_text(encoding="utf-8")
     assert "birlesik/durum.json" in page and "birlesik/golge/durum.json" not in page and "data.json" in page and "kararlar-" in page
+    assert "birlesik/hazirlik.json" in page
     assert page == alias
     assert "Kripto Radar" in legacy and "/*__DATA__*/null" not in legacy
     assert "Veri yok" in page and "Bayat" in page and "Bağlantı kesik" in page and "PAPER · TEK OTORİTE" in page
