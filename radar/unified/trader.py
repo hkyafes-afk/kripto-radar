@@ -78,7 +78,7 @@ class UnifiedTrader:
         tmp.replace(self.state_path)
 
     def equity(self, prices: Mapping[str, float] | None = None) -> float:
-        eq = self.start_equity + sum(c.get("net_usd") or 0.0 for c in self.adapter.closed)
+        eq = self.start_equity + self.adapter.closed_net_usd
         for inst, p in self.adapter.positions.items():
             px = (prices or {}).get(inst) or p.get("last") or p["entry"]
             sg = 1 if p["side"] == "long" else -1
