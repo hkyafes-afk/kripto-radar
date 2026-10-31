@@ -54,3 +54,26 @@ def test_research_candidate_does_not_pass_small_or_negative_holdout():
     )
     assert report["research_eligible"] is False
     assert "minimum_100_comparable_trades_not_met" in report["reasons"]
+
+
+
+def test_research_cli_writes_machine_readable_report(tmp_path):
+    import csv
+    import json
+
+    from scripts.unified_research import main
+
+    source = tmp_path / "trades.csv"
+    with source.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=["entry_ts_ms", "exit_ts_ms", "net_r"])
+        writer.writeheader()
+        writer.writerows(_rows())
+    output = tmp_path / "report.json"
+    code = main([
+        str(source), "--trials", "2", "--embargo-ms", "60000",
+        "--costs-audited", "--provenance-audited", "--output", str(output),
+    ])
+    assert code == 0
+    report = json.loads(output.read_text(encoding="utf-8"))
+    assert report["automatic_promotion"] is False
+    assert report["comparable_trades"] == 120
