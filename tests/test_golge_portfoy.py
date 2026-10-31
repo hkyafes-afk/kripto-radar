@@ -30,7 +30,11 @@ def fake_engine(site, cfg=CFG):
     fe.meta = {INST: {"list_ts": (time.time() - 2000 * 86400) * 1000}}
     fe.book, fe.ledger, fe.golge_fund_events = {}, {"closed": [], "open": []}, []
     fe.BBO_MAX_AGE_S = 15.0
-    fe.bbo_quality = MarketDataQualityEngine({"ws_ticker": ChannelRule(max_age_ms=15_000)})
+    fe.bbo_quality = MarketDataQualityEngine({
+        "ws_ticker": ChannelRule(max_age_ms=15_000),
+        "bitget_ticker": ChannelRule(max_age_ms=15_000),
+        "rest_ticker": ChannelRule(max_age_ms=15_000),
+    })
     fe.bbo_quality_latest = {}
     return fe
 
