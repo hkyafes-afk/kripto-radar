@@ -22,13 +22,14 @@ class QualityState(str, Enum):
 
 @dataclass(frozen=True)
 class ChannelRule:
-    max_age_ms: int
+    # None: yalnız yapısal/sıra doğrulaması; freshness strateji kapısında ayrıca uygulanır.
+    max_age_ms: int | None
     require_sequence: bool = False
     max_clock_skew_ms: int = 2_000
 
     def __post_init__(self):
-        if self.max_age_ms <= 0:
-            raise ValueError("max_age_ms pozitif olmalı")
+        if self.max_age_ms is not None and self.max_age_ms <= 0:
+            raise ValueError("max_age_ms pozitif olmalı veya None olmalı")
         if self.max_clock_skew_ms < 0:
             raise ValueError("max_clock_skew_ms negatif olamaz")
 
@@ -46,7 +47,12 @@ class QualityObservation:
 
 
 class MarketDataQualityEngine:
-    """Sembol/kanal bazında freshness, sıra ve saat tutarlılığı denetler."""
+    """Sembol/kanal bazında timestamp, freshness ve sıra tutarlılığı denetler.
+
+    max_age_ms=None yalnız yapısal geçerlilik bildirir; LIVE sonucu tek başına
+    strateji için yeterli tazelik kanıtı değildir. Tazelik strategy_data_gate ile
+    stratejinin kendi eşiğine göre yeniden denetlenmelidir.
+    """
 
     def __init__(self, rules: Mapping[str, ChannelRule]):
         self.rules = dict(rules)
@@ -81,7 +87,7 @@ class MarketDataQualityEngine:
         if age < -rule.max_clock_skew_ms:
             return QualityObservation(symbol, channel, QualityState.INVALID, event_ts_ms,
                                       receive_ts_ms, age, seq_id, "clock_skew_future")
-        if age > rule.max_age_ms:
+        if rule.max_age_ms is not None and age > rule.max_age_ms:
             return QualityObservation(symbol, channel, QualityState.STALE, event_ts_ms,
                                       receive_ts_ms, age, seq_id, "event_stale")
 
