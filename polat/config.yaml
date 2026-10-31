@@ -3,6 +3,13 @@
 
 sermaye_usd: 100000
 
+yetki:
+  # Polat gözlemci/challenger olarak veri ve karar üretmeye devam eder.
+  # Yeni pozisyon açma yetkisi tek Baş Trader'a geçiş tamamlanana kadar kapalıdır.
+  # Mevcut sanal pozisyonlar stop/hedef/funding yönetimiyle kapatılmaya devam eder.
+  yeni_pozisyon: false
+
+
 yurutme:
   # sanal   → Polat'ın kendi defteri, OKX gibi davranır (gerçek emir defterinden dolum, OKX ücretleri,
   #           borsa tarafı stop-market reduce-only, funding kesimi, izole marj, likidasyon)
