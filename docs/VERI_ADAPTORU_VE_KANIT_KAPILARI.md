@@ -26,4 +26,4 @@ Bu rapor otomatik strateji terfisi yapmaz. Ayrıca Unified PAPER strateji terfi 
 
 ## Zamanla tamamlanabilecek kanıt
 
-14 günlük forward gözlem ve 100 karşılaştırılabilir kapanmış işlem kodla üretilebilen anlık bir sonuç değildir. Kod bu şartları zorunlu kılar ve yetersiz veriyi `kanit_yetersiz` gösterir; eksik süre veya işlem sayısı sentetik kayıtla doldurulmaz. GitHub Actions kesintisiz sunucu olmadığından 7/24 ve milisaniyelik SLA iddiası yoktur.
+14 günlük kapanış zaman damgası aralığı ve 100 karşılaştırılabilir kapanmış işlem kodla üretilebilen anlık bir sonuç değildir. Kod bu şartları zorunlu kılar ve yetersiz veriyi `kanit_yetersiz` gösterir; eksik süre veya işlem sayısı sentetik kayıtla doldurulmaz. GitHub Actions kesintisiz sunucu olmadığından 7/24 ve milisaniyelik SLA iddiası yoktur.
