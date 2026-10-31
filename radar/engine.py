@@ -879,6 +879,7 @@ class Engine:
             tr = getattr(self, "_unified_trader", None)
             if tr is None:
                 tr = self._unified_trader = UnifiedTrader(self.cfg, self.site / "birlesik")
+            tr.diag = getattr(self, "_bbo_diag", None)
             now = time.time()
             insts = {c.get("inst") for c in ctxs} | set(tr.adapter.positions) | \
                 {o["intent"]["inst"] for o in tr.adapter.open_orders()}
