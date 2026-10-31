@@ -229,7 +229,7 @@ class Market:
                 for d in data:
                     self._trade(d, recv_ms)
             elif ch.startswith("candle"):
-                self._candle(arg["instId"], ch, data, msg_conn=arg)
+                self._candle(arg["instId"], ch, data, msg_conn=arg, recv_ms=recv_ms)
             elif ch == "open-interest":
                 for d in data:
                     c = self.coin(d["instId"])
@@ -396,11 +396,12 @@ class Market:
         if c.vol24_usd and usd >= max(c.vol24_usd / 20000, 25_000):      # günlük hacmin 1/20000'i ve ≥ 25 bin $
             c.big_trades.append((ts, px, usd, sgn))
         c.last = px
-        self.latency.append(recv_ms - ts)
+        if recv_ms >= ts:
+            self.latency.append(recv_ms - ts)
         if self.on_trade:
             self.on_trade(c, px, ts)
 
-    def _candle(self, inst: str, ch: str, data: list, msg_conn=None):
+    def _candle(self, inst: str, ch: str, data: list, msg_conn=None, recv_ms: int | None = None):
         tf = CHANNEL_TF.get(ch)
         if tf is None:
             return
@@ -415,7 +416,7 @@ class Market:
             except (TypeError, ValueError, IndexError, OverflowError):
                 cd, event_ts, valid = None, None, False
             channel = f"candle_{tf}"
-            self._observe_quality(inst, channel, event_ts, now_ms(), valid=valid)
+            self._observe_quality(inst, channel, event_ts, recv_ms if recv_ms is not None else now_ms(), valid=valid)
             if not valid or self.quality_latest[(inst, channel)].state is not QualityState.LIVE:
                 continue
             if tf == "1H":
