@@ -1,8 +1,8 @@
 name: Canlı döngü
 
-# 7/24 çalışma: her döngü ~5,5 saat sürer ve bitmeden halefini kendisi başlatır (devir=1).
-# Halef ısınıp bekler, nöbet bırakıldığı an en güncel durumla devralır (birkaç saniye).
-# Zamanlanmış tetik bekçidir: nöbetteki döngü sağlıklıysa hemen kapanır; nabız durmuşsa devralır.
+# Best-effort uzun koşu + lease devri. GitHub-hosted runner kalıcı sunucu değildir.
+# 355 dk timeout, runner/kota/iptal/devir boşlukları nedeniyle 7/24 veya düşük gecikme garantisi YOKTUR.
+# 15 dk cron yalnızca bekçi tetiktir; Actions zamanlayıcısı gecikebilir ve sürekli çalışma SLA'sı değildir.
 on:
   schedule:
     - cron: "*/15 * * * *"
