@@ -188,7 +188,7 @@ class Polat:
         if not self.learner.bench.get("btc_baslangic") and btc and btc.last:
             self.learner.bench.update(btc_baslangic=btc.last, baslangic_ts=now_ms())
             self.learner.save_weights()
-        self.feed = self.feed_cls(self.cfg, m.handle)
+        self.feed = self.feed_cls(self.cfg, m.handle, on_disconnect=m.disconnect_channels)
         self.feed.start()
         await self.feed.market_wide(list(meta))
         keep = {p["inst"] for p in self.broker.positions.values()}
