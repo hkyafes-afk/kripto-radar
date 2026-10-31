@@ -10,7 +10,7 @@ from collections.abc import Mapping
 from copy import deepcopy
 from typing import Any
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
 # Bunlar sıradan ayar olarak UI'dan değiştirilemez. PAPER ve tek-otorite
 # sınırı konfigürasyon ekranından gevşetilemez.
@@ -78,6 +78,27 @@ def _is_protected(path: str) -> bool:
     return any(any(secret in part for secret in _SECRET_PARTS) for part in parts)
 
 
+def _metadata(value: Any, path: str, protected: bool) -> dict[str, Any]:
+    """Yalnız doğrulanabilen tip bilgisini üretir; bilinmeyen sınır/birim/etkiyi tahmin etmez."""
+    value_type = _value_type(value)
+    item_types = sorted({_value_type(item) for item in value}) if isinstance(value, list) and value else []
+    return {
+        "description": f"config.yaml parametresi: {path}. İşlevsel açıklama ayrıca doğrulanmalıdır.",
+        "schema": {
+            "type": value_type,
+            "item_types": item_types if isinstance(value, list) else None,
+            "minimum": None,
+            "maximum": None,
+            "enum": None,
+            "unit": None,
+            "scope": "configuration",
+            "restart_requirement": "unknown",
+            "security_level": "restricted" if protected else "standard",
+            "validation": "type_only",
+        },
+    }
+
+
 def discover_settings(config: Mapping[str, Any]) -> dict[str, Any]:
     """Config içindeki bütün scalar/list değerleri deterministik kataloglar.
 
@@ -94,7 +115,9 @@ def discover_settings(config: Mapping[str, Any]) -> dict[str, Any]:
                 walk(value, path)
                 continue
             protected = _is_protected(path)
+            metadata = _metadata(value, path, protected)
             entries.append({
+                **metadata,
                 "path": path,
                 "label": str(key).replace("_", " ").strip().capitalize(),
                 "category": _category(path),
