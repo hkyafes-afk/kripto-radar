@@ -453,7 +453,11 @@ function renderSettings(settings) {
     html += '<div class="sec">' + esc(labels[key] || key) + '</div><div class="card dl">' + groups[key].map(p => {
       const value = typeof p.value === "string" ? p.value : JSON.stringify(p.value);
       const status = p.protected ? "KORUNAN" : "KEŞFEDİLDİ · YAZMA KAPALI";
-      return '<div class="dr"><div>⚙️</div><div style="min-width:0"><div class="t1"><b>' + esc(p.label) + '</b><span class="chip">' + esc(p.value_type) + '</span><span class="chip">' + status + '</span></div><div class="t2">' + esc(p.path) + ' · Değer: <span class="num">' + esc(value) + '</span></div></div><div class="tm">' + (p.protected ? "Kilitli" : "Salt okunur") + '</div></div>';
+      const schema = p.schema || {};
+      const details = 'Birim: ' + (schema.unit || 'doğrulanmadı') + ' · Sınırlar: ' +
+        (schema.minimum == null && schema.maximum == null ? 'doğrulanmadı' : [schema.minimum, schema.maximum].join('–')) +
+        ' · Yeniden başlatma: ' + (schema.restart_requirement || 'bilinmiyor');
+      return '<div class="dr"><div>⚙️</div><div style="min-width:0"><div class="t1"><b>' + esc(p.label) + '</b><span class="chip">' + esc(p.value_type) + '</span><span class="chip">' + status + '</span></div><div class="t2">' + esc(p.path) + ' · Değer: <span class="num">' + esc(value) + '</span></div><div class="t2">' + esc(p.description || 'Açıklama doğrulanmadı') + '</div><div class="t2">' + esc(details) + '</div></div><div class="tm">' + (p.protected ? "Kilitli" : "Salt okunur") + '</div></div>';
     }).join("") + '</div>';
   }
   return html;
