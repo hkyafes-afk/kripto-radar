@@ -8,28 +8,28 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 3132 | %47.1 | -0.294 | -919.88 |
+| polat_tum_sinyaller | 3134 | %47.1 | -0.294 | -920.92 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 3119 | %47.0 | -0.293 | -914.52 |
-| rastgele | 3110 | %43.6 | -0.37 | -1149.91 |
-| trend_naif | 3142 | %41.7 | -0.404 | -1268.5 |
+| polat_girilmeyen | 3121 | %47.0 | -0.293 | -915.56 |
+| rastgele | 3111 | %43.7 | -0.37 | -1149.62 |
+| trend_naif | 3143 | %41.7 | -0.404 | -1269.74 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-4.27
+Polat özsermaye: %-4.71 · BTC al-tut: %-4.26
 
 ## Öğrenme (walk-forward)
 
-Örnek 3120 (eğitim 2184, doğrulama 936) · uygulanan katsayı 75 · doğrulamada tutmadığı için reddedilen 46
+Örnek 3132 (eğitim 2192, doğrulama 940) · uygulanan katsayı 74 · doğrulamada tutmadığı için reddedilen 48
 
-En çok işe yarayan okumalar: macd_hist_15m ×1.476, uyusmazlik_rsi_15m ×1.428, uyusmazlik_cci_15m ×1.368, rsi_5m ×1.32, cci_5m ×1.317, tetik_psar_donus_15m ×1.301, uyusmazlik_macd_15m ×1.267, momentum_5m ×1.248, oi_fiyat ×1.23, willr_15m ×1.223
-En az işe yarayan okumalar: btc_1H ×0.413, obv_egim_1H ×0.554, cci_1H ×0.562, momentum_1H ×0.564, supertrend_1H ×0.628, mfi_1H ×0.634, ultimate_1H ×0.642, willr_1H ×0.651, adx_di_1H ×0.655, rsi_1H ×0.685
+En çok işe yarayan okumalar: macd_hist_15m ×1.472, uyusmazlik_rsi_15m ×1.436, uyusmazlik_cci_15m ×1.374, rsi_5m ×1.319, cci_5m ×1.314, tetik_psar_donus_15m ×1.307, uyusmazlik_macd_15m ×1.276, momentum_5m ×1.244, oi_fiyat ×1.228, willr_15m ×1.217
+En az işe yarayan okumalar: momentum_1H ×0.562, cci_1H ×0.564, supertrend_1H ×0.623, mfi_1H ×0.632, ultimate_1H ×0.647, adx_di_1H ×0.651, willr_1H ×0.659, rsi_1H ×0.682, yapi_1H ×0.694, mum_asili_adam_5m ×0.704
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 34440, girilen: 8.
+Kapanmış işlem yok. Görülen kurulum: 34526, girilen: 8.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 11560
+- ders: 11596
 - günlük işlem tavanı (8): 2524
 - aynı yönde pozisyon tavanı: 1156
 - gösterge aileleri aynı yönde değil: 865
@@ -91,7 +91,7 @@ Kapanmış işlem yok. Görülen kurulum: 34440, girilen: 8.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 18527
+- ders: 18563
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2464
 - üst üste 3 zarar: 2345
@@ -158,7 +158,7 @@ Kapanmış işlem yok. Görülen kurulum: 34440, girilen: 8.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 18527
+- ders: 18563
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2464
 - üst üste 3 zarar: 2345
