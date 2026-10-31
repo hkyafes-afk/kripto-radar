@@ -191,7 +191,7 @@ const coinIcon = s => { s = String(s || "?"); let h = 0; for (const c of s) h = 
   const col = s === "BTC" ? "#f7931a" : s === "ETH" ? "#627eea" : COLORS[h % COLORS.length];
   return `<div class="coin" style="background:${col}">${esc(s.slice(0, 1))}</div>`; };
 const S = {tab: "portfoy", range: 24, data: null};
-try { const t = localStorage.getItem("bt_tab"); if (t) S.tab = t; } catch (e) {}
+try { const t = localStorage.getItem("bt_tab"); if (t) S.tab = (t === "acik" || t === "kapanan") ? "portfoy" : t === "karne" ? "performans" : t; } catch (e) {}
 
 async function get(p, lines = false) {
   try { const r = await fetch(p + "?t=" + Date.now(), {cache: "no-store"});
