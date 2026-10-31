@@ -4,24 +4,24 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.259R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.26R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 2816 | %48.1 | -0.259 | -729.71 |
+| polat_tum_sinyaller | 2818 | %48.1 | -0.26 | -732.08 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 2803 | %48.1 | -0.258 | -724.35 |
-| rastgele | 2796 | %44.1 | -0.349 | -975.48 |
-| trend_naif | 2818 | %42.9 | -0.365 | -1028.49 |
+| polat_girilmeyen | 2805 | %48.1 | -0.259 | -726.71 |
+| rastgele | 2800 | %44.0 | -0.35 | -980.69 |
+| trend_naif | 2819 | %42.9 | -0.365 | -1029.64 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-4.53
+Polat özsermaye: %-4.71 · BTC al-tut: %-4.66
 
 ## Öğrenme (walk-forward)
 
-Örnek 2812 (eğitim 1968, doğrulama 844) · uygulanan katsayı 68 · doğrulamada tutmadığı için reddedilen 49
+Örnek 2816 (eğitim 1971, doğrulama 845) · uygulanan katsayı 68 · doğrulamada tutmadığı için reddedilen 50
 
-En çok işe yarayan okumalar: btc_dominans ×1.537, uyusmazlik_rsi_15m ×1.487, uyusmazlik_cci_15m ×1.391, rsi_5m ×1.382, tetik_yapi_bozulmasi_15m ×1.368, cci_5m ×1.361, tetik_psar_donus_15m ×1.333, momentum_5m ×1.292, willr_15m ×1.286, oi_fiyat ×1.284
-En az işe yarayan okumalar: btc_1H ×0.336, momentum_1H ×0.528, obv_egim_1H ×0.549, psar_1H ×0.562, cci_1H ×0.562, ultimate_1H ×0.596, supertrend_1H ×0.602, mfi_1H ×0.607, adx_di_1H ×0.627, willr_1H ×0.628
+En çok işe yarayan okumalar: btc_dominans ×1.537, uyusmazlik_rsi_15m ×1.483, uyusmazlik_cci_15m ×1.389, rsi_5m ×1.377, tetik_yapi_bozulmasi_15m ×1.366, cci_5m ×1.362, tetik_psar_donus_15m ×1.333, momentum_5m ×1.291, oi_fiyat ×1.281, willr_15m ×1.281
+En az işe yarayan okumalar: btc_1H ×0.336, momentum_1H ×0.527, obv_egim_1H ×0.547, psar_1H ×0.56, cci_1H ×0.562, ultimate_1H ×0.594, supertrend_1H ×0.601, mfi_1H ×0.606, adx_di_1H ×0.626, willr_1H ×0.626
 
 ## Son 1 gün
 
@@ -56,7 +56,7 @@ En az işe yarayan okumalar: btc_1H ×0.336, momentum_1H ×0.528, obv_egim_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 8530
+- ders: 8614
 - günlük işlem tavanı (8): 2524
 - aynı yönde pozisyon tavanı: 1156
 - gösterge aileleri aynı yönde değil: 841
@@ -118,7 +118,7 @@ En az işe yarayan okumalar: btc_1H ×0.336, momentum_1H ×0.528, obv_egim_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 15497
+- ders: 15581
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2440
 - üst üste 3 zarar: 2345
@@ -185,7 +185,7 @@ En az işe yarayan okumalar: btc_1H ×0.336, momentum_1H ×0.528, obv_egim_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 15497
+- ders: 15581
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2440
 - üst üste 3 zarar: 2345
