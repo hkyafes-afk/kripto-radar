@@ -27,47 +27,49 @@ class OrderBook:
         self.seq: int | None = None      # OKX seqId: son işlenen mesajın sıra numarası
 
     def apply(self, d: dict, snapshot: bool) -> bool:
-        """Snapshot/güncellemeyi işler; defter doğruysa True.
-
-        Doğrulama (28.10.2026 teşhisi): OKX 'books' kanalında checksum alanını artık 0 gönderiyor; bu yüzden
-        asıl doğrulama sıra numarasıyla yapılır: güncellemenin prevSeqId'si son seqId'ye eşit olmalı.
-        Eşit değilse mesaj kaçmıştır → defter bozuk, yeni snapshot gelene kadar güncelleme işlenmez.
-        Checksum yalnızca OKX sıfırdan farklı bir değer gönderirse kontrol edilir.
-        """
-        seq, prev = d.get("seqId"), d.get("prevSeqId")
-        if snapshot:
-            self.bids.clear()
-            self.asks.clear()
-        else:
-            if not self.ok:                  # bozuk defter üstüne güncelleme yığılmaz; snapshot beklenir
-                return False
-            if seq is not None and prev is not None and self.seq is not None and int(prev) != self.seq:
-                self.ok = False              # sıra boşluğu: en az bir güncelleme kaçtı
-                self.bad += 1
-                return False
-        for side, book in (("bids", self.bids), ("asks", self.asks)):
-            for lv in d.get(side, ()):
-                px_s, sz_s = lv[0], lv[1]
-                px = float(px_s)
-                if float(sz_s) == 0:
-                    book.pop(px, None)
-                else:
-                    book[px] = (px_s, sz_s)
-        self.ts = int(d.get("ts") or 0)
-        if seq is not None:
-            self.seq = int(seq)
-        cs = d.get("checksum")
-        if cs not in (None, 0, "0") and not self.checksum_ok(int(cs)):
+        """Apply a snapshot/update fail-closed; malformed levels invalidate the book."""
+        try:
+            seq_raw, prev_raw = d.get("seqId"), d.get("prevSeqId")
+            seq = int(seq_raw) if seq_raw is not None else None
+            prev = int(prev_raw) if prev_raw is not None else None
+            if snapshot:
+                self.bids.clear()
+                self.asks.clear()
+                self.seq = None
+            else:
+                if not self.ok:
+                    return False
+                if seq is None or prev is None or self.seq is None or prev != self.seq:
+                    self.ok = False
+                    self.bad += 1
+                    return False
+            for side, book in (("bids", self.bids), ("asks", self.asks)):
+                for level in d.get(side, ()):
+                    if len(level) < 2:
+                        raise ValueError("orderbook level incomplete")
+                    px_s, sz_s = level[0], level[1]
+                    px, size = float(px_s), float(sz_s)
+                    if not isfinite(px) or not isfinite(size) or px <= 0 or size < 0:
+                        raise ValueError("orderbook level invalid")
+                    if size == 0:
+                        book.pop(px, None)
+                    else:
+                        book[px] = (str(px_s), str(sz_s))
+            self.ts = int(d.get("ts") or 0)
+            if seq is not None:
+                self.seq = seq
+            checksum = d.get("checksum")
+            if checksum not in (None, 0, "0") and not self.checksum_ok(int(checksum)):
+                raise ValueError("orderbook checksum mismatch")
+            bid, ask = self.best()
+            if bid is not None and ask is not None and bid >= ask:
+                raise ValueError("orderbook locked or crossed")
+            self.ok = bool(bid is not None and ask is not None)
+            return self.ok
+        except (TypeError, ValueError, OverflowError, KeyError):
             self.ok = False
             self.bad += 1
             return False
-        bb, ba = self.best()
-        if bb is not None and ba is not None and bb >= ba:   # çapraz defter: veri bozuk
-            self.ok = False
-            self.bad += 1
-            return False
-        self.ok = True
-        return True
 
     def top(self, n: int = 25):
         b = sorted(self.bids.items(), key=lambda x: -x[0])[:n]
