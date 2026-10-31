@@ -13,6 +13,7 @@ from .okx import CHANNEL_TF, now_ms, parse_candle
 from .series import Series
 from radar.unified.quality import ChannelRule, MarketDataQualityEngine, QualityState
 from radar.unified.event_journal import QueuedEventJournal
+from radar.unified.market_data import normalize_okx_ticker
 
 
 class OrderBook:
@@ -148,12 +149,22 @@ class Market:
         self.coins: dict[str, Coin] = {}
         self.h1_all: dict[str, deque] = {}           # bütün piyasa 1S mumları (seçici için)
         self.latency: deque = deque(maxlen=5000)       # borsa zaman damgası → bize ulaşma (ms)
-        # Kanal kalite telemetrisi: freshness eşikleri burada uydurulmaz; LIVE yalnızca
-        # timestamp/sequence yapısal doğruluğudur. Strateji kendi max-age eşiğini uygular.
+        # Kaynakların beklenen yayın ritmine göre muhafazakâr kanal tazelik eşikleri.
+        # Seyrek olay akışları (likidasyon) ayrı tutulur; bunlar fiyat kanalı yerine
+        # olay akışı sağlığıdır. Mumlar kendi zaman dilimlerinin 2 barı içinde bayatlar.
+        channel_age_ms = {
+            "tickers": 15_000, "books": 5_000, "trades": 30_000,
+            "open-interest": 180_000, "funding-rate": 1_800_000,
+            "mark-price": 15_000, "index-tickers": 15_000,
+            "liquidation-orders": 300_000,
+        }
+        tf_ms = {"1m": 60_000, "5m": 300_000, "15m": 900_000,
+                 "1H": 3_600_000, "4H": 14_400_000, "1D": 86_400_000}
+        channel_age_ms.update({f"candle_{tf}": tf_ms[tf] * 2 for tf in self.tfs if tf in tf_ms})
+        channel_age_ms.update({f"candle_{tf}": tf_ms[tf] * 2 for tf in tf_ms})
         self.quality = MarketDataQualityEngine({
-            name: ChannelRule(max_age_ms=None, require_sequence=(name == "books"))
-            for name in ("tickers", "books", "trades", "open-interest", "funding-rate",
-                         "mark-price", "index-tickers", "liquidation-orders")
+            name: ChannelRule(max_age_ms=age, require_sequence=(name == "books"))
+            for name, age in channel_age_ms.items()
         })
         self.quality_latest: dict[tuple[str, str], object] = {}
         self.quality_counts: dict[str, int] = {state.value: 0 for state in QualityState}
@@ -250,20 +261,24 @@ class Market:
             self.proc.append((time.perf_counter() - t0) * 1e6)
 
     def _ticker(self, d: dict, recv_ms: int):
-        inst = d["instId"]
+        normalized = normalize_okx_ticker(d)
+        inst = normalized.symbol
+        if not inst:
+            return
+        self._observe_quality(inst, "tickers", normalized.event_ts_ms, recv_ms, valid=normalized.valid)
+        observation = self.quality_latest[(inst, "tickers")]
+        # Ticker ancak borsa zamanı ve geçerli BBO doğrulanırsa karar verisine girer.
+        if observation.state is not QualityState.LIVE:
+            return
         c = self.coin(inst)
-        c.last = float(d.get("last") or 0) or c.last
-        c.bid = float(d.get("bidPx") or 0) or c.bid
-        c.ask = float(d.get("askPx") or 0) or c.ask
+        c.last, c.bid, c.ask = normalized.last, normalized.bid, normalized.ask
         vol = float(d.get("volCcy24h") or 0)
         c.vol24_usd = vol * c.last
-        ts = int(d.get("ts") or 0)
+        ts = normalized.event_ts_ms
         c.tick_ts = ts
-        if ts:
-            self.latency.append(recv_ms - ts)
-        self._observe_quality(inst, "tickers", ts or None, recv_ms)
+        self.latency.append(recv_ms - ts)
         if not c.deep and self.on_trade:
-            self.on_trade(c, c.last, ts or recv_ms)
+            self.on_trade(c, c.last, ts)
 
     def _book(self, inst: str, data: list, action: str, recv_ms: int):
         c = self.coin(inst)
@@ -274,6 +289,9 @@ class Market:
                                   seq_id=int(d["seqId"]) if d.get("seqId") is not None else None,
                                   prev_seq_id=int(d["prevSeqId"]) if d.get("prevSeqId") is not None else None,
                                   snapshot=is_snapshot, valid=ok)
+            if self.quality_latest[(inst, "books")].state is not QualityState.LIVE:
+                c.book.ok = False
+                ok = False
             if not ok and self.on_book_bad:
                 self.on_book_bad(c)
                 return
@@ -302,12 +320,22 @@ class Market:
             del c.walls[key]                           # kayboldu (iptal ya da yendi)
 
     def _trade(self, d: dict, recv_ms: int):
-        c = self.coin(d["instId"])
-        px, sz = float(d["px"]), float(d["sz"]) * c.ct
-        ts = int(d["ts"])
+        inst = str(d.get("instId") or "")
+        if not inst:
+            return
+        c = self.coin(inst)
+        try:
+            px, sz = float(d["px"]), float(d["sz"]) * c.ct
+            ts = int(d.get("ts") or 0)
+        except (KeyError, TypeError, ValueError, OverflowError):
+            self._observe_quality(inst, "trades", None, recv_ms, valid=False)
+            return
+        valid = px > 0 and sz > 0 and ts > 0 and d.get("side") in ("buy", "sell")
+        self._observe_quality(inst, "trades", ts or None, recv_ms, valid=valid)
+        if self.quality_latest[(inst, "trades")].state is not QualityState.LIVE:
+            return
         sgn = 1 if d.get("side") == "buy" else -1
         c.tape.append((ts, px, sz, sgn))
-        self._observe_quality(c.inst, "trades", ts or None, recv_ms)
         usd = px * sz
         c.cvd += sgn * usd
         if not c.cvd_hist or ts - c.cvd_hist[-1][0] >= 1000:
@@ -324,7 +352,19 @@ class Market:
         if tf is None:
             return
         for r in data:
-            cd = parse_candle(r)
+            try:
+                cd = parse_candle(r)
+                event_ts = int(cd[0]) if cd and cd[0] is not None else None
+                valid = (len(cd) >= 6 and event_ts is not None and event_ts > 0
+                         and all(float(v) > 0 for v in cd[1:5])
+                         and float(cd[2]) >= max(float(cd[1]), float(cd[4]))
+                         and float(cd[3]) <= min(float(cd[1]), float(cd[4])))
+            except (TypeError, ValueError, IndexError, OverflowError):
+                cd, event_ts, valid = None, None, False
+            channel = f"candle_{tf}"
+            self._observe_quality(inst, channel, event_ts, now_ms(), valid=valid)
+            if not valid or self.quality_latest[(inst, channel)].state is not QualityState.LIVE:
+                continue
             if tf == "1H":
                 self._h1_all(inst, cd)
             c = self.coins.get(inst)
@@ -344,7 +384,9 @@ class Market:
         """OKX bağlantı grubu koptuğunda son gözlemleri DISCONNECTED olarak yayımla."""
         channels_by_connection = {
             "piyasa": {"tickers", "open-interest", "funding-rate", "mark-price", "index-tickers", "liquidation-orders"},
-            "defter": {"books"}, "tape": {"trades"}, "mum": set(), "mum_genel": set(),
+            "defter": {"books"}, "tape": {"trades"},
+            "mum": {f"candle_{tf}" for tf in CHANNEL_TF.values()},
+            "mum_genel": {"candle_1H"},
         }
         channels = channels_by_connection.get(connection_name, set())
         for key, previous in list(self.quality_latest.items()):
@@ -363,7 +405,19 @@ class Market:
         def pct(a, p):
             return round(a[int(len(a) * p)], 1) if a else None
         latest = {}
-        for (symbol, channel), obs in self.quality_latest.items():
+        now = now_ms()
+        for (key, original) in self.quality_latest.items():
+            symbol, channel = key
+            obs = original
+            rule = self.quality.rules.get(channel)
+            if (obs.state is QualityState.LIVE and rule and rule.max_age_ms is not None
+                    and obs.event_ts_ms is not None):
+                age = now - obs.event_ts_ms
+                if age > rule.max_age_ms:
+                    obs = self.quality.disconnected(symbol=symbol, channel=channel, receive_ts_ms=now)
+                    from dataclasses import replace
+                    obs = replace(obs, state=QualityState.STALE, event_ts_ms=original.event_ts_ms,
+                                  age_ms=age, reason_code="event_stale")
             latest.setdefault(channel, {"sembol_sayisi": 0, "durumlar": {state.value: 0 for state in QualityState},
                                         "son_olay_yasi_ms_max": None})
             row = latest[channel]
@@ -375,7 +429,7 @@ class Market:
         return {"mesaj": self.msgs, "gecikme_ms_p50": pct(lat, 0.5), "gecikme_ms_p95": pct(lat, 0.95),
                 "isleme_us_p50": pct(pr, 0.5), "isleme_us_p95": pct(pr, 0.95),
                 "ham_olay_gunlugu": self.event_journal.stats() if self.event_journal else {"enabled": False, "complete": False, "reason": "not_configured"},
-                "kalite_telemetrisi": {"anlam": "Yapısal timestamp/sequence kontrolü; freshness strateji eşiği ayrıca uygulanır.",
+                "kalite_telemetrisi": {"anlam": "Her kanal timestamp/sequence ve kanal tazelik eşiğiyle izlenir; strateji daha sıkı eşik uygulayabilir.",
                                        "kanallar": latest, "durum_sayilari": dict(self.quality_counts)}}
 
     def close(self) -> dict:
