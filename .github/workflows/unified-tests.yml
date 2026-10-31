@@ -39,3 +39,5 @@ jobs:
           tests/test_golge_portfoy.py
           tests/test_yetki_operasyonel.py
           tests/test_policy.py
+          tests/test_okx_contract_audit.py
+          tests/test_unified_authority.py
