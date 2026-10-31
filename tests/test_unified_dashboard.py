@@ -46,7 +46,9 @@ def test_site_birlesik_panelini_kopyalar_ve_baglar(tmp_path):
 
 def test_panel_dis_kaynak_yuklemez():
     page = (Path(__file__).resolve().parent.parent / "radar" / "templates" / "birlesik.html").read_text(encoding="utf-8")
-    assert "<script src" not in page and "http://" not in page and "https://" not in page
+    assert "<script src" not in page and "http://" not in page
+    assert page.count("https://") == 1
+    assert "https://github.com/hkyafes-afk/kripto-radar/actions/workflows/settings-change-request.yml" in page
 
 
 def test_sentetik_golge_ozeti_yazilir(tmp_path):
