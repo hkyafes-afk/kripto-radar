@@ -29,6 +29,13 @@ def test_site_birlesik_panelini_kopyalar_ve_baglar(tmp_path):
     assert "Veri yok" in page and "Bayat" in page and "Bağlantı kesik" in page and "PAPER · TEK OTORİTE" in page
     assert 'id="modeTag"' in page and "Deneysel doğrulama sürüyor" in page
     assert (tmp_path / "polat.html").exists()
+    settings = json.loads((tmp_path / "birlesik" / "ayarlar.json").read_text(encoding="utf-8"))
+    assert settings["mode"] == "read_only_discovery"
+    assert settings["write_enabled"] is False
+    assert settings["write_ready_count"] == 0
+    params = {item["path"]: item for item in settings["parameters"]}
+    assert params["birlesik.paper.baslangic_bakiye"]["value"] == 100
+    assert params["birlesik.yurutme_modu"]["protected"] is True
 
 
 def test_panel_dis_kaynak_yuklemez():
