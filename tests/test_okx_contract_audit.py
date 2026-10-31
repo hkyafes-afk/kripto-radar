@@ -21,6 +21,7 @@ def test_okx_audit_classifies_live_contract_minimums():
     assert result["live_usdt_swap_count"] == 3
     assert result["eligible_count"] == 2
     assert result["too_large_minimum_count"] == 1
+    assert result["risk_target_fit_count"] == 2
     assert {x["instId"] for x in result["eligible"]} == {"BTC-USDT-SWAP", "DOGE-USDT-SWAP"}
     assert result["eligible"][0]["min_notional_usdt"] <= result["eligible"][1]["min_notional_usdt"]
     assert "does not mean" in render(result)
