@@ -444,11 +444,13 @@ class Market:
             if obs.age_ms is not None:
                 current = row["son_olay_yasi_ms_max"]
                 row["son_olay_yasi_ms_max"] = obs.age_ms if current is None else max(current, obs.age_ms)
+        current_counts = {state.value: sum(row["durumlar"][state.value] for row in latest.values())
+                          for state in QualityState}
         return {"mesaj": self.msgs, "gecikme_ms_p50": pct(lat, 0.5), "gecikme_ms_p95": pct(lat, 0.95),
                 "isleme_us_p50": pct(pr, 0.5), "isleme_us_p95": pct(pr, 0.95),
                 "ham_olay_gunlugu": self.event_journal.stats() if self.event_journal else {"enabled": False, "complete": False, "reason": "not_configured"},
                 "kalite_telemetrisi": {"anlam": "Her kanal timestamp/sequence ve kanal tazelik eşiğiyle izlenir; strateji daha sıkı eşik uygulayabilir.",
-                                       "kanallar": latest, "durum_sayilari": dict(self.quality_counts)}}
+                                       "kanallar": latest, "durum_sayilari": current_counts}}
 
     def close(self) -> dict:
         return self.event_journal.close() if self.event_journal else {"enabled": False, "complete": False}
