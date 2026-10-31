@@ -249,3 +249,15 @@ Bu bölüm PR #23 dalındaki gerçek kod değişikliklerini ve doğrulama durumu
 - `tests/test_unified_event_journal.py`: kayıt ekleme, restart recovery, hash zinciri, tamper, truncated tail ve JSON/timestamp doğrulama testleri.
 - Yazıcı sözleşmesi şu anda **tek süreç/tek yazıcı** ile sınırlıdır. Bu primitive canlı Polat/OKX feed'ine veya UnifiedTrader'a henüz bağlanmamıştır; bu yüzden gerçek event coverage veya sıfır kayıp garantisi değildir.
 - UnifiedTrader CI bu değişiklikte başarılıdır; tam depo CI aynı head için tamamlanmayı bekliyor.
+
+
+## Sonraki uygulama — Polat OKX ham olay günlüğü
+
+- `QueuedEventJournal` artık Polat'ın OKX public Feed callback'ine bağlandı.
+- Ham WS mesajları sınırlı kuyruk üzerinden arka plan yazıcısına aktarılır; feed callback'i disk yazımını beklemez.
+- Her kayıtta borsa event zamanı (tek timestamp'li batch ise), yerel receive zamanı, monotonic receive zamanı, kaynak/kanal/enstrüman ve SHA-256 hash zinciri tutulur.
+- Secret benzeri alanlar kayıttan önce maskelenir.
+- Kuyruk taşması, dosya boyutu/record limiti veya disk hatası varsa `complete=false`, dropped/error/limit sayaçları görünür; sessizce tam kayıt iddiası yapılmaz.
+- Varsayılan çalışma dosyası `/tmp/polat-market-events-<pid>.jsonl` altındadır. GitHub Actions runner ephemeral olduğu için workflow/runner değişiminde kalıcı arşiv garantisi yoktur; dosya GitHub Pages'e yayınlanmaz ve Git'e commit edilmez.
+- Varsayılan limitler: 4.096 kuyruk girdisi, 64 MiB ve 100.000 kayıt. Bu sınırlar dolarsa günlüğün eksiksiz olmadığı açıkça raporlanır.
+- Bu entegrasyon Polat'ın OKX feed'ini UnifiedTrader'a bağlamaz; Polat'ın yeni pozisyon yetkisi kapalı kalır.
