@@ -48,6 +48,7 @@ from . import other_exchanges as ox
 from . import signals as sg
 from . import store
 from .config import ROOT, load_config
+from .unified.quality import ChannelRule, MarketDataQualityEngine, QualityState
 from .scan import (VERSION, _f, _interval_h, btc_info, build_universe, fetch_funding, karne_md,
                    msg_daily, oi_changes, summary_md)
 
@@ -126,6 +127,12 @@ class Engine:
         self.skipped: list[dict] = []
         # canlı veri
         self.book: dict[str, tuple] = {}        # inst → (last, bid, ask, alındığı an)
+        self.bbo_quality = MarketDataQualityEngine({
+            "ws_ticker": ChannelRule(max_age_ms=int(self.BBO_MAX_AGE_S * 1000)),
+            "bitget_ticker": ChannelRule(max_age_ms=int(self.BBO_MAX_AGE_S * 1000)),
+            "rest_ticker": ChannelRule(max_age_ms=int(self.BBO_MAX_AGE_S * 1000)),
+        })
+        self.bbo_quality_latest: dict[tuple[str, str], object] = {}
         self.bg_book: dict[str, tuple] = {}     # baz coin → Bitget (last, bid, ask, an)
         self.fund_cur: dict[str, tuple] = {}    # inst → (oran, kesim_ms, kaynak)
         self.fund_events: list[tuple] = []      # (inst, oran, kesim_ms) geçmiş kesimler
@@ -208,6 +215,15 @@ class Engine:
     # ── canlı akış geri çağrıları (WS thread'lerinden) ────────────────
     def _on_tick(self, venue, key, last, bid, ask, ts):
         now = time.time()
+        receive_ms = int(now * 1000)
+        event_ts_ms = int(ts) if ts not in (None, 0, "") else None
+        channel = "bitget_ticker" if venue == "bitget" else "ws_ticker"
+        observation = self.bbo_quality.observe(
+            symbol=key, channel=channel, event_ts_ms=event_ts_ms, receive_ts_ms=receive_ms,
+            valid=last > 0 and bid > 0 and ask > 0 and bid < ask,
+        )
+        self.bbo_quality_latest[(venue, key)] = observation
+        decision_ts = event_ts_ms or receive_ms
         if venue == "bitget":
             self.bg_book[key] = (last, bid, ask, now)
             return
@@ -215,12 +231,12 @@ class Engine:
             return
         self.book[key] = (last, bid, ask, now)
         self.prices[key] = last
-        self._check_watch(key, last, bid, ask, ts)
+        self._check_watch(key, last, bid, ask, decision_ts)
         ow = self.order_watch.get(key)
         if ow:
             for oid, side, px in ow:
                 if oid not in self.order_hits and ((side == "long" and last < px) or (side == "short" and last > px)):
-                    self.order_hits[oid] = (px, ts)        # limit emir: fiyat seviyenin içinden geçti → doldu
+                    self.order_hits[oid] = (px, decision_ts)  # limit emir: fiyat seviyenin içinden geçti → doldu
 
     def _check_watch(self, inst, last, bid, ask, ts):
         w = self.watch.get(inst)
@@ -755,28 +771,38 @@ class Engine:
         ask = ask if ask and ask > 0 else None
         return bid, ask, (round(time.time() - ts, 3) if ts else None)
 
+    def _trusted_bbo(self, inst: str, now: float | None = None):
+        """Yalnız borsa timestamp'i doğrulanmış ve 15 sn içinde olan BBO'yu döndür."""
+        now = time.time() if now is None else now
+        latest = getattr(self, "bbo_quality_latest", {})
+        ws_obs = latest.get(("okx", inst))
+        ws = getattr(self, "book", {}).get(inst)
+        if ws and ws_obs and ws_obs.state is QualityState.LIVE:
+            age = now - ws[3]
+            if age >= 0 and age <= self.BBO_MAX_AGE_S and ws[1] > 0 and ws[2] > 0 and ws[1] < ws[2]:
+                return ws, "ws"
+        rest_obs = latest.get(("rest", inst))
+        rb = (getattr(self, "bbo_rest", {}) or {}).get(inst)
+        if rb and rest_obs and rest_obs.state is QualityState.LIVE:
+            age = now - rb[2]
+            if age >= 0 and age <= self.BBO_MAX_AGE_S and rb[0] > 0 and rb[1] > 0 and rb[0] < rb[1]:
+                return ((rb[0] + rb[1]) / 2, rb[0], rb[1], rb[2]), "rest"
+        return None, "kalite_yok"
+
     def _book_ctx(self, inst: str) -> dict:
-        """Public BBO → karar bağlamı (bid, ask, yaş, kaynak). Öncelik: taze WS defteri; yoksa/bozuksa aynı turda
-        çekilmiş REST tickers anlık görüntüsü (gerçek public veri). Eski veri spread'i geçirmez."""
-        bid, ask, age = self._ws_bbo(inst)
-        src = "ws"
-        if not (bid and ask and age is not None and age <= self.BBO_MAX_AGE_S):
-            rb = (getattr(self, "bbo_rest", {}) or {}).get(inst)
-            if rb and rb[0] and rb[1] and time.time() - rb[2] <= self.BBO_MAX_AGE_S:
-                bid, ask, age, src = rb[0], rb[1], round(time.time() - rb[2], 3), "rest"
-            else:
-                src = "yok"
-                if bid and ask:
-                    src = "ws_eski"
-                return {"bid": None, "ask": None, "book_age_s": None, "bbo_kaynak": src}
-        return {"bid": bid, "ask": ask, "book_age_s": age, "bbo_kaynak": src}
+        """Unified kararına yalnız event timestamp'i doğrulanmış, taze ve çapraz olmayan BBO ver."""
+        now = time.time()
+        book, src = self._trusted_bbo(inst, now)
+        if not book:
+            return {"bid": None, "ask": None, "book_age_s": None, "bbo_kaynak": src}
+        return {"bid": book[1], "ask": book[2], "book_age_s": round(now - book[3], 3), "bbo_kaynak": src}
 
     def _bbo_snapshot(self, insts: set[str]) -> None:
         """WS defteri eksik/bayat olan karar coinleri için TEK bir REST tickers çağrısı (public, anlık BBO)."""
         need = set()
         for i in insts:
-            bid, ask, age = self._ws_bbo(i) if i else (None, None, None)
-            if not (bid and ask and age is not None and age <= self.BBO_MAX_AGE_S):
+            trusted, _ = self._trusted_bbo(i) if i else (None, "kalite_yok")
+            if not trusted:
                 need.add(i)
         if not need:
             return
@@ -789,7 +815,13 @@ class Engine:
                 iid = x.get("instId")
                 if iid in need:
                     bid, ask = _f(x.get("bidPx"), 0.0), _f(x.get("askPx"), 0.0)
-                    if bid > 0 and ask > 0:
+                    event_ts = int(_f(x.get("ts"))) or None
+                    obs = self.bbo_quality.observe(
+                        symbol=iid, channel="rest_ticker", event_ts_ms=event_ts,
+                        receive_ts_ms=int(now * 1000), valid=bid > 0 and ask > 0 and bid < ask,
+                    )
+                    self.bbo_quality_latest[("rest", iid)] = obs
+                    if obs.state is QualityState.LIVE:
                         rest[iid] = (bid, ask, now)
         except Exception as e:  # noqa: BLE001
             self._bbo_err = f"{type(e).__name__}: {e}"
@@ -859,14 +891,7 @@ class Engine:
                 now = time.time()
                 insts = {c.get("inst") for c in ctxs} | set(tr.adapter.positions) | \
                     {o["intent"]["inst"] for o in tr.adapter.open_orders()}
-                book = dict(getattr(self, "book", {}) or {})
-                for i in insts:                                 # dolum fiyatı da karar BBO'suyla aynı kaynaktan
-                    if not i:
-                        continue
-                    ws_ok = (b := book.get(i)) and b[1] and b[2] and time.time() - b[3] <= self.BBO_MAX_AGE_S
-                    rb = (getattr(self, "bbo_rest", {}) or {}).get(i)
-                    if not ws_ok and rb and rb[0] and rb[1] and time.time() - rb[2] <= self.BBO_MAX_AGE_S:
-                        book[i] = ((rb[0] + rb[1]) / 2, rb[0], rb[1], rb[2])
+                book = {i: trusted for i in insts if i and (trusted := self._trusted_bbo(i)[0])}
                 quotes = {i: q for i in insts if i and (q := quote_from_book(i, book.get(i), now))}
                 ev, self.golge_fund_events = list(getattr(self, "golge_fund_events", [])), []
                 okx = (getattr(self, "feeds", {}) or {}).get("okx")
@@ -883,7 +908,7 @@ class Engine:
             now = time.time()
             insts = {c.get("inst") for c in ctxs} | set(tr.adapter.positions) | \
                 {o["intent"]["inst"] for o in tr.adapter.open_orders()}
-            book = getattr(self, "book", {}) or {}
+            book = {i: trusted for i in insts if i and (trusted := self._trusted_bbo(i)[0])}
             quotes = {i: q for i in insts if i and (q := quote_from_book(i, book.get(i), now))}
             okx = (getattr(self, "feeds", {}) or {}).get("okx")
             out = tr.step(ctxs, quotes, meta=self.meta, closed_bars=getattr(self, "unified_closed_bars", {}),
