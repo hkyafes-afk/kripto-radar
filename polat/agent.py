@@ -29,6 +29,11 @@ from .risk import Risk, utc_day as _utc_day
 VERSION = "2.0"
 
 
+def new_position_authorized(cfg: dict) -> bool:
+    """Eski bağımsız ajanlar varsayılan olarak challenger'dır; yeni pozisyon yetkisi açıkça verilir."""
+    return bool((cfg.get("yetki") or {}).get("yeni_pozisyon", True))
+
+
 class Notifier:
     def __init__(self, cfg: dict):
         b = cfg.get("bildirim", {})
@@ -560,6 +565,8 @@ class Polat:
         engel = dec["engel"]
         if not engel and self.lease_gate is not None:
             engel = self.lease_gate()
+        if not engel and not new_position_authorized(self.cfg):
+            engel = "yetki: araştırma/challenger modu — yeni pozisyon açma izni yok"
         sl, sl_why = (None, "")
         if d and entry:
             sl, sl_why = karar.structural_stop(c, rd, d, entry, r["min_stop_atr"])

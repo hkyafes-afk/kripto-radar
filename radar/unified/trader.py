@@ -67,9 +67,18 @@ class UnifiedTrader:
     # ── portföy durumu ───────────────────────────────────────────
     def _load(self) -> dict:
         try:
-            return json.loads(self.state_path.read_text(encoding="utf-8"))
-        except (OSError, ValueError):
+            raw = self.state_path.read_text(encoding="utf-8")
+        except FileNotFoundError:
             return {"peak": None, "day": None, "day_start": None, "issue_since": {}, "halted": None}
+        except OSError as e:
+            raise RuntimeError(f"Birleşik portföy durumu okunamadı: {self.state_path}: {e}") from e
+        try:
+            state = json.loads(raw)
+        except ValueError as e:
+            raise RuntimeError(f"Birleşik portföy durumu bozuk; güvenli başlatma iptal edildi: {self.state_path}") from e
+        if not isinstance(state, dict):
+            raise RuntimeError(f"Birleşik portföy durumu nesne değil; güvenli başlatma iptal edildi: {self.state_path}")
+        return state
 
     def _save(self) -> None:
         self.root.mkdir(parents=True, exist_ok=True)
@@ -78,7 +87,7 @@ class UnifiedTrader:
         tmp.replace(self.state_path)
 
     def equity(self, prices: Mapping[str, float] | None = None) -> float:
-        eq = self.start_equity + sum(c.get("net_usd") or 0.0 for c in self.adapter.closed)
+        eq = self.start_equity + self.adapter.closed_net_usd
         for inst, p in self.adapter.positions.items():
             px = (prices or {}).get(inst) or p.get("last") or p["entry"]
             sg = 1 if p["side"] == "long" else -1
@@ -86,13 +95,7 @@ class UnifiedTrader:
         return eq
 
     def loss_streak(self) -> int:
-        n = 0
-        for c in reversed(self.adapter.closed):
-            if (c.get("net_usd") or 0.0) < 0:
-                n += 1
-            else:
-                break
-        return n
+        return self.adapter.closed_loss_streak
 
     def portfolio(self, now_ms: int, prices=None, data_issue: str | None = None) -> PortfolioState:
         eq = self.equity(prices)

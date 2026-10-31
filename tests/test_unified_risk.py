@@ -43,6 +43,21 @@ def test_sentetik_temel_boyutlandirma_yuzde_yarim_risk():
     assert "toplam_risk" in r.limits_checked and not r.limits_hit
 
 
+def test_sentetik_100_usdt_baslangic_bakiyesiyle_risk_boyutlandirma():
+    """100 USDT paper hesapta risk ve nominal tutar sermayeye göre ölçeklenir."""
+    r = G.evaluate(dec(entry=100.0, stop=95.0), pf(equity=100.0), mk())
+    assert r.approved and r.decision is Decision.OPEN
+    assert abs(r.risk_usd - 0.5) < 1e-9
+    assert abs(r.risk_pct - 0.5) < 1e-9
+    assert abs(r.notional_usd - 10.0) < 1e-9
+    assert abs(r.margin_usd - 10.0) < 1e-9
+    # En küçük kontrat 10 USDT nominalden büyükse risk sınırını aşan lot açılmaz.
+    too_large = G.evaluate(dec(entry=100.0, stop=95.0), pf(equity=100.0),
+                           mk(meta={"ct_val": 1.0, "lot_sz": 1, "min_sz": 1}))
+    assert too_large.decision is Decision.REJECT
+    assert any(code in too_large.reason_codes for code in ("LOT_UYGUN_DEGIL", "LOT_RISK_ASIMI", "RISK_COK_KUCULDU"))
+
+
 def test_sentetik_yarim_boyut_karari():
     r = G.evaluate(dec(Decision.REDUCE_SIZE), pf(), mk())
     assert r.decision is Decision.REDUCE_SIZE and abs(r.risk_usd - 2.5) < 1e-6

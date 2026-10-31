@@ -166,7 +166,7 @@ ekip:
   # maks. düşüş −%43 → −%14. Baş Trader ve Turbo dahil herkese uygulanır.
   kurallar:                    # (radar/policy.py)
     aktif: true
-    max_atr_yuzde: 12.5         # günlük ATR fiyatın %12.5'inden büyükse gölge (bu kovada 5 yılda kazanç yok)
+    max_atr_yuzde: 5.0          # günlük ATR fiyatın %5'inden büyükse gölge (5 yıllık araştırma/test eşiği)
     max_stop_yuzde: 15.0       # giriş–stop uzaklığı bu %'yi aşarsa gölgede (v10.1)
     kalabalik_long: 30         # funding yıllık %30 üstündeyken long gölge
     kalabalik_short: -20       # funding yıllık −%20 altındayken short gölge
@@ -239,8 +239,8 @@ dashboard:
 # Tek merkezden karar veren yeni yapı. Bu blok yalnız EKLENDİ; yukarıdaki hiçbir ayar değişmedi.
 # Varsayılanlar güvenli: legacy ajan sistemi çalışmaya devam eder, yeni motor canlı akışa bağlanmaz.
 birlesik:
-  karar_modu: shadow          # legacy | shadow | unified — 30.10.2026 kullanıcı kararı: 2 hafta GÖLGE (yalnız karar kaydı;
-                              # gerçek emir ve paper pozisyon açılmaz, legacy sistem aynen çalışır). Eski değer: legacy
+  karar_modu: shadow          # legacy | shadow | unified — 2 hafta gölge gözlem: kararlar kaydedilir ve uygun adaylar AYRI 100 USDT paper defterinde sanal emir/pozisyon olur.
+                              # Gerçek borsa emri/private API yok; legacy sistemin gerçek emirleri ve defteri etkilenmez. Eski değer: legacy
   yurutme_modu: paper         # yalnız paper izinli; okx_demo / okx_live istense bile reddedilir (gerçek emir yok)
   golge_aralik_sn: 300        # shadow modunda birleşik motor en sık 5 dakikada bir çalışır (yeni anahtar)
   gunluk_saklama_gun: 14      # karar günlüğü site/birlesik/kararlar-YYYY-MM-DD.jsonl bu kadar gün tutulur (yeni anahtar)
@@ -271,6 +271,7 @@ birlesik:
     veri_sorunu_cikis_dk: 60            # coin verisi 60 dk'dan uzun güvenilmezse pozisyonu kapat
     rejim_cikisi: true                  # long krizde / short boğada kapanır
   paper:                      # radar/unified/execution/paper.py (birleşik paper defteri: site/birlesik/yurutme.json)
+    baslangic_bakiye: 100       # birleşik trader'ın hedef sanal sermayesi (USDT); legacy demo bakiyesinden bağımsız
     kote_max_yas_sn: 15                 # bundan eski fiyatla dolum varsayılmaz
     varsayilan_kayma_bp: 10             # emir defteri derinliği yoksa piyasa emri kayması
     stop_kayma_bp: 10                   # stop emri tetiklenince kayma

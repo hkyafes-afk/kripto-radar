@@ -15,6 +15,7 @@ Rapor: son 1 / 50 / 500 gün; kuruluma, çıkış nedenine, seansa, teyit sayıs
 """
 from __future__ import annotations
 
+import copy
 import gzip
 import json
 import queue
@@ -58,6 +59,7 @@ class Journal:
         self._lock = threading.Lock()
         self._dec: list[tuple[int, bool, str]] = []        # canlı dosyadaki kararlar: (ts, girildi, engel anahtarı)
         self._summary: dict = {}
+        self.errors: list[str] = []  # writer hataları sessizce kaybolmasın; sağlık kontrolü/teşhis için
         self.rotate(force_scan=True)                        # eski biçimli/büyük dosyayı da hafifletir
         self.q: queue.Queue = queue.Queue()
         self._t = threading.Thread(target=self._run, daemon=True, name="gunluk")
@@ -78,8 +80,8 @@ class Journal:
                 else:
                     with self._lock:
                         self._append_nolock(kind, rec)
-            except Exception:  # noqa: BLE001
-                pass
+            except Exception as exc:  # noqa: BLE001
+                self.errors.append(f"{kind}: {type(exc).__name__}: {exc}")
             finally:
                 self.q.task_done()
 
@@ -112,8 +114,13 @@ class Journal:
         return out
 
     def write(self, kind: str, rec: dict):
-        rec.setdefault("ts", int(time.time() * 1000))
-        self.q.put((kind, rec))
+        # Writer ayrı thread'de çalıştığı için çağıranın aynı sözlüğü sonradan
+        # değiştirmesi/kullanması arşiv kararını etkilememeli.
+        snapshot = copy.deepcopy(rec)
+        snapshot.setdefault("ts", int(time.time() * 1000))
+        if kind not in self.files:
+            raise ValueError(f"bilinmeyen günlük türü: {kind}")
+        self.q.put((kind, snapshot))
 
     def flush(self):
         if hasattr(self, "q"):

@@ -1,0 +1,65 @@
+name: ATR research comparison
+
+on:
+  push:
+    branches: [feat/autonomous-trader-core]
+    paths:
+      - "tools/lab.py"
+      - ".github/workflows/atr-research.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: atr-research
+  cancel-in-progress: false
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Checkout trader code
+        uses: actions/checkout@v5
+        with:
+          ref: feat/autonomous-trader-core
+          path: trader
+      - name: Checkout historical market data
+        uses: actions/checkout@v5
+        with:
+          ref: gecmis
+          path: gecmis_data
+          sparse-checkout: |
+            1d
+            funding
+          sparse-checkout-cone-mode: true
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: trader/requirements.txt
+      - name: Install dependencies
+        working-directory: trader
+        run: pip install -r requirements.txt
+      - name: Run matched ATR comparison
+        working-directory: trader
+        run: |
+          python tools/lab.py \
+            --data ../gecmis_data \
+            --out data/ATR_DENeyi.md \
+            --set atr \
+            --top 100 \
+            --min_qv 5000000 \
+            --zar 0
+      - name: Upload full results and trade ledger
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: atr-research-${{ github.run_id }}
+          path: |
+            trader/data/ATR_DENeyi.md
+            trader/data/ATR_DENeyi.trades.json.gz
+          if-no-files-found: warn
+          retention-days: 30

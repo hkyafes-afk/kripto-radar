@@ -4,7 +4,7 @@ config.yaml → `birlesik:` bloğu (yoksa aşağıdaki varsayılanlar). Mevcut a
 
   karar_modu    legacy (varsayılan) | shadow | unified
                 legacy  : mevcut ajan sistemi karar verir; birleşik motor çalışmaz.
-                shadow  : birleşik motor yalnız gölgede karar üretir ve kaydeder (PR 2), işlemi legacy açar.
+                shadow  : kararları kaydeder; yalnız operasyonel uygunluk kapısından geçen gölge adayları ayrı paper defterinde sanal emir/pozisyon olarak yürütür. Gerçek borsa emri yok.
                 unified : birleşik motor karar verir (PR 2–3 tamamlanıp kullanıcı onaylamadan açılmaz).
   yurutme_modu  paper (tek izinli) | okx_demo | okx_live
                 Bu sürümde paper dışı her istek REDDEDİLİR ve paper kullanılır. Gerçek emir, gerçek hesap, API anahtarı yok.

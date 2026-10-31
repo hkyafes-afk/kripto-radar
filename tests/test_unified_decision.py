@@ -152,3 +152,17 @@ def test_sentetik_idempotency_birincilden():
 def test_cikis_kurali_turkcesi():
     assert "50 günlük" in exit_rule_tr({"type": "ma", "n": 50})
     assert exit_rule_tr(None) is None and exit_rule_tr({"type": "?"}) is None
+
+
+def test_politika_motoru_hatasi_fail_closed(monkeypatch):
+    from radar import policy
+
+    def broken_gate(*args, **kwargs):
+        raise RuntimeError("sentetik politika hatası")
+
+    monkeypatch.setattr(policy, "gate", broken_gate)
+    eng = UnifiedDecisionEngine(CFG, strategies=[SwingTrendStrategy(CFG)])
+    ds = eng.decide([mctx()], NOW)
+    assert ds and ds[0].decision is Decision.SHADOW
+    assert any(code.startswith("POLITIKA:POLITIKA_HATASI") for code in ds[0].reason_codes)
+    assert any("sentetik politika hatası" in error for error in eng.errors)

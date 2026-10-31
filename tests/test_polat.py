@@ -16,7 +16,7 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from polat import brain, selector  # noqa: E402
+from polat import agent as agent_mod, brain, selector  # noqa: E402
 from polat import karar as karar_mod  # noqa: E402
 from polat.__main__ import load_cfg  # noqa: E402
 from polat.agent import Polat  # noqa: E402
@@ -559,9 +559,13 @@ def test_agent_every_reading_votes_and_full_cycle():
         ag.cfg["karar"]["esik"] = 0.0
         orig = karar_mod.triggers
         karar_mod.triggers = lambda *a, **k: [("test_tetik", 1)]
+        # Sentetik mum zamanını karar saatine sabitle; üretim tazelik kapısı aynen kalır.
+        real_now_ms = agent_mod.now_ms
+        agent_mod.now_ms = lambda: now
         try:
             rec = ag.evaluate(c)
         finally:
+            agent_mod.now_ms = real_now_ms
             karar_mod.triggers = orig
         assert rec["yon"] == 1 and "oylar" in rec
         kinds = {x["tip"] for x in ag.learner.active}
@@ -569,9 +573,12 @@ def test_agent_every_reading_votes_and_full_cycle():
         dec_j = ag.journal.read("kararlar")
         assert dec_j and dec_j[-1]["oylar"] and dec_j[-1]["plan"]["stop_neden"]
         assert "okuma" not in dec_j[-1], "ham okuma canlı kayda yazılmamalı"
+        # Önce gerçekten pozisyon açıldığını doğrula; ham okuma arşivi yalnız
+        # başarılı girişlerde zorunludur. Başarısız girişte gerçek engeli göster.
+        assert rec["engel"] is None, f"işlem açılamadı: {rec['engel']}; karar={dec_j[-1]!r}"
+        assert dec_j[-1].get("girildi") is True, f"karar günlüğünde giriş yok: {dec_j[-1]!r}"
         okz = ag.journal.read_okuma()
-        assert okz and okz[-1]["okuma"], "girilen kurulumun ham okuması arşive yazılmalı"
-        assert rec["engel"] is None, rec["engel"]
+        assert okz and okz[-1]["okuma"], f"girilen kurulumun ham okuması arşive yazılmalı; writer_errors={ag.journal.errors!r}"
         p = list(ag.broker.positions.values())[0]
         assert p["sl"] < p["entry"] < p["tp"] and math.isclose(p["tp"] / p["entry"], 1.125)
         # gölge sinyal maliyetli sonuçlanır: stop → −1R'den kötü
@@ -703,3 +710,12 @@ if __name__ == "__main__":
         if name.startswith("test_"):
             fn()
             print("✓", name)
+
+
+
+def test_polat_yeni_pozisyon_yetkisi_varsayilan_ve_challenger():
+    from polat.agent import new_position_authorized
+
+    assert new_position_authorized({})
+    assert new_position_authorized({"yetki": {"yeni_pozisyon": True}})
+    assert not new_position_authorized({"yetki": {"yeni_pozisyon": False}})

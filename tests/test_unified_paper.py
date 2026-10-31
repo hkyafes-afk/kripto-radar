@@ -209,3 +209,22 @@ def test_sentetik_cikis_legacy_kural_ve_ara_hedef():
 def test_sentetik_stop_asla_gevsemez():
     acts = evaluate_exits(pos(stop=104.0, partials=[{"qty": 1}]), 106.0, NOW, CFG, atr=5.0)
     assert all(a.stop > 104.0 for a in acts if a.kind == "move_stop")
+
+
+def test_kapanan_islem_muhasebesi_saklama_penceresinden_bagimsiz(tmp_path):
+    a = PaperExecutionAdapter(CFG, tmp_path)
+    a.p["kapali_sakla"] = 1
+    a.submit(intent(key="account-open-1"), q(), NOW)
+    a.submit(intent(action="reduce", key="account-close-1", seq=1), q(), NOW + 1000)
+    first_net = a.closed_net_usd
+    assert a.closed_loss_streak == 1
+
+    a.submit(intent(key="account-open-2"), q(), NOW + 2000)
+    a.submit(intent(action="reduce", key="account-close-2", seq=1), q(), NOW + 3000)
+    assert len(a.closed) == 1
+    assert a.closed_net_usd == pytest.approx(first_net + a.closed[-1]["net_usd"])
+    assert a.closed_loss_streak == 2
+
+    b = PaperExecutionAdapter(CFG, tmp_path)
+    assert b.closed_net_usd == pytest.approx(a.closed_net_usd)
+    assert b.closed_loss_streak == 2
