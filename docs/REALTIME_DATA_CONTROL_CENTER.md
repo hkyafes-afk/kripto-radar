@@ -261,3 +261,12 @@ Bu bölüm PR #23 dalındaki gerçek kod değişikliklerini ve doğrulama durumu
 - Varsayılan çalışma dosyası `/tmp/polat-market-events-<pid>.jsonl` altındadır. GitHub Actions runner ephemeral olduğu için workflow/runner değişiminde kalıcı arşiv garantisi yoktur; dosya GitHub Pages'e yayınlanmaz ve Git'e commit edilmez.
 - Varsayılan limitler: 4.096 kuyruk girdisi, 64 MiB ve 100.000 kayıt. Bu sınırlar dolarsa günlüğün eksiksiz olmadığı açıkça raporlanır.
 - Bu entegrasyon Polat'ın OKX feed'ini UnifiedTrader'a bağlamaz; Polat'ın yeni pozisyon yetkisi kapalı kalır.
+
+
+## UnifiedTrader BBO kalite kapısı — canlı karar yolu
+
+- `Engine._on_tick` artık OKX/Bitget olay timestamp'lerini yerel receive zamanından ayrı tutar; OKX WS ve REST ticker verileri ayrı kalite kanallarında değerlendirilir.
+- UnifiedTrader'a giden BBO yalnızca 15 saniye içinde, pozitif ve çapraz olmayan bid/ask ile geçerli borsa event timestamp'i varsa kabul edilir. Eksik timestamp UNKNOWN; bayat STALE; future clock skew veya crossed/locked quote INVALID olur.
+- OKX WS timestamp'i eksikse adapter artık yerel zamanı borsa timestamp'iymiş gibi uydurmaz; `None` geçirir. Pozisyon izleme içi yerel fallback ayrı tutulur, karar BBO'suna yetki vermez.
+- `_trusted_bbo` hem Unified hem Shadow karar yollarında kullanılır; doğrulanmamış eski WS/REST defteri quote üretmez. Data Health örneklerinde kalite state ve reason code gösterilir.
+- Regresyonlar `tests/test_unified_bbo_quality.py` içinde eksik timestamp, stale, future clock skew, crossed quote ve doğrulanmamış REST snapshot senaryolarını kapsar.
