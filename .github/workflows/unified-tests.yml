@@ -32,5 +32,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt pytest
-      - name: Run test suite
-        run: python -m pytest -q tests
+      - name: Run unified trader and shared policy tests
+        run: >-
+          python -m pytest -q
+          tests/test_unified_*.py
+          tests/test_golge_portfoy.py
+          tests/test_yetki_operasyonel.py
+          tests/test_policy.py
