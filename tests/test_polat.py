@@ -465,8 +465,9 @@ class FakeRest:
 
 
 class FakeFeed:
-    def __init__(self, cfg, on_msg):
+    def __init__(self, cfg, on_msg, on_disconnect=None):
         self.stats = {"baglanti": {}, "kopma": {}, "son_hata": ""}
+        self.on_disconnect = on_disconnect
         self.watched = set()
 
     def start(self):
