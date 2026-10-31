@@ -38,3 +38,21 @@ Her workflow için tetikleyici, komut, yazdığı dosyalar, secret erişimi, iş
 
 ## Geri dönüş
 Her aşama ayrı commit ve config flag ile yapılır. Veri dosyaları ve eski kod silinmez. Sorunda legacy raporlar okunabilir kalır; ancak eski işlem yetkisi otomatik olarak geri açılmaz.
+
+
+## Güncel uygulama durumu (2026-10-31)
+- **Baş Trader ana paneli:** site üretiminde `index.html` artık birleşik paneldir. Eski Radar arayüzü kaybolmaz; `radar.html` arşiv rotasında tutulur. `birlesik.html` geriye dönük bağlantı alias'ıdır. Polat paneli korunur.
+- **Polat yetkisi:** `polat/config.yaml → yetki.yeni_pozisyon: false`. Polat piyasa okuması, karar/challenger günlüğü, öğrenme ve mevcut sanal pozisyonların stop/hedef/funding yönetimini sürdürür; yeni sanal pozisyon açamaz. Yetki kodda açık bayrakla denetlenir ve CI testi vardır.
+- **Legacy Radar döngüsü:** `canli.yml` kapatılmadı. `birlesik.karar_modu: shadow` aşamasında legacy demo portföyü karşılaştırma taban çizgisi olarak çalışır; UnifiedTrader ayrı gölge kayıt üretir. Bu aşamada legacy emir yolu gerçek borsa emri değildir. Shadow kabul kapısı tamamlanmadan eski döngüyü kapatmak karşılaştırma verisini keser.
+- **Araştırma/veri iş akışları:** backtest, race, geçmiş veri, Binance arşiv/metrik, saatlik arşiv, OI/long-short toplayıcı, hakem, öğrenme, teşhis ve OKX public probe görevleri araştırma/veri amaçlı korunur. Bunlar tek başına pozisyon yetkisi vermez.
+- **Polat nöbet zinciri:** workflow'u şu an açık kalır; çünkü raporlama/öğrenme ve mevcut sanal pozisyonların güvenli yönetimini sürdürür. Yeni pozisyon yetkisi ayrıca kapatılmıştır. Zinciri kapatmak yerine giriş yetkisini kapatmak veri ve pozisyon sürekliliğini korur.
+
+## Yetki sınırları
+| Bileşen | Karar/araştırma | Yeni pozisyon | Mevcut pozisyon yönetimi |
+|---|---|---|---|
+| UnifiedTrader (shadow) | Evet | Yalnız ayrı gölge defter | Gölge defter |
+| Legacy Radar | Baseline/challenger | Legacy sanal defter, shadow döneminde | Evet |
+| Polat | Challenger/öğrenme | **Kapalı** | Mevcut sanal pozisyonları yönetir |
+| Veri/backtest/probe workflow'ları | Evet | Yok | Yok |
+
+Not: Legacy Radar'ın sanal işlem üretmeye devam etmesi shadow testinin karşılaştırma taban çizgisidir; birleşik karar modu `unified` yapılmadıkça tek pozisyon otoritesi geçişi tamamlanmış sayılmaz. Bu PR'da canlı borsa emri açılmaz.
