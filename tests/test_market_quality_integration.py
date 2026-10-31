@@ -2,10 +2,11 @@ from polat.market import Market
 from polat.okx import Feed
 
 
-def _market():
+def _market(event_journal_path=None):
     return Market(
         {"veri": {"zaman_dilimleri": ["1m"]}, "kurulum": {"duvar_kat": 3}},
         {"BTC-USDT-SWAP": {"ctVal": 1.0}},
+        event_journal_path=event_journal_path,
     )
 
 
@@ -101,7 +102,7 @@ def test_okx_feed_disconnect_callback_updates_market_quality():
 
 
 def test_market_writes_raw_feed_events_to_bounded_journal(tmp_path):
-    market = Market(_config(), {}, event_journal_path=tmp_path / "raw.jsonl")
+    market = _market(event_journal_path=tmp_path / "raw.jsonl")
     market.handle(
         {"arg": {"channel": "tickers", "instId": "BTC-USDT-SWAP"},
          "data": [{"instId": "BTC-USDT-SWAP", "last": "100", "bidPx": "99.9",
