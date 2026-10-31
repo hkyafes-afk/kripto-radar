@@ -186,8 +186,10 @@ td{padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
     var qh = v.kalite_telemetrisi || {}, qchannels = qh.kanallar || {};
     var qsummary = Object.keys(qchannels).sort().map(function(ch) {
       var row = qchannels[ch] || {}, states = row.durumlar || {};
-      return ch + ": LIVE " + n(states.LIVE, 0) + " · INVALID " + n(states.INVALID, 0) +
-        " · UNKNOWN " + n(states.UNKNOWN, 0) + " · " + n(row.sembol_sayisi, 0) + " sembol";
+      return ch + ": LIVE " + n(states.LIVE, 0) + " · STALE " + n(states.STALE, 0) +
+        " · INVALID " + n(states.INVALID, 0) + " · DISCONNECTED " + n(states.DISCONNECTED, 0) +
+        " · UNKNOWN " + n(states.UNKNOWN, 0) + " · " + n(row.sembol_sayisi, 0) +
+        " sembol · max yaş " + n(row.son_olay_yasi_ms_max, 0) + " ms";
     }).join(" | ");
     var journal = v.ham_olay_gunlugu || {};
     var journalState = !journal.enabled ? "Etkin değil" :
