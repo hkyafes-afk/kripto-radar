@@ -12,6 +12,7 @@ from collections import deque
 from .okx import CHANNEL_TF, now_ms, parse_candle
 from .series import Series
 from radar.unified.quality import ChannelRule, MarketDataQualityEngine, QualityState
+from radar.unified.event_journal import QueuedEventJournal
 
 
 class OrderBook:
@@ -139,9 +140,10 @@ class Coin:
 
 
 class Market:
-    def __init__(self, cfg: dict, meta: dict[str, dict]):
+    def __init__(self, cfg: dict, meta: dict[str, dict], event_journal_path=None):
         self.cfg = cfg
         self.meta = meta
+        self.event_journal = QueuedEventJournal(event_journal_path) if event_journal_path else None
         self.tfs = cfg["veri"]["zaman_dilimleri"]
         self.coins: dict[str, Coin] = {}
         self.h1_all: dict[str, deque] = {}           # bütün piyasa 1S mumları (seçici için)
@@ -190,6 +192,8 @@ class Market:
     def handle(self, msg: dict, recv_ms: int):
         t0 = time.perf_counter()
         self.msgs += 1
+        if self.event_journal is not None:
+            self.event_journal.record(msg, receive_ts_ms=recv_ms)
         arg = msg.get("arg") or {}
         ch = arg.get("channel", "")
         data = msg.get("data") or []
@@ -370,9 +374,14 @@ class Market:
                 row["son_olay_yasi_ms_max"] = obs.age_ms if current is None else max(current, obs.age_ms)
         return {"mesaj": self.msgs, "gecikme_ms_p50": pct(lat, 0.5), "gecikme_ms_p95": pct(lat, 0.95),
                 "isleme_us_p50": pct(pr, 0.5), "isleme_us_p95": pct(pr, 0.95),
+                "ham_olay_gunlugu": self.event_journal.stats() if self.event_journal else {"enabled": False, "complete": False, "reason": "not_configured"},
                 "kalite_telemetrisi": {"anlam": "Yapısal timestamp/sequence kontrolü; freshness strateji eşiği ayrıca uygulanır.",
                                        "kanallar": latest, "durum_sayilari": dict(self.quality_counts)}}
 
 
 def now() -> int:
     return now_ms()
+
+
+    def close(self) -> dict:
+        return self.event_journal.close() if self.event_journal else {"enabled": False, "complete": False}
