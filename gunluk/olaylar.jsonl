@@ -336,3 +336,4 @@
 {"olay": "halef_cagrildi", "ok": true, "sonuc": "HTTP 204", "ts": 1793477401852}
 {"olay": "ogrenme", "durum": "güncellendi", "uygulanan": 79, "reddedilen": 44, "ts": 1793477680477}
 {"olay": "durdu", "neden": "süre doldu", "veri": {"mesaj": 30593984, "gecikme_ms_p50": 142, "gecikme_ms_p95": 190, "isleme_us_p50": 23.8, "isleme_us_p95": 319.5}, "ts": 1793478248965}
+{"olay": "devraldi", "bosluk_sn": 8.878, "pozisyon": 0, "ts": 1793478257830}

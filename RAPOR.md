@@ -25,11 +25,11 @@ En az işe yarayan okumalar: cift_dip_4H ×0.512, momentum_1H ×0.565, cci_1H ×
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 36626, girilen: 8.
+Kapanmış işlem yok. Görülen kurulum: 36635, girilen: 8.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 12541
+- ders: 12549
 - günlük işlem tavanı (8): 2524
 - aynı yönde pozisyon tavanı: 1156
 - gösterge aileleri aynı yönde değil: 886
@@ -91,7 +91,7 @@ Kapanmış işlem yok. Görülen kurulum: 36626, girilen: 8.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 19508
+- ders: 19516
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2485
 - üst üste 3 zarar: 2345
@@ -158,7 +158,7 @@ Kapanmış işlem yok. Görülen kurulum: 36626, girilen: 8.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 19508
+- ders: 19516
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2485
 - üst üste 3 zarar: 2345
