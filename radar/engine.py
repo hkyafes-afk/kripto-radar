@@ -9,6 +9,7 @@
 
 GitHub Actions lease zinciri kalıcı sunucu değildir: runner değişimi, timeout, iptal, cron
 gecikmesi ve kota nedeniyle kesinti olabilir. Bu modül 7/24 veya milisaniyelik SLA vaat etmez.
+"""
 
 from __future__ import annotations
 
