@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 2693 | %44.3 | -0.342 | -920.57 |
 | trend_naif | 2710 | %43.1 | -0.358 | -970.63 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-4.68
+Polat özsermaye: %-4.71 · BTC al-tut: %-4.67
 
 ## Öğrenme (walk-forward)
 
@@ -56,10 +56,10 @@ En az işe yarayan okumalar: momentum_1H ×0.47, obv_egim_1H ×0.48, cift_dip_4H
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 7440
+- ders: 7460
 - günlük işlem tavanı (8): 2524
 - aynı yönde pozisyon tavanı: 1156
-- gösterge aileleri aynı yönde değil: 764
+- gösterge aileleri aynı yönde değil: 774
 - bu coinde zaten pozisyon var: 464
 - büyük zaman dilimi trendi ters: 236
 - puan -0.183 eşiğin (0.25) altında: 52
@@ -118,9 +118,9 @@ En az işe yarayan okumalar: momentum_1H ×0.47, obv_egim_1H ×0.48, cift_dip_4H
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 14407
+- ders: 14427
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 2363
+- gösterge aileleri aynı yönde değil: 2373
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 1963
 - aynı yönde pozisyon tavanı: 1426
@@ -185,9 +185,9 @@ En az işe yarayan okumalar: momentum_1H ×0.47, obv_egim_1H ×0.48, cift_dip_4H
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 14407
+- ders: 14427
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 2363
+- gösterge aileleri aynı yönde değil: 2373
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 1963
 - aynı yönde pozisyon tavanı: 1426
