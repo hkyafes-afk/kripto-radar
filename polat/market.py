@@ -481,8 +481,12 @@ class Market:
                 row["son_olay_yasi_ms_max"] = obs.age_ms if current is None else max(current, obs.age_ms)
         current_counts = {state.value: sum(row["durumlar"][state.value] for row in latest.values())
                           for state in QualityState}
-        return {"mesaj": self.msgs, "gecikme_ms_p50": pct(lat, 0.5), "gecikme_ms_p95": pct(lat, 0.95),
-                "isleme_us_p50": pct(pr, 0.5), "isleme_us_p95": pct(pr, 0.95),
+        return {"mesaj": self.msgs, "gecikme_ornek_sayisi": len(lat),
+                "gecikme_ms_p50": pct(lat, 0.5), "gecikme_ms_p95": pct(lat, 0.95),
+                "gecikme_ms_p99": pct(lat, 0.99), "gecikme_ms_max": round(lat[-1], 1) if lat else None,
+                "isleme_ornek_sayisi": len(pr), "isleme_us_p50": pct(pr, 0.5),
+                "isleme_us_p95": pct(pr, 0.95), "isleme_us_p99": pct(pr, 0.99),
+                "isleme_us_max": round(pr[-1], 1) if pr else None,
                 "ham_olay_gunlugu": self.event_journal.stats() if self.event_journal else {"enabled": False, "complete": False, "reason": "not_configured"},
                 "kalite_telemetrisi": {"anlam": "Her kanal timestamp/sequence ve kanal tazelik eşiğiyle izlenir; strateji daha sıkı eşik uygulayabilir.",
                                        "kanallar": latest, "durum_sayilari": current_counts}}
