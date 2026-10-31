@@ -282,7 +282,18 @@ class UnifiedTrader:
             pf = self.portfolio(now, prices, data_issue=gi)
             raw = raw_by_inst.get(inst) or {}
             q = quotes.get(inst)
-            mr = MarketRisk(inst=inst, price=q.last if q else None, vol24_usd=raw.get("vol24_usd"),
+            # Karar motoru bağlam fiyatı üretmiş olsa bile, PAPER emri için güncel ve
+            # tutarlı BBO zorunludur. Bu kapı yalnız yeni girişe uygulanır; yukarıdaki
+            # açık pozisyon çıkış/koruma yönetimini durdurmaz.
+            if (q is None or not q.valid or
+                    not all(isinstance(v, (int, float)) and 0 < v < float("inf")
+                            for v in (q.bid, q.ask, q.last)) or q.bid > q.ask):
+                risk_log.append({"sym": d.symbol, "strateji": d.strategy, "karar": Decision.REJECT.value,
+                                 "kodlar": ["GIRIS_BBO_YOK"], "aciklama":
+                                 "Yeni PAPER girişi için güncel, pozitif ve çapraz olmayan bid/ask gerekli.",
+                                 "operasyonel": operational})
+                continue
+            mr = MarketRisk(inst=inst, price=q.last, vol24_usd=raw.get("vol24_usd"),
                             high_vol=bool(raw.get("high_vol")), cluster=(clusters or {}).get(inst),
                             meta=(meta or {}).get(inst))
             rd = self.risk.evaluate(d_use, pf, mr)
