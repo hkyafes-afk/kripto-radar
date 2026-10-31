@@ -183,10 +183,18 @@ td{padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
       ["Zirveden düşüş", n((1 - eq / (r.peak || eq)) * 100, 2) + "%"]
     ]);
     var v = d.veri || {}, rs = d.rest || {}, cal = d.likidasyon_kalibrasyon || {};
+    var qh = v.kalite_telemetrisi || {}, qchannels = qh.kanallar || {};
+    var qsummary = Object.keys(qchannels).sort().map(function(ch) {
+      var row = qchannels[ch] || {}, states = row.durumlar || {};
+      return ch + ": LIVE " + n(states.LIVE, 0) + " · INVALID " + n(states.INVALID, 0) +
+        " · UNKNOWN " + n(states.UNKNOWN, 0) + " · " + n(row.sembol_sayisi, 0) + " sembol";
+    }).join(" | ");
     var rtt = Object.keys(rs.rtt_ms || {}).map(function(b){ return b.replace("https://", "") + " " + n(rs.rtt_ms[b], 0) + " ms"; }).join(" · ");
     $("data").innerHTML = kv([
       ["İşlenen mesaj", n(v.mesaj, 0)], ["Veri gecikmesi p50 / p95", n(v.gecikme_ms_p50, 0) + " / " + n(v.gecikme_ms_p95, 0) + " ms"],
       ["İşleme süresi p50 / p95", n(v.isleme_us_p50, 0) + " / " + n(v.isleme_us_p95, 0) + " µs"],
+      ["Kanal kalite telemetrisi", esc(qsummary || "henüz kanal verisi yok")],
+      ["Kalite ölçüm kapsamı", esc(qh.anlam || "bu sürümde yapısal kalite ölçümü yok")],
       ["En uzun karar", n((d.sayac || {}).karar_ms_max, 1) + " ms"], ["Sunucu", esc(rtt || "–")],
       ["REST istek / tekrar", n(rs.istek, 0) + " / " + n(rs.tekrar, 0)],
       ["Kopma", esc(JSON.stringify((d.baglanti || {}).kopma || {}))],
