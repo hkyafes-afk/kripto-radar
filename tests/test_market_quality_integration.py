@@ -1,4 +1,6 @@
 from polat.market import Market
+from polat.okx import Feed
+from radar.config import load_config
 
 
 def _market():
@@ -76,3 +78,19 @@ def test_disconnect_marks_only_channels_owned_by_failed_connection():
     assert channels["tickers"]["durumlar"]["DISCONNECTED"] == 1
     assert channels["trades"]["durumlar"]["LIVE"] == 1
     assert channels["trades"]["durumlar"]["DISCONNECTED"] == 0
+
+
+def test_okx_feed_disconnect_callback_updates_market_quality():
+    market = _market()
+    market.handle(
+        {"arg": {"channel": "tickers"},
+         "data": [{"instId": "BTC-USDT-SWAP", "last": "100", "bidPx": "99.9",
+                   "askPx": "100.1", "ts": "1000"}]},
+        recv_ms=1_010,
+    )
+    feed = Feed(load_config(), market.handle, on_disconnect=market.disconnect_channels)
+    feed._disconnected("piyasa", 1_020)
+
+    quality = market.stats()["kalite_telemetrisi"]["kanallar"]["tickers"]
+    assert quality["durumlar"]["DISCONNECTED"] == 1
+    assert quality["durumlar"]["LIVE"] == 0
