@@ -61,7 +61,7 @@ def test_sentetik_100_usdt_butce_gercek_trader_entegrasyonu(tmp_path):
     # Küçük kontrat: 100 USDT hesabın %0,5 risk bütçesine göre emir açılabilir.
     s = t.step([kemal_ctx()], {INST: q(101.0)}, now_ms=NOW,
                meta={INST: {**META[INST], "ct_val": 0.001, "lot_sz": 1, "min_sz": 1}})
-    assert s["bakiye"] == 100.0 and s["acik"] == 1
+    assert 99.0 < s["bakiye"] < 100.0 and s["acik"] == 1  # açılış taker ücreti anında düşülür
     pos = t.adapter.positions[INST]
     assert pos["notional_usd"] < 20.0
     assert pos["risk_usd"] <= 0.5 * 1.05
