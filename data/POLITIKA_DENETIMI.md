@@ -95,3 +95,15 @@ Eşleştirilmiş altı varyant tamamlandı. Özet ve sağlamlık uyarıları `da
 - Coin-küme bootstrap %95 aralığı %5 için [+0,031; +0,335]R; ancak coin kümeleri ortak piyasa/zaman korelasyonunu çözmez.
 
 **Karar:** %5 en makul araştırma adayı, fakat üretim onayı değil. %3 küçük örneklem nedeniyle seçilemez. ATR eşiği config/production üzerinde değiştirilmedi. Yön ve rejim bazlı analiz, zaman-blok bootstrap, maliyet stresleri ve yeni ileri dönem gölge/holdout olmadan kuralı güncellemiyoruz.
+
+
+## 9. Gerçek OKX public kontrat denetimi — 31.10.2026
+Kaynak: [OKX public contract audit workflow](https://github.com/hkyafes-afk/kripto-radar/actions/runs/41205532933), artifact `okx-contract-audit-41205532933`.
+
+- OKX public `SWAP` instrument metadata ve ticker uç noktaları anahtarsız okundu.
+- Snapshot'ta **517 canlı USDT-settled linear SWAP** bulundu.
+- 517/517 minimum emir büyüklüğü, 100 USDT sermaye için %35 nominal üst sınır olan 35 USDT'nin altında/eşit; bu ölçüte göre minimum kontrat nedeniyle elenen yok.
+- Varsayımsal %5 stop mesafesinde, %0,5 sermaye riski 0,50 USDT ve risk hedefi nominali 10 USDT olur. Bu daha sıkı ölçütte **510** minimum emir 10 USDT'ye sığıyor, **7** tanesi sığmıyor.
+- Bilinmeyen/eksik metadata: **0**.
+
+Bu yalnızca snapshot anındaki minimum nominal değer denetimidir. Gerçek stop mesafesi, son lot yuvarlaması, fee tier, spread, emir defteri derinliği, funding ve kayma her sembol için ayrıca hesaplanmalıdır. 517 sembolün hepsinin işlem açmaya uygun olduğu veya fiilen dolum yapabileceği anlamına gelmez. RiskGate'in son risk doğrulaması her işlemde bağlayıcı kalır.
