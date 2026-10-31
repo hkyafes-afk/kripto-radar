@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 3225 | %46.7 | -0.304 | -980.78 |
+| polat_tum_sinyaller | 3226 | %46.7 | -0.304 | -979.35 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 3212 | %46.6 | -0.304 | -975.42 |
+| polat_girilmeyen | 3213 | %46.7 | -0.303 | -973.99 |
 | rastgele | 3206 | %43.4 | -0.377 | -1208.07 |
-| trend_naif | 3234 | %41.5 | -0.41 | -1326.26 |
+| trend_naif | 3235 | %41.5 | -0.41 | -1327.48 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-4.28
+Polat özsermaye: %-4.71 · BTC al-tut: %-4.3
 
 ## Öğrenme (walk-forward)
 
@@ -25,20 +25,20 @@ En az işe yarayan okumalar: momentum_1H ×0.562, cci_1H ×0.564, supertrend_1H 
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 36269, girilen: 8.
+Kapanmış işlem yok. Görülen kurulum: 36322, girilen: 8.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 12348
+- ders: 12372
 - günlük işlem tavanı (8): 2524
 - aynı yönde pozisyon tavanı: 1156
-- gösterge aileleri aynı yönde değil: 881
+- gösterge aileleri aynı yönde değil: 882
 - bu coinde zaten pozisyon var: 464
 - büyük zaman dilimi trendi ters: 287
 - yetki: 113
 - puan +0.121 eşiğin (0.3) altında: 60
 - puan +0.131 eşiğin (0.3) altında: 59
-- puan +0.123 eşiğin (0.3) altında: 55
+- puan +0.123 eşiğin (0.3) altında: 57
 
 ## Son 50 gün
 
@@ -91,9 +91,9 @@ Kapanmış işlem yok. Görülen kurulum: 36269, girilen: 8.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 19315
+- ders: 19339
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 2480
+- gösterge aileleri aynı yönde değil: 2481
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2014
 - aynı yönde pozisyon tavanı: 1426
@@ -158,9 +158,9 @@ Kapanmış işlem yok. Görülen kurulum: 36269, girilen: 8.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 19315
+- ders: 19339
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 2480
+- gösterge aileleri aynı yönde değil: 2481
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2014
 - aynı yönde pozisyon tavanı: 1426
