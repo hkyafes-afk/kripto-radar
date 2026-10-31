@@ -8,7 +8,9 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import queue
 import threading
+import time
 from pathlib import Path
 from typing import Any, Iterable, Mapping
 
@@ -138,3 +140,141 @@ class AppendOnlyEventJournal:
         with self.path.open("r", encoding="utf-8") as stream:
             for line in stream:
                 yield json.loads(line)
+
+
+
+class QueuedEventJournal:
+    """Bounded background writer for raw feed messages.
+
+    Queue overflow, size limits, or disk errors are explicit and make the
+    journal incomplete. The feed callback never waits for disk I/O.
+    """
+
+    def __init__(self, path: str | os.PathLike[str], *, queue_size: int = 4096,
+                 max_bytes: int = 64 * 1024 * 1024, max_records: int = 100_000):
+        if queue_size <= 0 or max_bytes <= 0 or max_records <= 0:
+            raise ValueError("journal limits must be positive")
+        self.path = Path(path)
+        self.journal = AppendOnlyEventJournal(self.path, fsync=False)
+        verified = self.journal.verify()
+        self._bytes = self.path.stat().st_size if self.path.exists() else 0
+        self._records = int(verified["records"])
+        self.max_bytes = max_bytes
+        self.max_records = max_records
+        self._queue: queue.Queue = queue.Queue(maxsize=queue_size)
+        self._lock = threading.Lock()
+        self._dropped = 0
+        self._written = 0
+        self._error: str | None = None
+        self._limit_reached = False
+        self._closed = False
+        self._worker = threading.Thread(target=self._run, name="market-event-journal", daemon=True)
+        self._worker.start()
+
+    @staticmethod
+    def _event_ts(msg: Mapping[str, Any]) -> int | None:
+        rows = msg.get("data") or []
+        values = {str(row.get("ts")) for row in rows if isinstance(row, Mapping) and row.get("ts")}
+        if len(values) != 1:
+            return None
+        try:
+            value = int(next(iter(values)))
+            return value if value >= 0 else None
+        except (TypeError, ValueError):
+            return None
+
+    @staticmethod
+    def _safe_payload(value: Any) -> Any:
+        if isinstance(value, Mapping):
+            safe = {}
+            for key, item in value.items():
+                name = str(key)
+                if any(part in name.lower() for part in ("token", "secret", "password", "api_key", "apikey", "signature")):
+                    safe[name] = "***"
+                else:
+                    safe[name] = QueuedEventJournal._safe_payload(item)
+            return safe
+        if isinstance(value, (list, tuple)):
+            return [QueuedEventJournal._safe_payload(item) for item in value]
+        return value
+
+    def record(self, message: Mapping[str, Any], *, receive_ts_ms: int) -> bool:
+        if self._closed or self._error or self._limit_reached:
+            with self._lock:
+                self._dropped += 1
+            return False
+        arg = message.get("arg") or {}
+        item = {
+            "source": "okx_public",
+            "channel": str(arg.get("channel") or "unknown"),
+            "event_type": str(message.get("action") or "message"),
+            "event_ts_ms": self._event_ts(message),
+            "receive_ts_ms": receive_ts_ms,
+            "receive_monotonic_ns": time.monotonic_ns(),
+            "payload": self._safe_payload(message),
+            "provenance": {"adapter": "polat.okx.Feed", "instrument": arg.get("instId")},
+        }
+        try:
+            _canonical(item["payload"])
+            self._queue.put_nowait(item)
+            return True
+        except queue.Full:
+            with self._lock:
+                self._dropped += 1
+            return False
+        except (TypeError, ValueError):
+            with self._lock:
+                self._dropped += 1
+            return False
+
+    def _run(self) -> None:
+        while True:
+            item = self._queue.get()
+            try:
+                if item is None:
+                    return
+                encoded_size = len(_canonical(item["payload"])) + 512
+                if self._records >= self.max_records or self._bytes + encoded_size > self.max_bytes:
+                    self._limit_reached = True
+                    with self._lock:
+                        self._dropped += 1
+                    continue
+                self.journal.append(
+                    source=item["source"], channel=item["channel"], event_type=item["event_type"],
+                    event_ts_ms=item["event_ts_ms"], receive_ts_ms=item["receive_ts_ms"],
+                    receive_monotonic_ns=item["receive_monotonic_ns"],
+                    payload=item["payload"], provenance=item["provenance"],
+                )
+                self._records += 1
+                self._written += 1
+                self._bytes = self.path.stat().st_size
+            except Exception as exc:  # disk failures are reported, never hidden
+                self._error = f"{type(exc).__name__}: {exc}"
+                with self._lock:
+                    self._dropped += 1
+            finally:
+                self._queue.task_done()
+
+    def stats(self) -> dict[str, Any]:
+        with self._lock:
+            dropped = self._dropped
+        return {
+            "enabled": True, "complete": dropped == 0 and self._error is None and not self._limit_reached,
+            "records_total": self._records, "records_this_run": self._written,
+            "queued": self._queue.qsize(), "dropped": dropped, "bytes": self._bytes,
+            "max_bytes": self.max_bytes, "max_records": self.max_records,
+            "limit_reached": self._limit_reached, "error": self._error,
+            "integrity": "hash_chain_sha256",
+        }
+
+    def close(self, timeout: float = 5.0) -> dict[str, Any]:
+        if not self._closed:
+            self._closed = True
+            try:
+                self._queue.put(None, timeout=max(0.1, timeout))
+                self._worker.join(timeout=max(0.1, timeout))
+                if self._worker.is_alive():
+                    self._error = self._error or "writer_shutdown_timeout"
+            except queue.Full:
+                self._error = self._error or "writer_queue_did_not_drain"
+        return self.stats()
