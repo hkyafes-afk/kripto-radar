@@ -287,7 +287,7 @@ class UnifiedTrader:
             # açık pozisyon çıkış/koruma yönetimini durdurmaz.
             if (q is None or not q.valid or
                     not all(isinstance(v, (int, float)) and 0 < v < float("inf")
-                            for v in (q.bid, q.ask, q.last)) or q.bid > q.ask):
+                            for v in (q.bid, q.ask, q.last)) or q.bid >= q.ask):
                 risk_log.append({"sym": d.symbol, "strateji": d.strategy, "karar": Decision.REJECT.value,
                                  "kodlar": ["GIRIS_BBO_YOK"], "aciklama":
                                  "Yeni PAPER girişi için güncel, pozitif ve çapraz olmayan bid/ask gerekli.",
