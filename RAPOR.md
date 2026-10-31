@@ -56,7 +56,7 @@ En az işe yarayan okumalar: momentum_1H ×0.526, cci_1H ×0.552, obv_egim_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 9113
+- ders: 9181
 - günlük işlem tavanı (8): 2524
 - aynı yönde pozisyon tavanı: 1156
 - gösterge aileleri aynı yönde değil: 848
@@ -118,7 +118,7 @@ En az işe yarayan okumalar: momentum_1H ×0.526, cci_1H ×0.552, obv_egim_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 16080
+- ders: 16148
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2447
 - üst üste 3 zarar: 2345
@@ -185,7 +185,7 @@ En az işe yarayan okumalar: momentum_1H ×0.526, cci_1H ×0.552, obv_egim_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 16080
+- ders: 16148
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2447
 - üst üste 3 zarar: 2345
