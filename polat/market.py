@@ -11,6 +11,7 @@ from collections import deque
 
 from .okx import CHANNEL_TF, now_ms, parse_candle
 from .series import Series
+from radar.unified.quality import ChannelRule, MarketDataQualityEngine, QualityState
 
 
 class OrderBook:
@@ -145,6 +146,15 @@ class Market:
         self.coins: dict[str, Coin] = {}
         self.h1_all: dict[str, deque] = {}           # bütün piyasa 1S mumları (seçici için)
         self.latency: deque = deque(maxlen=5000)       # borsa zaman damgası → bize ulaşma (ms)
+        # Kanal kalite telemetrisi: freshness eşikleri burada uydurulmaz; LIVE yalnızca
+        # timestamp/sequence yapısal doğruluğudur. Strateji kendi max-age eşiğini uygular.
+        self.quality = MarketDataQualityEngine({
+            name: ChannelRule(max_age_ms=None, require_sequence=(name == "books"))
+            for name in ("tickers", "books", "trades", "open-interest", "funding-rate",
+                         "mark-price", "index-tickers", "liquidation-orders")
+        })
+        self.quality_latest: dict[tuple[str, str], object] = {}
+        self.quality_counts: dict[str, int] = {state.value: 0 for state in QualityState}
         self.proc: deque = deque(maxlen=5000)          # mesaj işleme süresi (µs)
         self.msgs = 0
         self.on_close = None                           # geri çağrı: (coin, tf) — mum kapandı
@@ -161,6 +171,20 @@ class Market:
         if c is None:
             c = self.coins[inst] = Coin(inst, self.meta.get(inst, {}), self.tfs)
         return c
+
+    def _observe_quality(self, symbol: str, channel: str, event_ts_ms: int | None,
+                         recv_ms: int, *, seq_id: int | None = None,
+                         prev_seq_id: int | None = None, snapshot: bool = False,
+                         valid: bool = True) -> None:
+        obs = self.quality.observe(symbol=symbol, channel=channel, event_ts_ms=event_ts_ms,
+                                   receive_ts_ms=recv_ms, seq_id=seq_id,
+                                   prev_seq_id=prev_seq_id, is_snapshot=snapshot, valid=valid)
+        key = (symbol, channel)
+        previous = self.quality_latest.get(key)
+        if previous is not None:
+            self.quality_counts[previous.state.value] = max(0, self.quality_counts[previous.state.value] - 1)
+        self.quality_latest[key] = obs
+        self.quality_counts[obs.state.value] += 1
 
     # --- mesaj dağıtımı ---------------------------------------------------------------------
     def handle(self, msg: dict, recv_ms: int):
@@ -184,6 +208,7 @@ class Market:
                 for d in data:
                     c = self.coin(d["instId"])
                     ts, oi = int(d["ts"]), float(d.get("oiCcy") or 0) or float(d["oi"]) * c.ct
+                    self._observe_quality(c.inst, "open-interest", ts or None, recv_ms)
                     c.oi_hist.append((ts, oi))
                     hr = ts - ts % 3_600_000
                     if not c.oi_h1 or c.oi_h1[-1][0] < hr:
@@ -191,15 +216,18 @@ class Market:
             elif ch == "funding-rate":
                 for d in data:
                     c = self.coin(d["instId"])
+                    self._observe_quality(c.inst, "funding-rate", int(d.get("ts") or 0) or None, recv_ms)
                     c.funding = float(d["fundingRate"])
                     c.next_funding_ts = int(d.get("fundingTime") or 0)
             elif ch == "mark-price":
                 for d in data:
+                    self._observe_quality(d["instId"], "mark-price", int(d.get("ts") or 0) or None, recv_ms)
                     self.coin(d["instId"]).mark = float(d["markPx"])
             elif ch == "index-tickers":
                 for d in data:
                     c = self.coins.get(d["instId"] + "-SWAP")
                     if c:
+                        self._observe_quality(c.inst, "index-tickers", int(d.get("ts") or 0) or None, recv_ms)
                         c.index = float(d["idxPx"])
             elif ch == "liquidation-orders":
                 for d in data:
@@ -207,6 +235,7 @@ class Market:
                     if not c:
                         continue
                     for x in d.get("details", ()):
+                        self._observe_quality(c.inst, "liquidation-orders", int(x.get("ts") or d.get("ts") or 0) or None, recv_ms)
                         side = "long" if (x.get("posSide") == "long" or (x.get("posSide") == "net" and x.get("side") == "sell")) else "short"
                         px = float(x.get("bkPx") or c.last or 0)
                         usd = float(x.get("sz") or 0) * c.ct * px
@@ -228,13 +257,19 @@ class Market:
         c.tick_ts = ts
         if ts:
             self.latency.append(recv_ms - ts)
+        self._observe_quality(inst, "tickers", ts or None, recv_ms)
         if not c.deep and self.on_trade:
             self.on_trade(c, c.last, ts or recv_ms)
 
     def _book(self, inst: str, data: list, action: str, recv_ms: int):
         c = self.coin(inst)
         for d in data:
-            ok = c.book.apply(d, action == "snapshot")
+            is_snapshot = action == "snapshot"
+            ok = c.book.apply(d, is_snapshot)
+            self._observe_quality(inst, "books", int(d.get("ts") or 0) or None, recv_ms,
+                                  seq_id=int(d["seqId"]) if d.get("seqId") is not None else None,
+                                  prev_seq_id=int(d["prevSeqId"]) if d.get("prevSeqId") is not None else None,
+                                  snapshot=is_snapshot, valid=ok)
             if not ok and self.on_book_bad:
                 self.on_book_bad(c)
                 return
@@ -268,6 +303,7 @@ class Market:
         ts = int(d["ts"])
         sgn = 1 if d.get("side") == "buy" else -1
         c.tape.append((ts, px, sz, sgn))
+        self._observe_quality(c.inst, "trades", ts or None, recv_ms)
         usd = px * sz
         c.cvd += sgn * usd
         if not c.cvd_hist or ts - c.cvd_hist[-1][0] >= 1000:
@@ -306,8 +342,20 @@ class Market:
 
         def pct(a, p):
             return round(a[int(len(a) * p)], 1) if a else None
+        latest = {}
+        for (symbol, channel), obs in self.quality_latest.items():
+            latest.setdefault(channel, {"sembol_sayisi": 0, "durumlar": {state.value: 0 for state in QualityState},
+                                        "son_olay_yasi_ms_max": None})
+            row = latest[channel]
+            row["sembol_sayisi"] += 1
+            row["durumlar"][obs.state.value] += 1
+            if obs.age_ms is not None:
+                current = row["son_olay_yasi_ms_max"]
+                row["son_olay_yasi_ms_max"] = obs.age_ms if current is None else max(current, obs.age_ms)
         return {"mesaj": self.msgs, "gecikme_ms_p50": pct(lat, 0.5), "gecikme_ms_p95": pct(lat, 0.95),
-                "isleme_us_p50": pct(pr, 0.5), "isleme_us_p95": pct(pr, 0.95)}
+                "isleme_us_p50": pct(pr, 0.5), "isleme_us_p95": pct(pr, 0.95),
+                "kalite_telemetrisi": {"anlam": "Yapısal timestamp/sequence kontrolü; freshness strateji eşiği ayrıca uygulanır.",
+                                       "kanallar": latest, "durum_sayilari": dict(self.quality_counts)}}
 
 
 def now() -> int:
