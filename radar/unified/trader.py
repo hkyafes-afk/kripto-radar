@@ -349,7 +349,8 @@ class UnifiedTrader:
         md = {"strategy": d.strategy, "strategies": list(d.strategies or (d.strategy,)), "stop": d.stop,
               "targets": list(d.targets), "risk_usd": rd.risk_usd,
               "leverage": rd.leverage, "horizon": plan.get("horizon"), "max_holding_hours": plan.get("max_holding_hours"),
-              "cluster": cluster, "timeframe": d.timeframe}
+              "cluster": cluster, "timeframe": d.timeframe,
+              "execution_scope": "shadow" if self.mode == "shadow" else "unified"}
         it = ExecutionIntent(idempotency_key=d.idempotency_key, symbol=d.symbol, inst=inst, side=d.side, action="open",
                              order_type=otype, qty=rd.qty, price=price, created_ts_ms=now, expires_ts_ms=exp,
                              metadata=md)
