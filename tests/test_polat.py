@@ -16,7 +16,7 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from polat import brain, selector  # noqa: E402
+from polat import agent as agent_mod, brain, selector  # noqa: E402
 from polat import karar as karar_mod  # noqa: E402
 from polat.__main__ import load_cfg  # noqa: E402
 from polat.agent import Polat  # noqa: E402
@@ -559,9 +559,13 @@ def test_agent_every_reading_votes_and_full_cycle():
         ag.cfg["karar"]["esik"] = 0.0
         orig = karar_mod.triggers
         karar_mod.triggers = lambda *a, **k: [("test_tetik", 1)]
+        # Sentetik mum zamanını karar saatine sabitle; üretim tazelik kapısı aynen kalır.
+        real_now_ms = agent_mod.now_ms
+        agent_mod.now_ms = lambda: now
         try:
             rec = ag.evaluate(c)
         finally:
+            agent_mod.now_ms = real_now_ms
             karar_mod.triggers = orig
         assert rec["yon"] == 1 and "oylar" in rec
         kinds = {x["tip"] for x in ag.learner.active}
