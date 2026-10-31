@@ -196,7 +196,11 @@ Bu bölüm PR #23 dalındaki gerçek kod değişikliklerini ve doğrulama durumu
 - Katalog şu an bilinçli olarak salt okunurdur. Tip, aralık, etki kapsamı, yeniden başlatma gereksinimi, yetkilendirme, audit, atomik uygulama ve rollback doğrulanmadan yazma açılmaz.
 - `radar/dashboard.py` site üretiminde `site/birlesik/ayarlar.json` üretir.
 - `radar/templates/birlesik.html` içinde Ayarlar sekmesi eklendi; katalog gerçek config dosyasından gelen değerleri gösterir ve yazma kapalı durumunu açıkça belirtir.
+- Ayar kataloğu şeması v2: her config leaf için doğrulanmış Python tipi, dizi öğe tipleri, koruma seviyesi, kapsam ve doğrulanmamış alanların (min/max/enum/birim/restart) açık `unknown`/null durumu yayımlanır. İşlevsel açıklama henüz doğrulanmadıysa bunu da açıkça söyler; tahmini sınır üretmez.
+- `radar/templates/birlesik.html` Ayarlar sekmesinde tür, değer, açıklama doğrulama durumu, birim/sınır/restart belirsizliklerini gösterir; yazma kapalı kalır.
 - `tests/test_unified_settings_catalog.py` ve dashboard regresyon testleri eklendi/güncellendi.
+- `polat/okx.py` ve `polat/agent.py` gerçek WebSocket bağlantı kopmalarını kanal grubuna göre Market kalite motoruna iletir; `piyasa`, `defter`, `tape` kanalları birbirinden bağımsız DISCONNECTED olur. Bağlantı ilk kez hiç kurulmadıysa sahte kopma olayı üretilmez.
+- `tests/test_market_quality_integration.py` kopma kapsamı ve Feed → Market callback yolunu; `tests/test_polat.py` fake feed imzası uyumluluğunu sınar.
 
 ### Doğrulama
 
@@ -208,8 +212,8 @@ Bu bölüm PR #23 dalındaki gerçek kod değişikliklerini ve doğrulama durumu
 ### Sıradaki uygulama işleri
 
 1. Son head için tam test paketinin sonucunu doğrula; başarısızsa düzelt.
-2. Config şeması: her alan için tip, min/max veya enum, birim, açıklama, kapsam, restart ihtiyacı ve koruma seviyesi.
-3. Salt-okunur keşif kataloğunu şema ile eşleştir; şeması olmayan parametreler yazılamaz kalsın.
+2. Her ayar için işlevsel açıklama, doğrulanmış min/max veya enum, birim, etki kapsamı, restart gereksinimi ve güvenlik sınıfını kaynak kod/config üzerinden tek tek doğrula.
+3. Salt-okunur keşif kataloğunu doğrulanmış path-specific şemayla eşleştir; şeması/limitleri belirsiz parametreler yazılamaz kalsın.
 4. Ayar değişikliği için kimlik doğrulamalı server-side API; tarayıcıya GitHub token/PAT/private key koyma.
 5. Değişiklik önizleme, onay, sürümleme, audit log, atomik config doğrulama ve rollback.
 6. Sürekli veri runtime'ı, ortak event journal, timestamp/provenance, kalite/latency motoru.
