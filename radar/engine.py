@@ -815,7 +815,7 @@ class Engine:
                 iid = x.get("instId")
                 if iid in need:
                     bid, ask = _f(x.get("bidPx"), 0.0), _f(x.get("askPx"), 0.0)
-                    event_ts = int(_f(x.get("ts"))) or None
+                    event_ts = int(_f(x.get("ts"), 0.0)) or None
                     obs = self.bbo_quality.observe(
                         symbol=iid, channel="rest_ticker", event_ts_ms=event_ts,
                         receive_ts_ms=int(now * 1000), valid=bid > 0 and ask > 0 and bid < ask,
