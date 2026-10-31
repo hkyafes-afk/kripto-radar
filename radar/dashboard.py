@@ -1,4 +1,9 @@
-"""Statik dashboard üretimi: site/index.html (veri gömülü) + site/data.json."""
+"""Tek merkezli statik dashboard üretimi.
+
+site/index.html: Baş Trader birleşik paneli (tek ana giriş).
+site/radar.html: eski Radar paneli, geçiş süresince salt-okunur arşiv.
+site/birlesik.html: eski bağlantılar için uyumluluk alias'ı.
+"""
 from __future__ import annotations
 
 import json
@@ -7,7 +12,9 @@ from pathlib import Path
 
 from . import store
 
-TEMPLATE = Path(__file__).resolve().parent / "templates" / "index.html"
+TEMPLATES = Path(__file__).resolve().parent / "templates"
+LEGACY_TEMPLATE = TEMPLATES / "index.html"
+UNIFIED_TEMPLATE = TEMPLATES / "birlesik.html"
 
 
 def write_site(site: Path, payload: dict) -> None:
@@ -16,16 +23,20 @@ def write_site(site: Path, payload: dict) -> None:
     clean = store.clean(payload)
     data = json.dumps(clean, ensure_ascii=False, separators=(",", ":"))
     (site / "data.json").write_text(data, encoding="utf-8")
+
     bt = site / "backtest.json"
     repo_bt = Path(__file__).resolve().parent.parent / "data" / "backtest.json"
     if repo_bt.exists():
         shutil.copyfile(repo_bt, bt)
-    html = TEMPLATE.read_text(encoding="utf-8")
-    html = html.replace("/*__DATA__*/null", data.replace("</", "<\\/"))
-    (site / "index.html").write_text(html, encoding="utf-8")
+
+    # Eski dashboard'u silmek yerine radar.html arşiv rotasında tut.
+    legacy = LEGACY_TEMPLATE.read_text(encoding="utf-8")
+    legacy = legacy.replace("/*__DATA__*/null", data.replace("</", "<\\/"))
+    (site / "radar.html").write_text(legacy, encoding="utf-8")
+
+    # Tek ana giriş: birleşik Baş Trader. Bu panel kendi data.json ve birlesik/* JSON'larını okur.
+    unified = UNIFIED_TEMPLATE.read_text(encoding="utf-8")
+    (site / "index.html").write_text(unified, encoding="utf-8")
+    # Eski doğrudan bağlantıları kırmamak için alias dosyasını da koru.
+    (site / "birlesik.html").write_text(unified, encoding="utf-8")
     (site / ".nojekyll").write_text("", encoding="utf-8")
-    for name in ("polat.html",                             # Polat sayfası (bağımsız ajan; veriyi kendi dalından okur)
-                 "birlesik.html"):                         # Birleşik Baş Trader paneli (veriyi site/birlesik/'ten okur)
-        src = TEMPLATE.parent / name
-        if src.exists():
-            shutil.copyfile(src, site / name)
