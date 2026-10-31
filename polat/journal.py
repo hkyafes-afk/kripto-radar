@@ -58,6 +58,7 @@ class Journal:
         self._lock = threading.Lock()
         self._dec: list[tuple[int, bool, str]] = []        # canlı dosyadaki kararlar: (ts, girildi, engel anahtarı)
         self._summary: dict = {}
+        self.errors: list[str] = []  # writer hataları sessizce kaybolmasın; sağlık kontrolü/teşhis için
         self.rotate(force_scan=True)                        # eski biçimli/büyük dosyayı da hafifletir
         self.q: queue.Queue = queue.Queue()
         self._t = threading.Thread(target=self._run, daemon=True, name="gunluk")
@@ -78,8 +79,8 @@ class Journal:
                 else:
                     with self._lock:
                         self._append_nolock(kind, rec)
-            except Exception:  # noqa: BLE001
-                pass
+            except Exception as exc:  # noqa: BLE001
+                self.errors.append(f"{kind}: {type(exc).__name__}: {exc}")
             finally:
                 self.q.task_done()
 
