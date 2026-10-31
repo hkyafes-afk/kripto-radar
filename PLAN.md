@@ -3,12 +3,11 @@
 > Bu dosya kullanıcıyla birlikte alınan kararların kalıcı kaydıdır. Her yeni çalışma oturumunda **önce bu dosya okunur**.
 > Son güncelleme: 27 Ekim 2026 (v10 uygulandı)
 
-## Birleşik Baş Trader (30.10.2026, geliştirme dalı)
+## Birleşik Baş Trader (31.10.2026, main'e alındı)
 
-Çok ajanlı yapıdan tek merkezden karar veren yapıya geçiş planı ve durumu: `docs/birlesik/PLAN.md` (plan),
-`docs/birlesik/DEVAM.md` (yarıda kalırsa devam), `docs/birlesik/GOREV.md` (kullanıcı talimatı). Dal:
-`feat/unified-trader-foundation`. Varsayılan `birlesik.karar_modu: legacy` → mevcut sistem aynen çalışır.
+Geçiş uygulaması PR #20 ile main'e alındı (c6970f801ba6dfbc0b3e3872ccff47930e3ef4db). Güncel çalışma modu birlesik.karar_modu: unified; tek yeni-pozisyon yetkilisi UnifiedTrader, başlangıç sermayesi 100 USDT ve yürütme PAPER'dır. Gerçek OKX emir/private API kapalıdır. Legacy Radar ve Polat geçmiş/araştırma/challenger ve mevcut sanal pozisyon yönetimi için korunur; yeni bağımsız giriş yetkileri kapalıdır. Ana dashboard index.html birleşik paneldir.
 
+Detaylar: docs/birlesik/PLAN.md, docs/birlesik/DEVAM.md, docs/birlesik/GOREV.md, docs/AGENT_MIGRATION.md. Bu dosyanın aşağıdaki v10 ve önceki yatırım ekibi bölümleri tarihsel legacy kararlarını içerir; güncel üretim yapılandırmasının yerine geçmez.
 ## 0. Nihai hedef
 
 Önce demo parayla, **masraflar düştükten sonra işlem başına beklenen kârı (R) kanıtlanmış şekilde pozitif** bir ajan

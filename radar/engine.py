@@ -543,7 +543,7 @@ class Engine:
                    "btc_bear": w.get("btc_bear", regime < 0), "btc_bull": w.get("btc_bull", regime > 0),
                    "w_trend": w.get("trend"), "high_vol": w.get("high_vol"),
                    "d_up": bool(Dl["close"] > Dl["sma50"]), "d_dn": bool(Dl["close"] < Dl["sma50"]),
-                   "hour": int(close_ts.hour), "dow": int(close_ts.dayofweek)}
+                   "hour": int(close_ts.hour), "dow": int(close_ts.day_of_week)}
             issue = self._data_issue(df, tf, feat["price"], row["sym"], feat.get("atr"))
             if issue:
                 ctx["suspect"] = issue

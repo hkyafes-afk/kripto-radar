@@ -138,7 +138,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;paddin
         <div class="brand"><span style="font-size:26px">👑</span><h1>Baş Trader</h1><span class="pill p-shadow" id="modePill">SHADOW</span></div>
         <button class="ib" id="bellBtn" aria-label="Uyarılar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="dot" id="bellDot"></span></button>
       </div>
-      <div class="tag">Gerçek emir yok • Canlı piyasa • Sanal işlemler</div>
+      <div class="tag" id="modeTag">Gerçek emir yok • Canlı piyasa • Sanal işlemler</div>
       <div class="fresh" id="fresh"></div>
       <div id="warn"></div>
       <div class="kpis" id="kpis"></div>
@@ -243,8 +243,8 @@ function render() {
   if (st.data === "kesik") W.push(["red", "Bağlantı kesik: site verisine ulaşılamadı."]);
   else if (st.data === "bayat") W.push(["", `Bayat: canlı döngü ${ago(data.generated_at)} yayın yaptı; döngü yeniden başlıyor olabilir.`]);
   if (st.okx === "kesik") W.push(["red", "Bağlantı kesik: OKX canlı fiyat akışı sağlıksız."]);
-  if (st.durum === "yok" && st.data === "ok") W.push(["", "Veri yok: gölge sanal portföy henüz ilk turunu yayınlamadı."]);
-  if (st.durum === "bayat") W.push(["", "Bayat: gölge sanal portföy " + ago(durum.ts) + " güncellendi."]);
+  if (st.durum === "yok" && st.data === "ok") W.push(["", "Veri yok: Birleşik PAPER portföyü henüz ilk turunu yayınlamadı."]);
+  if (st.durum === "bayat") W.push(["", "Bayat: Birleşik PAPER portföyü " + ago(durum.ts) + " güncellendi."]);
   if (durum && (durum.hatalar || []).length) W.push(["", "Son hatalar: " + durum.hatalar.join(" · ")]);
   $("warn").innerHTML = W.map(([c, t]) => `<div class="warn ${c}">${esc(t)}</div>`).join("");
   $("bellDot").classList.toggle("on", W.length > 0);
@@ -257,7 +257,7 @@ function render() {
     k("Toplam Değer (Sanal)", isNum(eq) ? "$" + fmt(eq) : "—", isNum(tot) ? `<span class="${cls(tot)}">${usd(tot)} (${sgn(tot / start * 100, 2, "%")})</span>` : badge(st.durum), "", "kEq") +
     k("Açık İşlemler", durum ? pos.length : "—", durum ? `<span class="up">+${win}</span> / <span class="down">-${lose}</span>` : badge(st.durum)) +
     k("Bugünkü Karar", decs.length ? decs.length : (st.dec === "ok" ? 0 : "—"), decs.length ? `Aç: <b class="up">${(c.OPEN || 0) + (c.REDUCE_SIZE || 0)}</b> &nbsp;Gölge: <b>${c.SHADOW || 0}</b> &nbsp;Red: <b class="down">${c.REJECT || 0}</b>` : badge(st.dec)) +
-    k("Günlük Gölge K/Z", isNum(dpl) ? usd(dpl) : "—", isNum(dpl) && dstart ? `<span class="${cls(dpl)}">${sgn(dpl / dstart * 100, 2, "%")}</span>` : badge(st.durum), cls(dpl));
+    k("Günlük PAPER K/Z", isNum(dpl) ? usd(dpl) : "—", isNum(dpl) && dstart ? `<span class="${cls(dpl)}">${sgn(dpl / dstart * 100, 2, "%")}</span>` : badge(st.durum), cls(dpl));
   renderBtc(data, durum); renderSys(data, durum, st); renderTabs(pos, closed, decs, data, st, durum, ozet); renderPf(durum, tot, dpl, start, st); applyLive();
 }
 
@@ -583,28 +583,27 @@ function applyLive() {
 window.__BT = {calcLive, cardState, instIds};
 
 async function load() {
-  const [D, duShadow, duUnified, oz, t0, t1, hz] = await Promise.all([
-    get("data.json"), get("birlesik/golge/durum.json"), get("birlesik/durum.json"), get("birlesik/ozet.json"),
-    get(`birlesik/kararlar-${day(0)}.jsonl`, true), get(`birlesik/kararlar-${day(1)}.jsonl`, true), get("birlesik/hazirlik.json")]);
+  const [D, duUnified, t0, t1] = await Promise.all([
+    get("data.json"), get("birlesik/durum.json"),
+    get(`birlesik/kararlar-${day(0)}.jsonl`, true), get(`birlesik/kararlar-${day(1)}.jsonl`, true)]);
   const data = D.v;
-  // Unified PAPER durumu ile eski shadow dosyası ayrı tutulur. En yeni gerçek motor
-  // durumunu seç; birleşik modda gölge özetini aktif portföy gibi göstermeyi önle.
+  // Ana panel yalnız UnifiedTrader'ın 100 USDT PAPER portföyünü gösterir.
+  // Eski shadow/legacy defterleri arşivdir; aktif hesap bakiyesi olarak kullanılmaz.
   const unifiedStatus = duUnified.v && duUnified.v.mod === "unified" ? duUnified : null;
-  const shadowStatus = duShadow.v ? duShadow : null;
-  const useUnified = !!(unifiedStatus && (!shadowStatus || (unifiedStatus.v.ts || 0) >= (shadowStatus.v.ts || 0)));
-  const selected = useUnified ? unifiedStatus : (shadowStatus || duUnified);
-  const durum = selected.v, ozet = useUnified ? durum : oz.v;
+  const durum = unifiedStatus ? unifiedStatus.v : null;
+  const ozet = durum;
   const okx = data && data.feeds && data.feeds.okx;
-  const summaryState = useUnified ? selected.st : oz.st;
+  const summaryState = unifiedStatus ? unifiedStatus.st : duUnified.st;
   const st = {data: fresh(D.st, data && data.generated_at, LIM.data), ozet: fresh(summaryState, ozet && ozet.ts, LIM.ozet),
-    durum: fresh(selected.st, durum && durum.ts, LIM.durum), dec: (t0.st === "ok" || t1.st === "ok") ? "ok" : (t0.st === "kesik" ? "kesik" : "yok")};
+    durum: fresh(summaryState, durum && durum.ts, LIM.durum), dec: (t0.st === "ok" || t1.st === "ok") ? "ok" : (t0.st === "kesik" ? "kesik" : "yok")};
   st.okx = !data ? st.data : (okx ? (okx.healthy ? "ok" : "kesik") : "yok");
   const seen = new Map();
   for (const r of [...t1.v, ...t0.v]) seen.set(r.idempotency_key || (r.symbol + r.strategy + r.side), r);
   const decs = [...seen.values()].filter(r => (r.kayit_ms || r.ts_ms || 0) > Date.now() - 24 * 3600e3)
     .sort((a, b) => (b.kayit_ms || b.ts_ms) - (a.kayit_ms || a.ts_ms));
-  S.data = {data, durum, ozet, decs, st, haz: hz.v};
-  $("modePill").textContent = (durum && durum.mod === "unified") ? "PAPER · TEK OTORİTE" : "SHADOW";
+  S.data = {data, durum, ozet, decs, st, haz: null};
+  $("modePill").textContent = "PAPER · TEK OTORİTE";
+  $("modeTag").textContent = durum ? "100 USDT PAPER • Deneysel doğrulama sürüyor • Gerçek OKX emirleri kapalı" : "100 USDT PAPER • Birleşik durum bekleniyor • Eski defterler arşivde • Gerçek OKX emirleri kapalı";
   render();
   subscribeAll();
 }

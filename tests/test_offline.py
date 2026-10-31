@@ -285,7 +285,7 @@ def test_demo_scan_end_to_end():
         assert p["counts"]["scanned"] >= 30
         assert not any(c["sym"] == "CL" for c in p["coins"]), "emtia kontratı filtrelenmeli"
         html = (Path(d) / "index.html").read_text(encoding="utf-8")
-        assert "birlesik/durum.json" in html and "birlesik/golge/durum.json" in html
+        assert "birlesik/durum.json" in html and "birlesik/golge/durum.json" not in html
         # ikinci tarama: defter tekrar açmamalı
         p2 = scan.run(Path(d), client=DemoClient(), notify=False, demo=True)
         assert len(p2["ledger"]["open"]) == len(p["ledger"]["open"])
