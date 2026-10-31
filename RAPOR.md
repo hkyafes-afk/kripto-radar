@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.247R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.246R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 2560 | %48.4 | -0.247 | -633.25 |
+| polat_tum_sinyaller | 2568 | %48.4 | -0.246 | -632.0 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 2547 | %48.3 | -0.247 | -627.89 |
-| rastgele | 2531 | %43.5 | -0.351 | -888.9 |
-| trend_naif | 2575 | %42.4 | -0.368 | -946.36 |
+| polat_girilmeyen | 2555 | %48.3 | -0.245 | -626.64 |
+| rastgele | 2542 | %43.7 | -0.347 | -881.44 |
+| trend_naif | 2578 | %42.5 | -0.366 | -943.74 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-4.33
+Polat özsermaye: %-4.71 · BTC al-tut: %-4.35
 
 ## Öğrenme (walk-forward)
 
@@ -64,7 +64,7 @@ En az işe yarayan okumalar: btc_1H ×0.336, momentum_1H ×0.46, obv_egim_1H ×0
 - aynı yönde pozisyon tavanı: 1156
 - gösterge aileleri aynı yönde değil: 722
 - bu coinde zaten pozisyon var: 464
-- büyük zaman dilimi trendi ters: 233
+- büyük zaman dilimi trendi ters: 234
 - puan -0.183 eşiğin (0.25) altında: 52
 - puan -0.213 eşiğin (0.25) altında: 52
 - puan -0.182 eşiğin (0.25) altında: 50
@@ -129,7 +129,7 @@ En az işe yarayan okumalar: btc_1H ×0.336, momentum_1H ×0.46, obv_egim_1H ×0
 - günlük işlem tavanı (8): 7185
 - üst üste 3 zarar: 2345
 - gösterge aileleri aynı yönde değil: 2321
-- büyük zaman dilimi trendi ters: 1960
+- büyük zaman dilimi trendi ters: 1961
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
@@ -196,7 +196,7 @@ En az işe yarayan okumalar: btc_1H ×0.336, momentum_1H ×0.46, obv_egim_1H ×0
 - günlük işlem tavanı (8): 7185
 - üst üste 3 zarar: 2345
 - gösterge aileleri aynı yönde değil: 2321
-- büyük zaman dilimi trendi ters: 1960
+- büyük zaman dilimi trendi ters: 1961
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
