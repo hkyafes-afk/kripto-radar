@@ -710,3 +710,12 @@ if __name__ == "__main__":
         if name.startswith("test_"):
             fn()
             print("✓", name)
+
+
+
+def test_polat_yeni_pozisyon_yetkisi_varsayilan_ve_challenger():
+    from polat.agent import new_position_authorized
+
+    assert new_position_authorized({})
+    assert new_position_authorized({"yetki": {"yeni_pozisyon": True}})
+    assert not new_position_authorized({"yetki": {"yeni_pozisyon": False}})
