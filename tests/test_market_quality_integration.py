@@ -1,6 +1,5 @@
 from polat.market import Market
 from polat.okx import Feed
-from radar.config import load_config
 
 
 def _market():
@@ -88,7 +87,11 @@ def test_okx_feed_disconnect_callback_updates_market_quality():
                    "askPx": "100.1", "ts": "1000"}]},
         recv_ms=1_010,
     )
-    feed = Feed(load_config(), market.handle, on_disconnect=market.disconnect_channels)
+    feed = Feed(
+        {"veri": {"ws_public": [], "ws_business": [], "zaman_dilimleri": ["1m"]}},
+        market.handle,
+        on_disconnect=market.disconnect_channels,
+    )
     feed._disconnected("piyasa", 1_020)
 
     quality = market.stats()["kalite_telemetrisi"]["kanallar"]["tickers"]
