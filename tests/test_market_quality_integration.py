@@ -97,3 +97,21 @@ def test_okx_feed_disconnect_callback_updates_market_quality():
     quality = market.stats()["kalite_telemetrisi"]["kanallar"]["tickers"]
     assert quality["durumlar"]["DISCONNECTED"] == 1
     assert quality["durumlar"]["LIVE"] == 0
+
+
+
+def test_market_writes_raw_feed_events_to_bounded_journal(tmp_path):
+    market = Market(_config(), {}, event_journal_path=tmp_path / "raw.jsonl")
+    market.handle(
+        {"arg": {"channel": "tickers", "instId": "BTC-USDT-SWAP"},
+         "data": [{"instId": "BTC-USDT-SWAP", "last": "100", "bidPx": "99.9",
+                   "askPx": "100.1", "ts": "1000"}]},
+        recv_ms=1_010,
+    )
+    result = market.close()
+    assert result["complete"] is True
+    assert result["records_this_run"] == 1
+    raw = next(market.event_journal.journal.records())
+    assert raw["source"] == "okx_public"
+    assert raw["channel"] == "tickers"
+    assert raw["event_ts_ms"] == 1000
