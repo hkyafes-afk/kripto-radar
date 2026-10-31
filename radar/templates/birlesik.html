@@ -258,7 +258,7 @@ function render() {
     k("Açık İşlemler", durum ? pos.length : "—", durum ? `<span class="up">+${win}</span> / <span class="down">-${lose}</span>` : badge(st.durum)) +
     k("Bugünkü Karar", decs.length ? decs.length : (st.dec === "ok" ? 0 : "—"), decs.length ? `Aç: <b class="up">${(c.OPEN || 0) + (c.REDUCE_SIZE || 0)}</b> &nbsp;Gölge: <b>${c.SHADOW || 0}</b> &nbsp;Red: <b class="down">${c.REJECT || 0}</b>` : badge(st.dec)) +
     k("Günlük PAPER K/Z", isNum(dpl) ? usd(dpl) : "—", isNum(dpl) && dstart ? `<span class="${cls(dpl)}">${sgn(dpl / dstart * 100, 2, "%")}</span>` : badge(st.durum), cls(dpl));
-  renderBtc(data, durum); renderSys(data, durum, st); renderTabs(pos, closed, decs, data, st, durum, ozet); renderPf(durum, tot, dpl, start, st); applyLive();
+  renderBtc(data, durum); renderSys(data, durum, st); renderTabs(pos, closed, decs, data, st, durum, ozet, S.data && S.data.ayarlar); renderPf(durum, tot, dpl, start, st); applyLive();
 }
 
 function renderBtc(data, durum) {
@@ -417,8 +417,25 @@ function renderSysTab(data, durum, ozet, st) {
     ${row("Gerçek emir", "ok", "Kapalı: yalnız sanal yürütme; borsaya emir gönderilmez")}</div>`;
 }
 
-function renderTabs(pos, closed, decs, data, st, durum, ozet) {
-  const T = [["acik", `Açık İşlemler (${durum ? pos.length : "—"})`], ["karar", "Son Kararlar"], ["kapanan", "Kapananlar"], ["karne", "Karne"], ["sistem", "Sistem"]];
+function renderSettings(settings) {
+  if (!settings || settings.st !== "ok" || !settings.v) return '<div class="card empty">Ayar kataloğu henüz yayımlanmadı.</div>';
+  const catalog = settings.v;
+  const labels = {capital:"Sermaye", indicators:"Göstergeler", strategies:"Stratejiler", risk:"Risk", market:"Piyasa", derivatives:"Türev Veriler", data:"Veri", costs:"Maliyetler", notifications:"Bildirimler", dashboard:"Dashboard", general:"Genel"};
+  const groups = {};
+  for (const p of (catalog.parameters || [])) (groups[p.category] ||= []).push(p);
+  let html = '<div class="card"><div class="hrow"><h2>⚙️ Parametre kataloğu</h2>' + badge("Salt okunur") + '</div><div class="note">Kod ve config içindeki parametreler otomatik keşfedilir. Bu sürümde ayar yazma kapalıdır; henüz aralık doğrulama, onay, atomik uygulama ve geri alma API\\'si yoktur.</div><div class="cells"><div class="cell"><div class="l">Keşfedilen</div><div class="v num">' + catalog.parameter_count + '</div></div><div class="cell"><div class="l">Korunan</div><div class="v num">' + (catalog.parameters || []).filter(x => x.protected).length + '</div></div><div class="cell"><div class="l">Yazılabilir</div><div class="v num">0</div></div><div class="cell"><div class="l">Şema sürümü</div><div class="v num">' + catalog.schema_version + '</div></div></div></div>';
+  for (const key of Object.keys(groups).sort()) {
+    html += '<div class="sec">' + esc(labels[key] || key) + '</div><div class="card dl">' + groups[key].map(p => {
+      const value = typeof p.value === "string" ? p.value : JSON.stringify(p.value);
+      const status = p.protected ? "KORUNAN" : "KEŞFEDİLDİ · YAZMA KAPALI";
+      return '<div class="dr"><div>⚙️</div><div style="min-width:0"><div class="t1"><b>' + esc(p.label) + '</b><span class="chip">' + esc(p.value_type) + '</span><span class="chip">' + status + '</span></div><div class="t2">' + esc(p.path) + ' · Değer: <span class="num">' + esc(value) + '</span></div></div><div class="tm">' + (p.protected ? "Kilitli" : "Salt okunur") + '</div></div>';
+    }).join("") + '</div>';
+  }
+  return html;
+}
+
+function renderTabs(pos, closed, decs, data, st, durum, ozet, settings) {
+  const T = [["acik", `Açık İşlemler (${durum ? pos.length : "—"})`], ["karar", "Son Kararlar"], ["kapanan", "Kapananlar"], ["karne", "Karne"], ["sistem", "Sistem"], ["ayarlar", "Ayarlar"]];
   $("tabs").innerHTML = T.map(([k, n]) => `<button class="tab ${S.tab === k ? "on" : ""}" data-t="${k}">${n}</button>`).join("");
   $("tabs").querySelectorAll(".tab").forEach(b => b.onclick = () => setTab(b.dataset.t, false));
   let h;
@@ -428,7 +445,9 @@ function renderTabs(pos, closed, decs, data, st, durum, ozet) {
   else if (S.tab === "karar") h = engelOzet(S.data && S.data.haz) + `<div class="hrow" style="margin:0 2px 8px"><h2>Son Kararlar (${decs.length})</h2>${badge(st.dec)}</div>` +
       (decs.length ? `<div class="card dl">${decs.slice(0, 80).map(decRow).join("")}</div>` : `<div class="card empty">${(STL[st.dec] || STL.yok)[0]}.</div>`);
   else if (S.tab === "karne") h = renderKarne(data && data.karne, st.data);
-  else h = renderSysTab(data, durum, ozet, st);
+  else if (S.tab === "ayarlar") h = renderSettings(settings);
+  else if (S.tab === "sistem") h = renderSysTab(data, durum, ozet, st);
+  else h = `<div class="card empty">Bu bölüm henüz bağlı değil.</div>`;
   $("view").innerHTML = h;
 }
 
@@ -583,9 +602,9 @@ function applyLive() {
 window.__BT = {calcLive, cardState, instIds};
 
 async function load() {
-  const [D, duUnified, t0, t1, hz] = await Promise.all([
+  const [D, duUnified, t0, t1, hz, ayarlar] = await Promise.all([
     get("data.json"), get("birlesik/durum.json"),
-    get(`birlesik/kararlar-${day(0)}.jsonl`, true), get(`birlesik/kararlar-${day(1)}.jsonl`, true), get("birlesik/hazirlik.json")]);
+    get(`birlesik/kararlar-${day(0)}.jsonl`, true), get(`birlesik/kararlar-${day(1)}.jsonl`, true), get("birlesik/hazirlik.json"), get("birlesik/ayarlar.json")]);
   const data = D.v;
   // Ana panel yalnız UnifiedTrader'ın 100 USDT PAPER portföyünü gösterir.
   // Eski shadow/legacy defterleri arşivdir; aktif hesap bakiyesi olarak kullanılmaz.
@@ -601,7 +620,7 @@ async function load() {
   for (const r of [...t1.v, ...t0.v]) seen.set(r.idempotency_key || (r.symbol + r.strategy + r.side), r);
   const decs = [...seen.values()].filter(r => (r.kayit_ms || r.ts_ms || 0) > Date.now() - 24 * 3600e3)
     .sort((a, b) => (b.kayit_ms || b.ts_ms) - (a.kayit_ms || a.ts_ms));
-  S.data = {data, durum, ozet, decs, st, haz: hz.v};
+  S.data = {data, durum, ozet, decs, st, haz: hz.v, ayarlar};
   $("modePill").textContent = "PAPER · TEK OTORİTE";
   $("modeTag").textContent = durum ? "100 USDT PAPER • Deneysel doğrulama sürüyor • Gerçek OKX emirleri kapalı" : "100 USDT PAPER • Birleşik durum bekleniyor • Eski defterler arşivde • Gerçek OKX emirleri kapalı";
   render();
