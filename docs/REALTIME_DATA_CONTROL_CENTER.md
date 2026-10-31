@@ -32,6 +32,7 @@ Başlangıç main commit: 69a6239d4d6c9846db7defd01101a377e71ea170
 ### Çalıştırma ve yayın
 
 - `.github/workflows/canli.yml` GitHub Actions üzerinde uzun koşu/lease devriyle çalışır; GitHub Actions runner kalıcı, düşük gecikmeli WebSocket sunucusu olarak kabul edilmemelidir.
+- `.github/workflows/polat.yml` de 6 saatlik koşu/lease zinciriyle yaklaşık sürekli çalışma hedefler. Bu, kesintisiz tek process/kalıcı socket veya milisaniye gecikme SLA'sı değildir; koşular arasında runner değişimi ve devir aralığı olabilir.
 - GitHub Pages statik sunum katmanıdır; tarayıcıdan doğrudan public OKX WebSocket alınabilir, ancak UnifiedTrader karar motorunun sürekli çalışması ve güvenilir durum yayını ayrı bir sürekli çalışan servis gerektirir.
 - GitHub Pages statik sayfasına GitHub token/PAT veya uygulama özel anahtarı gömülmez. Ayar kaydetme için kimlik doğrulamalı sunucu tarafı yazma aracısı gerekir.
 
@@ -184,6 +185,10 @@ Gerçek canlı işlem, bu çalışmanın kapsamı değildir.
 Bu bölüm PR #23 dalındaki gerçek kod değişikliklerini ve doğrulama durumunu kaydeder.
 
 ### Tamamlanan ilk uygulama dilimi
+- `polat/okx.py`: OKX bağlantı döngüsü gerçekten kurulmuş bir WebSocket bağlantısı koptuğunda ilgili bağlantı grubunu callback ile bildirir; başarısız ilk bağlantı denemeleri sahte kopma olayı üretmez.
+- `polat/agent.py` bu callback'i `Market.disconnect_channels` ile bağlar. Piyasa, defter ve tape bağlantıları yalnızca kendi kanal gözlemlerini DISCONNECTED yapar; diğer bağlantı grupları etkilenmez.
+- `tests/test_market_quality_integration.py` bağlantı grubuna özgü kopma durumunu ve Feed → Market callback yolunu sınar. Test fake feed'i de yeni opsiyonel callback imzasıyla uyumlu tutuldu.
+- Bu kopma sinyali Polat'ın kanal telemetrisi içindir; UnifiedTrader strateji bazlı kalite kapısı henüz Polat'ın tüm normalize verileriyle birleştirilmiş değildir.
 
 - `radar/unified/settings.py`: `config.yaml` içindeki iç içe parametreleri deterministik biçimde keşfeden ve kategoriye ayıran katalog eklendi.
 - Güvenlik/işlem yetkisi alanları (`birlesik.karar_modu`, `birlesik.yurutme_modu`) sıradan ayar olarak işaretlenmez.
