@@ -31,7 +31,7 @@ VERSION = "2.0"
 
 def new_position_authorized(cfg: dict) -> bool:
     """Eski bağımsız ajanlar varsayılan olarak challenger'dır; yeni pozisyon yetkisi açıkça verilir."""
-    return bool((cfg.get("yetki") or {}).get("yeni_pozisyon", True))
+    return bool((cfg.get("yetki") or {}).get("yeni_pozisyon", False))
 
 
 class Notifier:
