@@ -157,10 +157,10 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;paddin
 </div>
 <nav class="bnav" id="bnav">
   <button data-go="home" class="on"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3 2 11h3v9h6v-6h2v6h6v-9h3z"/></svg>Ana Sayfa</button>
-  <button data-go="acik"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h13l-3-3M20 17H7l3 3"/></svg>İşlemler</button>
+  <button data-go="portfoy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h13l-3-3M20 17H7l3 3"/></svg>Portföy</button>
   <button data-go="karar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="m8 12 3 3 5-6"/></svg>Kararlar</button>
-  <button data-go="karne"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 20V10M10 20V4M15 20v-7M20 20V8"/></svg>Karne</button>
-  <button data-go="sistem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>Sistem</button>
+  <button data-go="performans"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 20V10M10 20V4M15 20v-7M20 20V8"/></svg>Performans</button>
+  <button data-go="veri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>Veri</button>
 </nav>
 <script>
 "use strict";
@@ -190,7 +190,7 @@ const COLORS = ["#14b8a6", "#c2a633", "#8b5cf6", "#ec4899", "#0ea5e9", "#f97316"
 const coinIcon = s => { s = String(s || "?"); let h = 0; for (const c of s) h = (h * 31 + c.charCodeAt(0)) >>> 0;
   const col = s === "BTC" ? "#f7931a" : s === "ETH" ? "#627eea" : COLORS[h % COLORS.length];
   return `<div class="coin" style="background:${col}">${esc(s.slice(0, 1))}</div>`; };
-const S = {tab: "acik", range: 24, data: null};
+const S = {tab: "portfoy", range: 24, data: null};
 try { const t = localStorage.getItem("bt_tab"); if (t) S.tab = t; } catch (e) {}
 
 async function get(p, lines = false) {
@@ -464,26 +464,53 @@ function renderSettings(settings) {
   return html;
 }
 
+function renderOpportunities(decs, st) {
+  const rows = decs.filter(x => ["OPEN", "REDUCE_SIZE", "SHADOW"].includes(x.decision));
+  const counts = rows.reduce((a, x) => (a[x.decision] = (a[x.decision] || 0) + 1, a), {});
+  return `<div class="hrow"><h2>Fırsat akışı · son 24 saat</h2>${badge(st.dec)}</div>` +
+    `<div class="cells"><div class="cell"><div class="l">Kabul</div><div class="v num">${counts.OPEN || 0}</div></div>` +
+    `<div class="cell"><div class="l">Boyut azalt</div><div class="v num">${counts.REDUCE_SIZE || 0}</div></div>` +
+    `<div class="cell"><div class="l">Gölge / challenger</div><div class="v num">${counts.SHADOW || 0}</div></div></div>` +
+    (rows.length ? `<div class="card dl">${rows.slice(0, 80).map(decRow).join("")}</div>` :
+      `<div class="card empty">${(STL[st.dec] || STL.yok)[0]}. Son 24 saatte kabul edilmiş veya gölgeye alınmış karar kaydı yok.</div>`) +
+    `<div class="note">Bu görünüm karar günlüğündeki gerçek OPEN/REDUCE_SIZE/SHADOW kayıtlarını gösterir; tahmini sinyal veya otomatik fırsat üretmez.</div>`;
+}
+
+function renderExperimentLab(K, st) {
+  if (!K) return `<div class="card empty">${(STL[st] || STL.yok)[0]}. Deney/SHADOW karne verisi henüz yayımlanmadı.</div>`;
+  let h = statBox(K.yeni_golge, "UnifiedTrader · ayrı SHADOW defteri", "Ücret, kayma ve funding düşülmüş sanal sonuçlar; legacy ve PAPER portföyüne karıştırılmaz.");
+  if ((K.yeni_kaynaklar || []).length) h += `<div class="sec">Strateji / sinyal kaynağı</div>` +
+    K.yeni_kaynaklar.map(r => statBox(r.golge_sanal, esc(r.etiket), "Ayrı shadow sonuçları")).join("");
+  return h + `<div class="note">Bu alan yalnız mevcut shadow kapanış kayıtlarını raporlar. Örneklem yetersizse performans kanıtı veya strateji terfisi anlamına gelmez.</div>`;
+}
+
 function renderTabs(pos, closed, decs, data, st, durum, ozet, settings) {
-  const T = [["acik", `Açık İşlemler (${durum ? pos.length : "—"})`], ["karar", "Son Kararlar"], ["kapanan", "Kapananlar"], ["karne", "Karne"], ["veri", "Veri Sağlığı"], ["sistem", "Sistem"], ["ayarlar", "Ayarlar"]];
+  const T = [["firsat", "Fırsatlar"], ["portfoy", `Portföy (${durum ? pos.length : "—"})`],
+    ["karar", "Karar Merkezi"], ["performans", "Performans"], ["deney", "Deney Laboratuvarı"],
+    ["veri", "Veri Sağlığı"], ["ayarlar", "Ayarlar"], ["sistem", "Sistem"]];
   $("tabs").innerHTML = T.map(([k, n]) => `<button class="tab ${S.tab === k ? "on" : ""}" data-t="${k}">${n}</button>`).join("");
   $("tabs").querySelectorAll(".tab").forEach(b => b.onclick = () => setTab(b.dataset.t, false));
   let h;
-  if (S.tab === "acik") h = pos.length ? pos.map(tradeCard).join("")
-      : `<div class="card empty">${durum ? "Açık sanal işlem yok. Baş Trader açma kararı verdiğinde burada görünür." : (STL[st.durum] || STL.yok)[0] + "."}</div>`;
-  else if (S.tab === "kapanan") h = closed.length ? closed.map(closedCard).join("") : `<div class="card empty">${durum ? "Henüz kapanan sanal işlem yok." : (STL[st.durum] || STL.yok)[0] + "."}</div>`;
+  if (S.tab === "firsat") h = renderOpportunities(decs, st.dec);
+  else if (S.tab === "portfoy" || S.tab === "acik" || S.tab === "kapanan") {
+    h = `<div class="hrow"><h2>Açık PAPER pozisyonları (${pos.length})</h2>${badge(st.durum)}</div>` +
+      (pos.length ? pos.map(tradeCard).join("") : `<div class="card empty">${durum ? "Açık sanal işlem yok." : (STL[st.durum] || STL.yok)[0] + "."}</div>`) +
+      `<div class="sec">Son kapanan PAPER işlemleri</div>` +
+      (closed.length ? closed.slice(0, 20).map(closedCard).join("") : `<div class="card empty">${durum ? "Henüz kapanan sanal işlem yok." : (STL[st.durum] || STL.yok)[0] + "."}</div>`);
+  }
   else if (S.tab === "karar") h = engelOzet(S.data && S.data.haz) + `<div class="hrow" style="margin:0 2px 8px"><h2>Son Kararlar (${decs.length})</h2>${badge(st.dec)}</div>` +
       (decs.length ? `<div class="card dl">${decs.slice(0, 80).map(decRow).join("")}</div>` : `<div class="card empty">${(STL[st.dec] || STL.yok)[0]}.</div>`);
-  else if (S.tab === "karne") h = renderKarne(data && data.karne, st.data);
+  else if (S.tab === "performans" || S.tab === "karne") h = renderKarne(data && data.karne, st.data);
+  else if (S.tab === "deney") h = renderExperimentLab(data && data.karne, st.data);
   else if (S.tab === "veri") h = renderDataHealth(durum);
   else if (S.tab === "ayarlar") h = renderSettings(settings);
   else if (S.tab === "sistem") h = renderSysTab(data, durum, ozet, st);
-  else h = `<div class="card empty">Bu bölüm henüz bağlı değil.</div>`;
+  else h = `<div class="card empty">Bu bölüm için gerçek veri henüz yayımlanmadı.</div>`;
   $("view").innerHTML = h;
 }
 
 function renderPf(durum, tot, dpl, start, st) {
-  $("pf").innerHTML = `<div class="hrow"><h2>💼 Portföy Özeti (Sanal)</h2><button class="btn" data-go="karne">Karne ›</button></div>
+  $("pf").innerHTML = `<div class="hrow"><h2>💼 Portföy Özeti (Sanal)</h2><button class="btn" data-go="performans">Performans ›</button></div>
     <div class="pf"><div><div class="l">Günlük K/Z</div><div class="v num ${cls(dpl)}">${usd(dpl)}</div>
       <div class="s num ${cls(dpl)}">${isNum(dpl) && durum.gun_basi ? sgn(dpl / durum.gun_basi * 100, 2, "%") : badge(st.durum)}</div></div>
       <div><div class="l">Toplam K/Z</div><div class="v num ${cls(tot)}">${usd(tot)}</div>
