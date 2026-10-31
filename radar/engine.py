@@ -1,16 +1,15 @@
-"""Canlı motor: sürekli açık kalan, gecikmesiz döngü.
+"""Canlı motor process'i: yalnızca başlatıldığı GitHub Actions çalışması boyunca döngü yürütür.
 
-  WebSocket (OKX)   → her fiyat değişiminde (~100 ms) stop/hedef kontrolü, gerçek bid/ask, canlı funding
-  WebSocket (Bitget)→ ikinci borsa fiyatı ve funding (borsalar arası fark)
-  Telegram          → long polling ile komutlara anında cevap, gönderim kuyruğu + yeniden deneme
-  Ana döngü (0,5 sn)→ tetiklenen stop/hedefleri kapat, süre dolanları kapat, funding kesimlerini uygula,
-                      elle kapatma isteklerini işle, gerekirse yayınla
-  Arka plan işçisi  → 15dk/1S/4S mum kapanır kapanmaz tarama (+2 sn, mum kesinleşene kadar tekrar),
-                      15 dk'da bir funding, saatte bir coin listesi/BTC rejimi/OI/harvest/diğer borsalar
-  Yedek             → WebSocket koparsa REST ile 5 sn'de bir fiyat; her dakika 1 dk'lık mumlarla kontrol
+  WebSocket (OKX)    → bağlantı varken fiyat/defter olaylarını işler; bağlantı ve olay ritmi garanti edilmez.
+  WebSocket (Bitget) → yapılandırılmışsa ikinci borsa fiyatı/funding teyidi.
+  Telegram           → yapılandırılmışsa long polling; ağ ve workflow süresince kullanılabilir.
+  Ana döngü          → açık pozisyon koruma/çıkışlarını ve süre/funding kontrollerini yürütür.
+  Arka plan işçisi   → yapılandırılmış mum/periyot taramaları ve piyasa araştırması.
+  Yedek              → tanımlı REST yedekleri; kaynak erişilemezse veri UNKNOWN/STALE kalmalıdır.
 
-Aynı sınıf, test ve elle çalıştırma için tek seferlik taramayı da yapar (run_once).
-"""
+GitHub Actions lease zinciri kalıcı sunucu değildir: runner değişimi, timeout, iptal, cron
+gecikmesi ve kota nedeniyle kesinti olabilir. Bu modül 7/24 veya milisaniyelik SLA vaat etmez.
+
 from __future__ import annotations
 
 import os
