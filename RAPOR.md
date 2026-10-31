@@ -14,14 +14,14 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 2597 | %44.2 | -0.338 | -878.76 |
 | trend_naif | 2624 | %42.4 | -0.37 | -969.99 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-4.54
+Polat özsermaye: %-4.71 · BTC al-tut: %-4.48
 
 ## Öğrenme (walk-forward)
 
-Örnek 2589 (eğitim 1812, doğrulama 777) · uygulanan katsayı 59 · doğrulamada tutmadığı için reddedilen 56
+Örnek 2619 (eğitim 1833, doğrulama 786) · uygulanan katsayı 54 · doğrulamada tutmadığı için reddedilen 62
 
-En çok işe yarayan okumalar: btc_dominans ×1.537, uyusmazlik_cci_15m ×1.481, cci_5m ×1.396, uyusmazlik_macd_15m ×1.355, likidasyon_miknatisi ×1.204, uyusmazlik_mfi_15m ×1.194, mum_dis_mum_15m ×1.156, willr_5m ×1.132, mum_cimbiz_dip_5m ×1.128, mum_cimbiz_dip_15m ×1.12
-En az işe yarayan okumalar: btc_1H ×0.336, momentum_1H ×0.441, obv_egim_1H ×0.444, cift_dip_4H ×0.528, cci_1H ×0.571, ultimate_1H ×0.603, yapi_4H ×0.622, willr_1H ×0.634, dow_4H ×0.693, adx_di_4H ×0.698
+En çok işe yarayan okumalar: btc_dominans ×1.537, cci_5m ×1.412, uyusmazlik_macd_15m ×1.366, tetik_psar_donus_15m ×1.35, likidasyon_miknatisi ×1.209, mum_dis_mum_15m ×1.163, willr_5m ×1.158, mum_cimbiz_dip_5m ×1.144, mum_cimbiz_dip_15m ×1.12, defter_dengesi ×1.1
+En az işe yarayan okumalar: btc_1H ×0.336, momentum_1H ×0.437, obv_egim_1H ×0.446, cift_dip_4H ×0.522, cci_1H ×0.553, ultimate_1H ×0.595, willr_1H ×0.634, rsi_1H ×0.695, mum_asili_adam_5m ×0.705, uyusmazlik_macd_1H ×0.707
 
 ## Son 1 gün
 
@@ -58,7 +58,7 @@ En az işe yarayan okumalar: btc_1H ×0.336, momentum_1H ×0.441, obv_egim_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 6933
+- ders: 6959
 - günlük işlem tavanı (8): 2524
 - aynı yönde pozisyon tavanı: 1156
 - gösterge aileleri aynı yönde değil: 731
@@ -124,7 +124,7 @@ En az işe yarayan okumalar: btc_1H ×0.336, momentum_1H ×0.441, obv_egim_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 13900
+- ders: 13926
 - günlük işlem tavanı (8): 7185
 - üst üste 3 zarar: 2345
 - gösterge aileleri aynı yönde değil: 2330
@@ -191,7 +191,7 @@ En az işe yarayan okumalar: btc_1H ×0.336, momentum_1H ×0.441, obv_egim_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 13900
+- ders: 13926
 - günlük işlem tavanı (8): 7185
 - üst üste 3 zarar: 2345
 - gösterge aileleri aynı yönde değil: 2330
