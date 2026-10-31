@@ -37,8 +37,9 @@ def now_ms() -> int:
 class Conn:
     """Tek bir WebSocket bağlantısı: abonelik kümesi + yeniden bağlanma + ping."""
 
-    def __init__(self, name: str, urls: list[str], on_msg, stats, start_delay: float = 0.0):
+    def __init__(self, name: str, urls: list[str], on_msg, stats, start_delay: float = 0.0, on_disconnect=None):
         self.name, self.urls, self.on_msg, self.stats = name, urls, on_msg, stats
+        self.on_disconnect = on_disconnect
         self.start_delay = start_delay           # OKX: IP başına saniyede en çok 3 bağlantı → aç, kademeli
         self.subs: dict[str, dict] = {}          # anahtar → arg
         self.ws: WS | None = None
@@ -142,6 +143,7 @@ class Conn:
             await asyncio.sleep(self.start_delay)
         while not self.stopping:
             url = self.urls[i % len(self.urls)]
+            was_connected = False
             try:
                 self.ws = await WS.connect(url)
                 self.stats["baglanti"][self.name] = url
@@ -155,6 +157,7 @@ class Conn:
                     if i + 100 < len(allargs):
                         await asyncio.sleep(self.min_gap)
                 self.connected.set()
+                was_connected = True
                 delay = 1.0
                 await self._loop()
             except asyncio.CancelledError:
@@ -164,6 +167,11 @@ class Conn:
                 self.stats["son_hata"] = f"{self.name}: {type(e).__name__}: {str(e)[:120]}"
             finally:
                 self.connected.clear()
+                if was_connected and self.on_disconnect:
+                    try:
+                        self.on_disconnect(self.name, now_ms())
+                    except Exception:  # noqa: BLE001 — telemetri hatası reconnect döngüsünü durdurmaz
+                        pass
                 if self.ws:
                     await self.ws.close()
                 self.ws = None
@@ -209,14 +217,21 @@ class Conn:
 
 
 class Feed:
-    def __init__(self, cfg: dict, on_msg):
+    def __init__(self, cfg: dict, on_msg, on_disconnect=None):
         v = cfg["veri"]
         self.stats = {"baglanti": {}, "kopma": {}, "son_hata": ""}
         names = [("piyasa", "ws_public"), ("defter", "ws_public"), ("tape", "ws_public"),
                  ("mum", "ws_business"), ("mum_genel", "ws_business")]
-        self.conns = {n: Conn(n, v[u], on_msg, self.stats, start_delay=i * 0.4) for i, (n, u) in enumerate(names)}
+        self.on_disconnect = on_disconnect
+        self.conns = {n: Conn(n, v[u], on_msg, self.stats, start_delay=i * 0.4,
+                              on_disconnect=self._disconnected) for i, (n, u) in enumerate(names)}
         self.book_channel = v.get("defter_kanali", "books")
         self.tfs = v["zaman_dilimleri"]
+
+    def _disconnected(self, connection_name: str, receive_ts_ms: int) -> None:
+        """Bağlantısı gerçekten kurulmuş kanal grubu koptuğunda kalite durumunu düşür."""
+        if self.on_disconnect:
+            self.on_disconnect(connection_name, receive_ts_ms)
 
     def start(self):
         for c in self.conns.values():
