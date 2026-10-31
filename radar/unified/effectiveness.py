@@ -99,7 +99,7 @@ def _unified_rows(closed: Iterable[Mapping]) -> list[dict]:
         if not is_finite_number(r):
             continue
         raw_scope = str(c.get("execution_scope") or "unknown")
-        mode = raw_scope if raw_scope in ("unified", "shadow") else "unknown"
+        mode = "paper" if raw_scope == "unified" else ("golge" if raw_scope == "shadow" else "unknown")
         rows.append({"kaynak": "birlesik", "strategy": c.get("strategy") or "?", "mgr": None,
                      "golge": mode == "shadow", "mode": mode,
                      "r": float(r), "net_usd": float(c.get("net_usd") or 0.0), "cost_usd": float(c.get("fees_usd") or 0.0),
