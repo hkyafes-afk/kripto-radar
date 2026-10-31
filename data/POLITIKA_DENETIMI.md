@@ -68,3 +68,16 @@ Hiçbir ATR varyantı veya politika değişikliği canlıya yalnızca backtest g
 6. insan incelemesi ve açık onay.
 
 Başlangıç sermayesi hedefi 100 USDT olarak ele alınacak; testlerde minimum emir/lot, ücret ve gerçekçi kayma küçük bakiyede ayrıca ölçülecek. Bu değer canlı işlem izni değildir.
+
+
+## 7. ATR eşik deneyi — otomatik yeniden üretim
+
+`tools/lab.py --set atr` aynı günlük fikir üretimini ve V10'un diğer filtrelerini koruyarak yalnız ATR üst sınırını değiştirir:
+- 3%, 5%, 7%, 10%, 12.5% ve limitsiz.
+- Point-in-time evren: günlük 30 günlük medyan hacim ≥ 5M USDT ve her tarihte en likit 100 coin.
+- Funding geçmişi mevcutsa günlük gerçek funding; yoksa kodun tanımlı long funding varsayımı uygulanır. Eksik funding verisi ayrıca raporda görünmelidir.
+- Giriş/çıkış simülatörü taker/maker ücretleri, giriş kayması ve ATR'a bağlı stop kayması kullanır.
+- Bu mum tabanlı model emir defteri derinliğini, sıra önceliğini ve gerçek kısmi dolumu modellemez; sonuç canlı dolum garantisi değildir.
+- Çalışma `.github/workflows/atr-research.yml` ile `gecmis` veri dalındaki 1D ve funding verisini alıp rapor ve işlem defterini CI artifact olarak üretir.
+- Her varyant için IS/OOS işlem sayısı, ortalama R, PF ve drawdown karşılaştırılmalıdır. Eşik tek metrikle seçilmez.
+- 2025-01-01 sonrası OOS dönemi önceki LAB araştırmalarında görüldüğü için dokunulmamış holdout değildir. Sonuç tekrar üretim ve aday eleme içindir; nihai onay için yeni ileri dönem gölge/holdout gerekir.
