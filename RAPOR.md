@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.254R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.253R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 2675 | %48.1 | -0.254 | -679.77 |
+| polat_tum_sinyaller | 2681 | %48.2 | -0.253 | -678.21 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 2662 | %48.1 | -0.253 | -674.41 |
-| rastgele | 2670 | %43.9 | -0.349 | -931.26 |
-| trend_naif | 2678 | %42.6 | -0.368 | -984.31 |
+| polat_girilmeyen | 2668 | %48.2 | -0.252 | -672.85 |
+| rastgele | 2673 | %44.0 | -0.348 | -930.88 |
+| trend_naif | 2683 | %42.7 | -0.366 | -983.09 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-4.78
+Polat özsermaye: %-4.71 · BTC al-tut: %-4.72
 
 ## Öğrenme (walk-forward)
 
@@ -56,7 +56,7 @@ En az işe yarayan okumalar: btc_1H ×0.336, momentum_1H ×0.467, obv_egim_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 7358
+- ders: 7371
 - günlük işlem tavanı (8): 2524
 - aynı yönde pozisyon tavanı: 1156
 - gösterge aileleri aynı yönde değil: 744
@@ -118,7 +118,7 @@ En az işe yarayan okumalar: btc_1H ×0.336, momentum_1H ×0.467, obv_egim_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 14325
+- ders: 14338
 - günlük işlem tavanı (8): 7185
 - üst üste 3 zarar: 2345
 - gösterge aileleri aynı yönde değil: 2343
@@ -185,7 +185,7 @@ En az işe yarayan okumalar: btc_1H ×0.336, momentum_1H ×0.467, obv_egim_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 14325
+- ders: 14338
 - günlük işlem tavanı (8): 7185
 - üst üste 3 zarar: 2345
 - gösterge aileleri aynı yönde değil: 2343
