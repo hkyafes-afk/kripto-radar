@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.262R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.263R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 2857 | %48.1 | -0.262 | -748.91 |
+| polat_tum_sinyaller | 2860 | %48.0 | -0.263 | -752.52 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 2844 | %48.1 | -0.261 | -743.55 |
-| rastgele | 2836 | %44.1 | -0.35 | -992.57 |
-| trend_naif | 2859 | %43.0 | -0.366 | -1047.65 |
+| polat_girilmeyen | 2847 | %48.0 | -0.262 | -747.15 |
+| rastgele | 2840 | %44.1 | -0.351 | -995.84 |
+| trend_naif | 2864 | %42.9 | -0.368 | -1053.73 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-4.45
+Polat özsermaye: %-4.71 · BTC al-tut: %-4.47
 
 ## Öğrenme (walk-forward)
 
@@ -56,10 +56,10 @@ En az işe yarayan okumalar: momentum_1H ×0.531, cci_1H ×0.551, obv_egim_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 9378
+- ders: 9442
 - günlük işlem tavanı (8): 2524
 - aynı yönde pozisyon tavanı: 1156
-- gösterge aileleri aynı yönde değil: 849
+- gösterge aileleri aynı yönde değil: 850
 - bu coinde zaten pozisyon var: 464
 - büyük zaman dilimi trendi ters: 238
 - puan -0.183 eşiğin (0.25) altında: 52
@@ -118,9 +118,9 @@ En az işe yarayan okumalar: momentum_1H ×0.531, cci_1H ×0.551, obv_egim_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 16345
+- ders: 16409
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 2448
+- gösterge aileleri aynı yönde değil: 2449
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 1965
 - aynı yönde pozisyon tavanı: 1426
@@ -185,9 +185,9 @@ En az işe yarayan okumalar: momentum_1H ×0.531, cci_1H ×0.551, obv_egim_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 16345
+- ders: 16409
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 2448
+- gösterge aileleri aynı yönde değil: 2449
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 1965
 - aynı yönde pozisyon tavanı: 1426
