@@ -23,7 +23,6 @@ from .learn import Learner
 from .broker import PaperBroker
 from .journal import DISCLAIMER, Journal, report, report_md
 from .market import Market
-from radar.unified.event_journal import QueuedEventJournal
 from .okx import Feed, Rest, TF_MS, now_ms
 from .risk import Risk, utc_day as _utc_day
 
