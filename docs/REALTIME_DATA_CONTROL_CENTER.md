@@ -1,0 +1,177 @@
+# Gerçek Zamanlı Veri ve Kontrol Merkezi — Uygulama Sözleşmesi
+
+Durum: araştırma ve uygulama başlangıç belgesi  
+Başlangıç: 2026-10-31  
+Hedef dal: feat/realtime-data-control-center
+
+## Değişmez ürün ilkeleri
+
+1. Üretim dashboard'unda örnek, sentetik, tahmini veya uydurulmuş piyasa/portföy/işlem verisi gösterilmez.
+2. Her veri alanı kaynak, borsa sembolü, borsa olay zamanı, yerel alım zamanı, son güncelleme zamanı, kalite durumu ve ölçüm yöntemiyle izlenebilir.
+3. Veri yoksa UNKNOWN/VERİ YOK; gecikmişse STALE/BAYAT; sıra bütünlüğü bozuksa INVALID/GEÇERSİZ; bağlantı yoksa DISCONNECTED/KOPUK gösterilir. Bilinmeyen değer sıfır değildir.
+4. Her kanal kendi gerçek yayın ritminde güncellenir. Olay bazlı kanallara yapay sabit yenileme hızı atfedilmez. "Sıfır gecikme" veya bütün kanallarda 1 ms garanti edilmez.
+5. Stratejiler veri gereksinimlerini açıkça tanımlar. Bir strateji yalnız ihtiyaç duyduğu kritik alanlar geçerli değilse bekletilir; diğer bağımsız stratejiler gereksiz yere durdurulmaz. Hesap/pozisyon uzlaştırması, temel fiyat güvenliği ve genel risk kilitleri ortak güvenlik istisnasıdır.
+6. UnifiedTrader tek yeni pozisyon otoritesi olmaya devam eder. İlk uygulama PAPER'dır. Gerçek emir/private API yolu eklenmez ve etkinleştirilmez.
+7. Mevcut defterler, işlem geçmişleri, arşivler ve legacy/challenger verileri silinmez veya tek portföy gibi birleştirilmez.
+8. Dashboard'daki her grafik, KPI, tablo, filtre ve buton gerçek bir veri kaynağına/işleme bağlıdır. Henüz bağlanmayan özellik gizlenir veya açıkça "henüz bağlı değil" der; dekoratif sahte kontrol konmaz.
+
+## 2026-10-31 mevcut repo denetimi — başlangıç bulguları
+
+Repo: hkyafes-afk/kripto-radar  
+Başlangıç main commit: 69a6239d4d6c9846db7defd01101a377e71ea170
+
+### Dashboard
+
+- Ana arayüz `radar/templates/birlesik.html` üzerinden `site/index.html` olarak üretiliyor.
+- Dashboard statik JSON dosyalarını `get()` ile okuyor; ana `load()` döngüsü 60 saniyede bir çalışıyor.
+- Tarayıcı ayrıca OKX public WebSocket'e bağlanıyor; yalnız BTC ve açık pozisyon sembolleri için `tickers` kanalını dinliyor.
+- Tarayıcı WebSocket alımında `Date.now()` ile yerel alım zamanı yazılıyor. Bu, borsa kaynaklı olay zamanı ile uçtan uca ağ gecikmesi ölçümü değildir.
+- Dashboard'da gerçek tarayıcı tick'i ile statik sunucu snapshot'ı ayrıştırılmalıdır. Bağlantı kurulmuş olması bütün sembollerin/kanalların canlı olduğu anlamına gelmez.
+- Mevcut sayfa kendisini 60 saniyede bir yenilenen JSON dosyaları üzerinden açıklıyor; bu mimari bütün paneli milisaniyelik gerçek zamanlı yapmaz.
+
+### Çalıştırma ve yayın
+
+- `.github/workflows/canli.yml` GitHub Actions üzerinde uzun koşu/lease devriyle çalışır; GitHub Actions runner kalıcı, düşük gecikmeli WebSocket sunucusu olarak kabul edilmemelidir.
+- GitHub Pages statik sunum katmanıdır; tarayıcıdan doğrudan public OKX WebSocket alınabilir, ancak UnifiedTrader karar motorunun sürekli çalışması ve güvenilir durum yayını ayrı bir sürekli çalışan servis gerektirir.
+- GitHub Pages statik sayfasına GitHub token/PAT veya uygulama özel anahtarı gömülmez. Ayar kaydetme için kimlik doğrulamalı sunucu tarafı yazma aracısı gerekir.
+
+### Mevcut piyasa verisi / Polat
+
+- `polat/market.py` tickers, order book, trades, candles, open interest, funding-rate, mark-price, index-tickers ve liquidation-orders kanallarını işliyor.
+- Mevcut gecikme örneklemesi ticker/trade zaman damgalarından alım anına kadar hesaplanıyor; tüm kanallar için ortak uçtan uca ölçüm değildir.
+- Mesaj işleme süresi ayrıca `perf_counter` ile ölçülüyor. Bu süre ağ gecikmesinden ayrı tutulmalıdır.
+- Order book bütünlüğü, snapshot/delta sırası ve yeniden snapshot akışı ayrıca test edilmelidir.
+- Polat'ın yeni pozisyon yetkisi kapalı kalır; yalnızca veri/araştırma/challenger rolü sürer. Polat verisinin UnifiedTrader'a doğrudan yetki devri yapılmaz.
+
+### UnifiedTrader veri aktarımı
+
+- `radar/unified/factors.py` mevcut legacy günlük bağlamdan MarketContext üretiyor; açıklama ve kodda intraday/microstructure bağlamının bu yoldan kurulmadığı belirtiliyor.
+- `radar/engine.py` UnifiedTrader'a legacy bağlamları ve mevcut quote'ları iletiyor. Polat'ın bütün ham kanallarının ortak normalize veri katmanından UnifiedTrader'a aktarıldığı henüz doğrulanmış değil.
+- `DerivativesContext` içinde funding, OI, basis, mark/index, long-short ve likidasyon alanları bulunması bu alanların canlıda doğru, taze ve tarihsel olarak kullanılabilir olduğu anlamına gelmez.
+- `radar/unified/trader.py` çağrısında live bar zamanı için yerel `now` kullanılabildiğinden gerçek borsa event timestamp'inin korunması ve bar kapanış zamanının doğru taşınması denetlenmelidir.
+
+## Hedef mimari
+
+1. Exchange adapters: OKX primary; Binance/Bybit/Bitget bağımsız teyit ve araştırma kaynakları. Erişim/abonelik/ülke/hesap kısıtları doğrulanmadan kaynak "aktif" sayılmaz.
+2. Raw event journal: değiştirilmeyen ham mesaj, exchange event timestamp, local wall-clock receive timestamp, monotonic receive timestamp, venue/channel/instrument/connection id.
+3. Normalization: ortak sembol/kontrat birimi, decimal hassasiyeti, tick/lot, timestamp, funding interval ve contract multiplier.
+4. Quality engine: seqId/prevSeqId, snapshot/delta, duplicate, out-of-order, gap, stale, clock skew, reconnect/resubscribe, crossed/locked book, impossible price/size ve source disagreement kontrolleri.
+5. Shared market state: her sembol/kanal için son değer + zaman + kalite + provenance.
+6. Feature/factor engine: yalnız geçerli ve uygun tazelikteki girdilerle hesaplanan faktörler; faktörün input kaynak kimlikleri ve zaman aralığı kaydedilir.
+7. Strategy requirements: her strateji zorunlu/opsiyonel veri kanallarını ve kanal başına maksimum yaş sınırını bildirir.
+8. UnifiedTrader: veri kapısı, karar, risk ve PAPER execution tek otoritede.
+9. Realtime API: dashboard'a push (WebSocket/SSE) ile durum, fiyat, veri sağlığı ve karar akışı.
+10. Dashboard: gerçek API abonelikleri, bağlantı durumu, kaynak bazlı gecikme/kalite ve veri yok/bayat durumları.
+11. Settings API: şema doğrulamalı, rol kontrollü, audit log'lu, versiyonlu, onaylı ve rollback destekli sunucu tarafı ayar değişikliği.
+
+## Kanal envanteri ve zorunlu ölçümler
+
+Her exchange + instrument + channel kombinasyonu için aşağıdaki ölçümler tutulur:
+
+- event_ts_ms (borsa zamanı, varsa)
+- recv_wall_ms (yerel UTC duvar saati)
+- recv_mono_ns (monotonik saat)
+- process_start_ns / process_end_ns
+- publish_ts_ms / dashboard_receive_ts_ms (varsa)
+- event_to_receive_ms (yalnız karşılaştırılabilir saatler ve clock uncertainty ile)
+- local_queue_ms, process_us, publish_to_client_ms
+- p50/p95/p99/max ve örnek sayısı
+- last_event_age_ms, message_rate, reconnect_count, dropped/duplicate/out_of_order/gap counters
+- snapshot age, sequence continuity, book validity
+- source id, channel id, symbol, connection id, schema version
+
+Kanal listesi: instruments, tickers/BBO, L2 order book, trades/tape, candles (open/closed ayrımı), mark price, index price, funding current/history/next settlement, open interest, long-short ratios (kaynak ve kapsam belirtilerek), liquidation events, account/balance/positions (PAPER durumuyla kesin ayrım), exchange status/maintenance.
+
+## Veri kalite ve strateji kapıları
+
+- Bozuk L2 defteri: yalnız L2 gerektiren stratejiye geçersiz; snapshot yeniden kurulana kadar L2 kullanılmaz.
+- Funding bayat/eksik: funding stratejisi ve funding maliyet tahmini güvenilmez; başka bağımsız strateji otomatik olarak durmaz.
+- OI/long-short eksik: bu alanlara dayalı faktörler UNKNOWN; 0 olarak doldurulmaz.
+- Candle incomplete: kapanış bazlı stratejiler tamamlanmış mum olmadan sinyal üretmez.
+- Quote stale veya crossed: ilgili sembolde yeni giriş kapısı kapanır.
+- Hesap/pozisyon durumu uzlaştırılamıyor veya global risk kilidi aktif: yeni girişler ortak güvenlik gereği durur.
+- Kaynaklar arası fiyat farkı: otomatik olarak bozuk veri denmez; farklı venue basis/spread olasılığı ayrıştırılır.
+- Kalite kapısı reddi her zaman neden kodu ve etkilenen strateji ile kaydedilir.
+
+## Dashboard doğruluk sözleşmesi
+
+- Her sayı için kaynağa, güncelleme zamanına ve hesaplama formülüne ulaşılabilir detay.
+- Live exchange data, server snapshot, PAPER simulation, historical/backtest, shadow/challenger ve unavailable data görsel olarak ayrı.
+- Gerçek borsa emri ile PAPER fill hiçbir koşulda karıştırılmaz.
+- Gerçekleşmemiş PnL mark/quote kaynağı ve hesaplama zamanı ile gösterilir; statik kayıtla karıştırılmaz.
+- Funding/fees/slippage gerçekleşmiş ve tahmini değerler ayrı etiketlenir.
+- Grafik yalnız gerçek zaman serisi mevcutsa çizilir; yeterli örnek yoksa "veri birikiyor/veri yok".
+- Tüm butonlar gerçek backend eylemine bağlıdır; bağlanmayan buton yayınlanmaz.
+- Ekran yenileme, veri yayın hızı değildir. UI animasyonu yeni veri üretmez.
+- Browser WebSocket public data yalnız görüntüleme için kullanılabilir; karar motorunun kendi doğrulanmış sunucu verisinin yerine geçmez.
+
+## Ayarlar sözleşmesi
+
+- UI şemadan türetilir; kod/config içindeki düzenlenebilir bütün parametreler kategorili şekilde keşfedilir.
+- Her alan: tip, açıklama, varsayılan, geçerli aralık, birim, etki kapsamı, yeniden başlatma ihtiyacı ve güvenlik seviyesi.
+- ATR, RSI/ADX/EMA, stop/hedef, strateji eşikleri, risk yüzdeleri, kaldıraç tavanı, evren, hacim/spread, veri tazelik eşikleri, ücret/kayma varsayımları gibi alanlar şemada tanımlanır.
+- UI'dan doğrudan secret, API key, trade enable veya PAPER dışına geçiş ayarı sunulmaz.
+- Değişiklik önce doğrulanır, farkı gösterilir, kullanıcı onayı alınır; ardından server-side GitHub App ile branch/commit/PR veya kontrollü config sürümü oluşturulur.
+- Browser'a PAT, GitHub token veya App private key gönderilmez.
+- Her değişiklik audit log, author, timestamp, old/new value, config hash ve rollback ref ile saklanır.
+- Uygulama atomik olmalı: bozuk config aktif ayarları kısmen değiştiremez; son geçerli config korunur.
+
+## Dashboard ve servis altyapısı için kabul testleri
+
+- Her kanal için event/receive/process/publish timestamp tutarlılığı.
+- OKX seqId/prevSeqId gap, duplicate, out-of-order, reconnect ve snapshot recovery.
+- Stale data, missing channel, malformed payload, wrong contract multiplier, crossed book.
+- Clock offset/uncertainty ve monotonic timer testleri.
+- Source divergence vs actual cross-venue basis ayrımı.
+- Dashboard API disconnect, websocket reconnect, slow consumer, browser background tab.
+- Static snapshot vs live stream display consistency.
+- Settings invalid range, conflicting params, unauthorized write, audit, rollback, restart.
+- PAPER-only invariant, no private trade credentials, no real-order endpoints.
+- Full existing test suite + yeni regression tests.
+- Gerçek uçtan uca latency ölçümleri ancak gerçek çalışan sunucu ve gerçek exchange bağlantısı üzerinde "measured" olarak raporlanır; yerel test latency'si network latency diye sunulmaz.
+
+## Uygulama aşamaları
+
+### A — Envanter ve ölçüm (ilk)
+- Tüm veri akışlarının kaynağı, çağrı zinciri, frekansı, timestamp semantiği, kayıp davranışı.
+- Mevcut dashboard JSON ve browser WebSocket alanlarının envanteri.
+- Mevcut workflow'ların yazdığı dosyalar ve çalışma periyotları.
+- Güncel OKX API changelog ve kanal erişim koşulları.
+
+### B — Ortak veri kalite katmanı
+- Provenance ve timestamp taşıyan typed event envelope.
+- Kanal bazlı quality/latency metrics.
+- L2 book sequence integrity ve recovery.
+- Strateji bazlı data requirements ve quality gating.
+
+### C — Canlı servis
+- Sürekli çalışan, kalıcı process ve uygun bölgede ölçülmüş host.
+- WebSocket market feed ve ortak market state.
+- UnifiedTrader loop, PAPER execution, health endpoint.
+- Dashboard'a push API.
+- GitHub Actions araştırma, CI, backtest, deploy iş akışları için kalır; düşük gecikmeli runtime varsayılmaz.
+
+### D — Dashboard
+- Piyasa, orderbook, tape, funding/OI, liquidations, portfolio, decisions, performance, data quality, agent health ve research lab.
+- Her kart gerçek kaynak bağlı; eksik olan "bağlı değil" diye işaretlenir.
+- Masaüstü ve mobil responsive; grafikler pan/zoom/timeframe, tooltip, source/time details.
+
+### E — Settings
+- Config schema ve registry.
+- Server-side authenticated settings API.
+- Diff/validation/approval/versioning/rollback.
+- GitHub repo ile izlenebilir sync.
+
+### F — Araştırma ve kural optimizasyonu
+- Futures öncelikli; spot yalnız index/basis/carry/hedge referansı gerektiğinde.
+- LONG ve SHORT ayrı değerlendirilir; bull/bear/range/high-vol/squeeze rejimlerinde ayrı test.
+- Trend/momentum, cross-sectional ranking, breakout/compression, mean reversion, funding forecast/crowding, basis, OI-price-funding interactions, liquidation flow, order flow, spread/depth/market impact.
+- Fee, funding, spread, slippage, market impact, lot rounding ve liquidation risk dahil.
+- Walk-forward, purged/embargoed split, untouched holdout, multiple-testing/PBO kontrolü ve forward PAPER.
+- Hiçbir araştırma parametresi otomatik olarak üretim ayarını değiştirmez.
+
+## Yayın / güvenlik kapısı
+
+Bu dalda ilk commit dokümantasyon ve denetim bulgularını içerir. Çalışan bot, config, GitHub Actions, mevcut defterler ve canlı emir yetkileri değiştirilmez. Kod değişiklikleri küçük, testli, ayrı commit/PR'lar olarak yapılır. CI ve PAPER kabul testleri geçmeden main'e merge edilmez.
+
+Gerçek canlı işlem, bu çalışmanın kapsamı değildir.
