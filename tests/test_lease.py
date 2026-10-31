@@ -9,6 +9,8 @@ import tempfile
 import time
 from pathlib import Path
 
+import yaml
+
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
@@ -39,12 +41,17 @@ def test_handoff_between_processes():
     from radar import lease
     from radar.demo import DemoClient
     from radar.engine import Engine
+    from radar.config import load_config
     with tempfile.TemporaryDirectory() as tmp:
         remote = os.path.join(tmp, "origin.git")
         subprocess.run(["git", "init", "-q", "--bare", remote], check=True)
         os.environ.update(LEASE_REMOTE=remote, GITHUB_RUN_ID="A", DEVIR="0")
         try:
-            a = Engine(Path(tmp) / "a", client=DemoClient(), notify=False, demo=True)
+            cfg = load_config()
+            cfg.setdefault("birlesik", {})["karar_modu"] = "legacy"
+            cfg_path = Path(tmp) / "legacy-test.yaml"
+            cfg_path.write_text(yaml.safe_dump(cfg, allow_unicode=True), encoding="utf-8")
+            a = Engine(Path(tmp) / "a", cfg_path=cfg_path, client=DemoClient(), notify=False, demo=True)
             a.publish_on = True
             assert a.acquire_lease(), "boş depoda nöbet alınabilmeli"
             a.run_once()

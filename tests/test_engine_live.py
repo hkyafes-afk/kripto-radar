@@ -7,6 +7,8 @@ import tempfile
 import time
 from pathlib import Path
 
+import yaml
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -14,11 +16,16 @@ from radar import ledger as lg  # noqa: E402
 from radar import ws  # noqa: E402
 from radar.demo import DemoClient  # noqa: E402
 from radar.engine import Engine  # noqa: E402
+from radar.config import load_config  # noqa: E402
 from test_ws import FakeServer, _frame  # noqa: E402
 
 
 def _engine(d):
-    e = Engine(Path(d), client=DemoClient(), notify=False, demo=True)
+    cfg = load_config()
+    cfg.setdefault("birlesik", {})["karar_modu"] = "legacy"  # bu dosya legacy motor davranışını test eder
+    cfg_path = Path(d) / "legacy-test.yaml"
+    cfg_path.write_text(yaml.safe_dump(cfg, allow_unicode=True), encoding="utf-8")
+    e = Engine(Path(d), cfg_path=cfg_path, client=DemoClient(), notify=False, demo=True)
     e.run_once()
     e.rebuild_watch()
     return e

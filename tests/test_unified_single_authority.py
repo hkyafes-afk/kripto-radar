@@ -56,3 +56,11 @@ def test_unified_mod_keeps_legacy_carry_closes_but_blocks_new_carry():
     e.pending_carry = [([candidate], [])]
     e.process_carry()
     assert e.ledger["open"] == []
+
+
+def test_unified_authority_does_not_delete_existing_legacy_positions():
+    e = _engine()
+    existing = {"id": "legacy-open-position", "inst": "X-USDT-SWAP"}
+    e.ledger["open"].append(existing)
+    assert e._enforce_unified_authority() is True
+    assert e.ledger["open"] == [existing]

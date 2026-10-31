@@ -127,6 +127,7 @@ def test_telegram_commands():
         import yaml
         from radar.config import ROOT
         c = yaml.safe_load((ROOT / "config.yaml").read_text(encoding="utf-8"))
+        c["birlesik"]["karar_modu"] = "legacy"  # bildirim testi eski Radar sinyal yolunu sınar
         c["ekip"]["kurallar"]["aktif"] = False
         cfgp = Path(d2) / "cfg_test.yaml"
         cfgp.write_text(yaml.safe_dump(c, allow_unicode=True), encoding="utf-8")

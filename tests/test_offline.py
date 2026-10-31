@@ -284,7 +284,8 @@ def test_demo_scan_end_to_end():
         p = scan.run(Path(d), client=DemoClient(), notify=False, demo=True)
         assert p["counts"]["scanned"] >= 30
         assert not any(c["sym"] == "CL" for c in p["coins"]), "emtia kontratı filtrelenmeli"
-        assert (Path(d) / "index.html").read_text().count("window.__DATA__ = {") == 1
+        html = (Path(d) / "index.html").read_text(encoding="utf-8")
+        assert "birlesik/durum.json" in html and "birlesik/golge/durum.json" in html
         # ikinci tarama: defter tekrar açmamalı
         p2 = scan.run(Path(d), client=DemoClient(), notify=False, demo=True)
         assert len(p2["ledger"]["open"]) == len(p["ledger"]["open"])
