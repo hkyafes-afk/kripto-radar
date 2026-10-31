@@ -89,3 +89,16 @@ Dal: `feat/unified-decision-engine` (PR 1 dalından). PR base: `feat/unified-tra
 - Brüt avantaj önselleri için Binance EĞİTİM dönemi (2020-10-28 → 2025-01-06) sonuçları (`tools/arastirma/team_test.py`):
   Kemal 252 işlem ort. +0,292R; Kaan 142, +1,139R; Selin 97, +0,708R; Murat 185, +0,236R. Test dönemi önselde KULLANILMAZ.
 - Denetim ek testleri: 1 gün gecikme (sızıntı yok), 8 tohumlu plasebo (A hepsinden iyi; test −%22…−%50'ye karşı +%17,7).
+
+
+## Güncel cutover notu — 2026-10-31
+
+PR #19 sonrası main üzerinde kalan uygulama işi: tek yeni-pozisyon yetkisini kod seviyesinde zorunlu kılmak, eski 100k shadow portföy durumunu 100 USDT'ye güvenli taşımak ve ana dashboard'un unified durum dosyasını okuması. Bu işler feat/unified-capital-cutover dalında uygulanıyor.
+
+Kabul koşulları:
+- [ ] Sermaye migrasyonu: geçmişsiz 100k state 100 USDT'ye rebase; emir/pozisyon/kapanmış işlem varsa fail-closed.
+- [ ] Legacy Radar market, yönetici ve carry giriş yolları Unified modda engellenmiş; mevcut pozisyon yönetimi korunmuş.
+- [ ] Unified dashboard birlesik/durum.json dosyasını shadow dosyasından ayırıyor.
+- [ ] Unified CI ve tam test paketi yeşil.
+- [ ] Yeni main süreci eski nöbetçi döngüden kontrollü devraldı; yayınlanan durum baslangic: 100, mod: unified, yurutme: paper olarak doğrulandı.
+- [ ] Gerçek OKX emir/private API kapalı kaldı.

@@ -583,19 +583,28 @@ function applyLive() {
 window.__BT = {calcLive, cardState, instIds};
 
 async function load() {
-  const [D, du, oz, t0, t1, hz] = await Promise.all([get("data.json"), get("birlesik/golge/durum.json"), get("birlesik/ozet.json"),
+  const [D, duShadow, duUnified, oz, t0, t1, hz] = await Promise.all([
+    get("data.json"), get("birlesik/golge/durum.json"), get("birlesik/durum.json"), get("birlesik/ozet.json"),
     get(`birlesik/kararlar-${day(0)}.jsonl`, true), get(`birlesik/kararlar-${day(1)}.jsonl`, true), get("birlesik/hazirlik.json")]);
-  const data = D.v, durum = du.v, ozet = oz.v;
+  const data = D.v;
+  // Unified PAPER durumu ile eski shadow dosyası ayrı tutulur. En yeni gerçek motor
+  // durumunu seç; birleşik modda gölge özetini aktif portföy gibi göstermeyi önle.
+  const unifiedStatus = duUnified.v && duUnified.v.mod === "unified" ? duUnified : null;
+  const shadowStatus = duShadow.v ? duShadow : null;
+  const useUnified = !!(unifiedStatus && (!shadowStatus || (unifiedStatus.v.ts || 0) >= (shadowStatus.v.ts || 0)));
+  const selected = useUnified ? unifiedStatus : (shadowStatus || duUnified);
+  const durum = selected.v, ozet = useUnified ? durum : oz.v;
   const okx = data && data.feeds && data.feeds.okx;
-  const st = {data: fresh(D.st, data && data.generated_at, LIM.data), ozet: fresh(oz.st, ozet && ozet.ts, LIM.ozet),
-    durum: fresh(du.st, durum && durum.ts, LIM.durum), dec: (t0.st === "ok" || t1.st === "ok") ? "ok" : (t0.st === "kesik" ? "kesik" : "yok")};
+  const summaryState = useUnified ? selected.st : oz.st;
+  const st = {data: fresh(D.st, data && data.generated_at, LIM.data), ozet: fresh(summaryState, ozet && ozet.ts, LIM.ozet),
+    durum: fresh(selected.st, durum && durum.ts, LIM.durum), dec: (t0.st === "ok" || t1.st === "ok") ? "ok" : (t0.st === "kesik" ? "kesik" : "yok")};
   st.okx = !data ? st.data : (okx ? (okx.healthy ? "ok" : "kesik") : "yok");
   const seen = new Map();
   for (const r of [...t1.v, ...t0.v]) seen.set(r.idempotency_key || (r.symbol + r.strategy + r.side), r);
   const decs = [...seen.values()].filter(r => (r.kayit_ms || r.ts_ms || 0) > Date.now() - 24 * 3600e3)
     .sort((a, b) => (b.kayit_ms || b.ts_ms) - (a.kayit_ms || a.ts_ms));
   S.data = {data, durum, ozet, decs, st, haz: hz.v};
-  $("modePill").textContent = (durum && durum.mod === "unified") ? "PAPER" : "SHADOW";
+  $("modePill").textContent = (durum && durum.mod === "unified") ? "PAPER · TEK OTORİTE" : "SHADOW";
   render();
   subscribeAll();
 }

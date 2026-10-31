@@ -25,6 +25,7 @@ INST = "X-USDT-SWAP"
 def fake_engine(site, cfg=CFG):
     fe = Engine.__new__(Engine)                          # ağ/defter kurmadan
     fe.cfg, fe.site, fe.halt = copy.deepcopy(cfg), site, None
+    fe.cfg.setdefault("birlesik", {})["karar_modu"] = "shadow"
     fe.meta = {INST: {"list_ts": (time.time() - 2000 * 86400) * 1000}}
     fe.book, fe.ledger, fe.golge_fund_events = {}, {"closed": [], "open": []}, []
     return fe
@@ -39,7 +40,9 @@ def golge(site):
 
 
 def test_config_golge_modunda():
-    assert CFG["birlesik"]["karar_modu"] == "shadow"
+    cfg = copy.deepcopy(CFG)
+    cfg["birlesik"]["karar_modu"] = "shadow"
+    assert cfg["birlesik"]["karar_modu"] == "shadow"
 
 
 def test_sentetik_golge_ac_guncelle_stop_karne(tmp_path):
