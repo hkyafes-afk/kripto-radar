@@ -718,6 +718,6 @@ if __name__ == "__main__":
 def test_polat_yeni_pozisyon_yetkisi_varsayilan_ve_challenger():
     from polat.agent import new_position_authorized
 
-    assert new_position_authorized({})
+    assert not new_position_authorized({})  # Eksik yetki yapılandırması fail-closed davranır.
     assert new_position_authorized({"yetki": {"yeni_pozisyon": True}})
     assert not new_position_authorized({"yetki": {"yeni_pozisyon": False}})
