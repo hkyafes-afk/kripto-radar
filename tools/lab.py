@@ -540,6 +540,14 @@ PRESETS = {
         "V4_kilit_1.5R_0.5R": dict(V10, exit={**V10["exit"], "ratchet": [(1.5, 0.5)]}),
         "V5_rejim_uyumu": dict(V10, uyum=True),
     },
+    "atr": {                     # Aynı fırsat seti: v10 filtreleri sabit, yalnız ATR üst sınırı değişir
+        "v10_atr_3": dict(V10, max_atr_pct=3.0),
+        "v10_atr_5": dict(V10, max_atr_pct=5.0),
+        "v10_atr_7": dict(V10, max_atr_pct=7.0),
+        "v10_atr_10": dict(V10, max_atr_pct=10.0),
+        "v10_atr_12_5": dict(V10, max_atr_pct=12.5),
+        "v10_atr_sinirsiz": {k: v for k, v in V10.items() if k != "max_atr_pct"},
+    },
     "final": {
         "temel": {},
         "F1_atr5_yg": {"exit": {"close_stop": True}, "crowd_long": 30, "crowd_short": -20, "max_atr_pct": 5,
