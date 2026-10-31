@@ -102,7 +102,7 @@ def test_bayat_ws_ve_rest_yoksa_spread_gecmez(tmp_path):
     fe = _fe_rest(tmp_path, [], book={"X-USDT-SWAP": (100.0, 99.0, 101.0, _t.time() - 60)})
     fe._bbo_snapshot({"X-USDT-SWAP"})
     b = fe._book_ctx("X-USDT-SWAP")
-    assert b["bid"] is None and b["ask"] is None and b["bbo_kaynak"] in ("yok", "ws_eski")
+    assert b["bid"] is None and b["ask"] is None and b["bbo_kaynak"] == "kalite_yok"
 
 
 def test_tanilama_dosyasi_yazilir(tmp_path):
