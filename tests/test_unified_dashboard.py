@@ -28,6 +28,7 @@ def test_site_birlesik_panelini_kopyalar_ve_baglar(tmp_path):
     assert "Kripto Radar" in legacy and "/*__DATA__*/null" not in legacy
     assert "Veri yok" in page and "Bayat" in page and "Bağlantı kesik" in page and "PAPER · TEK OTORİTE" in page
     assert "Ayarlar" in page and "renderSettings" in page and "birlesik/ayarlar.json" in page
+    assert "Veri Sağlığı" in page and "renderDataHealth" in page and "tanilama" in page
     assert 'id="modeTag"' in page and "Deneysel doğrulama sürüyor" in page
     assert (tmp_path / "polat.html").exists()
     settings = json.loads((tmp_path / "birlesik" / "ayarlar.json").read_text(encoding="utf-8"))
