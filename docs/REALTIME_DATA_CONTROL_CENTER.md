@@ -241,3 +241,11 @@ Bu bölüm PR #23 dalındaki gerçek kod değişikliklerini ve doğrulama durumu
 - PR #23 açık ve taslaktır; main'e merge edilmemiştir. Main tabanı `69a6239d4d6c9846db7defd01101a377e71ea170` olarak korunur.
 - `docs/birlesik/DEVAM.md` içindeki eski PR #2–#6 sıralaması tarihsel olarak işaretlendi; güncel devam noktası Issue #24'tür.
 - Bu test başarısı yalnız mevcut head'i doğrular; Issue #24'teki kalan işler tamamlandı anlamına gelmez.
+
+
+### Append-only olay günlüğü altyapısı — 2026-10-31
+
+- `radar/unified/event_journal.py` eklendi: JSONL append-only kayıt, sıra numarası, önceki kayıt SHA-256 bağlantısı, kayıt hash'i, event/receive/monotonic zaman alanları, provenance alanı, yeniden başlatmada zincir doğrulaması ve bozuk/kesik kayıt reddi.
+- `tests/test_unified_event_journal.py`: kayıt ekleme, restart recovery, hash zinciri, tamper, truncated tail ve JSON/timestamp doğrulama testleri.
+- Yazıcı sözleşmesi şu anda **tek süreç/tek yazıcı** ile sınırlıdır. Bu primitive canlı Polat/OKX feed'ine veya UnifiedTrader'a henüz bağlanmamıştır; bu yüzden gerçek event coverage veya sıfır kayıp garantisi değildir.
+- UnifiedTrader CI bu değişiklikte başarılıdır; tam depo CI aynı head için tamamlanmayı bekliyor.
