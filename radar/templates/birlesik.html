@@ -417,6 +417,31 @@ function renderSysTab(data, durum, ozet, st) {
     ${row("Gerçek emir", "ok", "Kapalı: yalnız sanal yürütme; borsaya emir gönderilmez")}</div>`;
 }
 
+function renderDataHealth(durum) {
+  const q = durum && durum.tanilama;
+  if (!q || q.hazir === false) return '<div class="card empty">Birleşik Baş Trader veri tanılaması henüz yayımlanmadı. Veri yok.</div>';
+  if (q.hata) return '<div class="card empty">Veri tanılaması hatası: ' + esc(q.hata) + '</div>';
+  const spread = q.spread_durum_sayim || {};
+  const spreadText = Object.keys(spread).sort().map(k => esc(k) + ': ' + spread[k]).join(' · ') || 'henüz yok';
+  const age = isNum(q.ts) ? Math.max(0, Math.round((Date.now() - q.ts) / 1000)) + ' sn önce' : '—';
+  const rows = (q.ornek || []).map(x => '<div class="dr"><div style="min-width:0"><b>' + esc(x.decision_inst || '—') +
+    '</b><div class="t2">Feed: ' + (x.feed_inst ? 'abone' : 'abone değil') + ' · Defter: ' +
+    (x.book_exists ? 'var' : 'yok') + ' · Kaynak: ' + esc(x.bbo_kaynak || '—') +
+    ' · Spread: ' + esc(x.spread_status || '—') + '</div></div><div class="tm num">' +
+    (isNum(x.ws_book_age) ? fmt(x.ws_book_age, 1) + ' sn' : '—') + '</div></div>').join('');
+  return '<div class="card dl">' +
+    '<div class="hrow"><h2>OKX BBO / veri akışı</h2>' + badge(q.ws_healthy === true ? 'Bağlı' : q.ws_healthy === false ? 'Kopuk' : 'Bilinmiyor') + '</div>' +
+    '<div class="cells"><div class="cell"><div class="l">Tanılama güncellemesi</div><div class="v num">' + age + '</div></div>' +
+    '<div class="cell"><div class="l">Son tick sayacı</div><div class="v num">' + (q.tick_count ?? '—') + '</div></div>' +
+    '<div class="cell"><div class="l">Feed sembolü</div><div class="v num">' + (q.feed_symbols ?? '—') + '</div></div>' +
+    '<div class="cell"><div class="l">Karar coini / defter</div><div class="v num">' + (q.decision_coins ?? '—') + ' / ' + (q.book_entries ?? '—') + '</div></div></div>' +
+    '<div class="dr"><div><b>Son tick yaşı</b></div><div class="tm num">' + (isNum(q.last_tick_age) ? fmt(q.last_tick_age, 1) + ' sn' : '—') + '</div></div>' +
+    '<div class="dr"><div><b>Spread kalite dağılımı</b></div><div class="tm">' + spreadText + '</div></div>' +
+    (q.bbo_rest_hata ? '<div class="note">REST BBO hatası: ' + esc(q.bbo_rest_hata) + '</div>' : '') +
+    '</div>' + (rows ? '<div class="sec">Karar evreninden gerçek BBO örnekleri</div><div class="card dl">' + rows + '</div>' : '<div class="card empty">Karar evreni BBO örneği yok.</div>') +
+    '<div class="note">Bu görünüm sunucunun gerçek BBO/akış tanılamasıdır. Tarayıcıdaki ek OKX ticker akışıyla karıştırılmaz; gecikme garantisi vermez.</div>';
+}
+
 function renderSettings(settings) {
   if (!settings || settings.st !== "ok" || !settings.v) return '<div class="card empty">Ayar kataloğu henüz yayımlanmadı.</div>';
   const catalog = settings.v;
@@ -435,7 +460,7 @@ function renderSettings(settings) {
 }
 
 function renderTabs(pos, closed, decs, data, st, durum, ozet, settings) {
-  const T = [["acik", `Açık İşlemler (${durum ? pos.length : "—"})`], ["karar", "Son Kararlar"], ["kapanan", "Kapananlar"], ["karne", "Karne"], ["sistem", "Sistem"], ["ayarlar", "Ayarlar"]];
+  const T = [["acik", `Açık İşlemler (${durum ? pos.length : "—"})`], ["karar", "Son Kararlar"], ["kapanan", "Kapananlar"], ["karne", "Karne"], ["veri", "Veri Sağlığı"], ["sistem", "Sistem"], ["ayarlar", "Ayarlar"]];
   $("tabs").innerHTML = T.map(([k, n]) => `<button class="tab ${S.tab === k ? "on" : ""}" data-t="${k}">${n}</button>`).join("");
   $("tabs").querySelectorAll(".tab").forEach(b => b.onclick = () => setTab(b.dataset.t, false));
   let h;
@@ -445,6 +470,7 @@ function renderTabs(pos, closed, decs, data, st, durum, ozet, settings) {
   else if (S.tab === "karar") h = engelOzet(S.data && S.data.haz) + `<div class="hrow" style="margin:0 2px 8px"><h2>Son Kararlar (${decs.length})</h2>${badge(st.dec)}</div>` +
       (decs.length ? `<div class="card dl">${decs.slice(0, 80).map(decRow).join("")}</div>` : `<div class="card empty">${(STL[st.dec] || STL.yok)[0]}.</div>`);
   else if (S.tab === "karne") h = renderKarne(data && data.karne, st.data);
+  else if (S.tab === "veri") h = renderDataHealth(durum);
   else if (S.tab === "ayarlar") h = renderSettings(settings);
   else if (S.tab === "sistem") h = renderSysTab(data, durum, ozet, st);
   else h = `<div class="card empty">Bu bölüm henüz bağlı değil.</div>`;
