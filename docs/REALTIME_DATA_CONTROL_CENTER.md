@@ -175,3 +175,48 @@ Kanal listesi: instruments, tickers/BBO, L2 order book, trades/tape, candles (op
 Bu dalda ilk commit dokümantasyon ve denetim bulgularını içerir. Çalışan bot, config, GitHub Actions, mevcut defterler ve canlı emir yetkileri değiştirilmez. Kod değişiklikleri küçük, testli, ayrı commit/PR'lar olarak yapılır. CI ve PAPER kabul testleri geçmeden main'e merge edilmez.
 
 Gerçek canlı işlem, bu çalışmanın kapsamı değildir.
+
+
+---
+
+## Uygulama ilerlemesi — 2026-10-31
+
+Bu bölüm PR #23 dalındaki gerçek kod değişikliklerini ve doğrulama durumunu kaydeder.
+
+### Tamamlanan ilk uygulama dilimi
+
+- `radar/unified/settings.py`: `config.yaml` içindeki iç içe parametreleri deterministik biçimde keşfeden ve kategoriye ayıran katalog eklendi.
+- Güvenlik/işlem yetkisi alanları (`birlesik.karar_modu`, `birlesik.yurutme_modu`) sıradan ayar olarak işaretlenmez.
+- Token/secret/private-key/parola benzeri alanların değerleri katalog çıktısında maskelenir.
+- Katalog şu an bilinçli olarak salt okunurdur. Tip, aralık, etki kapsamı, yeniden başlatma gereksinimi, yetkilendirme, audit, atomik uygulama ve rollback doğrulanmadan yazma açılmaz.
+- `radar/dashboard.py` site üretiminde `site/birlesik/ayarlar.json` üretir.
+- `radar/templates/birlesik.html` içinde Ayarlar sekmesi eklendi; katalog gerçek config dosyasından gelen değerleri gösterir ve yazma kapalı durumunu açıkça belirtir.
+- `tests/test_unified_settings_catalog.py` ve dashboard regresyon testleri eklendi/güncellendi.
+
+### Doğrulama
+
+- Önceki PR head `586277a18034f8ef91a731fcd5e7ebbb62752ec4` için Unified Trader test workflow'u başarılıydı.
+- Yeni ayar kataloğu testleri için Unified Trader workflow'u `322c25c670df9fe3a6c4f20663283117cc91aef2` commit'inde başarılı raporlandı.
+- Son dashboard değişiklikleri head `93f0507e4ac521149e1b1d4febada4f260ae6b8f` üzerine işlendi. Bu head için tam repo ve unified workflow sonuçları henüz kesinleşmeden PR merge edilmemelidir.
+- PR #23 draft ve açık kalır; `main` dalına otomatik merge yapılmaz.
+
+### Sıradaki uygulama işleri
+
+1. Son head için tam test paketinin sonucunu doğrula; başarısızsa düzelt.
+2. Config şeması: her alan için tip, min/max veya enum, birim, açıklama, kapsam, restart ihtiyacı ve koruma seviyesi.
+3. Salt-okunur keşif kataloğunu şema ile eşleştir; şeması olmayan parametreler yazılamaz kalsın.
+4. Ayar değişikliği için kimlik doğrulamalı server-side API; tarayıcıya GitHub token/PAT/private key koyma.
+5. Değişiklik önizleme, onay, sürümleme, audit log, atomik config doğrulama ve rollback.
+6. Sürekli veri runtime'ı, ortak event journal, timestamp/provenance, kalite/latency motoru.
+7. UnifiedTrader'a kanal bazlı doğrulanmış market state adaptörü.
+8. Dashboard'un gerçek API/push akışına taşınması; eski statik kaynaklar ve PAPER/legacy ayrımı korunur.
+9. Kapsamlı futures testleri, PAPER/SHADOW ileri gözlem ve kabul kriterleri.
+
+### Değişmez güvenlik ilkeleri
+
+- PAPER dışı yürütme modu etkinleştirilmez.
+- Gerçek OKX emirleri/private API yolu eklenmez.
+- UnifiedTrader tek yeni-pozisyon otoritesi olarak kalır.
+- Ayar kataloğu veya dashboard, güvenlik kilitlerini devre dışı bırakamaz.
+- Gerçek olmayan veri üretilmez; eksik veri UNKNOWN/VERİ YOK olarak kalır.
+- Testte sentetik fixture kullanılırsa test kapsamı olarak açıkça etiketlenir.
