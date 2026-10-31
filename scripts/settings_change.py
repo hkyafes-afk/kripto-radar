@@ -80,8 +80,13 @@ def apply_change(text: str, path: str, raw_value: str) -> tuple[str, dict]:
 
     replacement = str(value)
     updated = text[:node.start_mark.index] + replacement + text[node.end_mark.index:]
-    # Parse again before any write; malformed/duplicate YAML is rejected.
-    yaml.safe_load(updated)
+    # Parse again before any write; malformed config and cross-field threshold
+    # inversions are rejected before the atomic replace.
+    updated_config = yaml.safe_load(updated)
+    signal = updated_config.get("sinyal") or {}
+    if ("guclu_esik" in signal and "izle_esik" in signal
+            and float(signal["izle_esik"]) >= float(signal["guclu_esik"])):
+        raise SettingsChangeError("sinyal.izle_esik, guclu_esik değerinden küçük olmalı.")
     return updated, {"path": path, "old_value": current, "new_value": value,
                      "range": [minimum, maximum], "approval": "pull_request_required"}
 
