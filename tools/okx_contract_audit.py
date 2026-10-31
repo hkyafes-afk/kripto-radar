@@ -27,7 +27,7 @@ def audit(instruments: list[dict], tickers: list[dict], equity=100.0, max_positi
           risk_pct=0.005, stop_pct=0.05) -> dict:
     prices = {x.get("instId"): float(x["last"]) for x in tickers
               if x.get("instId") and _positive(x.get("last"))}
-    live, eligible, rejected, unknown = [], [], [], []
+    live, eligible, rejected, unknown, risk_fit = [], [], [], [], []
     max_notional = equity * max_position_pct
     risk_budget = equity * risk_pct
     target_notional = risk_budget / stop_pct if stop_pct > 0 else 0.0
@@ -61,6 +61,8 @@ def audit(instruments: list[dict], tickers: list[dict], equity=100.0, max_positi
             eligible.append(row)
         else:
             rejected.append(row)
+        if min_notional <= target_notional:
+            risk_fit.append(row)
     eligible.sort(key=lambda x: x["min_notional_usdt"])
     rejected.sort(key=lambda x: x["min_notional_usdt"])
     return {
@@ -72,7 +74,8 @@ def audit(instruments: list[dict], tickers: list[dict], equity=100.0, max_positi
         "target_notional_at_assumed_stop_usdt": round(target_notional, 4),
         "live_usdt_swap_count": len(live), "eligible_count": len(eligible),
         "too_large_minimum_count": len(rejected), "unknown_metadata_count": len(unknown),
-        "eligible": eligible, "too_large_minimum": rejected, "unknown": unknown,
+        "risk_target_fit_count": len(risk_fit), "risk_target_too_large_count": len(eligible) - len(risk_fit),
+        "eligible": eligible, "too_large_minimum": rejected, "risk_target_fit": risk_fit, "unknown": unknown,
         "scope_note": "Public OKX metadata snapshot; minimum-order notional estimate. Not a fill/liquidity guarantee. Fee tier, spread, depth, slippage and funding are not inferred."
     }
 
