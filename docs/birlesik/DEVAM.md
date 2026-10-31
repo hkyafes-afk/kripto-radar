@@ -5,8 +5,9 @@
 > https://github.com/hkyafes-afk/kripto-radar/pull/23
 > Kalan tüm işler ve kabul kapıları: https://github.com/hkyafes-afk/kripto-radar/issues/24
 >
-> PR #23 dalı: `feat/realtime-data-control-center`. 2026-10-31 doğrulanan head `3691dd7f86fe21e6ba5dfb9f9df9adaa63e1d0a4`.
-> Bu head için GitHub Actions: UnifiedTrader `184 passed, 3 skipped`; tam depo `335 passed, 10 skipped`.
+> PR #23 dalı: `feat/realtime-data-control-center`. Son kod head'i `193aeb2f7d21af673b4b4a9410ae2b9acdf4b5ca` için GitHub Actions: UnifiedTrader `187 passed, 3 skipped`; tam depo `338 passed, 10 skipped` (ikisi de başarılı).
+> Ardından yalnız ücretsiz çalışma modeli dokümantasyonu eklendi; bu doküman commit'leri için CI yeniden çalıştırılacak.
+> Ek ücretli sunucu/hosting/kişisel PC varsayımı yoktur. Ücretsiz çalışma sınırları `docs/FREE_ONLY_OPERATIONAL_MODEL.md` içinde kayıtlıdır.
 > PR açık ve taslak; main'e merge edilmedi. Main tabanı `69a6239d4d6c9846db7defd01101a377e71ea170`.
 >
 > Polat, UnifiedTrader değildir ve ana portföyü yönetmez. Polat'ın `yetki.yeni_pozisyon` değeri false; kodda eksik yetki de fail-closed'dur.
