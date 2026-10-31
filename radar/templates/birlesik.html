@@ -427,7 +427,8 @@ function renderDataHealth(durum) {
   const rows = (q.ornek || []).map(x => '<div class="dr"><div style="min-width:0"><b>' + esc(x.decision_inst || '—') +
     '</b><div class="t2">Feed: ' + (x.feed_inst ? 'abone' : 'abone değil') + ' · Defter: ' +
     (x.book_exists ? 'var' : 'yok') + ' · Kaynak: ' + esc(x.bbo_kaynak || '—') +
-    ' · Spread: ' + esc(x.spread_status || '—') + '</div></div><div class="tm num">' +
+    ' · Spread: ' + esc(x.spread_status || '—') + ' · Kalite: ' + esc(x.quality_state || 'UNKNOWN') +
+    (x.quality_reason ? ' (' + esc(x.quality_reason) + ')' : '') + '</div></div><div class="tm num">' +
     (isNum(x.ws_book_age) ? fmt(x.ws_book_age, 1) + ' sn' : '—') + '</div></div>').join('');
   return '<div class="card dl">' +
     '<div class="hrow"><h2>OKX BBO / veri akışı</h2>' + badge(q.ws_healthy === true ? 'Bağlı' : q.ws_healthy === false ? 'Kopuk' : 'Bilinmiyor') + '</div>' +
