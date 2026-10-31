@@ -66,7 +66,7 @@ Not: Legacy Radar'ın sanal işlem üretmeye devam etmesi shadow testinin karş�
 - Polat yetki.yeni_pozisyon: false olarak kalır; mevcut sanal pozisyonları yönetir, araştırma/öğrenme kayıtlarını üretir.
 - canli.yml ve polat.yml veri akışı ile açık sanal pozisyonların yönetimi için çalışmaya devam eder. Workflow'un çalışıyor olması bağımsız yeni pozisyon yetkisi anlamına gelmez.
 - Eski 100.000 USDT shadow state, yalnızca paper emir/pozisyon/kapanmış işlem geçmişi yoksa 100 USDT'ye güvenli biçimde yeniden bazlanır. İşlem geçmişi varsa başlangıç sermayesi değişimi fail-closed olur; otomatik silme yapılmaz.
-- Ana dashboard en yeni Unified (birlesik/durum.json) veya eski Shadow (birlesik/golge/durum.json) durumunu seçer; iki portföyü tek hesap gibi toplamaz.
+- Ana dashboard yalnız UnifiedTrader'ın 100 USDT PAPER durumunu (birlesik/durum.json) gösterir. Eski Shadow (birlesik/golge/durum.json) ayrı arşivdir; aktif hesap gibi gösterilmez ve iki portföy birleştirilmez.
 
 ## Açık güvenlik/strateji sınırları — 2026-10-31
 
