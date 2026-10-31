@@ -182,3 +182,18 @@ def test_market_rejects_invalid_mark_price_and_funding_values():
     channels = market.stats()["kalite_telemetrisi"]["kanallar"]
     assert channels["mark-price"]["durumlar"]["INVALID"] == 1
     assert channels["funding-rate"]["durumlar"]["INVALID"] == 1
+
+
+
+def test_malformed_orderbook_levels_fail_closed_without_crashing():
+    market = _market()
+    market.handle(
+        {"arg": {"channel": "books", "instId": "BTC-USDT-SWAP"}, "action": "snapshot",
+         "data": [{"ts": "1000", "seqId": 10,
+                   "bids": [["NaN", "2"]], "asks": [["101", "2"]]}]},
+        recv_ms=1_010,
+    )
+    coin = market.coins["BTC-USDT-SWAP"]
+    assert coin.book.ok is False
+    quality = market.stats()["kalite_telemetrisi"]["kanallar"]["books"]
+    assert quality["durumlar"]["INVALID"] == 1
