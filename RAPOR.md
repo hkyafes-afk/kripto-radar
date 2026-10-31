@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.297R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.296R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 3120 | %47.0 | -0.297 | -926.15 |
+| polat_tum_sinyaller | 3124 | %47.0 | -0.296 | -923.22 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 3107 | %46.9 | -0.296 | -920.78 |
+| polat_girilmeyen | 3111 | %47.0 | -0.295 | -917.86 |
 | rastgele | 3103 | %43.6 | -0.37 | -1147.0 |
-| trend_naif | 3135 | %41.7 | -0.403 | -1262.83 |
+| trend_naif | 3136 | %41.7 | -0.403 | -1264.1 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-4.23
+Polat özsermaye: %-4.71 · BTC al-tut: %-4.21
 
 ## Öğrenme (walk-forward)
 
@@ -25,11 +25,11 @@ En az işe yarayan okumalar: btc_1H ×0.413, obv_egim_1H ×0.554, cci_1H ×0.562
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 34110, girilen: 8.
+Kapanmış işlem yok. Görülen kurulum: 34170, girilen: 8.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 11441
+- ders: 11462
 - günlük işlem tavanı (8): 2524
 - aynı yönde pozisyon tavanı: 1156
 - gösterge aileleri aynı yönde değil: 865
@@ -37,8 +37,8 @@ Kapanmış işlem yok. Görülen kurulum: 34110, girilen: 8.
 - büyük zaman dilimi trendi ters: 284
 - puan -0.183 eşiğin (0.25) altında: 52
 - puan -0.213 eşiğin (0.25) altında: 52
-- puan +0.121 eşiğin (0.3) altında: 50
-- puan +0.131 eşiğin (0.3) altında: 50
+- puan +0.121 eşiğin (0.3) altında: 51
+- puan +0.131 eşiğin (0.3) altında: 51
 
 ## Son 50 gün
 
@@ -91,7 +91,7 @@ Kapanmış işlem yok. Görülen kurulum: 34110, girilen: 8.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 18408
+- ders: 18429
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2464
 - üst üste 3 zarar: 2345
@@ -158,7 +158,7 @@ Kapanmış işlem yok. Görülen kurulum: 34110, girilen: 8.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 18408
+- ders: 18429
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2464
 - üst üste 3 zarar: 2345
