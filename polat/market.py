@@ -378,10 +378,9 @@ class Market:
                 "kalite_telemetrisi": {"anlam": "Yapısal timestamp/sequence kontrolü; freshness strateji eşiği ayrıca uygulanır.",
                                        "kanallar": latest, "durum_sayilari": dict(self.quality_counts)}}
 
+    def close(self) -> dict:
+        return self.event_journal.close() if self.event_journal else {"enabled": False, "complete": False}
+
 
 def now() -> int:
     return now_ms()
-
-
-    def close(self) -> dict:
-        return self.event_journal.close() if self.event_journal else {"enabled": False, "complete": False}
