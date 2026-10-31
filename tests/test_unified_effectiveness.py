@@ -104,3 +104,28 @@ def test_sentetik_yaris_csv_ve_komut(tmp_path):
     assert main(["etkinlik", "--yaris", str(p), "--cikti", str(out)]) == 0
     assert json.loads(out.read_text())["yaris"]["ozet"]["islem_sayisi"] == 41
     assert main(["etkinlik", "--cikti", str(out)]) == 2
+
+
+
+def test_unified_paper_promotion_requires_fourteen_days_of_forward_evidence():
+    same_day = [
+        {"strategy": "swing_trend", "r": 0.5 + (i % 3) * 0.05,
+         "net_usd": 2.5, "fees_usd": 0.1, "funding_usd": 0.0,
+         "horizon": "swing", "closed_ts": NOW}
+        for i in range(120)
+    ]
+    report = EffectivenessAuditor().audit(unified_closed=same_day, now_ms=NOW)
+    item = report["kapsamlar"]["strateji:swing_trend:birlesik:paper"]
+    assert item["n_trades"] == 120
+    assert item["evidence_window_days"] == 0
+    assert item["karar"] == "kanit_yetersiz"
+    assert "14 gün" in item["karar_tr"]
+
+    forward = [
+        {**row, "closed_ts": NOW - (119 - i) * 12 * 60 * 60 * 1000}
+        for i, row in enumerate(same_day)
+    ]
+    report = EffectivenessAuditor().audit(unified_closed=forward, now_ms=NOW)
+    item = report["kapsamlar"]["strateji:swing_trend:birlesik:paper"]
+    assert item["evidence_window_days"] >= 14
+    assert item["karar"] == "terfi_adayi"
