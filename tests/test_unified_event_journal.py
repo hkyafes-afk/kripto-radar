@@ -46,7 +46,7 @@ def test_journal_detects_tampering_and_truncated_tail(tmp_path):
     original = path.read_text()
     record = json.loads(original)
     record["payload"]["last"] = "999"
-    path.write_text(json.dumps(record, separators=(",", ":")) + "\\n")
+    path.write_text(json.dumps(record, separators=(",", ":")) + "\n")
     with pytest.raises(JournalIntegrityError, match="record_hash_mismatch"):
         AppendOnlyEventJournal(path, fsync=False)
 
