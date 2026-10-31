@@ -169,8 +169,9 @@ class UnifiedDecisionEngine:
         try:
             return policy.gate(idea, dict(ctx.raw or {}), self.cfg)
         except Exception as e:  # noqa: BLE001
-            self.errors.append(f"politika {ctx.symbol}: {e}")
-            return None
+            # Politika motoru hata verirse yeni pozisyon açmak güvenli değildir.
+            self.errors.append(f"politika {ctx.symbol}: {type(e).__name__}: {e}")
+            return f"POLITIKA_HATASI:{type(e).__name__}"
 
     def _resolve_conflicts(self, ctx: MarketContext, drafts: list[dict]) -> None:
         live = (Decision.OPEN, Decision.REDUCE_SIZE)
