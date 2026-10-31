@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 2668 | %48.1 | -0.255 | -680.69 |
+| polat_tum_sinyaller | 2673 | %48.1 | -0.255 | -680.29 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 2655 | %48.0 | -0.254 | -675.33 |
-| rastgele | 2662 | %43.9 | -0.349 | -929.34 |
-| trend_naif | 2670 | %42.5 | -0.369 | -983.98 |
+| polat_girilmeyen | 2660 | %48.1 | -0.254 | -674.93 |
+| rastgele | 2667 | %43.9 | -0.349 | -930.44 |
+| trend_naif | 2675 | %42.6 | -0.368 | -983.58 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-4.8
+Polat özsermaye: %-4.71 · BTC al-tut: %-4.76
 
 ## Öğrenme (walk-forward)
 
@@ -56,12 +56,12 @@ En az işe yarayan okumalar: btc_1H ×0.336, momentum_1H ×0.467, obv_egim_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 7330
+- ders: 7347
 - günlük işlem tavanı (8): 2524
 - aynı yönde pozisyon tavanı: 1156
 - gösterge aileleri aynı yönde değil: 743
 - bu coinde zaten pozisyon var: 464
-- büyük zaman dilimi trendi ters: 234
+- büyük zaman dilimi trendi ters: 236
 - puan -0.183 eşiğin (0.25) altında: 52
 - puan -0.213 eşiğin (0.25) altında: 52
 - puan -0.182 eşiğin (0.25) altında: 50
@@ -118,11 +118,11 @@ En az işe yarayan okumalar: btc_1H ×0.336, momentum_1H ×0.467, obv_egim_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 14297
+- ders: 14314
 - günlük işlem tavanı (8): 7185
 - üst üste 3 zarar: 2345
 - gösterge aileleri aynı yönde değil: 2342
-- büyük zaman dilimi trendi ters: 1961
+- büyük zaman dilimi trendi ters: 1963
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
@@ -185,11 +185,11 @@ En az işe yarayan okumalar: btc_1H ×0.336, momentum_1H ×0.467, obv_egim_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 14297
+- ders: 14314
 - günlük işlem tavanı (8): 7185
 - üst üste 3 zarar: 2345
 - gösterge aileleri aynı yönde değil: 2342
-- büyük zaman dilimi trendi ters: 1961
+- büyük zaman dilimi trendi ters: 1963
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
