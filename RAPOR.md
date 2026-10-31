@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.257R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.256R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 2647 | %47.9 | -0.257 | -679.34 |
+| polat_tum_sinyaller | 2655 | %48.0 | -0.256 | -679.39 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 2634 | %47.9 | -0.256 | -673.98 |
-| rastgele | 2634 | %44.1 | -0.344 | -907.2 |
-| trend_naif | 2648 | %42.4 | -0.371 | -981.4 |
+| polat_girilmeyen | 2642 | %48.0 | -0.255 | -674.02 |
+| rastgele | 2639 | %44.1 | -0.343 | -906.25 |
+| trend_naif | 2656 | %42.5 | -0.37 | -981.44 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-4.74
+Polat özsermaye: %-4.71 · BTC al-tut: %-4.64
 
 ## Öğrenme (walk-forward)
 
@@ -56,10 +56,10 @@ En az işe yarayan okumalar: btc_1H ×0.336, momentum_1H ×0.448, obv_egim_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 7232
+- ders: 7239
 - günlük işlem tavanı (8): 2524
 - aynı yönde pozisyon tavanı: 1156
-- gösterge aileleri aynı yönde değil: 732
+- gösterge aileleri aynı yönde değil: 733
 - bu coinde zaten pozisyon var: 464
 - büyük zaman dilimi trendi ters: 234
 - puan -0.183 eşiğin (0.25) altında: 52
@@ -118,10 +118,10 @@ En az işe yarayan okumalar: btc_1H ×0.336, momentum_1H ×0.448, obv_egim_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 14199
+- ders: 14206
 - günlük işlem tavanı (8): 7185
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 2331
+- gösterge aileleri aynı yönde değil: 2332
 - büyük zaman dilimi trendi ters: 1961
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
@@ -185,10 +185,10 @@ En az işe yarayan okumalar: btc_1H ×0.336, momentum_1H ×0.448, obv_egim_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 14199
+- ders: 14206
 - günlük işlem tavanı (8): 7185
 - üst üste 3 zarar: 2345
-- gösterge aileleri aynı yönde değil: 2331
+- gösterge aileleri aynı yönde değil: 2332
 - büyük zaman dilimi trendi ters: 1961
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
