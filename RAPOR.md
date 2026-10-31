@@ -56,7 +56,7 @@ En az işe yarayan okumalar: cift_dip_4H ×0.486, momentum_1H ×0.542, cci_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 9674
+- ders: 9739
 - günlük işlem tavanı (8): 2524
 - aynı yönde pozisyon tavanı: 1156
 - gösterge aileleri aynı yönde değil: 850
@@ -118,7 +118,7 @@ En az işe yarayan okumalar: cift_dip_4H ×0.486, momentum_1H ×0.542, cci_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 16641
+- ders: 16706
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2449
 - üst üste 3 zarar: 2345
@@ -185,7 +185,7 @@ En az işe yarayan okumalar: cift_dip_4H ×0.486, momentum_1H ×0.542, cci_1H ×
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 16641
+- ders: 16706
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2449
 - üst üste 3 zarar: 2345
