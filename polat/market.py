@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import time
 import zlib
+from math import isfinite
 from collections import deque
 
 from .okx import CHANNEL_TF, now_ms, parse_candle
@@ -185,6 +186,14 @@ class Market:
             c = self.coins[inst] = Coin(inst, self.meta.get(inst, {}), self.tfs)
         return c
 
+    @staticmethod
+    def _event_ts(value) -> int | None:
+        try:
+            stamp = int(value)
+        except (TypeError, ValueError, OverflowError):
+            return None
+        return stamp if stamp > 0 else None
+
     def _observe_quality(self, symbol: str, channel: str, event_ts_ms: int | None,
                          recv_ms: int, *, seq_id: int | None = None,
                          prev_seq_id: int | None = None, snapshot: bool = False,
@@ -222,8 +231,14 @@ class Market:
             elif ch == "open-interest":
                 for d in data:
                     c = self.coin(d["instId"])
-                    ts, oi = int(d["ts"]), float(d.get("oiCcy") or 0) or float(d["oi"]) * c.ct
-                    self._observe_quality(c.inst, "open-interest", ts or None, recv_ms)
+                    ts = self._event_ts(d.get("ts"))
+                    try:
+                        oi_ccy = float(d.get("oiCcy") or 0)
+                        oi = oi_ccy if oi_ccy > 0 else float(d.get("oi") or 0) * c.ct
+                    except (TypeError, ValueError, OverflowError):
+                        oi = 0.0
+                    self._observe_quality(c.inst, "open-interest", ts, recv_ms,
+                                          valid=bool(ts and isfinite(oi) and oi > 0))
                     if self.quality_latest[(c.inst, "open-interest")].state is not QualityState.LIVE:
                         continue
                     c.oi_hist.append((ts, oi))
@@ -233,10 +248,15 @@ class Market:
             elif ch == "funding-rate":
                 for d in data:
                     c = self.coin(d["instId"])
-                    self._observe_quality(c.inst, "funding-rate", int(d.get("ts") or 0) or None, recv_ms)
+                    event_ts = self._event_ts(d.get("ts"))
+                    try:
+                        funding = float(d.get("fundingRate"))
+                    except (TypeError, ValueError, OverflowError):
+                        funding = float("nan")
+                    self._observe_quality(c.inst, "funding-rate", event_ts, recv_ms,
+                                          valid=isfinite(funding) and -1.0 <= funding <= 1.0)
                     if self.quality_latest[(c.inst, "funding-rate")].state is not QualityState.LIVE:
                         continue
-                    funding = float(d["fundingRate"])
                     if not (-1.0 <= funding <= 1.0):
                         self._observe_quality(c.inst, "funding-rate", int(d.get("ts") or 0) or None,
                                               recv_ms, valid=False)
@@ -246,27 +266,39 @@ class Market:
             elif ch == "mark-price":
                 for d in data:
                     inst = d["instId"]
-                    self._observe_quality(inst, "mark-price", int(d.get("ts") or 0) or None, recv_ms,
-                                          valid=float(d.get("markPx") or 0) > 0)
+                    try:
+                        mark_px = float(d.get("markPx"))
+                    except (TypeError, ValueError, OverflowError):
+                        mark_px = float("nan")
+                    self._observe_quality(inst, "mark-price", self._event_ts(d.get("ts")), recv_ms,
+                                          valid=isfinite(mark_px) and mark_px > 0)
                     if self.quality_latest[(inst, "mark-price")].state is QualityState.LIVE:
-                        self.coin(inst).mark = float(d["markPx"])
+                        self.coin(inst).mark = mark_px
             elif ch == "index-tickers":
                 for d in data:
                     c = self.coins.get(d["instId"] + "-SWAP")
                     if c:
-                        self._observe_quality(c.inst, "index-tickers", int(d.get("ts") or 0) or None, recv_ms,
-                                              valid=float(d.get("idxPx") or 0) > 0)
+                        try:
+                            index_px = float(d.get("idxPx"))
+                        except (TypeError, ValueError, OverflowError):
+                            index_px = float("nan")
+                        self._observe_quality(c.inst, "index-tickers", self._event_ts(d.get("ts")), recv_ms,
+                                              valid=isfinite(index_px) and index_px > 0)
                         if self.quality_latest[(c.inst, "index-tickers")].state is QualityState.LIVE:
-                            c.index = float(d["idxPx"])
+                            c.index = index_px
             elif ch == "liquidation-orders":
                 for d in data:
                     c = self.coins.get(d.get("instId", ""))
                     if not c:
                         continue
                     for x in d.get("details", ()):
-                        event_ts = int(x.get("ts") or d.get("ts") or 0) or None
+                        event_ts = self._event_ts(x.get("ts") or d.get("ts"))
+                        try:
+                            liq_size = float(x.get("sz") or 0)
+                        except (TypeError, ValueError, OverflowError):
+                            liq_size = 0.0
                         self._observe_quality(c.inst, "liquidation-orders", event_ts, recv_ms,
-                                              valid=float(x.get("sz") or 0) > 0)
+                                              valid=isfinite(liq_size) and liq_size > 0)
                         if self.quality_latest[(c.inst, "liquidation-orders")].state is not QualityState.LIVE:
                             continue
                         side = "long" if (x.get("posSide") == "long" or (x.get("posSide") == "net" and x.get("side") == "sell")) else "short"
@@ -303,9 +335,9 @@ class Market:
         for d in data:
             is_snapshot = action == "snapshot"
             ok = c.book.apply(d, is_snapshot)
-            self._observe_quality(inst, "books", int(d.get("ts") or 0) or None, recv_ms,
-                                  seq_id=int(d["seqId"]) if d.get("seqId") is not None else None,
-                                  prev_seq_id=int(d["prevSeqId"]) if d.get("prevSeqId") is not None else None,
+            self._observe_quality(inst, "books", self._event_ts(d.get("ts")), recv_ms,
+                                  seq_id=self._event_ts(d.get("seqId")),
+                                  prev_seq_id=self._event_ts(d.get("prevSeqId")),
                                   snapshot=is_snapshot, valid=ok)
             if self.quality_latest[(inst, "books")].state is not QualityState.LIVE:
                 c.book.ok = False
@@ -348,7 +380,7 @@ class Market:
         except (KeyError, TypeError, ValueError, OverflowError):
             self._observe_quality(inst, "trades", None, recv_ms, valid=False)
             return
-        valid = px > 0 and sz > 0 and ts > 0 and d.get("side") in ("buy", "sell")
+        valid = isfinite(px) and isfinite(sz) and px > 0 and sz > 0 and ts > 0 and d.get("side") in ("buy", "sell")
         self._observe_quality(inst, "trades", ts or None, recv_ms, valid=valid)
         if self.quality_latest[(inst, "trades")].state is not QualityState.LIVE:
             return
