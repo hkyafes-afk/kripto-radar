@@ -186,3 +186,18 @@ if __name__ == "__main__":
         if name.startswith("test_"):
             fn()
             print("✓", name)
+
+
+def test_atr_gate_boundary_and_candidate_thresholds():
+    """ATR sınırı kesin karşılaştırılır; alternatifler aynı fikir üzerinde ayrı ayrı denenebilir."""
+    idea = _idea(atr=5.0)
+    for threshold in (3.0, 5.0, 7.0, 10.0, 12.5):
+        cfg = copy.deepcopy(CFG)
+        cfg.setdefault("ekip", {}).setdefault("kurallar", {})["max_atr_yuzde"] = threshold
+        result = policy.gate(idea, {}, cfg)
+        assert (result is None) == (5.0 <= threshold), f"eşik={threshold}, sonuç={result}"
+    cfg = copy.deepcopy(CFG)
+    cfg["ekip"]["kurallar"]["max_atr_yuzde"] = 5.0
+    assert policy.gate(_idea(atr=5.01), {}, cfg) and "oynaklık" in policy.gate(_idea(atr=5.01), {}, cfg)
+    cfg["ekip"]["kurallar"]["max_atr_yuzde"] = None
+    assert policy.gate(_idea(atr=50.0), {}, cfg) is None, "limitsiz aday ATR kapısı uygulamaz"
