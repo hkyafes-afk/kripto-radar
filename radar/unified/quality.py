@@ -1,4 +1,6 @@
-"""Ortak piyasa verisi kalite kapısı (saf çekirdek; ağ adaptörüne bağımlı değildir).
+"""Ortak piyasa verisi kalite kapısı.
+
+Polat OKX adaptörü bu çekirdeği olay bazında besler; UnifiedTrader strateji kapısı henüz ayrı entegrasyon aşamasıdır.
 
 Bu modül olayların gerçek zaman damgalarını ve kanal sırası bilgisini değerlendirir.
 Henüz UnifiedTrader/Polat runtime'ına bağlanmış bir servis değildir.
