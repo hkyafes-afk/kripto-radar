@@ -472,7 +472,7 @@ function renderOpportunities(decs, st) {
     `<div class="cell"><div class="l">Boyut azalt</div><div class="v num">${counts.REDUCE_SIZE || 0}</div></div>` +
     `<div class="cell"><div class="l">Gölge / challenger</div><div class="v num">${counts.SHADOW || 0}</div></div></div>` +
     (rows.length ? `<div class="card dl">${rows.slice(0, 80).map(decRow).join("")}</div>` :
-      `<div class="card empty">${(STL[st.dec] || STL.yok)[0]}. Son 24 saatte kabul edilmiş veya gölgeye alınmış karar kaydı yok.</div>`) +
+      `<div class="card empty">${(STL[st] || STL.yok)[0]}. Son 24 saatte kabul edilmiş veya gölgeye alınmış karar kaydı yok.</div>`) +
     `<div class="note">Bu görünüm karar günlüğündeki gerçek OPEN/REDUCE_SIZE/SHADOW kayıtlarını gösterir; tahmini sinyal veya otomatik fırsat üretmez.</div>`;
 }
 
