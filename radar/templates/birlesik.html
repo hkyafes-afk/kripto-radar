@@ -521,6 +521,8 @@ function renderPf(durum, tot, dpl, start, st) {
 }
 
 function setTab(t, scroll = true) {
+  if (t === "acik" || t === "kapanan") t = "portfoy";
+  if (t === "karne") t = "performans";
   S.tab = t; try { localStorage.setItem("bt_tab", t); } catch (e) {}
   render();
   document.querySelectorAll(".bnav button").forEach(b => b.classList.toggle("on", b.dataset.go === t));
