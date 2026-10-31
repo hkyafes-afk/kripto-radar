@@ -1,3 +1,22 @@
+> **GÜNCEL DURUM / ÖNCELİKLİ KAYIT — 2026-10-31**
+> Bu dosyanın aşağıdaki eski PR sıralaması ve cutover notları tarihsel kalmıştır; yeni çalışma için bunları talimat olarak izleme.
+> Güncel üretim yapılandırması `config.yaml → birlesik.karar_modu: unified`, yürütme `paper`; tek yeni pozisyon yetkilisi UnifiedTrader'dır.
+> Eski PR #2–#6 sıralamasını tekrar merge etmeye çalışma. Güncel çalışma PR #23'tür:
+> https://github.com/hkyafes-afk/kripto-radar/pull/23
+> Kalan tüm işler ve kabul kapıları: https://github.com/hkyafes-afk/kripto-radar/issues/24
+>
+> PR #23 dalı: `feat/realtime-data-control-center`. 2026-10-31 doğrulanan head `3691dd7f86fe21e6ba5dfb9f9df9adaa63e1d0a4`.
+> Bu head için GitHub Actions: UnifiedTrader `184 passed, 3 skipped`; tam depo `335 passed, 10 skipped`.
+> PR açık ve taslak; main'e merge edilmedi. Main tabanı `69a6239d4d6c9846db7defd01101a377e71ea170`.
+>
+> Polat, UnifiedTrader değildir ve ana portföyü yönetmez. Polat'ın `yetki.yeni_pozisyon` değeri false; kodda eksik yetki de fail-closed'dur.
+> Polat'ın eski sanal pozisyon yönetimi/araştırma kaydı ayrı kalır. Polat verisi UnifiedTrader'a ortak feed olarak bağlıymış gibi gösterilmez.
+> Gerçek OKX emir/private API kapalı; PAPER dışı yürütme yok. Eski defter ve portföyler ayrı korunur.
+>
+> **Sıradaki adım:** Issue #24'teki ilk açık kabul maddesinden ilerle. Her kod diliminden sonra hem UnifiedTrader hem tam depo testlerini çalıştır; son commit için sonuçlar yeşil değilse tamamlandı deme. Tüm kabul maddeleri kanıtlanmadan PR #23 merge edilmez.
+>
+> ---
+>
 # DEVAM NOTU — Birleşik Baş Trader dönüşümü (yarıda kalırsa buradan devam)
 
 > Bu dosya her adımdan sonra güncellenir. Yeni bir oturum (ya da kota yenilenince aynı oturum) **önce bunu okur**,
