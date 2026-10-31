@@ -884,7 +884,9 @@ class Engine:
                 {o["intent"]["inst"] for o in tr.adapter.open_orders()}
             book = getattr(self, "book", {}) or {}
             quotes = {i: q for i in insts if i and (q := quote_from_book(i, book.get(i), now))}
+            okx = (getattr(self, "feeds", {}) or {}).get("okx")
             out = tr.step(ctxs, quotes, meta=self.meta, closed_bars=getattr(self, "unified_closed_bars", {}),
+                          ws_healthy=okx.healthy() if okx else None,
                           global_issue=getattr(self, "halt", None))
             self.unified_shadow = out
             print(f"[birleşik paper] bakiye {out['bakiye']} · açık {out['acik']} · açılan {len(out['acilan'])} · "
