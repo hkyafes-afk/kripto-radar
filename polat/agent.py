@@ -23,6 +23,7 @@ from .learn import Learner
 from .broker import PaperBroker
 from .journal import DISCLAIMER, Journal, report, report_md
 from .market import Market
+from radar.unified.event_journal import QueuedEventJournal
 from .okx import Feed, Rest, TF_MS, now_ms
 from .risk import Risk, utc_day as _utc_day
 
@@ -170,7 +171,8 @@ class Polat:
         except Exception:  # noqa: BLE001
             pass
         meta = await self.rest.instruments()
-        self.market = m = Market(self.cfg, meta)
+        journal_path = Path(os.getenv("TMPDIR", "/tmp")) / f"polat-market-events-{os.getpid()}.jsonl"
+        self.market = m = Market(self.cfg, meta, event_journal_path=journal_path)
         m.on_close = self._on_close
         m.on_trade = self._on_trade
         m.on_book_bad = self._on_book_bad
@@ -220,6 +222,8 @@ class Polat:
         if self.feed:
             await self.feed.stop()
         self.save()
+        if self.market:
+            self.market.close()
         self.journal.write("olaylar", {"olay": "durdu", "neden": reason, "veri": self.market.stats() if self.market else {}})
         self.journal.flush()
 
