@@ -74,6 +74,13 @@ def test_sentetik_elle_durdurma(tmp_path):
     assert s["acik"] == 0 and s["risk"][0]["kodlar"] == ["DEVRE_DURDURULDU"]
 
 
+def test_bozuk_portfoy_durumu_sessizce_sifirlanmaz(tmp_path):
+    (tmp_path / "portfoy.json").write_text("{bozuk", encoding="utf-8")
+    import pytest
+    with pytest.raises(RuntimeError, match="güvenli başlatma iptal edildi"):
+        trader(tmp_path)
+
+
 def test_sentetik_yeniden_baslatma_pozisyon_ve_stop_korunur(tmp_path):
     t = trader(tmp_path)
     t.step([kemal_ctx()], {INST: q(101.0)}, now_ms=NOW, meta=META)
