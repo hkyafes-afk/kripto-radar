@@ -59,6 +59,9 @@ class PaperExecutionAdapter(ExecutionAdapter):
         self.orders: dict[str, dict] = {}
         self.positions: dict[str, dict] = {}
         self.closed: list[dict] = []
+        # `closed` yalnız son N işlemi tutar; muhasebe bu pencereden bağımsız olmalı.
+        self.closed_net_usd = 0.0
+        self.closed_loss_streak = 0
         self._pending_events: list[dict] = []
         self._load()
 
@@ -78,6 +81,19 @@ class PaperExecutionAdapter(ExecutionAdapter):
         self.orders = st.get("orders") or {}
         self.positions = st.get("positions") or {}
         self.closed = st.get("closed") or []
+        # Eski durum dosyalarıyla uyumluluk: ilk açılışta eldeki geçmişten başlat.
+        self.closed_net_usd = float(st.get("closed_net_usd", sum(c.get("net_usd") or 0.0 for c in self.closed)))
+        self.closed_loss_streak = int(st.get("closed_loss_streak", self._trailing_loss_streak(self.closed)))
+
+    @staticmethod
+    def _trailing_loss_streak(closed: list[dict]) -> int:
+        streak = 0
+        for trade in reversed(closed):
+            if float(trade.get("net_usd") or 0.0) < 0:
+                streak += 1
+            else:
+                break
+        return streak
 
     def save(self) -> None:
         if not self.root:
@@ -99,7 +115,9 @@ class PaperExecutionAdapter(ExecutionAdapter):
                 del self.orders[k]
         self.closed = self.closed[-keep:]
         tmp = self.state_path.with_suffix(".tmp")
-        tmp.write_text(json.dumps({"v": 1, "orders": self.orders, "positions": self.positions, "closed": self.closed},
+        tmp.write_text(json.dumps({"v": 2, "orders": self.orders, "positions": self.positions, "closed": self.closed,
+                                   "closed_net_usd": self.closed_net_usd,
+                                   "closed_loss_streak": self.closed_loss_streak},
                                   ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
         tmp.replace(self.state_path)
 
@@ -186,6 +204,8 @@ class PaperExecutionAdapter(ExecutionAdapter):
             closed = {**pos, "qty": 0.0, "closed_ts": now, "exit_px": px, "net_usd": net,
                       "r": (net / risk) if risk else None, "exit_reason": (it.get("metadata") or {}).get("why")}
             self.closed.append(closed)
+            self.closed_net_usd += net
+            self.closed_loss_streak = self.closed_loss_streak + 1 if net < 0 else 0
             del self.positions[inst]
             for oo in self.orders.values():                  # sahipsiz kalan reduce-only emirleri iptal et
                 if oo["intent"]["inst"] == inst and oo is not o and oo["intent"]["reduce_only"] and \
