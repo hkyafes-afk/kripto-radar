@@ -81,3 +81,17 @@ Başlangıç sermayesi hedefi 100 USDT olarak ele alınacak; testlerde minimum e
 - Çalışma `.github/workflows/atr-research.yml` ile `gecmis` veri dalındaki 1D ve funding verisini alıp rapor ve işlem defterini CI artifact olarak üretir.
 - Her varyant için IS/OOS işlem sayısı, ortalama R, PF ve drawdown karşılaştırılmalıdır. Eşik tek metrikle seçilmez.
 - 2025-01-01 sonrası OOS dönemi önceki LAB araştırmalarında görüldüğü için dokunulmamış holdout değildir. Sonuç tekrar üretim ve aday eleme içindir; nihai onay için yeni ileri dönem gölge/holdout gerekir.
+
+
+## 8. 31.10.2026 ATR deneyinin ilk bulgusu
+Eşleştirilmiş altı varyant tamamlandı. Özet ve sağlamlık uyarıları `data/ATR_DENeyi.md` içinde; ham işlem defteri Actions artifact'inde.
+
+- OOS %5: 466 işlem, +0,171R ortalama, PF 1,41, max DD −%14,2.
+- OOS %3: 78 işlem, +0,187R, PF 1,44, max DD −%3,9; yalnız 8 sembol nedeniyle örneklem çok küçük.
+- OOS %7: 1.547 işlem, +0,005R, PF 1,01, max DD −%41,3.
+- OOS %10 / %12,5 / sınırsız: ortalama net R yaklaşık sıfır veya negatif; düşüşler yaklaşık −%38 ila −%43.
+- %5 yön ayrımında long +0,307R (261), short −0,002R (205). Geniş ATR eşiklerinde short tarafı görece daha iyi, long tarafı belirgin biçimde kötüleşiyor.
+- %5 2025'te −0,112R (162), 2026'da +0,321R (304); dönem kararlılığı yok.
+- Coin-küme bootstrap %95 aralığı %5 için [+0,031; +0,335]R; ancak coin kümeleri ortak piyasa/zaman korelasyonunu çözmez.
+
+**Karar:** %5 en makul araştırma adayı, fakat üretim onayı değil. %3 küçük örneklem nedeniyle seçilemez. ATR eşiği config/production üzerinde değiştirilmedi. Yön ve rejim bazlı analiz, zaman-blok bootstrap, maliyet stresleri ve yeni ileri dönem gölge/holdout olmadan kuralı güncellemiyoruz.
