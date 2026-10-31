@@ -23,7 +23,7 @@ def test_market_exports_real_ticker_timestamp_quality_telemetry():
     quality = stats["kalite_telemetrisi"]
     assert quality["kanallar"]["tickers"]["sembol_sayisi"] == 1
     assert quality["kanallar"]["tickers"]["durumlar"]["LIVE"] == 1
-    assert "freshness strateji eşiği ayrıca uygulanır" in quality["anlam"]
+    assert "Her kanal timestamp/sequence ve kanal tazelik eşiğiyle izlenir" in quality["anlam"]
 
 
 def test_market_marks_order_book_sequence_gap_invalid_until_snapshot():
@@ -116,3 +116,69 @@ def test_market_writes_raw_feed_events_to_bounded_journal(tmp_path):
     assert raw["source"] == "okx_public"
     assert raw["channel"] == "tickers"
     assert raw["event_ts_ms"] == 1000
+
+
+
+def test_ticker_with_missing_or_stale_exchange_timestamp_never_updates_price_state():
+    import time
+
+    market = _market()
+    now = int(time.time() * 1000)
+    market.handle(
+        {"arg": {"channel": "tickers"},
+         "data": [{"instId": "BTC-USDT-SWAP", "last": "100", "bidPx": "99.9",
+                   "askPx": "100.1"}]},
+        recv_ms=now,
+    )
+    assert "BTC-USDT-SWAP" not in market.coins
+
+    market.handle(
+        {"arg": {"channel": "tickers"},
+         "data": [{"instId": "BTC-USDT-SWAP", "last": "100", "bidPx": "99.9",
+                   "askPx": "100.1", "ts": str(now - 20_000)}]},
+        recv_ms=now,
+    )
+    assert "BTC-USDT-SWAP" not in market.coins
+    quality = market.stats()["kalite_telemetrisi"]["kanallar"]["tickers"]
+    assert quality["durumlar"]["STALE"] == 1
+
+
+def test_market_tracks_candle_quality_and_candle_connection_disconnect():
+    import time
+
+    market = _market()
+    coin = market.coin("BTC-USDT-SWAP")
+    now = int(time.time() * 1000)
+    candle_ts = now - 30_000
+    market._candle(
+        "BTC-USDT-SWAP", "candle1m",
+        [[str(candle_ts), "100", "102", "99", "101", "10", "1000", "1", "1"]],
+    )
+    channel = market.stats()["kalite_telemetrisi"]["kanallar"]["candle_1m"]
+    assert channel["durumlar"]["LIVE"] == 1
+    market.disconnect_channels("mum", now + 1)
+    channel = market.stats()["kalite_telemetrisi"]["kanallar"]["candle_1m"]
+    assert channel["durumlar"]["DISCONNECTED"] == 1
+
+
+def test_market_rejects_invalid_mark_price_and_funding_values():
+    import time
+
+    market = _market()
+    now = int(time.time() * 1000)
+    market.handle(
+        {"arg": {"channel": "mark-price"},
+         "data": [{"instId": "BTC-USDT-SWAP", "markPx": "-1", "ts": str(now)}]},
+        recv_ms=now,
+    )
+    market.handle(
+        {"arg": {"channel": "funding-rate"},
+         "data": [{"instId": "BTC-USDT-SWAP", "fundingRate": "5", "ts": str(now)}]},
+        recv_ms=now,
+    )
+    coin = market.coins["BTC-USDT-SWAP"]
+    assert coin.mark is None
+    assert coin.funding is None
+    channels = market.stats()["kalite_telemetrisi"]["kanallar"]
+    assert channels["mark-price"]["durumlar"]["INVALID"] == 1
+    assert channels["funding-rate"]["durumlar"]["INVALID"] == 1
