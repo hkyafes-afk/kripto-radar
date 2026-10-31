@@ -56,3 +56,14 @@ Her aşama ayrı commit ve config flag ile yapılır. Veri dosyaları ve eski ko
 | Veri/backtest/probe workflow'ları | Evet | Yok | Yok |
 
 Not: Legacy Radar'ın sanal işlem üretmeye devam etmesi shadow testinin karşılaştırma taban çizgisidir; birleşik karar modu `unified` yapılmadıkça tek pozisyon otoritesi geçişi tamamlanmış sayılmaz. Bu PR'da canlı borsa emri açılmaz.
+
+
+## Tek yetkili paper cutover — 2026-10-31
+
+- config.yaml / birlesik.karar_modu: unified: yeni pozisyon açma yetkisi yalnız UnifiedTrader'dadır; yürütme modu hâlâ PAPER'dır.
+- Legacy Radar'ın open_positions, yönetici process_ideas, bekleyen limit emirleri ve Elif'in yeni carry girişleri tek yetki kapısıyla engellenir. Bekleyen eski giriş emirleri iptal edilir; mevcut legacy pozisyonların çıkış/risk yönetimi ve arşiv defteri korunur.
+- Eski yönetici fikirleri yeni pozisyon değildir; challenger günlüğüne yazılır. Bunlar UnifiedTrader portföyüne otomatik aktarılmış gibi gösterilmez.
+- Polat yetki.yeni_pozisyon: false olarak kalır; mevcut sanal pozisyonları yönetir, araştırma/öğrenme kayıtlarını üretir.
+- canli.yml ve polat.yml veri akışı ile açık sanal pozisyonların yönetimi için çalışmaya devam eder. Workflow'un çalışıyor olması bağımsız yeni pozisyon yetkisi anlamına gelmez.
+- Eski 100.000 USDT shadow state, yalnızca paper emir/pozisyon/kapanmış işlem geçmişi yoksa 100 USDT'ye güvenli biçimde yeniden bazlanır. İşlem geçmişi varsa başlangıç sermayesi değişimi fail-closed olur; otomatik silme yapılmaz.
+- Ana dashboard en yeni Unified (birlesik/durum.json) veya eski Shadow (birlesik/golge/durum.json) durumunu seçer; iki portföyü tek hesap gibi toplamaz.

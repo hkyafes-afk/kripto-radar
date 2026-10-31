@@ -142,3 +142,40 @@ def test_sentetik_motor_kancasi_unified_modu_ayri_defter(tmp_path):
     assert fe.unified_shadow["mod"] == "unified" and (tmp_path / "birlesik" / "durum.json").exists()
     assert not (tmp_path / "ledger.json").exists()                       # legacy deftere dokunulmaz
     assert fe.unified_audit["islem_sayisi"] == 0
+
+
+def test_eski_100k_shadow_portfoyu_islemsizse_100_usdtye_guvenle_rebase_edilir(tmp_path):
+    cfg = copy.deepcopy(CFG)
+    cfg.setdefault("birlesik", {}).setdefault("paper", {})["baslangic_bakiye"] = 100.0
+    old_btc = [[NOW, 77500.0]]
+    (tmp_path / "portfoy.json").write_text(json.dumps({
+        "peak": 100000.0, "day": "2026-10-31", "day_start": 100000.0,
+        "issue_since": {}, "halted": None, "eq_hist": [[NOW, 100000.0]], "btc_hist": old_btc
+    }), encoding="utf-8")
+
+    t = trader(tmp_path, cfg)
+    assert t.start_equity == 100.0
+    assert t.st["start_equity"] == 100.0
+    assert t.st["peak"] is None
+    assert t.st["eq_hist"] == []
+    assert t.st["btc_hist"] == old_btc
+    assert t.portfolio(NOW).equity == 100.0
+    t._save()
+    assert json.loads((tmp_path / "portfoy.json").read_text())["start_equity"] == 100.0
+
+
+def test_sermaye_degisiminde_islem_gecmisi_varsa_migrasyon_fail_closed(tmp_path):
+    import pytest
+
+    cfg = copy.deepcopy(CFG)
+    cfg.setdefault("birlesik", {}).setdefault("paper", {})["baslangic_bakiye"] = 100.0
+    t = trader(tmp_path, cfg)
+    t.adapter.closed = [{"net_usd": 1.0}]
+    t.adapter.closed_net_usd = 1.0
+    t.adapter.save()
+    (tmp_path / "portfoy.json").write_text(json.dumps({
+        "peak": 100000.0, "day": "2026-10-31", "day_start": 100000.0,
+        "issue_since": {}, "halted": None, "eq_hist": [[NOW, 100000.0]]
+    }), encoding="utf-8")
+    with pytest.raises(RuntimeError, match="otomatik sıfırlama yapılmadı"):
+        trader(tmp_path, cfg)

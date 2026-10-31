@@ -239,8 +239,9 @@ dashboard:
 # Tek merkezden karar veren yeni yapı. Bu blok yalnız EKLENDİ; yukarıdaki hiçbir ayar değişmedi.
 # Varsayılanlar güvenli: legacy ajan sistemi çalışmaya devam eder, yeni motor canlı akışa bağlanmaz.
 birlesik:
-  karar_modu: shadow          # legacy | shadow | unified — 2 hafta gölge gözlem: kararlar kaydedilir ve uygun adaylar AYRI 100 USDT paper defterinde sanal emir/pozisyon olur.
-                              # Gerçek borsa emri/private API yok; legacy sistemin gerçek emirleri ve defteri etkilenmez. Eski değer: legacy
+  karar_modu: unified         # Tek yeni pozisyon/karar otoritesi: Birleşik Baş Trader (100 USDT PAPER).
+                              # Legacy Radar/Elif yeni girişleri kod kapısıyla engellenir; açık eski pozisyonlar yönetilmeye devam eder.
+                              # Polat yeni giriş yetkisi kapalı challenger olarak kalır. Gerçek borsa emri/private API yok.
   yurutme_modu: paper         # yalnız paper izinli; okx_demo / okx_live istense bile reddedilir (gerçek emir yok)
   golge_aralik_sn: 300        # shadow modunda birleşik motor en sık 5 dakikada bir çalışır (yeni anahtar)
   gunluk_saklama_gun: 14      # karar günlüğü site/birlesik/kararlar-YYYY-MM-DD.jsonl bu kadar gün tutulur (yeni anahtar)
