@@ -15,6 +15,7 @@ Rapor: son 1 / 50 / 500 gün; kuruluma, çıkış nedenine, seansa, teyit sayıs
 """
 from __future__ import annotations
 
+import copy
 import gzip
 import json
 import queue
@@ -113,8 +114,13 @@ class Journal:
         return out
 
     def write(self, kind: str, rec: dict):
-        rec.setdefault("ts", int(time.time() * 1000))
-        self.q.put((kind, rec))
+        # Writer ayrı thread'de çalıştığı için çağıranın aynı sözlüğü sonradan
+        # değiştirmesi/kullanması arşiv kararını etkilememeli.
+        snapshot = copy.deepcopy(rec)
+        snapshot.setdefault("ts", int(time.time() * 1000))
+        if kind not in self.files:
+            raise ValueError(f"bilinmeyen günlük türü: {kind}")
+        self.q.put((kind, snapshot))
 
     def flush(self):
         if hasattr(self, "q"):
