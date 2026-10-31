@@ -229,3 +229,15 @@ Bu bölüm PR #23 dalındaki gerçek kod değişikliklerini ve doğrulama durumu
 - Ayar kataloğu veya dashboard, güvenlik kilitlerini devre dışı bırakamaz.
 - Gerçek olmayan veri üretilmez; eksik veri UNKNOWN/VERİ YOK olarak kalır.
 - Testte sentetik fixture kullanılırsa test kapsamı olarak açıkça etiketlenir.
+
+
+### Güncel takip ve doğrulama — 2026-10-31 (PR #23)
+
+- Tüm kalan proje planları tek kabul listesinde toplandı: https://github.com/hkyafes-afk/kripto-radar/issues/24
+- PR #23 güncel dalı `feat/realtime-data-control-center`; son doğrulanan test head'i `3691dd7f86fe21e6ba5dfb9f9df9adaa63e1d0a4`.
+- Bu head için UnifiedTrader CI: **184 passed, 3 skipped**.
+- Aynı head için tam depo CI: **335 passed, 10 skipped**.
+- Son test hatası, Polat yetki fonksiyonunun fail-closed varsayılanına geçişinden sonra eski bir ortak yetki testinin varsayılan-açık davranış beklemesiydi. Test, fail-closed sözleşmesine göre güncellendi; iki CI da son head'de başarılı oldu.
+- PR #23 açık ve taslaktır; main'e merge edilmemiştir. Main tabanı `69a6239d4d6c9846db7defd01101a377e71ea170` olarak korunur.
+- `docs/birlesik/DEVAM.md` içindeki eski PR #2–#6 sıralaması tarihsel olarak işaretlendi; güncel devam noktası Issue #24'tür.
+- Bu test başarısı yalnız mevcut head'i doğrular; Issue #24'teki kalan işler tamamlandı anlamına gelmez.
