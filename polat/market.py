@@ -329,7 +329,8 @@ class Market:
         c.vol24_usd = vol * c.last
         ts = normalized.event_ts_ms
         c.tick_ts = ts
-        self.latency.append(recv_ms - ts)
+        if recv_ms >= ts:
+            self.latency.append(recv_ms - ts)
         if not c.deep and self.on_trade:
             self.on_trade(c, c.last, ts)
 
