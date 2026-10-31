@@ -98,10 +98,14 @@ def _unified_rows(closed: Iterable[Mapping]) -> list[dict]:
         r = c.get("r")
         if not is_finite_number(r):
             continue
-        rows.append({"kaynak": "birlesik", "strategy": c.get("strategy") or "?", "mgr": None, "golge": False,
+        raw_scope = str(c.get("execution_scope") or "unknown")
+        mode = raw_scope if raw_scope in ("unified", "shadow") else "unknown"
+        rows.append({"kaynak": "birlesik", "strategy": c.get("strategy") or "?", "mgr": None,
+                     "golge": mode == "shadow", "mode": mode,
                      "r": float(r), "net_usd": float(c.get("net_usd") or 0.0), "cost_usd": float(c.get("fees_usd") or 0.0),
                      "funding_usd": float(c.get("funding_usd") or 0.0), "rejim": c.get("regime") or "?",
-                     "ufuk": c.get("horizon") or _horizon(c.get("timeframe")), "ts": int(c.get("closed_ts") or 0),
+                     "ufuk": c.get("horizon") or _horizon(c.get("timeframe")),
+                     "entry_ts": int(c.get("opened_ts") or 0), "ts": int(c.get("closed_ts") or 0),
                      "carry": False})
     return rows
 
@@ -168,11 +172,21 @@ class EffectivenessAuditor:
         d["maliyet_payi"] = (cost / gross) if gross > 0 else None             # brüt kârın ne kadarı maliyete gitti
         d["dsr"] = deflated_sharpe(rs, n_trials)
         d["karar"], d["karar_tr"] = self.verdict(snap, d["dsr"])
-        timestamps = [int(row.get("ts") or 0) for row in rows if int(row.get("ts") or 0) > 0]
-        d["evidence_window_days"] = (
-            round((max(timestamps) - min(timestamps)) / 86_400_000, 2)
-            if len(timestamps) >= 2 else 0.0
-        )
+        if scope.startswith("strateji:") and ":birlesik:paper" in scope:
+            # Forward evidence spans actual PAPER entry → final exit timestamps.
+            # Missing entry provenance means the 14-day requirement is not proven.
+            entries = [int(row.get("entry_ts") or 0) for row in rows]
+            exits = [int(row.get("ts") or 0) for row in rows]
+            evidence_ok = bool(entries) and all(ts > 0 for ts in entries + exits)
+            d["evidence_window_days"] = (
+                round((max(exits) - min(entries)) / 86_400_000, 2) if evidence_ok else 0.0
+            )
+        else:
+            timestamps = [int(row.get("ts") or 0) for row in rows if int(row.get("ts") or 0) > 0]
+            d["evidence_window_days"] = (
+                round((max(timestamps) - min(timestamps)) / 86_400_000, 2)
+                if len(timestamps) >= 2 else 0.0
+            )
         # Unified PAPER için 100 kapanmış işlem ve istatistiksel kanıt tek başına
         # yeterli değildir: gerçek forward kayıtları en az 14 güne yayılmalıdır.
         # Legacy/backtest sınıfları bu canlı PAPER kapısını taklit edemez.
@@ -217,7 +231,7 @@ class EffectivenessAuditor:
             if r["carry"]:
                 add("carry", r)
                 continue
-            mode = "golge" if r["golge"] else "paper"
+            mode = r.get("mode") if r["kaynak"] == "birlesik" else ("golge" if r["golge"] else "paper")
             add(f"sistem:{r['kaynak']}:{mode}", r)
             add(f"strateji:{r['strategy']}:{r['kaynak']}:{mode}", r)
             add(f"rejim:{r['rejim']}:{r['kaynak']}:{mode}", r)
