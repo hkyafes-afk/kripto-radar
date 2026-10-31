@@ -45,10 +45,10 @@ jobs:
       - name: Install YAML parser
         run: python -m pip install "pyyaml>=6.0"
       - name: Validate and atomically stage one allow-listed setting
-        run: >-
-          python scripts/settings_change.py
-          --path "${{ inputs.parameter_path }}"
-          --value "${{ inputs.new_value }}"
+        env:
+          SETTINGS_PATH: ${{ inputs.parameter_path }}
+          SETTINGS_VALUE: ${{ inputs.new_value }}
+        run: python scripts/settings_change.py --path "$SETTINGS_PATH" --value "$SETTINGS_VALUE"
       - name: Open a draft pull request for human review
         uses: peter-evans/create-pull-request@v7
         with:
