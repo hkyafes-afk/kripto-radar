@@ -168,6 +168,21 @@ class EffectivenessAuditor:
         d["maliyet_payi"] = (cost / gross) if gross > 0 else None             # brüt kârın ne kadarı maliyete gitti
         d["dsr"] = deflated_sharpe(rs, n_trials)
         d["karar"], d["karar_tr"] = self.verdict(snap, d["dsr"])
+        timestamps = [int(row.get("ts") or 0) for row in rows if int(row.get("ts") or 0) > 0]
+        d["evidence_window_days"] = (
+            round((max(timestamps) - min(timestamps)) / 86_400_000, 2)
+            if len(timestamps) >= 2 else 0.0
+        )
+        # Unified PAPER için 100 kapanmış işlem ve istatistiksel kanıt tek başına
+        # yeterli değildir: gerçek forward kayıtları en az 14 güne yayılmalıdır.
+        # Legacy/backtest sınıfları bu canlı PAPER kapısını taklit edemez.
+        if (scope.startswith("strateji:") and ":birlesik:paper" in scope
+                and d["karar"] == "terfi_adayi" and d["evidence_window_days"] < 14.0):
+            d["karar"] = "kanit_yetersiz"
+            d["karar_tr"] = (
+                f"100 işlem ve istatistik eşiği sağlandı; ancak Unified PAPER forward kanıtı "
+                f"{d['evidence_window_days']:.2f}/14 gün. Gözlem sürmeli."
+            )
         return d
 
     def verdict(self, snap: EffectivenessSnapshot, dsr: dict | None) -> tuple[str, str]:
