@@ -56,8 +56,8 @@ def test_sentetik_cok_deneme_dsr_sikilasir(tmp_path):
 
 def test_sentetik_golge_paper_ve_legacy_birlesik_karsilastirma():
     lc = legacy("kemal", sentetik_r(40, 0.3, seed=7)) + legacy("kemal", sentetik_r(35, 0.1, seed=8), shadow=True)
-    uc = [{"strategy": "swing_trend", "r": r, "net_usd": r * 5, "fees_usd": 0.3, "funding_usd": 0.0,
-           "horizon": "swing", "closed_ts": NOW} for r in sentetik_r(12, 0.4, seed=9)]
+    uc = [{"strategy": "swing_trend", "execution_scope": "unified", "r": r, "net_usd": r * 5, "fees_usd": 0.3, "funding_usd": 0.0,
+           "horizon": "swing", "opened_ts": NOW - 60_000, "closed_ts": NOW} for r in sentetik_r(12, 0.4, seed=9)]
     rep = EffectivenessAuditor().audit(lc, uc, now_ms=NOW)
     cmp = rep["karsilastirma"]["swing_trend"]
     assert cmp["golge_paper"]["n_a"] == 35 and cmp["golge_paper"]["n_b"] == 40
@@ -109,9 +109,9 @@ def test_sentetik_yaris_csv_ve_komut(tmp_path):
 
 def test_unified_paper_promotion_requires_fourteen_days_of_forward_evidence():
     same_day = [
-        {"strategy": "swing_trend", "r": 0.5 + (i % 3) * 0.05,
+        {"strategy": "swing_trend", "execution_scope": "unified", "r": 0.5 + (i % 3) * 0.05,
          "net_usd": 2.5, "fees_usd": 0.1, "funding_usd": 0.0,
-         "horizon": "swing", "closed_ts": NOW}
+         "horizon": "swing", "opened_ts": NOW - 60_000, "closed_ts": NOW}
         for i in range(120)
     ]
     report = EffectivenessAuditor().audit(unified_closed=same_day, now_ms=NOW)
@@ -122,10 +122,34 @@ def test_unified_paper_promotion_requires_fourteen_days_of_forward_evidence():
     assert "14 gün" in item["karar_tr"]
 
     forward = [
-        {**row, "closed_ts": NOW - (119 - i) * 12 * 60 * 60 * 1000}
+        {**row, "opened_ts": NOW - (119 - i) * 12 * 60 * 60 * 1000,
+         "closed_ts": NOW - (119 - i) * 12 * 60 * 60 * 1000 + 60_000}
         for i, row in enumerate(same_day)
     ]
     report = EffectivenessAuditor().audit(unified_closed=forward, now_ms=NOW)
     item = report["kapsamlar"]["strateji:swing_trend:birlesik:paper"]
     assert item["evidence_window_days"] >= 14
     assert item["karar"] == "terfi_adayi"
+
+
+def test_unified_shadow_and_legacy_unknown_scope_never_count_as_paper():
+    shadow = [{"strategy": "swing_trend", "execution_scope": "shadow", "r": 0.5,
+               "net_usd": 1.0, "fees_usd": 0.1, "opened_ts": NOW - 20 * 86_400_000,
+               "closed_ts": NOW}]
+    unknown = [{"strategy": "swing_trend", "r": 0.5, "net_usd": 1.0,
+                "fees_usd": 0.1, "opened_ts": NOW - 20 * 86_400_000, "closed_ts": NOW}]
+    report = EffectivenessAuditor().audit(unified_closed=shadow + unknown, now_ms=NOW)
+    assert "sistem:birlesik:golge" in report["kapsamlar"]
+    assert "sistem:birlesik:unknown" in report["kapsamlar"]
+    assert "sistem:birlesik:paper" not in report["kapsamlar"]
+    assert "strateji:swing_trend:birlesik:paper" not in report["kapsamlar"]
+
+
+def test_unified_paper_fourteen_day_evidence_requires_entry_provenance():
+    rows = [{"strategy": "swing_trend", "execution_scope": "unified", "r": 0.5,
+             "net_usd": 1.0, "fees_usd": 0.1, "closed_ts": NOW - i * 86_400_000}
+            for i in range(120)]
+    report = EffectivenessAuditor().audit(unified_closed=rows, now_ms=NOW)
+    item = report["kapsamlar"]["strateji:swing_trend:birlesik:paper"]
+    assert item["evidence_window_days"] == 0.0
+    assert item["karar"] == "kanit_yetersiz"
