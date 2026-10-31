@@ -1,9 +1,10 @@
 """Ortak piyasa verisi kalite kapısı.
 
-Polat OKX adaptörü bu çekirdeği olay bazında besler; UnifiedTrader strateji kapısı henüz ayrı entegrasyon aşamasıdır.
+Polat'ın public OKX olayları ve UnifiedTrader'ın OKX WS/REST BBO karar yolu
+bu çekirdeği kullanır. Her kanal kendi timestamp/freshness kuralıyla değerlendirilir.
 
-Bu modül olayların gerçek zaman damgalarını ve kanal sırası bilgisini değerlendirir.
-Henüz UnifiedTrader/Polat runtime'ına bağlanmış bir servis değildir.
+Eksik veya güvenilmez kaynak verisi UNKNOWN/INVALID/STALE kalır; yerel alım zamanı
+borsa olay zamanı yerine geçirilmez.
 """
 from __future__ import annotations
 
