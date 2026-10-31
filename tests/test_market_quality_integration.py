@@ -24,6 +24,9 @@ def test_market_exports_real_ticker_timestamp_quality_telemetry():
     assert quality["kanallar"]["tickers"]["sembol_sayisi"] == 1
     assert quality["kanallar"]["tickers"]["durumlar"]["LIVE"] == 1
     assert "Her kanal timestamp/sequence ve kanal tazelik eşiğiyle izlenir" in quality["anlam"]
+    assert stats["gecikme_ornek_sayisi"] == 1
+    assert stats["gecikme_ms_p99"] == 125
+    assert stats["gecikme_ms_max"] == 125
 
 
 def test_market_marks_order_book_sequence_gap_invalid_until_snapshot():
