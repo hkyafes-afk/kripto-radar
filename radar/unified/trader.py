@@ -86,13 +86,7 @@ class UnifiedTrader:
         return eq
 
     def loss_streak(self) -> int:
-        n = 0
-        for c in reversed(self.adapter.closed):
-            if (c.get("net_usd") or 0.0) < 0:
-                n += 1
-            else:
-                break
-        return n
+        return self.adapter.closed_loss_streak
 
     def portfolio(self, now_ms: int, prices=None, data_issue: str | None = None) -> PortfolioState:
         eq = self.equity(prices)
