@@ -54,3 +54,25 @@ def test_market_marks_order_book_sequence_gap_invalid_until_snapshot():
     recovered = market.stats()["kalite_telemetrisi"]["kanallar"]["books"]
     assert recovered["durumlar"]["LIVE"] == 1
     assert recovered["durumlar"]["INVALID"] == 0
+
+
+
+def test_disconnect_marks_only_channels_owned_by_failed_connection():
+    market = _market()
+    market.handle(
+        {"arg": {"channel": "tickers"},
+         "data": [{"instId": "BTC-USDT-SWAP", "last": "100", "bidPx": "99.9",
+                   "askPx": "100.1", "ts": "1000"}]},
+        recv_ms=1_010,
+    )
+    market.handle(
+        {"arg": {"channel": "trades", "instId": "BTC-USDT-SWAP"},
+         "data": [{"instId": "BTC-USDT-SWAP", "tradeId": "1", "px": "100",
+                   "sz": "1", "side": "buy", "ts": "1001"}]},
+        recv_ms=1_011,
+    )
+    market.disconnect_channels("piyasa", 1_020)
+    channels = market.stats()["kalite_telemetrisi"]["kanallar"]
+    assert channels["tickers"]["durumlar"]["DISCONNECTED"] == 1
+    assert channels["trades"]["durumlar"]["LIVE"] == 1
+    assert channels["trades"]["durumlar"]["DISCONNECTED"] == 0
