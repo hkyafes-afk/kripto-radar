@@ -336,6 +336,22 @@ class Market:
         elif not q or cd[0] > q[-1][0]:
             q.append(cd)
 
+    def disconnect_channels(self, connection_name: str, receive_ts_ms: int) -> None:
+        """OKX bağlantı grubu koptuğunda son gözlemleri DISCONNECTED olarak yayımla."""
+        channels_by_connection = {
+            "piyasa": {"tickers", "open-interest", "funding-rate", "mark-price", "index-tickers", "liquidation-orders"},
+            "defter": {"books"}, "tape": {"trades"}, "mum": set(), "mum_genel": set(),
+        }
+        channels = channels_by_connection.get(connection_name, set())
+        for key, previous in list(self.quality_latest.items()):
+            symbol, channel = key
+            if channel not in channels:
+                continue
+            obs = self.quality.disconnected(symbol=symbol, channel=channel, receive_ts_ms=receive_ts_ms)
+            self.quality_counts[previous.state.value] = max(0, self.quality_counts[previous.state.value] - 1)
+            self.quality_latest[key] = obs
+            self.quality_counts[obs.state.value] += 1
+
     def stats(self) -> dict:
         lat = sorted(self.latency)
         pr = sorted(self.proc)
