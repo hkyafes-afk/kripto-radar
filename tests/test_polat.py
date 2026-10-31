@@ -529,6 +529,7 @@ def test_agent_every_reading_votes_and_full_cycle():
         inst = "X-USDT-SWAP"
         data = {inst: _uptrend_data(), "BTC-USDT-SWAP": _uptrend_data(50_000)}
         cfg = copy.deepcopy(CFG)
+        cfg.setdefault("yetki", {})["yeni_pozisyon"] = True  # bu sentetik test giriş yetkisi açıkken tam döngüyü sınar
         cfg["secici"]["min_hacim_usd"] = 0
         cfg["secici"]["sabit"] = ["BTC-USDT-SWAP"]
         cfg["bildirim"]["telegram"] = False

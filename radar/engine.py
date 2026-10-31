@@ -1572,7 +1572,41 @@ class Engine:
         ct = (self.meta.get(inst) or {}).get("ct_val") or 1.0
         return {"asks": [(p, q * ct) for p, q in b["asks"]], "bids": [(p, q * ct) for p, q in b["bids"]]}
 
+    def _unified_authority_active(self) -> bool:
+        """True only when the unified paper trader is configured as the sole new-entry authority."""
+        try:
+            from .unified.flags import decision_mode
+            return decision_mode(self.cfg).value == "unified"
+        except Exception:  # noqa: BLE001 — an explicit unified config must fail closed
+            return str((self.cfg.get("birlesik") or {}).get("karar_modu") or "").strip().lower() == "unified"
+
+    def _enforce_unified_authority(self) -> bool:
+        """Stop legacy entry paths while retaining feeds and management of already-open legacy positions."""
+        if not self._unified_authority_active():
+            return False
+        cancelled = []
+        with self.lock:
+            self.pending_open.clear()
+            self.pending_ideas.clear()
+            self.order_hits.clear()
+            for order in list(self.ledger.get("orders") or []):
+                self.ledger["orders"].remove(order)
+                cancelled.append(order)
+        if cancelled:
+            if self.desk:
+                for order in cancelled:
+                    idea = order.get("idea") or {}
+                    self.desk.journal(order.get("mgr") or idea.get("mgr") or "legacy",
+                                      idea.get("sym") or "-", idea.get("tf") or "-",
+                                      idea.get("side") or "-", "iptal",
+                                      "Yeni pozisyon yetkisi Birleşik Baş Trader'a devredildi")
+            self.rebuild_watch()
+            self.dirty = True
+        return True
+
     def open_positions(self, strong: list[dict]) -> list[dict]:
+        if self._enforce_unified_authority():
+            return []
         if not strong:
             return []
         skipped: list[dict] = []
@@ -2249,6 +2283,15 @@ class Engine:
     def process_ideas(self):
         with self.lock:
             ideas, self.pending_ideas = self.pending_ideas, []
+        if self._enforce_unified_authority():
+            if ideas and self.desk:
+                for idea in ideas:
+                    self.desk.journal(idea.get("mgr") or "legacy", idea.get("sym") or "-",
+                                      idea.get("tf") or "-", idea.get("side") or "-",
+                                      "challenger", "Yeni pozisyon yetkisi yalnız Birleşik Baş Trader'da")
+            if ideas:
+                self.stats_counter["legacy_blocked"] = self.stats_counter.get("legacy_blocked", 0) + len(ideas)
+            return
         if not ideas or not self.desk:
             return
         now_ms = int(time.time() * 1000)
@@ -2284,6 +2327,8 @@ class Engine:
                 self._notify(self.msg_orders(rord))
 
     def process_orders(self):
+        if self._enforce_unified_authority():
+            return
         if not self.desk:
             return
         if self.order_hits:
@@ -2329,6 +2374,7 @@ class Engine:
                 self.pending_carry.append(plan)
 
     def process_carry(self):
+        unified_only = self._enforce_unified_authority()
         with self.lock:
             plans, self.pending_carry = self.pending_carry, []
         if not plans:
@@ -2351,6 +2397,8 @@ class Engine:
                             f"· {_fmt_dur(c['hours'])} · toplanan funding {_usd(-c.get('funding_usd', 0))}")
                 self.desk.journal("elif", t["sym"], "8H", "nötr", "kapattı", why)
             for h, spot, perp, qty, shadow in to_open:
+                if unified_only:  # carry eski ajan stratejisidir; unified carry stratejisi gelene kadar yeni giriş yok
+                    continue
                 if any(t.get("carry") and t["inst"] == h["inst"] and t.get("mgr") == "elif" for t in self.ledger["open"]):
                     continue
                 qp, qs = self._quote(h["inst"]), self._quote(f"{h['sym']}-USDT")

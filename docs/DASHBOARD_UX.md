@@ -45,3 +45,10 @@
 - `site/polat.html` korunur; Polat artık yeni pozisyon açmayan challenger modundadır.
 - Legacy ve birleşik veriler aynı panelde birleştirilmiş portföy gibi gösterilmez. Shadow kararları ayrı gölge defterinden okunur; legacy baseline ayrı kalır.
 - Panel üretim testi ana girişin birleşik şablon olduğunu, legacy sayfanın arşiv rotasında kaldığını ve Polat sayfasının korunduğunu doğrular.
+
+
+## Tek yetki yayını — 2026-10-31
+
+- birlesik.karar_modu: unified durumunda ana sayfa birlesik/durum.json dosyasını kullanır; önceki shadow durumu birlesik/golge/durum.json ayrı kalır.
+- Durum seçimi zaman damgasına göre yapılır; eski shadow portföyü yeni paper portföyü gibi gösterilmez.
+- Unified mod etiketi PAPER · TEK OTORİTE olarak görünür. Legacy Radar ve Polat arşiv/management-only durumundadır; portföyleri birleşik 100 USDT bakiyesine eklenmez.

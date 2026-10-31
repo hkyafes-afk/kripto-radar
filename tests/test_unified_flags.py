@@ -15,8 +15,9 @@ from radar.unified.models import DecisionMode, ExecutionMode  # noqa: E402
 
 def test_gercek_config_varsayilanlari_guvenli():
     cfg = load_config()
-    # 30.10.2026 kullanıcı kararı: gölge modu (yalnız karar kaydı). unified (işlem açan) mod onaysız açılmamalı.
-    assert F.decision_mode(cfg) is DecisionMode.SHADOW
+    # Üretim yapılandırması: tek karar otoritesi UnifiedTrader; yürütme yalnız PAPER.
+    assert F.decision_mode(cfg) is DecisionMode.UNIFIED
+    assert F.decision_mode({**cfg, "birlesik": {**cfg["birlesik"], "karar_modu": "shadow"}}) is DecisionMode.SHADOW
     assert F.execution_mode(cfg) == (ExecutionMode.PAPER, None)
     # Unified sermaye legacy demo bakiyesinden bağımsız ve hedef 100 USDT olmalı.
     assert cfg["birlesik"]["paper"]["baslangic_bakiye"] == 100

@@ -66,10 +66,12 @@ class UnifiedTrader:
 
     # ── portföy durumu ───────────────────────────────────────────
     def _load(self) -> dict:
+        empty = {"start_equity": self.start_equity, "peak": None, "day": None, "day_start": None,
+                 "issue_since": {}, "halted": None}
         try:
             raw = self.state_path.read_text(encoding="utf-8")
         except FileNotFoundError:
-            return {"peak": None, "day": None, "day_start": None, "issue_since": {}, "halted": None}
+            return empty
         except OSError as e:
             raise RuntimeError(f"Birleşik portföy durumu okunamadı: {self.state_path}: {e}") from e
         try:
@@ -78,10 +80,43 @@ class UnifiedTrader:
             raise RuntimeError(f"Birleşik portföy durumu bozuk; güvenli başlatma iptal edildi: {self.state_path}") from e
         if not isinstance(state, dict):
             raise RuntimeError(f"Birleşik portföy durumu nesne değil; güvenli başlatma iptal edildi: {self.state_path}")
+
+        # Eski shadow süreci 100.000 USDT varsayılanıyla çalışmış olabilir. 100 USDT
+        # yapılandırmasına geçerken eski zirveyi taşımak hesabı sahte biçimde %99,9 düşüşte
+        # gösterir. Yalnızca hiç emir/pozisyon/kapanmış işlem yoksa geçmiş özsermaye eğrisi
+        # yeniden bazlanır. Herhangi bir işlem geçmişi varsa otomatik migrasyon YASAKTIR.
+        baseline = state.get("start_equity", state.get("peak"))
+        mismatch = False
+        if baseline is not None:
+            try:
+                previous = float(baseline)
+            except (TypeError, ValueError) as e:
+                raise RuntimeError(f"Birleşik portföy başlangıç sermayesi geçersiz; güvenli başlatma iptal edildi: {self.state_path}") from e
+            if previous != previous or abs(previous) == float("inf"):
+                raise RuntimeError(f"Birleşik portföy başlangıç sermayesi sonlu değil; güvenli başlatma iptal edildi: {self.state_path}")
+            mismatch = abs(previous - self.start_equity) > max(1e-8, abs(self.start_equity) * 1e-9)
+
+        if mismatch:
+            has_history = bool(self.adapter.positions or self.adapter.closed or self.adapter.open_orders())
+            if has_history:
+                raise RuntimeError(
+                    f"Birleşik paper sermayesi {previous:g} → {self.start_equity:g} değişmiş ancak emir/pozisyon/geçmiş var; "
+                    "otomatik sıfırlama yapılmadı. Önce defter migrasyonu gerekir."
+                )
+            return {**empty, "halted": state.get("halted"), "btc_hist": state.get("btc_hist") or [],
+                    "eq_hist": [], "capital_migration": {"from": previous, "to": self.start_equity}}
+
+        state["start_equity"] = self.start_equity
+        state.setdefault("peak", None)
+        state.setdefault("day", None)
+        state.setdefault("day_start", None)
+        state.setdefault("issue_since", {})
+        state.setdefault("halted", None)
         return state
 
     def _save(self) -> None:
         self.root.mkdir(parents=True, exist_ok=True)
+        self.st["start_equity"] = self.start_equity
         tmp = self.state_path.with_suffix(".tmp")
         tmp.write_text(json.dumps(self.st, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
         tmp.replace(self.state_path)
