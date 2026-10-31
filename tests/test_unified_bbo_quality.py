@@ -73,3 +73,38 @@ def test_unified_bbo_does_not_use_unvalidated_rest_snapshot():
     engine.bbo_rest = {inst: (99.9, 100.1, time.time())}
 
     assert engine._trusted_bbo(inst) == (None, "kalite_yok")
+
+
+
+def test_unified_rest_bbo_rejects_missing_exchange_timestamp():
+    from types import SimpleNamespace
+
+    engine = _engine()
+    inst = "BTC-USDT-SWAP"
+    engine.client = SimpleNamespace(tickers=lambda _kind: [
+        {"instId": inst, "bidPx": "99.9", "askPx": "100.1"}
+    ])
+    engine._bbo_snapshot({inst})
+
+    observation = engine.bbo_quality_latest[("rest", inst)]
+    assert observation.state is QualityState.UNKNOWN
+    assert observation.reason_code == "event_timestamp_missing"
+    assert inst not in engine.bbo_rest
+    assert engine._trusted_bbo(inst)[0] is None
+
+
+def test_unified_rest_bbo_rejects_stale_or_crossed_snapshot():
+    from types import SimpleNamespace
+
+    for ticker, expected in (
+        ({"ts": str(int(time.time() * 1000) - 16_000), "bidPx": "99.9", "askPx": "100.1"},
+         QualityState.STALE),
+        ({"ts": str(int(time.time() * 1000)), "bidPx": "100.1", "askPx": "99.9"},
+         QualityState.INVALID),
+    ):
+        engine = _engine()
+        inst = "BTC-USDT-SWAP"
+        engine.client = SimpleNamespace(tickers=lambda _kind, t=ticker: [{"instId": inst, **t}])
+        engine._bbo_snapshot({inst})
+        assert engine.bbo_quality_latest[("rest", inst)].state is expected
+        assert inst not in engine.bbo_rest
