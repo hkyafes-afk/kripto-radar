@@ -27,3 +27,13 @@ Bu belge, dashboard bölümlerinin hangi yayımlanmış dosyalardan beslendiğin
 - Gerçek borsa emri/private API yoktur.
 - Polat raw event journal ve legacy/challenger defterleri UnifiedTrader portföyüne karıştırılmaz.
 - Settings ekranına GitHub PAT, token veya private key konmaz; güvenli yazma altyapısı kurulana kadar ayar değiştirme kapalıdır.
+
+
+## Sonraki doğrulanmış bağlantılar
+
+- Polat kalite telemetrisi artık ticker, L2 books, trades, open-interest, funding-rate, mark-price, index-tickers, liquidation-orders ve candle zaman dilimlerini kapsar. Her kanal için freshness, sequence/timestamp, DISCONNECTED ve STALE durumu raporlanır.
+- Polat latency paneli ölçülen örnek sayısı ile p50/p95/p99/max exchange-event-to-receive ve processing latency değerlerini gösterir. Örnek yoksa alan boş kalır.
+- UnifiedTrader ve Polat aynı `NormalizedBBO` sözleşmesini `radar/unified/market_data.py` üzerinden kullanır. Bu ortak parser/şema, iki runtime'ı ortak socket veya process hâline getirmez.
+- Settings için dashboard PAT saklamaz. GitHub kimlik doğrulamalı workflow yalnız yedi allowlisted sayısal parametreye taslak PR açar; aralık dışı değerler reddedilir ve hiçbir değişiklik otomatik uygulanmaz.
+- Research Lab altyapısı `scripts/unified_research.py` ile CSV üzerinden purged walk-forward, untouched holdout, DSR/multiple-testing ve maliyet/provenance attestation raporu üretir. Otomatik terfi yoktur.
+- Unified PAPER terfi adaylığına 100 kapanmış işlem ve istatistik eşiklerine ek olarak 14 günlük forward kapanış kanıtı şartı eklendi. Bu zaman ve örneklem, kod tarafından sentetik şekilde tamamlanmaz.
