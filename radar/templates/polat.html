@@ -189,12 +189,22 @@ td{padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
       return ch + ": LIVE " + n(states.LIVE, 0) + " · INVALID " + n(states.INVALID, 0) +
         " · UNKNOWN " + n(states.UNKNOWN, 0) + " · " + n(row.sembol_sayisi, 0) + " sembol";
     }).join(" | ");
+    var journal = v.ham_olay_gunlugu || {};
+    var journalState = !journal.enabled ? "Etkin değil" :
+      journal.complete ? "Kayıp yok (şu ana kadar)" : "Eksik · kayıp / sınır / hata";
+    var journalCount = n(journal.records_total, 0) + " toplam · " + n(journal.records_this_run, 0) +
+      " bu çalışma · kuyruk " + n(journal.queued, 0) + " · düşen " + n(journal.dropped, 0);
+    var journalBytes = n(journal.bytes, 0) + " / " + n(journal.max_bytes, 0) + " byte";
     var rtt = Object.keys(rs.rtt_ms || {}).map(function(b){ return b.replace("https://", "") + " " + n(rs.rtt_ms[b], 0) + " ms"; }).join(" · ");
     $("data").innerHTML = kv([
       ["İşlenen mesaj", n(v.mesaj, 0)], ["Veri gecikmesi p50 / p95", n(v.gecikme_ms_p50, 0) + " / " + n(v.gecikme_ms_p95, 0) + " ms"],
       ["İşleme süresi p50 / p95", n(v.isleme_us_p50, 0) + " / " + n(v.isleme_us_p95, 0) + " µs"],
       ["Kanal kalite telemetrisi", esc(qsummary || "henüz kanal verisi yok")],
       ["Kalite ölçüm kapsamı", esc(qh.anlam || "bu sürümde yapısal kalite ölçümü yok")],
+      ["Ham olay günlüğü", esc(journalState)],
+      ["Ham günlük kayıt / kuyruk / düşen", esc(journalCount)],
+      ["Ham günlük boyut / sınır", esc(journalBytes)],
+      ["Ham günlük hata", esc(journal.error || (journal.limit_reached ? "kayıt veya boyut sınırına ulaşıldı" : "yok"))],
       ["En uzun karar", n((d.sayac || {}).karar_ms_max, 1) + " ms"], ["Sunucu", esc(rtt || "–")],
       ["REST istek / tekrar", n(rs.istek, 0) + " / " + n(rs.tekrar, 0)],
       ["Kopma", esc(JSON.stringify((d.baglanti || {}).kopma || {}))],
