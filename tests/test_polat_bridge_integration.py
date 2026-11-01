@@ -30,6 +30,23 @@ def _polat_telemetry():
     }
 
 
+
+def _bridge_telemetry():
+    metrics = _polat_telemetry()
+    quality = metrics["kalite_telemetrisi"]
+    return {
+        "channels": quality["kanallar"],
+        "channel_counters": quality["kanal_sayaclari"],
+        "latency": {key: metrics[key] for key in (
+            "gecikme_ornek_sayisi", "gecikme_ms_p50", "gecikme_ms_p95",
+            "gecikme_ms_p99", "gecikme_ms_max", "isleme_ornek_sayisi",
+            "isleme_us_p50", "isleme_us_p95", "isleme_us_p99", "isleme_us_max",
+        )},
+        "connections": {},
+    }
+
+
+
 def test_polat_publisher_exports_only_fresh_live_quality_tickers(tmp_path, monkeypatch):
     now = 10_000
     monkeypatch.setattr(polat_agent, "now_ms", lambda: now)
@@ -86,7 +103,7 @@ def test_unified_consumer_writes_research_only_status_and_detects_replay(tmp_pat
         bridge, sequence=10_000, generated_at_ms=now,
         observations=[normalize_bbo(venue="okx", symbol="BTC-USDT-SWAP", last=100,
                                     bid=99.9, ask=100.1, event_ts_ms=now)],
-        source_run_id="polat-run-3",
+        source_run_id="polat-run-3", telemetry=_bridge_telemetry(),
     )
     monkeypatch.setenv("UNIFIED_POLAT_BRIDGE_PATH", str(bridge))
     engine = object.__new__(Engine)
@@ -98,9 +115,12 @@ def test_unified_consumer_writes_research_only_status_and_detects_replay(tmp_pat
     assert fresh["scope"] == "research_only"
     assert fresh["observation_count"] == 1
     assert fresh["source_run_id"] == "polat-run-3"
+    assert fresh["telemetry"]["channels"]["tickers"]["durumlar"]["LIVE"] == 1
+    assert fresh["telemetry"]["latency"]["gecikme_ms_p95"] == 1.0
     status_path = engine.site / "birlesik" / "polat_kopru.json"
     saved = json.loads(status_path.read_text(encoding="utf-8"))
     assert saved["status"] == "fresh"
+    assert saved["telemetry"]["channel_counters"]["tickers"]["observations"] == 1
     assert "last" not in saved and "bid" not in saved and "ask" not in saved
 
     replay = engine._poll_polat_research_bridge()
