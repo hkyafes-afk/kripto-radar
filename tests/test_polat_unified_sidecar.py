@@ -7,8 +7,7 @@ import pytest
 from scripts import polat_unified_sidecar as sidecar
 
 
-@pytest.mark.asyncio
-async def test_sidecar_uses_public_feed_and_only_research_publisher(tmp_path, monkeypatch):
+def test_sidecar_uses_public_feed_and_only_research_publisher(tmp_path, monkeypatch):
     calls = []
 
     class FakeRest:
@@ -73,7 +72,7 @@ async def test_sidecar_uses_public_feed_and_only_research_publisher(tmp_path, mo
 
     monkeypatch.setattr(sidecar.asyncio, "sleep", stop_after_first_publish)
     with pytest.raises(asyncio.CancelledError):
-        await sidecar.run()
+        asyncio.run(sidecar.run())
 
     assert "pick_fastest" in calls
     assert "feed_started" in calls
