@@ -34,7 +34,7 @@ def test_site_birlesik_panelini_kopyalar_ve_baglar(tmp_path):
     assert "renderOpportunities" in page and "renderExperimentLab" in page
     assert "renderKarne(data && data.karne" in page
     assert "function sourceMeta" in page and "Kaynak güncellemesi" in page and "sourcebar" in page
-    assert "birlesik/durum.json → PAPER defteri" in page
+    assert "birlesik/durum.json → pozisyonlar / kapananlar" in page
     assert "data.json → karne.yeni_golge" in page
     assert 'role="status"' in page and 'aria-live="polite"' in page
     assert 'id="modeTag"' in page and "Deneysel doğrulama sürüyor" in page
