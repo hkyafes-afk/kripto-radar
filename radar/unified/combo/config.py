@@ -42,8 +42,13 @@ class ComboConfig:
             raise ValueError("İlk COMBO sürümünde tam 24 grid aralığı sabittir")
         if self.quote_max_age_ms <= 0:
             raise ValueError("quote_max_age_ms pozitif olmalı")
+        if not math.isfinite(self.hard_stop_below_low_pct) or not math.isfinite(self.stop_slippage_bps):
+            raise ValueError("Stop ve kayma ayarları sonlu olmalı")
         if self.hard_stop_below_low_pct < 0 or self.stop_slippage_bps < 0:
             raise ValueError("Stop ve kayma ayarları negatif olamaz")
+        if (not math.isfinite(self.maker_fee_pct) or not math.isfinite(self.taker_fee_pct)
+                or self.maker_fee_pct < 0 or self.taker_fee_pct < 0):
+            raise ValueError("Fee yüzdeleri sonlu ve negatif olmayan değerler olmalı")
         if self.execution_mode != "paper":
             raise ValueError("COMBO ilk sürüm yalnız PAPER modunu kabul eder")
         if self.private_api_enabled or self.live_order_submission:
