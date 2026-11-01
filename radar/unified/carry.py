@@ -40,6 +40,7 @@ class CarryPairPaper:
         self.leverage = float(c.get("leverage", 1.0))
         self.slippage_bp = float(c.get("slippage_bp", 5.0))
         self.min_projected_net_usd = float(c.get("min_projected_net_usd", 0.10))
+        self.max_quote_age_ms = int(c.get("max_quote_age_ms", 5_000))
         self.max_funding_age_ms = int(c.get("max_funding_age_ms", 9 * 3_600_000))
         self.max_history_age_ms = int(c.get("max_history_age_ms", 26 * 3_600_000))
         self.min_funding_30d = float(c.get("min_funding_30d_avg", 0.0))
@@ -250,7 +251,10 @@ class ElifCarryStrategy:
                       funding_rate: float | None, funding_ts_ms: int | None,
                       funding_30d_avg: float | None, positive_funding_ratio: float | None,
                       history_ts_ms: int | None, funding_interval_h: float, now_ms: int) -> dict:
-        if not CarryPairPaper._fresh(spot, now_ms) or not CarryPairPaper._fresh(perp, now_ms):
+        if (not spot or not perp or not spot.valid or not perp.valid
+                or spot.ts_ms <= 0 or perp.ts_ms <= 0
+                or not (-1_000 <= now_ms - spot.ts_ms <= self.max_quote_age_ms)
+                or not (-1_000 <= now_ms - perp.ts_ms <= self.max_quote_age_ms)):
             return {"status": "blocked", "reason": "both_spot_and_perp_quotes_must_be_fresh"}
         if (type(funding_ts_ms) is not int or now_ms - funding_ts_ms < -1_000
                 or now_ms - funding_ts_ms > self.max_funding_age_ms):
