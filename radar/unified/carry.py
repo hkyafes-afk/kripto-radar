@@ -40,7 +40,6 @@ class CarryPairPaper:
         self.leverage = float(c.get("leverage", 1.0))
         self.slippage_bp = float(c.get("slippage_bp", 5.0))
         self.min_projected_net_usd = float(c.get("min_projected_net_usd", 0.10))
-        self.max_quote_age_ms = int(c.get("max_quote_age_ms", 5_000))
         self.max_funding_age_ms = int(c.get("max_funding_age_ms", 9 * 3_600_000))
         self.max_history_age_ms = int(c.get("max_history_age_ms", 26 * 3_600_000))
         self.min_funding_30d = float(c.get("min_funding_30d_avg", 0.0))
@@ -238,6 +237,7 @@ class ElifCarryStrategy:
     def __init__(self, cfg: Mapping | None = None):
         self.cfg = dict(cfg or {})
         c = ((self.cfg.get("birlesik") or {}).get("elif_carry") or {})
+        self.max_quote_age_ms = int(c.get("max_quote_age_ms", 5_000))
         self.max_funding_age_ms = int(c.get("max_funding_age_ms", 9 * 3_600_000))
         self.max_history_age_ms = int(c.get("max_history_age_ms", 26 * 3_600_000))
         self.min_funding_30d = float(c.get("min_funding_30d_avg", 0.0))
