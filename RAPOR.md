@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 3714 | %45.5 | -0.346 | -1284.72 |
+| polat_tum_sinyaller | 3715 | %45.5 | -0.346 | -1286.14 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 3701 | %45.4 | -0.346 | -1279.36 |
-| rastgele | 3693 | %42.6 | -0.406 | -1501.02 |
+| polat_girilmeyen | 3702 | %45.4 | -0.346 | -1280.78 |
+| rastgele | 3695 | %42.5 | -0.407 | -1503.72 |
 | trend_naif | 3713 | %40.9 | -0.441 | -1636.88 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-3.83
+Polat özsermaye: %-4.71 · BTC al-tut: %-3.8
 
 ## Öğrenme (walk-forward)
 
@@ -25,12 +25,12 @@ En az işe yarayan okumalar: cift_dip_4H ×0.516, obv_egim_1H ×0.581, momentum_
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 22896, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 22945, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 11456
-- yetki: 491
+- ders: 11486
+- yetki: 501
 - gösterge aileleri aynı yönde değil: 224
 - büyük zaman dilimi trendi ters: 77
 - puan +0.131 eşiğin (0.3) altında: 76
@@ -91,7 +91,7 @@ Kapanmış işlem yok. Görülen kurulum: 22896, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 24969
+- ders: 24999
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2545
 - üst üste 3 zarar: 2345
@@ -99,7 +99,7 @@ Kapanmış işlem yok. Görülen kurulum: 22896, girilen: 0.
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
-- yetki: 491
+- yetki: 501
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
 
 **Hata sınıfları**
@@ -158,7 +158,7 @@ Kapanmış işlem yok. Görülen kurulum: 22896, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 24969
+- ders: 24999
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2545
 - üst üste 3 zarar: 2345
@@ -166,7 +166,7 @@ Kapanmış işlem yok. Görülen kurulum: 22896, girilen: 0.
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
-- yetki: 491
+- yetki: 501
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
 
 **Hata sınıfları**
