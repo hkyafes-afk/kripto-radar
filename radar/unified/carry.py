@@ -88,12 +88,15 @@ class CarryPairPaper:
                   funding_interval_h: float, expected_holding_hours: float, now_ms: int) -> dict:
         if pair_id in self.positions:
             return dict(self.positions[pair_id])
+        previous = next((row for row in self.closed if row.get("pair_id") == pair_id), None)
+        if previous is not None:
+            return dict(previous)
         if not self.enabled:
             return {"status": "blocked", "reason": "elif_carry_disabled"}
-        if (not pair_id or not symbol or spot_inst == perp_inst or qty <= 0
-                or not math.isfinite(qty) or not math.isfinite(funding_rate)
-                or funding_rate <= 0 or funding_interval_h <= 0
-                or expected_holding_hours <= 0):
+        numeric = (qty, funding_rate, funding_interval_h, expected_holding_hours)
+        if (not pair_id or not symbol or not spot_inst or not perp_inst or spot_inst == perp_inst
+                or any(type(v) not in (int, float) or not math.isfinite(v) for v in numeric)
+                or qty <= 0 or funding_rate <= 0 or funding_interval_h <= 0 or expected_holding_hours <= 0):
             return {"status": "rejected", "reason": "pair_parameters_invalid"}
         if not self._fresh(spot, now_ms) or not self._fresh(perp, now_ms):
             return {"status": "rejected", "reason": "spot_or_perp_quote_missing_stale_or_invalid"}
@@ -132,8 +135,11 @@ class CarryPairPaper:
         p = self.positions.get(pair_id)
         if not p or p["status"] != "open":
             return 0.0
-        if not math.isfinite(rate) or not math.isfinite(perp_mark) or perp_mark <= 0 or ts_ms <= p["opened_ts_ms"]:
-            raise ValueError("funding_event_invalid")
+        last_funding = int(p.get("last_funding_ts_ms") or p["opened_ts_ms"])
+        if (type(rate) not in (int, float) or not math.isfinite(rate)
+                or type(perp_mark) not in (int, float) or not math.isfinite(perp_mark)
+                or perp_mark <= 0 or type(ts_ms) is not int or ts_ms <= last_funding):
+            raise ValueError("funding_event_invalid_or_duplicate")
         # Short perp receives positive funding and pays negative funding.
         amount = p["perp_qty"] * perp_mark * rate
         p["funding_usd"] += amount
@@ -146,7 +152,8 @@ class CarryPairPaper:
                    reason: str = "rule") -> dict:
         p = self.positions.get(pair_id)
         if not p:
-            return {"status": "rejected", "reason": "carry_pair_not_found"}
+            previous = next((row for row in self.closed if row.get("pair_id") == pair_id), None)
+            return dict(previous) if previous is not None else {"status": "rejected", "reason": "carry_pair_not_found"}
         if p["status"] == "closed":
             return dict(p)
         if not self._fresh(spot, now_ms) or not self._fresh(perp, now_ms):
@@ -176,3 +183,54 @@ class CarryPairPaper:
                     if not math.isclose(float(p.get("spot_qty", 0)), float(p.get("perp_qty", -1)), rel_tol=1e-9)]
         return {"ok": not unhedged, "open_pairs": len(self.positions), "unhedged_pair_ids": unhedged,
                 "closed_pairs": len(self.closed)}
+
+
+class ElifCarryStrategy:
+    """Pair-only candidate evaluator; deliberately excluded from the single-leg Strategy registry."""
+
+    def __init__(self, cfg: Mapping | None = None):
+        self.cfg = dict(cfg or {})
+        c = ((self.cfg.get("birlesik") or {}).get("elif_carry") or {})
+        self.max_funding_age_ms = int(c.get("max_funding_age_ms", 9 * 3_600_000))
+        self.max_history_age_ms = int(c.get("max_history_age_ms", 26 * 3_600_000))
+        self.min_funding_30d = float(c.get("min_funding_30d_avg", 0.0))
+        self.expected_holding_hours = float(c.get("expected_holding_hours", 72.0))
+        self.min_projected_net_usd = float(c.get("min_projected_net_usd", 0.10))
+        estimate_cfg = {**self.cfg, "birlesik": {**(self.cfg.get("birlesik") or {}),
+                        "elif_carry": {**c, "enabled": False}}}
+        self.paper = CarryPairPaper(estimate_cfg, Path(tempfile.gettempdir()) / "kripto-radar-carry-estimate")
+
+    def evaluate_pair(self, *, symbol: str, spot: Quote | None, perp: Quote | None,
+                      funding_rate: float | None, funding_ts_ms: int | None,
+                      funding_30d_avg: float | None, history_ts_ms: int | None,
+                      funding_interval_h: float, now_ms: int) -> dict:
+        if not self.paper._fresh(spot, now_ms) or not self.paper._fresh(perp, now_ms):
+            return {"status": "blocked", "reason": "both_spot_and_perp_quotes_must_be_fresh"}
+        if (type(funding_ts_ms) is not int or now_ms - funding_ts_ms < -1_000
+                or now_ms - funding_ts_ms > self.max_funding_age_ms):
+            return {"status": "blocked", "reason": "funding_rate_missing_or_stale"}
+        if (type(history_ts_ms) is not int or now_ms - history_ts_ms < -1_000
+                or now_ms - history_ts_ms > self.max_history_age_ms):
+            return {"status": "blocked", "reason": "funding_30d_history_missing_or_stale"}
+        if (type(funding_rate) not in (int, float) or not math.isfinite(funding_rate)
+                or type(funding_30d_avg) not in (int, float) or not math.isfinite(funding_30d_avg)
+                or funding_rate <= 0 or funding_30d_avg <= self.min_funding_30d
+                or type(funding_interval_h) not in (int, float) or funding_interval_h <= 0):
+            return {"status": "rejected", "reason": "funding_not_positive_and_stable"}
+        notional = min(self.paper.max_notional_usd, 100.0)
+        projected_funding = notional * funding_rate * (self.expected_holding_hours / funding_interval_h)
+        estimated_cost = self.paper._costs(notional, spot, perp)
+        projected_net = projected_funding - estimated_cost
+        if projected_net <= self.min_projected_net_usd:
+            return {"status": "rejected", "reason": "carry_net_edge_below_minimum",
+                    "projected_funding_usd": projected_funding, "estimated_four_leg_cost_usd": estimated_cost,
+                    "projected_net_usd": projected_net}
+        return {"status": "eligible", "strategy": "carry", "manager": "elif",
+                "direction": "spot_long_perp_short", "symbol": symbol,
+                "spot_inst": spot.inst, "perp_inst": perp.inst,
+                "funding_rate": float(funding_rate), "funding_30d_avg": float(funding_30d_avg),
+                "funding_interval_h": float(funding_interval_h),
+                "expected_holding_hours": self.expected_holding_hours,
+                "reference_notional_usd": notional, "projected_funding_usd": projected_funding,
+                "estimated_four_leg_cost_usd": estimated_cost, "projected_net_usd": projected_net,
+                "paper_execution_required": True}
