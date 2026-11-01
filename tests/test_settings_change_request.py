@@ -124,3 +124,30 @@ def test_settings_file_change_rejects_audit_path_collision(tmp_path):
     with pytest.raises(SettingsChangeError, match="aynı olamaz"):
         apply_file_change(target, "risk.risk_yuzde", "0.75", audit_file=target)
     assert target.read_text(encoding="utf-8") == CONFIG
+
+
+def test_concurrent_settings_writers_serialize_and_reject_stale_second_writer(tmp_path):
+    from concurrent.futures import ThreadPoolExecutor
+
+    target = tmp_path / "config.yaml"
+    audit = tmp_path / "audit.jsonl"
+    target.write_text(CONFIG, encoding="utf-8")
+    expected = hashlib.sha256(CONFIG.encode("utf-8")).hexdigest()
+
+    def apply(value):
+        try:
+            return apply_file_change(target, "risk.risk_yuzde", value, audit_file=audit,
+                                     expected_sha256=expected, run_id="race-" + value)
+        except SettingsChangeError as exc:
+            return exc
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        first, second = list(pool.map(apply, ("0.75", "0.8")))
+    outcomes = [first, second]
+    assert sum(isinstance(item, dict) for item in outcomes) == 1
+    rejected = next(item for item in outcomes if isinstance(item, SettingsChangeError))
+    assert "SHA-256" in str(rejected)
+    audit_rows = [json.loads(line) for line in audit.read_text(encoding="utf-8").splitlines()]
+    assert len(audit_rows) == 1
+    assert audit_rows[0]["action"] == "apply"
+    assert ".settings.lock" in " ".join(p.name for p in tmp_path.iterdir())
