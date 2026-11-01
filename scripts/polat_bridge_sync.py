@@ -36,7 +36,8 @@ def _api(method: str, path: str, body: dict | None = None):
     req = urllib.request.Request(
         f"https://api.github.com/repos/{repo}/{path}", data=data, method=method,
         headers={"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json",
-                 "X-GitHub-Api-Version": "2022-11-28", "User-Agent": "kripto-radar-bridge",\n                 "Content-Type": "application/json"},
+                 "X-GitHub-Api-Version": "2022-11-28", "User-Agent": "kripto-radar-bridge",
+                 "Content-Type": "application/json"},
     )
     try:
         with urllib.request.urlopen(req, timeout=15) as response:
