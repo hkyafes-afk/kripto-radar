@@ -25,6 +25,8 @@ from .journal import DISCLAIMER, Journal, report, report_md
 from .market import Market
 from .okx import Feed, Rest, TF_MS, now_ms
 from .risk import Risk, utc_day as _utc_day
+from radar.unified.market_data import normalize_bbo
+from radar.unified.polat_bridge import write_snapshot
 
 VERSION = "2.0"
 
@@ -98,6 +100,12 @@ class Polat:
         self.lease_gate = None
         # Durum diskten yüklenmeden save() çağrılmaz: başlatma yarıda kalırsa boş defter gerçek durumun üstüne yazılmaz.
         self.state_ready = False
+        # Optional shared-volume bridge: always research-only; never an execution price source.
+        bridge_value = os.environ.get("POLAT_UNIFIED_BRIDGE_PATH", "").strip()
+        self.bridge_path = Path(bridge_value) if bridge_value else None
+        self.bridge_sequence = 0
+        self.bridge_run_id = str(os.environ.get("GITHUB_RUN_ID") or f"local-{os.getpid()}-{self.started}")
+        self.bridge_stats = {"published": 0, "failed": 0, "last_published_ms": None, "last_error": None}
 
     # ===================================================================================== durum
     @property
@@ -207,6 +215,8 @@ class Polat:
                                f" · açık pozisyon {len(self.broker.positions)}")
         loops = [self._loop_select(), self._loop_second(), self._loop_save(), self._loop_ls(), self._loop_extras(),
                  self._bootstrap_h1_all(list(meta)), self._loop_eval(), self._loop_learn(), self._loop_fast()]
+        if self.bridge_path is not None:
+            loops.append(self._loop_bridge())
         self.tasks = [asyncio.create_task(x) for x in loops]
         if run_seconds:
             await asyncio.sleep(run_seconds)
@@ -255,9 +265,11 @@ class Polat:
         self.standby = False
         for t in self.tasks:
             t.cancel()
-        self.tasks = [asyncio.create_task(x) for x in (
-            self._loop_select(), self._loop_second(), self._loop_save(), self._loop_ls(), self._loop_extras(),
-            self._loop_eval(), self._loop_learn(), self._loop_fast())]
+        loops = [self._loop_select(), self._loop_second(), self._loop_save(), self._loop_ls(), self._loop_extras(),
+                 self._loop_eval(), self._loop_learn(), self._loop_fast()]
+        if self.bridge_path is not None:
+            loops.append(self._loop_bridge())
+        self.tasks = [asyncio.create_task(x) for x in loops]
         gap = (now_ms() - st["saved"]) / 1000 if st else None
         self.journal.write("olaylar", {"olay": "devraldi", "bosluk_sn": gap, "pozisyon": len(self.broker.positions)})
         return {"bosluk_sn": gap}
@@ -521,6 +533,55 @@ class Polat:
                 if ev:
                     ev["reason"] = act[1]
                     self._closed(c, ev)
+
+    def _publish_research_bridge(self) -> bool:
+        """Publish only fresh, quality-approved Polat tickers to an explicitly mounted shared path."""
+        if self.bridge_path is None or self.market is None:
+            return False
+        generated = now_ms()
+        observations = []
+        for inst, coin in list(self.market.coins.items()):
+            quality = self.market.quality_latest.get((inst, "tickers"))
+            if quality is None or quality.state.value != "LIVE" or not coin.tick_ts:
+                continue
+            if generated - coin.tick_ts < -1_000 or generated - coin.tick_ts > 5_000:
+                continue
+            item = normalize_bbo(
+                venue="okx", symbol=inst, last=coin.last, bid=coin.bid,
+                ask=coin.ask, event_ts_ms=coin.tick_ts,
+            )
+            if item.valid:
+                observations.append(item)
+        if not observations:
+            return False
+        observations.sort(key=lambda item: item.symbol)
+        # Unix-millisecond sequence survives normal process/runner restarts; never resets to 1.
+        sequence = max(generated, self.bridge_sequence + 1)
+        try:
+            write_snapshot(
+                self.bridge_path, sequence=sequence, generated_at_ms=generated,
+                observations=observations[:500], source_run_id=self.bridge_run_id,
+            )
+        except (OSError, ValueError, TypeError) as exc:
+            self.bridge_stats["failed"] += 1
+            self.bridge_stats["last_error"] = f"{type(exc).__name__}: {str(exc)[:180]}"
+            return False
+        self.bridge_sequence = sequence
+        self.bridge_stats.update(published=self.bridge_stats["published"] + 1,
+                                 last_published_ms=generated, last_error=None)
+        return True
+
+    async def _loop_bridge(self):
+        """One-second research snapshot loop; absent shared storage, no bridge is advertised as active."""
+        while True:
+            await asyncio.sleep(1)
+            if getattr(self, "standby", False):
+                continue
+            try:
+                self._publish_research_bridge()
+            except Exception as exc:  # noqa: BLE001
+                self.bridge_stats["failed"] += 1
+                self.bridge_stats["last_error"] = f"{type(exc).__name__}: {str(exc)[:180]}"
 
     async def _loop_second(self):
         while True:
