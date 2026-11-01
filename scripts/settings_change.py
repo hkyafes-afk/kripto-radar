@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+from contextlib import contextmanager
 import hashlib
 import json
 import math
@@ -107,6 +108,37 @@ def apply_change(text: str, path: str, raw_value: str) -> tuple[str, dict]:
 
 
 
+@contextmanager
+def _exclusive_config_lock(target: Path):
+    """Serialize apply/rollback jobs that cooperate with this config change tool."""
+    lock_path = target.with_name(target.name + ".settings.lock")
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    fd = os.open(lock_path, os.O_RDWR | os.O_CREAT, 0o600)
+    backend = None
+    try:
+        try:
+            import fcntl
+            fcntl.flock(fd, fcntl.LOCK_EX)
+            backend = "fcntl"
+        except ImportError:
+            import msvcrt
+            if os.fstat(fd).st_size == 0:
+                os.write(fd, b"\\0")
+            os.lseek(fd, 0, os.SEEK_SET)
+            msvcrt.locking(fd, msvcrt.LK_LOCK, 1)
+            backend = "msvcrt"
+        yield
+    finally:
+        if backend == "fcntl":
+            import fcntl
+            fcntl.flock(fd, fcntl.LOCK_UN)
+        elif backend == "msvcrt":
+            import msvcrt
+            os.lseek(fd, 0, os.SEEK_SET)
+            msvcrt.locking(fd, msvcrt.LK_UNLCK, 1)
+        os.close(fd)
+
+
 def _sha256(value: str) -> str:
     return hashlib.sha256(value.encode("utf-8")).hexdigest()
 
@@ -205,13 +237,14 @@ def apply_file_change(
     actor: str | None = None, run_id: str | None = None,
 ) -> dict:
     target, audit_path = Path(file_path), Path(audit_file)
-    original = target.read_text(encoding="utf-8")
-    before_hash = _sha256(original)
-    if expected_sha256 and before_hash != expected_sha256:
-        raise SettingsChangeError("Config SHA-256 beklenen sürümle eşleşmiyor; eşzamanlı değişiklik reddedildi.")
-    updated, summary = apply_change(original, path, raw_value)
-    return _commit_audited_change(target, audit_path, original=original, updated=updated,
-                                  summary=summary, action="apply", actor=actor, run_id=run_id)
+    with _exclusive_config_lock(target):
+        original = target.read_text(encoding="utf-8")
+        before_hash = _sha256(original)
+        if expected_sha256 and before_hash != expected_sha256:
+            raise SettingsChangeError("Config SHA-256 beklenen sürümle eşleşmiyor; eşzamanlı değişiklik reddedildi.")
+        updated, summary = apply_change(original, path, raw_value)
+        return _commit_audited_change(target, audit_path, original=original, updated=updated,
+                                      summary=summary, action="apply", actor=actor, run_id=run_id)
 
 
 def rollback_file_change(
@@ -219,24 +252,25 @@ def rollback_file_change(
     actor: str | None = None, run_id: str | None = None,
 ) -> dict:
     target, audit_path = Path(file_path), Path(audit_file)
-    if not rollback_id.strip():
-        raise SettingsChangeError("Geri alma kimliği boş olamaz.")
-    records = _audit_records(audit_path)
-    source = next((r for r in records if r.get("event_id") == rollback_id), None)
-    if source is None or source.get("action") != "apply":
-        raise SettingsChangeError("Geri alınacak uygulama denetim kaydı bulunamadı.")
-    if source.get("target") != str(target.resolve()):
-        raise SettingsChangeError("Denetim kaydı farklı config dosyasına ait.")
-    original = target.read_text(encoding="utf-8")
-    if _sha256(original) != source.get("after_sha256"):
-        raise SettingsChangeError("Config, uygulamadan sonra değişmiş; güvenli geri alma için önce farkı incele.")
-    updated, summary = apply_change(
-        original, str(source.get("path")),
-        str(source.get("old_value")),
-    )
-    return _commit_audited_change(target, audit_path, original=original, updated=updated,
-                                  summary=summary, action="rollback", actor=actor,
-                                  run_id=run_id, rollback_of=rollback_id)
+    with _exclusive_config_lock(target):
+        if not rollback_id.strip():
+            raise SettingsChangeError("Geri alma kimliği boş olamaz.")
+        records = _audit_records(audit_path)
+        source = next((r for r in records if r.get("event_id") == rollback_id), None)
+        if source is None or source.get("action") != "apply":
+            raise SettingsChangeError("Geri alınacak uygulama denetim kaydı bulunamadı.")
+        if source.get("target") != str(target.resolve()):
+            raise SettingsChangeError("Denetim kaydı farklı config dosyasına ait.")
+        original = target.read_text(encoding="utf-8")
+        if _sha256(original) != source.get("after_sha256"):
+            raise SettingsChangeError("Config, uygulamadan sonra değişmiş; güvenli geri alma için önce farkı incele.")
+        updated, summary = apply_change(
+            original, str(source.get("path")),
+            str(source.get("old_value")),
+        )
+        return _commit_audited_change(target, audit_path, original=original, updated=updated,
+                                      summary=summary, action="rollback", actor=actor,
+                                      run_id=run_id, rollback_of=rollback_id)
 
 
 def main() -> int:
