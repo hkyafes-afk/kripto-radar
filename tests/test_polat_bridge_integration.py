@@ -69,7 +69,10 @@ def test_polat_publisher_exports_only_fresh_live_quality_tickers(tmp_path, monke
     agent.bridge_stats = {"published": 0, "failed": 0, "last_published_ms": None, "last_error": None}
 
     assert agent._publish_research_bridge() is True
-    result = read_snapshot(agent.bridge_path, now_ms=now)
+    result = read_snapshot(
+        agent.bridge_path, now_ms=now,
+        hmac_key="test-only-bridge-secret-32-bytes-minimum", require_hmac=True,
+    )
     assert result.status == "fresh"
     assert [item.symbol for item in result.observations] == ["BTC-USDT-SWAP"]
     assert result.source_run_id == "polat-run-1"
