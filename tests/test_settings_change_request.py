@@ -105,3 +105,22 @@ def test_settings_rollback_refuses_to_overwrite_a_later_config_edit(tmp_path):
         rollback_file_change(target, audit, applied["event_id"])
     assert target.read_text(encoding="utf-8") == changed
     assert len(audit.read_text(encoding="utf-8").splitlines()) == 1
+
+
+def test_settings_file_change_rejects_malformed_existing_yaml_without_write(tmp_path):
+    target = tmp_path / "config.yaml"
+    audit = tmp_path / "audit.jsonl"
+    malformed = "risk:\\n  risk_yuzde: [unterminated\\n"
+    target.write_text(malformed, encoding="utf-8")
+    with pytest.raises(SettingsChangeError, match="YAML bozuk"):
+        apply_file_change(target, "risk.risk_yuzde", "0.75", audit_file=audit)
+    assert target.read_text(encoding="utf-8") == malformed
+    assert not audit.exists()
+
+
+def test_settings_file_change_rejects_audit_path_collision(tmp_path):
+    target = tmp_path / "config.yaml"
+    target.write_text(CONFIG, encoding="utf-8")
+    with pytest.raises(SettingsChangeError, match="aynı olamaz"):
+        apply_file_change(target, "risk.risk_yuzde", "0.75", audit_file=target)
+    assert target.read_text(encoding="utf-8") == CONFIG
