@@ -40,12 +40,8 @@ class ComboPaperAdapter:
         return self.root / "combo_paper.json" if self.root else None
 
     def _signature(self) -> dict[str, Any]:
-        return {
-            "symbol": self.cfg.symbol, "low_price": self.cfg.low_price, "high_price": self.cfg.high_price,
-            "grid_intervals": self.cfg.grid_intervals, "order_qty_btc": self.cfg.order_qty_btc,
-            "paper_capital_usdt": self.cfg.paper_capital_usdt, "leverage_simulation": self.cfg.leverage_simulation,
-            "take_profit_pct": self.cfg.take_profit_pct,
-        }
+        # Tüm ayarlar defter kimliğine dahildir: ücret/stop/tick değişikliği eski defteri sessizce yorumlamasın.
+        return asdict(self.cfg)
 
     def _load(self) -> None:
         path = self.state_path
@@ -340,22 +336,27 @@ class ComboPaperAdapter:
     def snapshot(self) -> dict[str, Any]:
         mark = self.last_mark
         avg = self.position.avg_entry_price
+        tp_status = (self.tp_order or {}).get("status")
+        tp_active = tp_status in ("active", "triggered", "partially_filled")
+        active_grid_orders = sum(o.active for o in self.orders.values())
         return {
             "mode": "PAPER_ONLY", "symbol": self.cfg.symbol,
             "capital_usdt": self.cfg.paper_capital_usdt,
             "equity_usdt": self.equity_usdt(mark),
-            "realized_net_usdt": self.realized_gross_usdt - self.fees_paid_usdt,
+            "net_after_fees_usdt": self.realized_gross_usdt - self.fees_paid_usdt,
             "unrealized_gross_usdt": self.unrealized_gross_usdt(mark),
             "fees_paid_usdt": self.fees_paid_usdt,
             "position_qty_btc": self.position.qty, "avg_entry_price": avg,
-            "mark_price": mark, "tp_order": self.tp_order,
+            "mark_price": mark, "tp_order": self.tp_order, "tp_active": tp_active,
             "hard_stop_price": self.cfg.hard_stop_price,
             "used_margin_usdt": self.used_margin_usdt(mark),
             "reserved_buy_margin_usdt": self.reserved_buy_margin_usdt(),
             "free_margin_usdt": self.free_margin_usdt(mark),
             "leverage_simulation": self.cfg.leverage_simulation,
             "initialized": self.initialized, "halted": self.halted,
-            "halt_reason": self.halt_reason, "active_orders": sum(o.active for o in self.orders.values()),
+            "halt_reason": self.halt_reason,
+            "active_grid_orders": active_grid_orders,
+            "active_orders": active_grid_orders + int(tp_active),
             "order_count": len(self.orders), "fill_count": len(self.fills),
             "private_api_enabled": False, "live_order_submission": False,
         }
