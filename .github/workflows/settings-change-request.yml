@@ -36,6 +36,10 @@ permissions:
   pull-requests: write
 
 concurrency:
+  group: secure-settings-change-${{ github.ref }}
+  cancel-in-progress: false
+
+concurrency:
   group: settings-change-request
   cancel-in-progress: false
 
