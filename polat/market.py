@@ -504,7 +504,7 @@ class Market:
             counters = self.channel_counters.setdefault(channel, {
                 "observations": 0, "live": 0, "stale": 0, "invalid": 0, "unknown": 0,
                 "duplicate": 0, "out_of_order": 0, "sequence_gap": 0,
-                "disconnected": 0, "dropped_sequence_updates": 0,
+                "disconnected": 0, "dropped_sequence_updates": 0, "duplicate_event_id": 0,
             })
             counters["disconnected"] += 1
 
