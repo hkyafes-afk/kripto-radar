@@ -889,7 +889,7 @@ class Engine:
             "source": "polat", "scope": "research_only", "status": "disabled",
             "reason": "shared_path_not_configured", "last_sequence": None,
             "sequence": None, "generated_at_ms": None, "received_at_ms": now_ms,
-            "age_ms": None, "observation_count": 0, "source_run_id": None,
+            "age_ms": None, "observation_count": 0, "source_run_id": None, "telemetry": {},
         }
         last_sequence = getattr(self, "_polat_bridge_last_sequence", None)
         if last_sequence is None:
@@ -913,6 +913,7 @@ class Engine:
                 "age_ms": (now_ms - result.generated_at_ms) if result.generated_at_ms else None,
                 "observation_count": len(result.observations),
                 "source_run_id": result.source_run_id,
+                "telemetry": result.telemetry or {},
             })
         target.parent.mkdir(parents=True, exist_ok=True)
         temporary = target.with_suffix(target.suffix + ".tmp")
