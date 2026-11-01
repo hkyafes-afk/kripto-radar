@@ -174,6 +174,7 @@ class Conn:
             except Exception as e:  # noqa: BLE001
                 self.stats["kopma"][self.name] = self.stats["kopma"].get(self.name, 0) + 1
                 self.stats["son_hata"] = f"{self.name}: {type(e).__name__}: {str(e)[:120]}"
+                telemetry["last_error"] = f"{type(e).__name__}: {str(e)[:120]}"
             finally:
                 self.connected.clear()
                 if was_connected:
