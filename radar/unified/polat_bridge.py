@@ -110,6 +110,8 @@ def read_snapshot(
         return BridgeRead("invalid", "snapshot_too_large", None, None)
     try:
         envelope = json.loads(raw)
+        if not isinstance(envelope, dict):
+            return BridgeRead("invalid", "snapshot_root_not_object", None, None)
         digest = envelope.pop("sha256")
         expected = hashlib.sha256(_canonical(envelope)).hexdigest()
         if not isinstance(digest, str) or not hmac.compare_digest(digest, expected):
@@ -147,5 +149,5 @@ def read_snapshot(
                 return BridgeRead("stale", "observation_timestamp_out_of_range", seq, stamp)
             observations.append(item)
         return BridgeRead("fresh", None, seq, stamp, tuple(observations), digest)
-    except (ValueError, TypeError, KeyError, json.JSONDecodeError, UnicodeDecodeError):
+    except (ValueError, TypeError, KeyError, AttributeError, json.JSONDecodeError, UnicodeDecodeError):
         return BridgeRead("invalid", "snapshot_parse_or_schema_error", None, None)
