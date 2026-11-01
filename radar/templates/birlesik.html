@@ -452,7 +452,7 @@ function renderSysTab(data, durum, ozet, st) {
   return `<div class="card dl">${row("Canlı döngü (site)", st.data, data ? "son yayın " + ago(data.generated_at) : "data.json okunamadı")}
     ${row("OKX canlı fiyat akışı", st.okx, okx ? "son mesaj " + (isNum(okx.last_msg_age_s) ? okx.last_msg_age_s + " sn önce" : "—") + " · yeniden bağlanma " + (okx.reconnects ?? "—") : "akış bilgisi yok")}
     ${row("Karar motoru", st.ozet, ozet ? "son tur " + ago(ozet.ts) + " · " + (ozet.coin ?? "—") + " coin" : "özet yok")}
-    ${row("Gölge sanal portföy", st.durum, durum ? "son güncelleme " + ago(durum.ts) + " · açık " + (durum.pozisyonlar || []).length : "durum dosyası yok")}
+    ${row("UnifiedTrader PAPER portföyü", st.durum, durum ? "son güncelleme " + ago(durum.ts) + " · açık " + (durum.pozisyonlar || []).length : "durum dosyası yok")}
     ${row("Karar günlüğü", st.dec, st.dec === "ok" ? "kararlar-" + day(0) + ".jsonl" : "bugünün dosyası yok")}
     ${row("Gerçek emir", "ok", "Kapalı: yalnız sanal yürütme; borsaya emir gönderilmez")}</div>`;
 }
