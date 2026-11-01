@@ -21,7 +21,7 @@ from typing import Any, Iterable, Mapping
 
 from .. import ledger as lg
 from .decision import UnifiedDecisionEngine
-from .carry import CarryPairPaper
+from .carry import CarryPairPaper, ElifCarryStrategy
 from .execution.base import Quote
 from .execution.paper import PaperExecutionAdapter
 from .exits import evaluate_exits
@@ -60,6 +60,7 @@ class UnifiedTrader:
         self.adapter = PaperExecutionAdapter(self.cfg, root=self.root)
         # Elif'in ayrı spot+perp defteri UnifiedTrader tarafından sahiplenilir; varsayılan kapalıdır.
         self.carry_paper = CarryPairPaper(self.cfg, root=self.root / "elif_carry")
+        self.carry_strategy = ElifCarryStrategy(self.cfg)  # pair-only evaluator; not registered as a one-leg signal
         self.forward_evidence = ForwardPaperEvidence(self.root / "forward_paper_evidence.json")
         self.mode = mode
         self.journal_root = Path(journal_root) if journal_root else self.root
