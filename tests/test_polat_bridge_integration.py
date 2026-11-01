@@ -90,3 +90,17 @@ def test_unified_consumer_reports_disabled_without_shared_path(tmp_path, monkeyp
     engine.site = tmp_path / "site"
     result = engine._poll_polat_research_bridge()
     assert (result["status"], result["reason"]) == ("disabled", "shared_path_not_configured")
+
+
+def test_bridge_telemetry_publish_failure_is_nonfatal(tmp_path, monkeypatch):
+    engine = object.__new__(Engine)
+    engine.site = tmp_path / "site"
+
+    def fail_publish():
+        raise OSError("read-only volume")
+
+    monkeypatch.setattr(engine, "_poll_polat_research_bridge", fail_publish)
+    status = engine._safe_poll_polat_research_bridge()
+    assert status["status"] == "error"
+    assert status["reason"] == "status_publish_failed:OSError"
+    assert engine.polat_bridge_status == status
