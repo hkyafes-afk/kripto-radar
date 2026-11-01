@@ -217,3 +217,36 @@ def test_snapshot_rejects_invalid_telemetry_before_publish(tmp_path, mutate):
     with pytest.raises(ValueError):
         write_snapshot(tmp_path / "invalid.json", sequence=1, generated_at_ms=10_000,
                        observations=[_bbo(10_000)], source_run_id="run", telemetry=telemetry)
+
+
+def test_runtime_bridge_hmac_authenticates_sender_and_fails_closed_for_wrong_or_missing_key(tmp_path):
+    path = tmp_path / "authenticated.json"
+    key = "a-strong-test-only-secret-at-least-32-bytes"
+    write_snapshot(path, sequence=1, generated_at_ms=10_000,
+                   observations=[_bbo(10_000)], source_run_id="polat-hmac",
+                   hmac_key=key)
+
+    accepted = read_snapshot(path, now_ms=10_000, hmac_key=key, require_hmac=True)
+    assert accepted.status == "fresh"
+    assert accepted.source_run_id == "polat-hmac"
+
+    wrong = read_snapshot(path, now_ms=10_000,
+                          hmac_key="a-different-test-only-secret-at-least-32-bytes",
+                          require_hmac=True)
+    assert (wrong.status, wrong.reason) == ("invalid", "hmac_mismatch")
+
+    missing = read_snapshot(path, now_ms=10_000, require_hmac=True)
+    assert (missing.status, missing.reason) == ("invalid", "hmac_key_missing")
+
+
+def test_runtime_bridge_requires_hmac_signature_and_rejects_weak_keys(tmp_path):
+    path = tmp_path / "unsigned.json"
+    write_snapshot(path, sequence=1, generated_at_ms=10_000,
+                   observations=[_bbo(10_000)], source_run_id="polat-unsigned")
+    unsigned = read_snapshot(path, now_ms=10_000, require_hmac=True)
+    assert (unsigned.status, unsigned.reason) == ("invalid", "hmac_signature_missing")
+
+    with pytest.raises(ValueError, match="hmac_key_must_be_at_least_32_bytes"):
+        write_snapshot(tmp_path / "weak.json", sequence=1, generated_at_ms=10_000,
+                       observations=[_bbo(10_000)], source_run_id="polat-weak",
+                       hmac_key="too-short")
