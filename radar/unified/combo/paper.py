@@ -26,6 +26,7 @@ class ComboPaperAdapter:
         self.realized_gross_usdt = 0.0
         self.fees_paid_usdt = 0.0
         self.last_mark: float | None = None
+        self.last_quote_ts_ms: int | None = None
         self.initialized = False
         self.halted = False
         self.halt_reason: str | None = None
@@ -67,6 +68,7 @@ class ComboPaperAdapter:
         self.realized_gross_usdt = float(raw.get("realized_gross_usdt", 0.0))
         self.fees_paid_usdt = float(raw.get("fees_paid_usdt", 0.0))
         self.last_mark = raw.get("last_mark")
+        self.last_quote_ts_ms = raw.get("last_quote_ts_ms")
         self.initialized = bool(raw.get("initialized", False))
         self.halted = bool(raw.get("halted", False))
         self.halt_reason = raw.get("halt_reason")
@@ -85,7 +87,8 @@ class ComboPaperAdapter:
             "fills": [asdict(fill) for fill in self.fills[-5000:]],
             "events": [asdict(event) for event in self.events[-2000:]],
             "realized_gross_usdt": self.realized_gross_usdt, "fees_paid_usdt": self.fees_paid_usdt,
-            "last_mark": self.last_mark, "initialized": self.initialized, "halted": self.halted,
+            "last_mark": self.last_mark, "last_quote_ts_ms": self.last_quote_ts_ms,
+            "initialized": self.initialized, "halted": self.halted,
             "halt_reason": self.halt_reason, "tp_triggered": self.tp_triggered,
             "tp_order": self.tp_order, "next_order_id": self.next_order_id,
         }
