@@ -369,10 +369,17 @@ class Market:
         for d in data:
             is_snapshot = action == "snapshot"
             ok = c.book.apply(d, is_snapshot)
+            seq_id = self._event_ts(d.get("seqId"))
+            prev_seq_id = self._event_ts(d.get("prevSeqId"))
+            baseline_seq = self.quality._last_seq.get((inst, "books"))
+            # Keep sequence loss distinguishable from an invalid book payload:
+            # the quality engine must see prevSeqId even when OrderBook has already
+            # failed closed and refused to apply the update.
+            sequence_gap = (not is_snapshot and baseline_seq is not None
+                            and prev_seq_id is not None and prev_seq_id != baseline_seq)
             self._observe_quality(inst, "books", self._event_ts(d.get("ts")), recv_ms,
-                                  seq_id=self._event_ts(d.get("seqId")),
-                                  prev_seq_id=self._event_ts(d.get("prevSeqId")),
-                                  snapshot=is_snapshot, valid=ok)
+                                  seq_id=seq_id, prev_seq_id=prev_seq_id,
+                                  snapshot=is_snapshot, valid=(ok or sequence_gap))
             if self.quality_latest[(inst, "books")].state is not QualityState.LIVE:
                 c.book.ok = False
                 ok = False
