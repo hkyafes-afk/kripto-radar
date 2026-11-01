@@ -37,8 +37,12 @@ def test_forward_evidence_requires_14_days_and_100_real_scope_closed_trades(tmp_
     # Legacy/shadow records never count.
     rows += closed_rows(start + 1, 50, scope="shadow")
     later = start + 14 * DAY_MS
-    snap = e.record(now_ms=later, mode="unified", ws_healthy=True, global_issue=None,
-                    quotes={"BTC": quote(later)}, closed=rows)
+    # Simulate the expected live 15-minute heartbeat cadence; a multi-day gap
+    # must not be mistaken for a continuous forward observation window.
+    for ts in range(start + 15 * 60_000, later + 1, 15 * 60_000):
+        e.record(now_ms=ts, mode="unified", ws_healthy=True, global_issue=None,
+                 quotes={"BTC": quote(ts)}, closed=rows)
+    snap = e.snapshot(later, rows)
     assert snap["days_ok"] and snap["trades_ok"] and snap["promotion_evidence_ready"]
     assert snap["closed_paper_trades"] == 100
 
