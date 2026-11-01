@@ -40,6 +40,10 @@ class CarryPairPaper:
         self.leverage = float(c.get("leverage", 1.0))
         self.slippage_bp = float(c.get("slippage_bp", 5.0))
         self.min_projected_net_usd = float(c.get("min_projected_net_usd", 0.10))
+        self.max_funding_age_ms = int(c.get("max_funding_age_ms", 9 * 3_600_000))
+        self.max_history_age_ms = int(c.get("max_history_age_ms", 26 * 3_600_000))
+        self.min_funding_30d = float(c.get("min_funding_30d_avg", 0.0))
+        self.min_positive_ratio = float(c.get("min_positive_funding_ratio", 0.75))
         if (self.max_quote_age_ms <= 0 or not math.isfinite(self.max_notional_usd) or self.max_notional_usd <= 0
                 or not math.isfinite(self.leverage) or self.leverage < 1
                 or not math.isfinite(self.slippage_bp) or self.slippage_bp < 0
@@ -108,6 +112,8 @@ class CarryPairPaper:
 
     def open_pair(self, *, pair_id: str, symbol: str, spot_inst: str, perp_inst: str,
                   qty: float, spot: Quote | None, perp: Quote | None, funding_rate: float,
+                  funding_30d_avg: float, positive_funding_ratio: float,
+                  funding_ts_ms: int, history_ts_ms: int,
                   funding_interval_h: float, expected_holding_hours: float, now_ms: int) -> dict:
         if pair_id in self.positions:
             return dict(self.positions[pair_id])
@@ -125,6 +131,15 @@ class CarryPairPaper:
             return {"status": "rejected", "reason": "pair_parameters_invalid"}
         if not self._fresh(spot, now_ms) or not self._fresh(perp, now_ms):
             return {"status": "rejected", "reason": "spot_or_perp_quote_missing_stale_or_invalid"}
+        if (type(funding_ts_ms) is not int or now_ms - funding_ts_ms < -1_000
+                or now_ms - funding_ts_ms > self.max_funding_age_ms
+                or type(history_ts_ms) is not int or now_ms - history_ts_ms < -1_000
+                or now_ms - history_ts_ms > self.max_history_age_ms):
+            return {"status": "rejected", "reason": "funding_or_30d_history_stale"}
+        if (type(funding_30d_avg) not in (int, float) or not math.isfinite(funding_30d_avg)
+                or type(positive_funding_ratio) not in (int, float) or not math.isfinite(positive_funding_ratio)
+                or funding_30d_avg <= self.min_funding_30d or positive_funding_ratio < self.min_positive_ratio):
+            return {"status": "rejected", "reason": "funding_30d_not_positive_and_stable"}
         if spot.inst != spot_inst or perp.inst != perp_inst:
             return {"status": "rejected", "reason": "instrument_mismatch"}
         if not self._depth_ok(spot, "buy", qty) or not self._depth_ok(perp, "sell", qty):
