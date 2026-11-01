@@ -115,3 +115,4 @@
 {"olay": "yol", "yol": "kirilim|short|btc:yatay", "karar": "kacin", "n": 41, "ort_R": -0.313, "ts": 1793454906207}
 {"olay": "yol", "yol": "trend_cizgisi_kirilim_15m|short|btc:yatay", "karar": "kacin", "n": 93, "ort_R": -0.285, "ts": 1793460510296}
 {"olay": "yol", "yol": "stoch_kesisim|long|btc:yatay", "karar": "kacin", "n": 22, "ort_R": -0.373, "ts": 1793472990499}
+{"olay": "yol", "yol": "obv_kirilim|short|btc:yatay", "karar": "kacin", "n": 48, "ort_R": -0.303, "ts": 1793492740982}
