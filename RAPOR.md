@@ -8,10 +8,10 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 3695 | %45.4 | -0.345 | -1275.15 |
+| polat_tum_sinyaller | 3696 | %45.4 | -0.345 | -1276.48 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 3682 | %45.4 | -0.345 | -1269.78 |
-| rastgele | 3673 | %42.7 | -0.404 | -1482.27 |
+| polat_girilmeyen | 3683 | %45.4 | -0.345 | -1271.12 |
+| rastgele | 3674 | %42.7 | -0.404 | -1483.61 |
 | trend_naif | 3692 | %40.9 | -0.44 | -1626.21 |
 
 Polat özsermaye: %-4.71 · BTC al-tut: %-3.73
@@ -25,12 +25,12 @@ En az işe yarayan okumalar: cift_dip_4H ×0.516, obv_egim_1H ×0.576, momentum_
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 22429, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 22460, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 11147
-- yetki: 429
+- ders: 11172
+- yetki: 432
 - gösterge aileleri aynı yönde değil: 224
 - büyük zaman dilimi trendi ters: 77
 - puan +0.131 eşiğin (0.3) altında: 76
@@ -91,7 +91,7 @@ Kapanmış işlem yok. Görülen kurulum: 22429, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 24660
+- ders: 24685
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2545
 - üst üste 3 zarar: 2345
@@ -99,7 +99,7 @@ Kapanmış işlem yok. Görülen kurulum: 22429, girilen: 0.
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
-- yetki: 429
+- yetki: 432
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
 
 **Hata sınıfları**
@@ -158,7 +158,7 @@ Kapanmış işlem yok. Görülen kurulum: 22429, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 24660
+- ders: 24685
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2545
 - üst üste 3 zarar: 2345
@@ -166,7 +166,7 @@ Kapanmış işlem yok. Görülen kurulum: 22429, girilen: 0.
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
-- yetki: 429
+- yetki: 432
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
 
 **Hata sınıfları**
