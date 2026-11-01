@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 4143 | %42.6 | -0.411 | -1703.47 |
 | trend_naif | 4159 | %41.7 | -0.429 | -1786.26 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-3.5
+Polat özsermaye: %-4.71 · BTC al-tut: %-3.48
 
 ## Öğrenme (walk-forward)
 
@@ -25,11 +25,11 @@ En az işe yarayan okumalar: btc_1H ×0.574, ultimate_1H ×0.66, adx_di_1H ×0.6
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 32301, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 32305, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 19735
+- ders: 19738
 - yetki: 684
 - gösterge aileleri aynı yönde değil: 226
 - büyük zaman dilimi trendi ters: 88
@@ -91,7 +91,7 @@ Kapanmış işlem yok. Görülen kurulum: 32301, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 33248
+- ders: 33251
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2547
 - üst üste 3 zarar: 2345
@@ -158,7 +158,7 @@ Kapanmış işlem yok. Görülen kurulum: 32301, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 33248
+- ders: 33251
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2547
 - üst üste 3 zarar: 2345
