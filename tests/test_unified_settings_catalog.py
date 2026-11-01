@@ -61,7 +61,7 @@ def test_catalog_exposes_only_verified_schema_metadata_without_guessing():
     risk = values["risk.risk_yuzde"]
     periods = values["tarama.periyotlar"]
 
-    assert result["schema_version"] == 2
+    assert result["schema_version"] == 3
     assert risk["description"].startswith("config.yaml parametresi:")
     assert risk["schema"]["type"] == "number"
     assert risk["schema"]["minimum"] is None and risk["schema"]["maximum"] is None
@@ -71,3 +71,24 @@ def test_catalog_exposes_only_verified_schema_metadata_without_guessing():
     assert periods["schema"]["item_types"] == ["string"]
     assert periods["schema"]["enum"] is None
     assert all(not item["write_ready"] for item in values.values())
+
+
+def test_verified_writable_candidates_expose_real_units_and_guardrails_but_remain_pr_only():
+    result = discover_settings({
+        "tarama": {"coin_sayisi": 100, "min_hacim_usd": 5_000_000},
+        "risk": {"risk_yuzde": 0.5, "max_spread_bp": 15, "max_kayma_bp": 20},
+        "sinyal": {"guclu_esik": 65, "izle_esik": 50},
+    })
+    params = {item["path"]: item for item in result["parameters"]}
+    assert params["tarama.coin_sayisi"]["schema"]["unit"] == "coin"
+    assert params["tarama.coin_sayisi"]["schema"]["minimum"] == 20
+    assert params["tarama.coin_sayisi"]["schema"]["maximum"] == 150
+    assert params["tarama.min_hacim_usd"]["schema"]["unit"] == "USD / 24 saat"
+    assert params["risk.risk_yuzde"]["schema"]["unit"] == "%"
+    assert params["risk.max_spread_bp"]["schema"]["unit"] == "bp"
+    assert params["risk.max_kayma_bp"]["schema"]["maximum"] == 50
+    assert params["sinyal.guclu_esik"]["schema"]["unit"] == "puan / 100"
+    assert params["sinyal.izle_esik"]["schema"]["minimum"] == 35
+    assert all(item["schema"]["validation"] == "fixed_allowlist_range" for item in params.values())
+    assert all(item["write_ready"] is False for item in params.values())
+    assert result["write_enabled"] is False
