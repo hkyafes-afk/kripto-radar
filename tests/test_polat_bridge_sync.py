@@ -42,6 +42,14 @@ def test_push_once_updates_dedicated_branch_and_skips_identical_snapshot(tmp_pat
             return 200, {}
         if method == "GET" and path.startswith("contents/"):
             return 200, {"content": base64.b64encode(raw).decode()}
+        if method == "POST" and path == "git/blobs":
+            return 201, {"sha": "blob-sha"}
+        if method == "POST" and path == "git/trees":
+            return 201, {"sha": "tree-sha"}
+        if method == "POST" and path == "git/commits":
+            return 201, {"sha": "commit-sha"}
+        if method == "PATCH" and path == f"git/refs/heads/{sync.BRANCH}":
+            return 200, {"ref": f"refs/heads/{sync.BRANCH}"}
         return 200, {}
 
     monkeypatch.setattr(sync, "_api", api)
@@ -50,4 +58,4 @@ def test_push_once_updates_dedicated_branch_and_skips_identical_snapshot(tmp_pat
     calls.clear()
     target.write_bytes(raw + b" ")
     assert sync.push_once(target)
-    assert any(method == "PUT" and path == f"contents/{sync.FILE_PATH}" for method, path, _ in calls)
+    assert any(method == "PATCH" and path == f"git/refs/heads/{sync.BRANCH}" for method, path, _ in calls)
