@@ -135,6 +135,29 @@ def test_unified_consumer_writes_research_only_status_and_detects_replay(tmp_pat
     assert replay["reason"] == "sequence_not_increasing"
 
 
+def test_unified_consumer_rejects_signed_snapshot_without_hmac_secret(tmp_path, monkeypatch):
+    now = 10_000
+    bridge = tmp_path / "shared" / "polat.json"
+    write_digest = __import__("radar.unified.polat_bridge", fromlist=["write_snapshot"]).write_snapshot
+    write_digest(
+        bridge, sequence=11, generated_at_ms=now,
+        observations=[normalize_bbo(venue="okx", symbol="BTC-USDT-SWAP", last=100,
+                                    bid=99.9, ask=100.1, event_ts_ms=now)],
+        source_run_id="polat-run-no-key", telemetry=_bridge_telemetry(),
+        hmac_key="test-only-bridge-secret-32-bytes-minimum",
+    )
+    monkeypatch.setenv("UNIFIED_POLAT_BRIDGE_PATH", str(bridge))
+    monkeypatch.delenv("UNIFIED_POLAT_BRIDGE_HMAC_KEY", raising=False)
+    engine = object.__new__(Engine)
+    engine.site = tmp_path / "site"
+    monkeypatch.setattr("radar.engine.time.time", lambda: now / 1000)
+
+    result = engine._poll_polat_research_bridge()
+    assert result["status"] == "invalid"
+    assert result["reason"] == "hmac_key_missing"
+    assert result["observation_count"] == 0
+
+
 def test_unified_consumer_reports_disabled_without_shared_path(tmp_path, monkeypatch):
     monkeypatch.delenv("UNIFIED_POLAT_BRIDGE_PATH", raising=False)
     monkeypatch.delenv("POLAT_UNIFIED_BRIDGE_PATH", raising=False)
