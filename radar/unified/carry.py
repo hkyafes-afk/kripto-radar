@@ -28,8 +28,10 @@ class CarryPairPaper:
         self.leverage = float(c.get("leverage", 1.0))
         self.slippage_bp = float(c.get("slippage_bp", 5.0))
         self.min_projected_net_usd = float(c.get("min_projected_net_usd", 0.10))
-        if (self.max_quote_age_ms <= 0 or self.max_notional_usd <= 0 or self.leverage < 1
-                or self.slippage_bp < 0 or self.min_projected_net_usd < 0):
+        if (self.max_quote_age_ms <= 0 or not math.isfinite(self.max_notional_usd) or self.max_notional_usd <= 0
+                or not math.isfinite(self.leverage) or self.leverage < 1
+                or not math.isfinite(self.slippage_bp) or self.slippage_bp < 0
+                or not math.isfinite(self.min_projected_net_usd) or self.min_projected_net_usd < 0):
             raise ValueError("elif_carry_config_invalid")
         fees = self.cfg.get("ucret") or {}
         self.spot_fee_rate = float(fees.get("spot_taker_yuzde", 0.10)) / 100.0
@@ -78,8 +80,14 @@ class CarryPairPaper:
     @staticmethod
     def _depth_ok(q: Quote, side: str, qty: float) -> bool:
         levels = q.asks if side == "buy" else q.bids
-        valid = [(float(px), float(size)) for px, size in levels
-                 if math.isfinite(float(px)) and math.isfinite(float(size)) and float(px) > 0 and float(size) > 0]
+        valid = []
+        try:
+            for px, size in levels:
+                px, size = float(px), float(size)
+                if math.isfinite(px) and math.isfinite(size) and px > 0 and size > 0:
+                    valid.append((px, size))
+        except (TypeError, ValueError, OverflowError):
+            return False
         return bool(valid) and sum(size for _, size in valid) + 1e-12 >= qty
 
     def _costs(self, notional: float, spot: Quote, perp: Quote) -> float:
@@ -88,7 +96,8 @@ class CarryPairPaper:
         fees = 2 * notional * (self.spot_fee_rate + self.perp_fee_rate)
         spreads = notional * ((spot.ask - spot.bid) / spot.mid + (perp.ask - perp.bid) / perp.mid)
         slippage = 4 * notional * slip
-        return fees + spreads + slippage
+        hedge_buffer = notional * float(((self.cfg.get("birlesik") or {}).get("elif_carry") or {}).get("hedge_buffer_bp", 10.0)) / 10_000
+        return fees + spreads + slippage + hedge_buffer
 
     def open_pair(self, *, pair_id: str, symbol: str, spot_inst: str, perp_inst: str,
                   qty: float, spot: Quote | None, perp: Quote | None, funding_rate: float,
@@ -101,7 +110,9 @@ class CarryPairPaper:
         if not self.enabled:
             return {"status": "blocked", "reason": "elif_carry_disabled"}
         numeric = (qty, funding_rate, funding_interval_h, expected_holding_hours)
-        if (not pair_id or not symbol or not spot_inst or not perp_inst or spot_inst == perp_inst
+        if (not isinstance(pair_id, str) or not pair_id or not isinstance(symbol, str) or not symbol
+                or not isinstance(spot_inst, str) or not isinstance(perp_inst, str)
+                or not spot_inst or not perp_inst or spot_inst == perp_inst
                 or any(type(v) not in (int, float) or not math.isfinite(v) for v in numeric)
                 or qty <= 0 or funding_rate <= 0 or funding_interval_h <= 0 or expected_holding_hours <= 0):
             return {"status": "rejected", "reason": "pair_parameters_invalid"}
@@ -165,6 +176,8 @@ class CarryPairPaper:
             return dict(previous) if previous is not None else {"status": "rejected", "reason": "carry_pair_not_found"}
         if p["status"] == "closed":
             return dict(p)
+        if now_ms <= p["opened_ts_ms"]:
+            return {"status": "rejected", "reason": "close_timestamp_must_follow_open"}
         if not self._fresh(spot, now_ms) or not self._fresh(perp, now_ms):
             return {"status": "blocked", "reason": "both_exit_quotes_required_fresh"}
         if spot.inst != p["spot_inst"] or perp.inst != p["perp_inst"]:
@@ -205,6 +218,7 @@ class ElifCarryStrategy:
         self.max_funding_age_ms = int(c.get("max_funding_age_ms", 9 * 3_600_000))
         self.max_history_age_ms = int(c.get("max_history_age_ms", 26 * 3_600_000))
         self.min_funding_30d = float(c.get("min_funding_30d_avg", 0.0))
+        self.min_positive_ratio = float(c.get("min_positive_funding_ratio", 0.75))
         self.expected_holding_hours = float(c.get("expected_holding_hours", 72.0))
         self.min_projected_net_usd = float(c.get("min_projected_net_usd", 0.10))
         estimate_cfg = {**self.cfg, "birlesik": {**(self.cfg.get("birlesik") or {}),
@@ -213,8 +227,8 @@ class ElifCarryStrategy:
 
     def evaluate_pair(self, *, symbol: str, spot: Quote | None, perp: Quote | None,
                       funding_rate: float | None, funding_ts_ms: int | None,
-                      funding_30d_avg: float | None, history_ts_ms: int | None,
-                      funding_interval_h: float, now_ms: int) -> dict:
+                      funding_30d_avg: float | None, positive_funding_ratio: float | None,
+                      history_ts_ms: int | None, funding_interval_h: float, now_ms: int) -> dict:
         if not self.paper._fresh(spot, now_ms) or not self.paper._fresh(perp, now_ms):
             return {"status": "blocked", "reason": "both_spot_and_perp_quotes_must_be_fresh"}
         if (type(funding_ts_ms) is not int or now_ms - funding_ts_ms < -1_000
@@ -225,8 +239,11 @@ class ElifCarryStrategy:
             return {"status": "blocked", "reason": "funding_30d_history_missing_or_stale"}
         if (type(funding_rate) not in (int, float) or not math.isfinite(funding_rate)
                 or type(funding_30d_avg) not in (int, float) or not math.isfinite(funding_30d_avg)
+                or type(positive_funding_ratio) not in (int, float) or not math.isfinite(positive_funding_ratio)
+                or positive_funding_ratio < self.min_positive_ratio
                 or funding_rate <= 0 or funding_30d_avg <= self.min_funding_30d
-                or type(funding_interval_h) not in (int, float) or funding_interval_h <= 0):
+                or type(funding_interval_h) not in (int, float) or not math.isfinite(funding_interval_h)
+                or funding_interval_h <= 0):
             return {"status": "rejected", "reason": "funding_not_positive_and_stable"}
         notional = min(self.paper.max_notional_usd, 100.0)
         projected_funding = notional * funding_rate * (self.expected_holding_hours / funding_interval_h)
