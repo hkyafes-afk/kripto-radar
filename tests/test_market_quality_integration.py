@@ -200,3 +200,73 @@ def test_malformed_orderbook_levels_fail_closed_without_crashing():
     assert coin.book.ok is False
     quality = market.stats()["kalite_telemetrisi"]["kanallar"]["books"]
     assert quality["durumlar"]["INVALID"] == 1
+
+
+
+def test_market_counts_orderbook_sequence_loss_duplicates_and_disconnects():
+    market = _market()
+    market.handle(
+        {"arg": {"channel": "books", "instId": "BTC-USDT-SWAP"}, "action": "snapshot",
+         "data": [{"ts": "1000", "seqId": 100,
+                   "bids": [["99", "2"]], "asks": [["101", "2"]]}]},
+        recv_ms=1_010,
+    )
+    market.handle(
+        {"arg": {"channel": "books", "instId": "BTC-USDT-SWAP"}, "action": "update",
+         "data": [{"ts": "1010", "seqId": 105, "prevSeqId": 104,
+                   "bids": [["99", "1"]], "asks": []}]},
+        recv_ms=1_020,
+    )
+    counters = market.stats()["kalite_telemetrisi"]["kanal_sayaclari"]["books"]
+    assert counters["sequence_gap"] == 1
+    assert counters["dropped_sequence_updates"] == 4
+
+    market.handle(
+        {"arg": {"channel": "books", "instId": "BTC-USDT-SWAP"}, "action": "snapshot",
+         "data": [{"ts": "1020", "seqId": 200,
+                   "bids": [["99", "2"]], "asks": [["101", "2"]]}]},
+        recv_ms=1_030,
+    )
+    market.handle(
+        {"arg": {"channel": "books", "instId": "BTC-USDT-SWAP"}, "action": "update",
+         "data": [{"ts": "1030", "seqId": 200, "prevSeqId": 200,
+                   "bids": [["99", "1"]], "asks": []}]},
+        recv_ms=1_040,
+    )
+    counters = market.stats()["kalite_telemetrisi"]["kanal_sayaclari"]["books"]
+    assert counters["duplicate"] == 1
+    assert counters["live"] == 2
+    assert counters["invalid"] == 2
+
+    market.disconnect_channels("defter", 1_050)
+    counters = market.stats()["kalite_telemetrisi"]["kanal_sayaclari"]["books"]
+    assert counters["disconnected"] == 1
+
+
+def test_market_counts_stale_and_out_of_order_channel_events():
+    market = _market()
+    market.handle(
+        {"arg": {"channel": "tickers"},
+         "data": [{"instId": "BTC-USDT-SWAP", "last": "100", "bidPx": "99.9",
+                   "askPx": "100.1", "ts": "1000"}]},
+        recv_ms=1_010,
+    )
+    market.handle(
+        {"arg": {"channel": "tickers"},
+         "data": [{"instId": "BTC-USDT-SWAP", "last": "100", "bidPx": "99.9",
+                   "askPx": "100.1", "ts": "900"}]},
+        recv_ms=1_020,
+    )
+    counters = market.stats()["kalite_telemetrisi"]["kanal_sayaclari"]["tickers"]
+    assert counters["live"] == 1
+    assert counters["out_of_order"] == 1
+    assert counters["invalid"] == 1
+
+
+def test_feed_exports_connection_telemetry_container():
+    feed = Feed(
+        {"veri": {"ws_public": [], "ws_business": [], "zaman_dilimleri": ["1m"]}},
+        lambda _msg, _ts: None,
+    )
+    assert feed.stats["baglanti_telemetrisi"] == {}
+    assert set(feed.conns) == {"piyasa", "defter", "tape", "mum", "mum_genel"}
