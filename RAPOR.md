@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.325R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.326R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 3496 | %46.1 | -0.325 | -1137.67 |
+| polat_tum_sinyaller | 3499 | %46.0 | -0.326 | -1141.11 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 3483 | %46.1 | -0.325 | -1132.31 |
-| rastgele | 3471 | %42.7 | -0.399 | -1386.16 |
-| trend_naif | 3497 | %41.1 | -0.43 | -1501.99 |
+| polat_girilmeyen | 3486 | %46.0 | -0.326 | -1135.75 |
+| rastgele | 3473 | %42.7 | -0.4 | -1388.47 |
+| trend_naif | 3500 | %41.1 | -0.43 | -1505.43 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-4.0
+Polat özsermaye: %-4.71 · BTC al-tut: %-3.96
 
 ## Öğrenme (walk-forward)
 
@@ -25,18 +25,18 @@ En az işe yarayan okumalar: btc_1H ×0.474, cift_dip_4H ×0.515, momentum_1H ×
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 17342, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 17293, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 8873
+- ders: 8858
 - yetki: 217
-- gösterge aileleri aynı yönde değil: 182
+- gösterge aileleri aynı yönde değil: 179
 - büyük zaman dilimi trendi ters: 70
 - puan +0.131 eşiğin (0.3) altında: 59
+- puan +0.188 eşiğin (0.3) altında: 55
 - puan +0.123 eşiğin (0.3) altında: 54
 - puan +0.128 eşiğin (0.3) altında: 54
-- puan +0.188 eşiğin (0.3) altında: 54
 - puan +0.160 eşiğin (0.3) altında: 53
 - puan +0.129 eşiğin (0.3) altında: 52
 
@@ -91,7 +91,7 @@ Kapanmış işlem yok. Görülen kurulum: 17342, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 22870
+- ders: 22875
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2516
 - üst üste 3 zarar: 2345
@@ -158,7 +158,7 @@ Kapanmış işlem yok. Görülen kurulum: 17342, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 22870
+- ders: 22875
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2516
 - üst üste 3 zarar: 2345
