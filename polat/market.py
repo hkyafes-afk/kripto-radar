@@ -171,6 +171,7 @@ class Market:
         })
         self.quality_latest: dict[tuple[str, str], object] = {}
         self.quality_counts: dict[str, int] = {state.value: 0 for state in QualityState}
+        self.channel_counters: dict[str, dict[str, int]] = {}
         self.proc: deque = deque(maxlen=5000)          # mesaj işleme süresi (µs)
         self.msgs = 0
         self.on_close = None                           # geri çağrı: (coin, tf) — mum kapandı
@@ -209,6 +210,33 @@ class Market:
             self.quality_counts[previous.state.value] = max(0, self.quality_counts[previous.state.value] - 1)
         self.quality_latest[key] = obs
         self.quality_counts[obs.state.value] += 1
+        counters = self.channel_counters.setdefault(channel, {
+            "observations": 0, "live": 0, "stale": 0, "invalid": 0, "unknown": 0,
+            "duplicate": 0, "out_of_order": 0, "sequence_gap": 0,
+            "disconnected": 0, "dropped_sequence_updates": 0,
+        })
+        counters["observations"] += 1
+        if obs.state is QualityState.LIVE:
+            counters["live"] += 1
+        elif obs.state is QualityState.STALE:
+            counters["stale"] += 1
+        elif obs.state is QualityState.INVALID:
+            counters["invalid"] += 1
+        elif obs.state is QualityState.UNKNOWN:
+            counters["unknown"] += 1
+        elif obs.state is QualityState.DISCONNECTED:
+            counters["disconnected"] += 1
+        reason = obs.reason_code or ""
+        if reason == "duplicate_sequence":
+            counters["duplicate"] += 1
+        elif reason in ("event_out_of_order", "sequence_out_of_order"):
+            counters["out_of_order"] += 1
+        elif reason == "sequence_gap":
+            counters["sequence_gap"] += 1
+            if prev_seq_id is not None and seq_id is not None and prev_seq_id >= seq_id:
+                counters["dropped_sequence_updates"] += 1
+            elif prev_seq_id is not None and seq_id is not None:
+                counters["dropped_sequence_updates"] += max(1, prev_seq_id - seq_id + 1)
 
     # --- mesaj dağıtımı ---------------------------------------------------------------------
     def handle(self, msg: dict, recv_ms: int):
@@ -452,6 +480,12 @@ class Market:
             self.quality_counts[previous.state.value] = max(0, self.quality_counts[previous.state.value] - 1)
             self.quality_latest[key] = obs
             self.quality_counts[obs.state.value] += 1
+            counters = self.channel_counters.setdefault(channel, {
+                "observations": 0, "live": 0, "stale": 0, "invalid": 0, "unknown": 0,
+                "duplicate": 0, "out_of_order": 0, "sequence_gap": 0,
+                "disconnected": 0, "dropped_sequence_updates": 0,
+            })
+            counters["disconnected"] += 1
 
     def stats(self) -> dict:
         lat = sorted(self.latency)
@@ -491,7 +525,8 @@ class Market:
                 "isleme_us_max": round(pr[-1], 1) if pr else None,
                 "ham_olay_gunlugu": self.event_journal.stats() if self.event_journal else {"enabled": False, "complete": False, "reason": "not_configured"},
                 "kalite_telemetrisi": {"anlam": "Her kanal timestamp/sequence ve kanal tazelik eşiğiyle izlenir; strateji daha sıkı eşik uygulayabilir.",
-                                       "kanallar": latest, "durum_sayilari": current_counts}}
+                                       "kanallar": latest, "durum_sayilari": current_counts,
+                                       "kanal_sayaclari": {k: dict(v) for k, v in self.channel_counters.items()}}}
 
     def close(self) -> dict:
         return self.event_journal.close() if self.event_journal else {"enabled": False, "complete": False}
