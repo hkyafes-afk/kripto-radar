@@ -7,6 +7,7 @@ these observations as execution quotes or order authority.
 from __future__ import annotations
 
 import hashlib
+import hmac
 import json
 import os
 import tempfile
@@ -111,7 +112,7 @@ def read_snapshot(
         envelope = json.loads(raw)
         digest = envelope.pop("sha256")
         expected = hashlib.sha256(_canonical(envelope)).hexdigest()
-        if not isinstance(digest, str) or not hashlib.compare_digest(digest, expected):
+        if not isinstance(digest, str) or not hmac.compare_digest(digest, expected):
             return BridgeRead("invalid", "digest_mismatch", None, None)
         if envelope.get("schema_version") != SCHEMA_VERSION:
             return BridgeRead("invalid", "schema_version_unsupported", None, None)
