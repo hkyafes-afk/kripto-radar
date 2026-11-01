@@ -377,6 +377,7 @@ class ComboPaperAdapter:
             "leverage_simulation": self.cfg.leverage_simulation,
             "initialized": self.initialized, "halted": self.halted,
             "halt_reason": self.halt_reason,
+            "grid_seeded": self.grid_seeded, "grid_anchor_price": self.grid_anchor_price,
             "active_grid_orders": active_grid_orders,
             "active_orders": active_grid_orders + int(tp_active),
             "order_count": len(self.orders), "fill_count": len(self.fills),
