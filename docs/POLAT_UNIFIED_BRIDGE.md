@@ -13,9 +13,15 @@
 
 ## Runtime boundary
 
-This module and its tests establish the transport contract; they do **not** create a shared filesystem between GitHub Actions runners. To activate cross-process delivery, both processes must be deployed with the same mounted durable volume and configured to use the same path. Separate GitHub-hosted runners do not share local files. GitHub branch/artifact polling is a delayed snapshot mechanism, not a millisecond feed.
+The producer and consumer hooks are now in the runtimes:
 
-UnifiedTrader continues to obtain execution BBO from its own trusted exchange feed. Polat data must remain a challenger/research input until an independently reviewed ingestion path and end-to-end tests prove provenance, freshness, loss/replay handling and strategy isolation.
+- Polat: set POLAT_UNIFIED_BRIDGE_PATH=/shared/kripto-radar/polat/latest.json. Its one-second loop publishes only ticker BBOs whose Polat channel quality is LIVE and whose exchange timestamp is no older than five seconds. Standby Polat processes do not publish.
+- UnifiedTrader host: set UNIFIED_POLAT_BRIDGE_PATH to the same mounted path. Its unified loop validates the snapshot and writes a status-only file to site/birlesik/polat_kopru.json. Freshness, sequence replay, parse failures and a missing path are surfaced explicitly.
+- Both variables must resolve to the same durable filesystem in both processes. No path is configured by default.
+
+This code does not create a shared filesystem between GitHub Actions runners. Separate GitHub-hosted runners do not share local files. The current Polat and main workflows therefore do not have an active cross-process transport merely because these hooks exist. A persistent host/volume or a separately provisioned transport is still required to activate it. GitHub branch/artifact polling is a delayed snapshot mechanism, not a millisecond feed.
+
+UnifiedTrader continues to obtain execution BBO exclusively from its own trusted exchange feed. Polat snapshots are research/diagnostic telemetry only: they are not used for Quote, factor inputs, decisions, fills, orders, position valuation or permissions to open positions. A fresh bridge status is not trade evidence and must not be counted toward the 14-day/100-closed-trade promotion gate.
 
 ## Example
 
