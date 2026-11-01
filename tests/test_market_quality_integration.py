@@ -270,3 +270,31 @@ def test_feed_exports_connection_telemetry_container():
     )
     assert feed.stats["baglanti_telemetrisi"] == {}
     assert set(feed.conns) == {"piyasa", "defter", "tape", "mum", "mum_genel"}
+
+
+def test_duplicate_okx_trade_id_is_not_aggregated_twice():
+    market = _market()
+    first = {"instId": "BTC-USDT-SWAP", "tradeId": "9001", "px": "100",
+             "sz": "2", "side": "buy", "ts": "1000"}
+    market.handle({"arg": {"channel": "trades", "instId": "BTC-USDT-SWAP"},
+                   "data": [first]}, recv_ms=1_010)
+    coin = market.coins["BTC-USDT-SWAP"]
+    assert len(coin.tape) == 1
+    assert coin.cvd == 200
+
+    duplicate = {**first, "px": "101", "ts": "1011"}
+    market.handle({"arg": {"channel": "trades", "instId": "BTC-USDT-SWAP"},
+                   "data": [duplicate]}, recv_ms=1_020)
+    assert len(coin.tape) == 1
+    assert coin.cvd == 200
+    counters = market.stats()["kalite_telemetrisi"]["kanal_sayaclari"]["trades"]
+    assert counters["duplicate"] == 1
+    assert counters["duplicate_event_id"] == 1
+
+
+def test_trade_without_exchange_trade_id_fails_closed():
+    market = _market()
+    market.handle({"arg": {"channel": "trades", "instId": "BTC-USDT-SWAP"},
+                   "data": [{"instId": "BTC-USDT-SWAP", "px": "100", "sz": "2",
+                             "side": "buy", "ts": "1000"}]}, recv_ms=1_010)
+    assert market.coins["BTC-USDT-SWAP"].tape == []
