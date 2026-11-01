@@ -30,6 +30,7 @@ def test_push_once_rejects_stale_or_invalid_snapshot(tmp_path, monkeypatch):
 
 
 def test_push_once_updates_dedicated_branch_and_skips_identical_snapshot(tmp_path, monkeypatch):
+    monkeypatch.setenv("POLAT_UNIFIED_BRIDGE_HMAC_KEY", "test-bridge-hmac-key-at-least-32-bytes-long")
     target = tmp_path / "bridge.json"
     raw = b'{"snapshot":"valid"}'
     target.write_bytes(raw)
@@ -59,3 +60,15 @@ def test_push_once_updates_dedicated_branch_and_skips_identical_snapshot(tmp_pat
     target.write_bytes(raw + b" ")
     assert sync.push_once(target)
     assert any(method == "PATCH" and path == f"git/refs/heads/{sync.BRANCH}" for method, path, _ in calls)
+
+
+def test_push_once_requires_hmac_key_before_any_github_write(tmp_path, monkeypatch):
+    target = tmp_path / "bridge.json"
+    target.write_text("{\"snapshot\":\"valid\"}", encoding="utf-8")
+    monkeypatch.delenv("POLAT_UNIFIED_BRIDGE_HMAC_KEY", raising=False)
+    called = []
+    monkeypatch.setattr(sync, "_api", lambda *a, **k: called.append((a, k)))
+    import pytest
+    with pytest.raises(RuntimeError, match="hmac_key_missing"):
+        sync.push_once(target)
+    assert not called
