@@ -78,7 +78,8 @@ def _validate_telemetry(value: Any) -> dict[str, Any]:
         counts = row["durumlar"]
         if (type(row["sembol_sayisi"]) is not int or row["sembol_sayisi"] < 0
                 or not isinstance(counts, dict) or set(counts) != states
-                or any(type(counts[k]) is not int or counts[k] < 0 for k in states)):
+                or any(type(counts[k]) is not int or counts[k] < 0 for k in states)
+                or sum(counts.values()) != row["sembol_sayisi"]):
             raise ValueError("telemetry_channel_counts_invalid")
         age = row["son_olay_yasi_ms_max"]
         if age is not None and (type(age) is not int or age < 0):
@@ -88,7 +89,7 @@ def _validate_telemetry(value: Any) -> dict[str, Any]:
                     "duplicate_event_id"}
     for channel, row in counters.items():
         if (not isinstance(channel, str) or not channel or len(channel) > 64
-                or not isinstance(row, dict) or set(row) - counter_keys
+                or not isinstance(row, dict) or set(row) != counter_keys
                 or any(type(v) is not int or v < 0 for v in row.values())):
             raise ValueError("telemetry_counters_invalid")
     latency_keys = {"gecikme_ornek_sayisi", "gecikme_ms_p50", "gecikme_ms_p95",
@@ -155,7 +156,7 @@ def write_snapshot(
         if age < -1_000 or age > DEFAULT_MAX_AGE_MS:
             raise ValueError("observation_timestamp_out_of_range")
         rows.append(_observation_dict(item))
-    safe_telemetry = _validate_telemetry(dict(telemetry or {
+    safe_telemetry = _validate_telemetry(dict(telemetry if telemetry is not None else {
         "channels": {}, "channel_counters": {},
         "latency": {"gecikme_ornek_sayisi": 0, "gecikme_ms_p50": None, "gecikme_ms_p95": None,
                     "gecikme_ms_p99": None, "gecikme_ms_max": None, "isleme_ornek_sayisi": 0,
