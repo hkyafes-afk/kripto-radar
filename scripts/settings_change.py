@@ -70,8 +70,14 @@ def apply_change(text: str, path: str, raw_value: str) -> tuple[str, dict]:
     if not minimum <= value <= maximum:
         raise SettingsChangeError(f"İzin verilen aralık: {minimum}–{maximum}")
 
-    config = yaml.safe_load(text)
-    node = _node_for_path(yaml.compose(text), path)
+    try:
+        config = yaml.safe_load(text)
+        root = yaml.compose(text)
+        if not isinstance(config, dict) or not isinstance(root, MappingNode):
+            raise SettingsChangeError("Mevcut config YAML kökü bir nesne olmalı.")
+        node = _node_for_path(root, path)
+    except yaml.YAMLError as exc:
+        raise SettingsChangeError("Mevcut config YAML bozuk; hiçbir dosya değiştirilmedi.") from exc
     current = config
     for part in path.split("."):
         if not isinstance(current, dict) or part not in current:
@@ -86,7 +92,12 @@ def apply_change(text: str, path: str, raw_value: str) -> tuple[str, dict]:
     updated = text[:node.start_mark.index] + replacement + text[node.end_mark.index:]
     # Parse again before any write; malformed config and cross-field threshold
     # inversions are rejected before the atomic replace.
-    updated_config = yaml.safe_load(updated)
+    try:
+        updated_config = yaml.safe_load(updated)
+    except yaml.YAMLError as exc:
+        raise SettingsChangeError("Değişiklik sonrası config YAML geçersiz; hiçbir dosya değiştirilmedi.") from exc
+    if not isinstance(updated_config, dict):
+        raise SettingsChangeError("Değişiklik sonrası config kökü nesne değil.")
     signal = updated_config.get("sinyal") or {}
     if ("guclu_esik" in signal and "izle_esik" in signal
             and float(signal["izle_esik"]) >= float(signal["guclu_esik"])):
