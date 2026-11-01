@@ -565,9 +565,37 @@ class Polat:
         # Unix-millisecond sequence survives normal process/runner restarts; never resets to 1.
         sequence = max(generated, self.bridge_sequence + 1)
         try:
+            metrics = self.market.stats()
+            quality = metrics.get("kalite_telemetrisi") or {}
+            feed_stats = self.feed.stats if self.feed else {}
+            connections = feed_stats.get("baglanti_telemetrisi") or {}
+            telemetry = {
+                "channels": quality.get("kanallar") or {},
+                "channel_counters": quality.get("kanal_sayaclari") or {},
+                "latency": {
+                    key: metrics.get(key) for key in (
+                        "gecikme_ornek_sayisi", "gecikme_ms_p50", "gecikme_ms_p95",
+                        "gecikme_ms_p99", "gecikme_ms_max", "isleme_ornek_sayisi",
+                        "isleme_us_p50", "isleme_us_p95", "isleme_us_p99", "isleme_us_max",
+                    )
+                },
+                "connections": {
+                    name: {
+                        "attempts": row.get("attempts", 0),
+                        "connected": row.get("connected", 0),
+                        "disconnects": row.get("disconnects", 0),
+                        "last_attempt_ms": row.get("last_attempt_ms"),
+                        "last_connected_ms": row.get("last_connected_ms"),
+                        "last_disconnected_ms": row.get("last_disconnected_ms"),
+                        "last_error": row.get("last_error"),
+                    }
+                    for name, row in connections.items()
+                },
+            }
             write_snapshot(
                 self.bridge_path, sequence=sequence, generated_at_ms=generated,
                 observations=observations[:500], source_run_id=self.bridge_run_id,
+                telemetry=telemetry,
             )
         except (OSError, ValueError, TypeError) as exc:
             self.bridge_stats["failed"] += 1
