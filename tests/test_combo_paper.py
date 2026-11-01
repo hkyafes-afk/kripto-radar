@@ -418,3 +418,40 @@ def test_crash_after_sell_fill_recovers_missing_counter_buy(tmp_path):
     assert len(counter) == 1
     assert counter[0].qty == pytest.approx(0.013)
     assert counter[0].level_index == sell.level_index - 1
+
+
+def test_partial_buy_fills_aggregate_to_one_fixed_size_lot_before_sell():
+    strategy = ComboStrategy()
+    strategy.on_quote(quote(), now_ms=NOW)
+    buy = max((o for o in strategy.paper.orders.values() if o.active and o.side == "buy"),
+              key=lambda o: o.price)
+
+    first = strategy.on_quote(
+        quote(last=buy.price - 0.1, bid=buy.price - 0.2, ask=buy.price,
+              bid_size=0.05, ask_size=0.005, ts=NOW + 1_000),
+        now_ms=NOW + 1_000,
+    )
+    assert first["position_qty_btc"] == pytest.approx(0.018)
+    lot_id = f"{buy.order_id}-lot-1"
+    partial_lot = strategy.paper.position.lots[lot_id]
+    assert partial_lot.qty == pytest.approx(0.005)
+    assert not strategy.paper.has_active_sell_for_lot(lot_id)
+
+    second_ask = buy.price - 0.2
+    second = strategy.on_quote(
+        quote(last=second_ask - 0.1, bid=second_ask - 0.1, ask=second_ask,
+              bid_size=0.05, ask_size=0.008, ts=NOW + 2_000),
+        now_ms=NOW + 2_000,
+    )
+    assert second["position_qty_btc"] == pytest.approx(0.026)
+    assert buy.status is ComboOrderStatus.FILLED
+    assert len([lot for lot in strategy.paper.position.lots.values()
+                if lot.source_order_id == buy.order_id]) == 1
+    completed_lot = strategy.paper.position.lots[lot_id]
+    assert completed_lot.qty == pytest.approx(0.013)
+    expected_avg = (0.005 * buy.price + 0.008 * second_ask) / 0.013
+    assert completed_lot.entry_price == pytest.approx(expected_avg)
+    paired = [o for o in strategy.paper.orders.values()
+              if o.active and o.side == "sell" and o.lot_id == lot_id]
+    assert len(paired) == 1
+    assert paired[0].qty == pytest.approx(0.013)
