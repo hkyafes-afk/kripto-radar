@@ -201,6 +201,7 @@ class Market:
                          recv_ms: int, *, seq_id: int | None = None,
                          prev_seq_id: int | None = None, snapshot: bool = False,
                          valid: bool = True) -> None:
+        baseline_seq = self.quality._last_seq.get((symbol, channel))
         obs = self.quality.observe(symbol=symbol, channel=channel, event_ts_ms=event_ts_ms,
                                    receive_ts_ms=recv_ms, seq_id=seq_id,
                                    prev_seq_id=prev_seq_id, is_snapshot=snapshot, valid=valid)
@@ -233,10 +234,9 @@ class Market:
             counters["out_of_order"] += 1
         elif reason == "sequence_gap":
             counters["sequence_gap"] += 1
-            if prev_seq_id is not None and seq_id is not None and prev_seq_id >= seq_id:
-                counters["dropped_sequence_updates"] += 1
-            elif prev_seq_id is not None and seq_id is not None:
-                counters["dropped_sequence_updates"] += max(1, prev_seq_id - seq_id + 1)
+            if prev_seq_id is not None and seq_id is not None:
+                missing = (prev_seq_id - baseline_seq) if baseline_seq is not None and prev_seq_id > baseline_seq else 1
+                counters["dropped_sequence_updates"] += max(1, missing)
 
     # --- mesaj dağıtımı ---------------------------------------------------------------------
     def handle(self, msg: dict, recv_ms: int):
