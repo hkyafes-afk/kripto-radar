@@ -151,3 +151,19 @@ def test_concurrent_settings_writers_serialize_and_reject_stale_second_writer(tm
     assert len(audit_rows) == 1
     assert audit_rows[0]["action"] == "apply"
     assert ".settings.lock" in " ".join(p.name for p in tmp_path.iterdir())
+
+
+def test_settings_audit_write_failure_restores_original_config(tmp_path, monkeypatch):
+    import scripts.settings_change as settings_change
+
+    target = tmp_path / "config.yaml"
+    audit = tmp_path / "audit.jsonl"
+    target.write_text(CONFIG, encoding="utf-8")
+
+    def fail_audit(_path, _record):
+        raise OSError("disk full")
+
+    monkeypatch.setattr(settings_change, "_append_audit", fail_audit)
+    with pytest.raises(SettingsChangeError, match="geri alınmaya çalışıldı"):
+        apply_file_change(target, "risk.risk_yuzde", "0.75", audit_file=audit)
+    assert target.read_text(encoding="utf-8") == CONFIG
