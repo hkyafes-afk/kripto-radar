@@ -41,6 +41,15 @@ def _canonical(payload: Mapping[str, Any]) -> bytes:
                       allow_nan=False).encode("utf-8")
 
 
+def _hmac_key_bytes(value: str | bytes | None) -> bytes | None:
+    if value is None:
+        return None
+    key = value.encode("utf-8") if isinstance(value, str) else value
+    if not isinstance(key, bytes) or len(key) < 32:
+        raise ValueError("hmac_key_must_be_at_least_32_bytes")
+    return key
+
+
 def _observation_dict(item: NormalizedBBO) -> dict[str, Any]:
     return {
         "venue": item.venue, "symbol": item.symbol, "last": item.last,
@@ -118,6 +127,7 @@ def write_snapshot(
     path: str | Path, *, sequence: int, generated_at_ms: int,
     observations: list[NormalizedBBO], source_run_id: str,
     telemetry: Mapping[str, Any] | None = None,
+    hmac_key: str | bytes | None = None,
 ) -> str:
     """Atomically publish one Polat research snapshot and return its SHA-256."""
     if type(sequence) is not int or sequence < 1:
@@ -158,8 +168,12 @@ def write_snapshot(
         "generated_at_ms": generated_at_ms, "source_run_id": source_run_id,
         "observations": rows, "telemetry": safe_telemetry,
     }
-    digest = hashlib.sha256(_canonical(body)).hexdigest()
+    body_bytes = _canonical(body)
+    digest = hashlib.sha256(body_bytes).hexdigest()
     envelope = {**body, "sha256": digest}
+    key_bytes = _hmac_key_bytes(hmac_key)
+    if key_bytes is not None:
+        envelope["hmac_sha256"] = hmac.new(key_bytes, body_bytes, hashlib.sha256).hexdigest()
     encoded = _canonical(envelope)
     if len(encoded) > MAX_SNAPSHOT_BYTES:
         raise ValueError("snapshot_too_large")
@@ -183,6 +197,7 @@ def write_snapshot(
 def read_snapshot(
     path: str | Path, *, now_ms: int | None = None,
     max_age_ms: int = DEFAULT_MAX_AGE_MS, last_sequence: int | None = None,
+    hmac_key: str | bytes | None = None, require_hmac: bool = False,
 ) -> BridgeRead:
     """Read and validate a snapshot; never returns stale or replayed observations."""
     if type(max_age_ms) is not int or max_age_ms <= 0:
@@ -204,9 +219,22 @@ def read_snapshot(
         if not isinstance(envelope, dict):
             return BridgeRead("invalid", "snapshot_root_not_object", None, None)
         digest = envelope.pop("sha256")
-        expected = hashlib.sha256(_canonical(envelope)).hexdigest()
+        signature = envelope.pop("hmac_sha256", None)
+        body_bytes = _canonical(envelope)
+        expected = hashlib.sha256(body_bytes).hexdigest()
         if not isinstance(digest, str) or not hmac.compare_digest(digest, expected):
             return BridgeRead("invalid", "digest_mismatch", None, None)
+        key_bytes = _hmac_key_bytes(hmac_key)
+        if require_hmac and signature is None:
+            return BridgeRead("invalid", "hmac_signature_missing", None, None)
+        if signature is not None:
+            if key_bytes is None:
+                return BridgeRead("invalid", "hmac_key_missing", None, None)
+            expected_hmac = hmac.new(key_bytes, body_bytes, hashlib.sha256).hexdigest()
+            if not isinstance(signature, str) or not hmac.compare_digest(signature, expected_hmac):
+                return BridgeRead("invalid", "hmac_mismatch", None, None)
+        elif key_bytes is not None:
+            return BridgeRead("invalid", "hmac_signature_missing", None, None)
         if set(envelope) != {"schema_version", "source", "scope", "sequence", "generated_at_ms",
                              "source_run_id", "observations", "telemetry"}:
             return BridgeRead("invalid", "snapshot_fields_invalid", None, None)
