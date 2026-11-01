@@ -11,10 +11,10 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 3524 | %46.0 | -0.327 | -1154.03 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
 | polat_girilmeyen | 3511 | %46.0 | -0.327 | -1148.67 |
-| rastgele | 3496 | %42.8 | -0.396 | -1384.99 |
-| trend_naif | 3525 | %41.0 | -0.431 | -1519.1 |
+| rastgele | 3497 | %42.8 | -0.397 | -1386.9 |
+| trend_naif | 3526 | %41.0 | -0.431 | -1521.01 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-4.01
+Polat özsermaye: %-4.71 · BTC al-tut: %-3.91
 
 ## Öğrenme (walk-forward)
 
@@ -25,20 +25,20 @@ En az işe yarayan okumalar: btc_1H ×0.474, momentum_1H ×0.585, adx_di_1H ×0.
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 16772, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 16764, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - ders: 8997
-- yetki: 228
-- gösterge aileleri aynı yönde değil: 127
+- yetki: 229
+- gösterge aileleri aynı yönde değil: 120
 - büyük zaman dilimi trendi ters: 68
 - puan +0.131 eşiğin (0.3) altında: 62
 - puan +0.188 eşiğin (0.3) altında: 58
 - puan +0.160 eşiğin (0.3) altında: 57
 - puan +0.128 eşiğin (0.3) altında: 56
 - puan +0.126 eşiğin (0.3) altında: 55
-- puan +0.129 eşiğin (0.3) altında: 55
+- puan +0.121 eşiğin (0.3) altında: 54
 
 ## Son 50 gün
 
@@ -91,7 +91,7 @@ Kapanmış işlem yok. Görülen kurulum: 16772, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 23208
+- ders: 23228
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2517
 - üst üste 3 zarar: 2345
@@ -100,7 +100,7 @@ Kapanmış işlem yok. Görülen kurulum: 16772, girilen: 0.
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
-- yetki: 228
+- yetki: 229
 
 **Hata sınıfları**
 
@@ -158,7 +158,7 @@ Kapanmış işlem yok. Görülen kurulum: 16772, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 23208
+- ders: 23228
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2517
 - üst üste 3 zarar: 2345
@@ -167,7 +167,7 @@ Kapanmış işlem yok. Görülen kurulum: 16772, girilen: 0.
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
-- yetki: 228
+- yetki: 229
 
 **Hata sınıfları**
 
