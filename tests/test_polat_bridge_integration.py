@@ -56,6 +56,7 @@ def test_polat_publisher_exports_only_fresh_live_quality_tickers(tmp_path, monke
     agent.bridge_path = tmp_path / "shared" / "polat.json"
     agent.bridge_sequence = 0
     agent.bridge_run_id = "polat-run-1"
+    agent.bridge_hmac_key = "test-only-bridge-secret-32-bytes-minimum"
     agent.market = SimpleNamespace(
         coins={"BTC-USDT-SWAP": good, "ETH-USDT-SWAP": stale},
         quality_latest={
@@ -85,6 +86,7 @@ def test_polat_publisher_does_not_publish_when_no_fresh_live_tickers(tmp_path, m
     agent.bridge_path = tmp_path / "shared" / "polat.json"
     agent.bridge_sequence = 0
     agent.bridge_run_id = "polat-run-2"
+    agent.bridge_hmac_key = "test-only-bridge-secret-32-bytes-minimum"
     agent.market = SimpleNamespace(
         coins={"BTC-USDT-SWAP": coin},
         quality_latest={("BTC-USDT-SWAP", "tickers"): SimpleNamespace(state=QualityState.STALE)},
@@ -104,8 +106,10 @@ def test_unified_consumer_writes_research_only_status_and_detects_replay(tmp_pat
         observations=[normalize_bbo(venue="okx", symbol="BTC-USDT-SWAP", last=100,
                                     bid=99.9, ask=100.1, event_ts_ms=now)],
         source_run_id="polat-run-3", telemetry=_bridge_telemetry(),
+        hmac_key="test-only-bridge-secret-32-bytes-minimum",
     )
     monkeypatch.setenv("UNIFIED_POLAT_BRIDGE_PATH", str(bridge))
+    monkeypatch.setenv("UNIFIED_POLAT_BRIDGE_HMAC_KEY", "test-only-bridge-secret-32-bytes-minimum")
     engine = object.__new__(Engine)
     engine.site = tmp_path / "site"
 
