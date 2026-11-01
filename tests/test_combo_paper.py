@@ -12,6 +12,7 @@ from radar.unified.combo.paper import ComboPaperAdapter
 from radar.unified.combo.position import LongLot
 from radar.unified.combo.strategy import ComboStrategy
 from radar.unified.combo.feed import ComboWebSocketListener
+from radar.unified.combo.instrument import OKXInstrumentMetadata
 
 NOW = 1_800_000_000_000
 
@@ -232,7 +233,23 @@ def test_corrupt_or_mismatched_combo_ledger_fails_closed(tmp_path):
         ComboPaperAdapter(changed, root=tmp_path)
 
 
-def test_websocket_listener_consumes_public_tick_size_payload():
+def test_okx_contract_metadata_normalizes_contracts_to_btc():
+    meta = OKXInstrumentMetadata(
+        inst_id="BTC-USDT-SWAP", contract_type="linear", contract_value=0.01,
+        contract_value_ccy="BTC", tick_size=0.1, lot_size_contracts=0.01,
+        min_size_contracts=0.01, state="live",
+    )
+    assert meta.contracts_to_btc(5.0) == pytest.approx(0.05)
+    assert meta.btc_to_contracts(0.013) == pytest.approx(1.3)
+    with pytest.raises(ValueError):
+        OKXInstrumentMetadata(
+            inst_id="BTC-USDT-SWAP", contract_type="inverse", contract_value=100,
+            contract_value_ccy="USD", tick_size=0.1, lot_size_contracts=1,
+            min_size_contracts=1, state="live",
+        )
+
+
+def test_websocket_listener_consumes_contract_size_and_converts_to_btc():
     class FakeFeed:
         def __init__(self):
             self.callback = None
@@ -246,15 +263,21 @@ def test_websocket_listener_consumes_public_tick_size_payload():
 
     strategy = ComboStrategy()
     feed = FakeFeed()
-    listener = ComboWebSocketListener(strategy, feed=feed)
+    meta = OKXInstrumentMetadata(
+        inst_id="BTC-USDT-SWAP", contract_type="linear", contract_value=0.01,
+        contract_value_ccy="BTC", tick_size=0.1, lot_size_contracts=0.01,
+        min_size_contracts=0.01, state="live",
+    )
+    listener = ComboWebSocketListener(strategy, feed=feed, instrument_meta=meta)
     listener.start()
     assert feed.symbols == ["BTC-USDT-SWAP"]
     now = int(time.time() * 1000)
     feed.callback({
         "exchange": "okx", "inst": "BTC-USDT-SWAP", "last": 78_000.0,
-        "bid": 77_999.9, "ask": 78_000.1, "bid_size": 0.05,
-        "ask_size": 0.05, "ts_ms": now,
+        "bid": 77_999.9, "ask": 78_000.1, "bid_size_contracts": 5,
+        "ask_size_contracts": 5, "size_unit": "contracts_for_swap", "ts_ms": now,
     })
     assert listener.last_error is None
     assert listener.last_result["status"] == "base_opened"
+    assert strategy.paper.position.qty == pytest.approx(0.013)
     assert listener.status()["execution_mode"] == "PAPER_ONLY"
