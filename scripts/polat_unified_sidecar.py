@@ -77,7 +77,10 @@ async def run() -> None:
     finally:
         await feed.stop()
         market.close()
-        for conn in rest.pool.values():
+        # Keep shutdown resilient for REST adapters without a connection pool
+        # (e.g. a minimal test adapter); cleanup must not mask cancellation.
+        pool = getattr(rest, "pool", {})
+        for conn in pool.values() if isinstance(pool, dict) else ():
             for item in conn:
                 try:
                     item.close()
