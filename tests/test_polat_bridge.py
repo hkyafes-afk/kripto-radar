@@ -128,3 +128,92 @@ def test_snapshot_reader_reports_source_run_id_and_rejects_unknown_fields(tmp_pa
     path.write_text(json.dumps(payload), encoding="utf-8")
     rejected = read_snapshot(path, now_ms=10_000)
     assert (rejected.status, rejected.reason) == ("invalid", "snapshot_fields_invalid")
+
+
+def _telemetry_fixture():
+    return {
+    "channels": {
+        "tickers": {
+            "sembol_sayisi": 1,
+            "durumlar": {
+                "LIVE": 1,
+                "STALE": 0,
+                "INVALID": 0,
+                "UNKNOWN": 0,
+                "DISCONNECTED": 0
+            },
+            "son_olay_yasi_ms_max": 250
+        }
+    },
+    "channel_counters": {
+        "tickers": {
+            "observations": 10,
+            "live": 9,
+            "stale": 0,
+            "invalid": 1,
+            "unknown": 0,
+            "duplicate": 0,
+            "out_of_order": 0,
+            "sequence_gap": 0,
+            "disconnected": 0,
+            "dropped_sequence_updates": 0,
+            "duplicate_event_id": 0
+        }
+    },
+    "latency": {
+        "gecikme_ornek_sayisi": 10,
+        "gecikme_ms_p50": 8,
+        "gecikme_ms_p95": 15,
+        "gecikme_ms_p99": 22,
+        "gecikme_ms_max": 30,
+        "isleme_ornek_sayisi": 10,
+        "isleme_us_p50": 40,
+        "isleme_us_p95": 80,
+        "isleme_us_p99": 100,
+        "isleme_us_max": 120
+    },
+    "connections": {
+        "piyasa": {
+            "attempts": 2,
+            "connected": 2,
+            "disconnects": 1,
+            "last_attempt_ms": 10000,
+            "last_connected_ms": 9900,
+            "last_disconnected_ms": 9950,
+            "last_error": "temporary disconnect"
+        }
+    }
+}
+
+
+def test_snapshot_round_trips_signed_channel_latency_and_connection_telemetry(tmp_path):
+    path = tmp_path / "polat.json"
+    telemetry = _telemetry_fixture()
+    write_snapshot(path, sequence=2, generated_at_ms=10_000,
+                   observations=[_bbo(10_000)], source_run_id="run-telemetry",
+                   telemetry=telemetry)
+    result = read_snapshot(path, now_ms=10_000)
+    assert result.status == "fresh"
+    assert result.telemetry == telemetry
+    assert result.telemetry["channels"]["tickers"]["durumlar"]["LIVE"] == 1
+    assert result.telemetry["channel_counters"]["tickers"]["duplicate_event_id"] == 0
+    assert result.telemetry["latency"]["gecikme_ms_p95"] == 15.0
+    assert result.telemetry["connections"]["piyasa"]["disconnects"] == 1
+
+
+@pytest.mark.parametrize(
+    "mutate",
+    [
+        lambda t: t["channels"]["tickers"]["durumlar"].update({"LIVE": True}),
+        lambda t: t["channel_counters"]["tickers"].update({"duplicate": -1}),
+        lambda t: t["latency"].update({"gecikme_ms_p95": float("nan")}),
+        lambda t: t["connections"]["piyasa"].update({"disconnects": True}),
+        lambda t: t["channels"]["tickers"].update({"unexpected": 1}),
+    ],
+)
+def test_snapshot_rejects_invalid_telemetry_before_publish(tmp_path, mutate):
+    telemetry = _telemetry_fixture()
+    mutate(telemetry)
+    with pytest.raises(ValueError):
+        write_snapshot(tmp_path / "invalid.json", sequence=1, generated_at_ms=10_000,
+                       observations=[_bbo(10_000)], source_run_id="run", telemetry=telemetry)
