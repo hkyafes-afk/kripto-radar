@@ -593,7 +593,7 @@ class Polat:
                         "last_attempt_ms": row.get("last_attempt_ms"),
                         "last_connected_ms": row.get("last_connected_ms"),
                         "last_disconnected_ms": row.get("last_disconnected_ms"),
-                        "last_error": row.get("last_error"),
+                        "last_error": (str(row.get("last_error"))[:200] if row.get("last_error") is not None else None),
                     }
                     for name, row in connections.items()
                 },
