@@ -19,6 +19,11 @@ case "$cmd" in
     ;;
   push)
     msg=${2:-güncelleme}
+    # Keep the dedicated UnifiedTrader dashboard in every Pages publication.
+    # This is a static template copy; runtime data remains sourced from site/birlesik/*.json.
+    if [ -f "radar/templates/birlesik.html" ]; then
+      cp "radar/templates/birlesik.html" "$SITE/birlesik.html"
+    fi
     if [ ! -f "$SITE/index.html" ] && [ ! -f "$SITE/state.json" ]; then
       echo "site içeriği yok, yayın atlandı."
       exit 0
