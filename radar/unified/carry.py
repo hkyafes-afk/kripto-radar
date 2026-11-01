@@ -75,6 +75,13 @@ class CarryPairPaper:
     def _fresh(self, q: Quote | None, now_ms: int) -> bool:
         return bool(q and q.valid and q.ts_ms > 0 and -1_000 <= now_ms - q.ts_ms <= self.max_quote_age_ms)
 
+    @staticmethod
+    def _depth_ok(q: Quote, side: str, qty: float) -> bool:
+        levels = q.asks if side == "buy" else q.bids
+        valid = [(float(px), float(size)) for px, size in levels
+                 if math.isfinite(float(px)) and math.isfinite(float(size)) and float(px) > 0 and float(size) > 0]
+        return bool(valid) and sum(size for _, size in valid) + 1e-12 >= qty
+
     def _costs(self, notional: float, spot: Quote, perp: Quote) -> float:
         slip = self.slippage_bp / 10_000
         # Four taker legs (spot/perp open and close) plus conservative full-spread crossing.
@@ -102,6 +109,8 @@ class CarryPairPaper:
             return {"status": "rejected", "reason": "spot_or_perp_quote_missing_stale_or_invalid"}
         if spot.inst != spot_inst or perp.inst != perp_inst:
             return {"status": "rejected", "reason": "instrument_mismatch"}
+        if not self._depth_ok(spot, "buy", qty) or not self._depth_ok(perp, "sell", qty):
+            return {"status": "rejected", "reason": "entry_orderbook_depth_insufficient_or_missing"}
         spot_notional, perp_notional = qty * spot.ask, qty * perp.bid
         notional = max(spot_notional, perp_notional)
         if notional > self.max_notional_usd:
@@ -161,6 +170,8 @@ class CarryPairPaper:
         if spot.inst != p["spot_inst"] or perp.inst != p["perp_inst"]:
             return {"status": "rejected", "reason": "instrument_mismatch"}
         qty = p["spot_qty"]
+        if not self._depth_ok(spot, "sell", qty) or not self._depth_ok(perp, "buy", qty):
+            return {"status": "blocked", "reason": "exit_orderbook_depth_insufficient_or_missing"}
         slip = self.slippage_bp / 10_000
         spot_exit, perp_exit = spot.bid * (1 - slip), perp.ask * (1 + slip)
         spot_pnl = qty * (spot_exit - p["spot_entry"])
