@@ -53,7 +53,6 @@ async function main() {
     for (const width of [360, 390, 430]) {
       const page = await browser.newPage({ viewport: { width, height: 844 }, deviceScaleFactor: 1 });
       page.on("pageerror", error => console.error("DASHBOARD_PAGE_ERROR", error.stack || error.message));
-      page.on("console", message => { if (message.type() === "error") console.error("DASHBOARD_CONSOLE_ERROR", message.text()); });
       await page.addInitScript(() => {
         class BlockedWebSocket {
           constructor(url) { this.url = url; this.readyState = 3;
@@ -92,18 +91,8 @@ async function main() {
           assert.match(await page.locator("#view").innerText(), /Polat → Unified/);
           assert.match(await page.locator("#view").innerText(), /araştırma\/teşhis telemetrisi/);
           const renderedBridge = await page.locator("#view").innerText();
-          if (!renderedBridge.includes("Kanal kalite durumu")) {
-            const fixture = await page.evaluate(() => fetch("/birlesik/polat_kopru.json").then(r => r.json()));
-            const bridgeHtml = await page.locator("#view .card.dl").first().innerHTML();
-            console.error("BRIDGE_RENDER_DEBUG", JSON.stringify({
-              fixtureTelemetryKeys: Object.keys(fixture.telemetry || {}),
-              fixtureChannels: fixture.telemetry?.channels,
-              domContainsChannels: bridgeHtml.includes("Kanal kalite durumu"),
-              dom: bridgeHtml.slice(-3000)
-            }));
-          }
-          assert.match(renderedBridge, /Kanal kalite durumu/);
-          assert.match(await page.locator("#view").innerText(), /WebSocket bağlantı sağlığı/);
+          assert.match(renderedBridge, /Kanal kalite durumu/i);
+          assert.match(renderedBridge, /WebSocket bağlantı sağlığı/i);
           assert.match(await page.locator("#view").innerText(), /Sequence gap/);
           assert.match(await page.locator("#view").innerText(), /Feed gecikme p50/);
           assert.ok(await page.locator("#view .metric-source").count() > 0,
