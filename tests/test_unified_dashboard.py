@@ -32,6 +32,9 @@ def test_site_birlesik_panelini_kopyalar_ve_baglar(tmp_path):
     assert "Veri Sağlığı" in page and "renderDataHealth" in page and "tanilama" in page
     assert "renderPolatBridge" in page and "birlesik/polat_kopru.json" in page
     assert "Yalnız araştırma/teşhis telemetrisi" in page and "Gözlem sayısı" in page
+    assert "Kanal kalite durumu ve olay sayaçları" in page
+    assert "Gecikme dağılımı" in page and "WebSocket bağlantı sağlığı" in page
+    assert "dropped_sequence_updates" in page and "duplicate_event_id" in page
     assert all(label in page for label in ("Fırsatlar", "Portföy", "Karar Merkezi", "Performans", "Deney Laboratuvarı"))
     assert "renderOpportunities" in page and "renderExperimentLab" in page
     assert "renderKarne(data && data.karne" in page
