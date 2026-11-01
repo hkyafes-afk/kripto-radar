@@ -15,7 +15,14 @@ const unified = { mod: "unified", ts: now, bakiye: 100, baslangic: 100, gun_basi
     decision_coins: 0, book_entries: 0, spread_durum_sayim: {}, ornek: [] } };
 const polat = { source: "polat", scope: "research_only", status: "fresh", reason: null,
   last_sequence: 100, sequence: 101, generated_at_ms: now - 200, received_at_ms: now,
-  age_ms: 200, observation_count: 2, source_run_id: "mobile-test-run" };
+  age_ms: 200, observation_count: 2, source_run_id: "mobile-test-run",
+  telemetry: {
+    channels: {tickers: {sembol_sayisi: 1, durumlar: {LIVE: 1, STALE: 0, INVALID: 0, UNKNOWN: 0, DISCONNECTED: 0}, son_olay_yasi_ms_max: 250}},
+    channel_counters: {tickers: {observations: 10, live: 9, stale: 0, invalid: 1, unknown: 0, duplicate: 0, out_of_order: 0, sequence_gap: 0, disconnected: 0, dropped_sequence_updates: 0, duplicate_event_id: 0}},
+    latency: {gecikme_ornek_sayisi: 10, gecikme_ms_p50: 8, gecikme_ms_p95: 15, gecikme_ms_p99: 22, gecikme_ms_max: 30, isleme_ornek_sayisi: 10, isleme_us_p50: 40, isleme_us_p95: 80, isleme_us_p99: 100, isleme_us_max: 120},
+    connections: {piyasa: {attempts: 2, connected: 2, disconnects: 1, last_attempt_ms: now - 1000, last_connected_ms: now - 900, last_disconnected_ms: now - 500, last_error: "test disconnect"}}
+  }
+};
 const settings = { schema_version: 3, mode: "read_only_discovery", write_enabled: false,
   write_ready_count: 0, parameter_count: 1,
   parameters: [{ path: "risk.max_spread_bp", label: "Max spread bp", category: "risk",
@@ -82,6 +89,10 @@ async function main() {
         if (tab === "veri") {
           assert.match(await page.locator("#view").innerText(), /Polat → Unified/);
           assert.match(await page.locator("#view").innerText(), /araştırma\/teşhis telemetrisi/);
+          assert.match(await page.locator("#view").innerText(), /Kanal kalite durumu/);
+          assert.match(await page.locator("#view").innerText(), /WebSocket bağlantı sağlığı/);
+          assert.match(await page.locator("#view").innerText(), /Sequence gap/);
+          assert.match(await page.locator("#view").innerText(), /Feed gecikme p50/);
           assert.ok(await page.locator("#view .metric-source").count() > 0,
             "Data Health metric labels must include source/freshness/calculation provenance");
         }
