@@ -103,6 +103,7 @@ class Polat:
         # Optional shared-volume bridge: always research-only; never an execution price source.
         bridge_value = os.environ.get("POLAT_UNIFIED_BRIDGE_PATH", "").strip()
         self.bridge_path = Path(bridge_value) if bridge_value else None
+        self.bridge_hmac_key = os.environ.get("POLAT_UNIFIED_BRIDGE_HMAC_KEY")
         self.bridge_sequence = 0
         self.bridge_run_id = str(os.environ.get("GITHUB_RUN_ID") or f"local-{os.getpid()}-{self.started}")
         self.bridge_stats = {"published": 0, "failed": 0, "last_published_ms": None, "last_error": None}
@@ -160,6 +161,7 @@ class Polat:
                     "configured": self.bridge_path is not None,
                     "scope": "research_only",
                     "execution_authority": False,
+                    "hmac_configured": bool(self.bridge_hmac_key and len(self.bridge_hmac_key.encode("utf-8")) >= 32),
                     **self.bridge_stats,
                 },
                 "sayac": self.counters,
@@ -545,6 +547,10 @@ class Polat:
         """Publish only fresh, quality-approved Polat tickers to an explicitly mounted shared path."""
         if self.bridge_path is None or self.market is None:
             return False
+        if not self.bridge_hmac_key or len(self.bridge_hmac_key.encode("utf-8")) < 32:
+            self.bridge_stats["failed"] += 1
+            self.bridge_stats["last_error"] = "bridge_hmac_key_missing_or_too_short"
+            return False
         generated = now_ms()
         observations = []
         for inst, coin in list(self.market.coins.items()):
@@ -595,7 +601,7 @@ class Polat:
             write_snapshot(
                 self.bridge_path, sequence=sequence, generated_at_ms=generated,
                 observations=observations[:500], source_run_id=self.bridge_run_id,
-                telemetry=telemetry,
+                telemetry=telemetry, hmac_key=self.bridge_hmac_key,
             )
         except (OSError, ValueError, TypeError) as exc:
             self.bridge_stats["failed"] += 1
