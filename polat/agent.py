@@ -155,7 +155,14 @@ class Polat:
                                                                          "r", "pnl_net", "sure_saat", "hatalar", "ts")}
                                                     for x in self.recent_closes[-30:]][::-1],
                 "izlenen": sorted(self.deep), "risk": self.risk.to_state(), "veri": m.stats() if m else {},
-                "baglanti": self.feed.stats if self.feed else {}, "sayac": self.counters,
+                "baglanti": self.feed.stats if self.feed else {},
+                "unified_bridge": {
+                    "configured": self.bridge_path is not None,
+                    "scope": "research_only",
+                    "execution_authority": False,
+                    **self.bridge_stats,
+                },
+                "sayac": self.counters,
                 "rest": {"istek": getattr(self.rest, "calls", 0), "tekrar": getattr(self.rest, "retries", 0),
                          "rtt_ms": {k: round(v, 1) for k, v in (getattr(self.rest, "rtt", {}) or {}).items()}},
                 "likidasyon_kalibrasyon": m.liq_calib if m else None, "global": m.global_ if m else {},
