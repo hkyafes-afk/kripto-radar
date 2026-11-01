@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 3512 | %46.1 | -0.326 | -1143.54 |
+| polat_tum_sinyaller | 3514 | %46.1 | -0.326 | -1145.7 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 3499 | %46.1 | -0.325 | -1138.18 |
-| rastgele | 3481 | %42.7 | -0.399 | -1388.1 |
-| trend_naif | 3512 | %41.1 | -0.429 | -1506.6 |
+| polat_girilmeyen | 3501 | %46.0 | -0.326 | -1140.33 |
+| rastgele | 3483 | %42.8 | -0.398 | -1384.78 |
+| trend_naif | 3515 | %41.1 | -0.429 | -1507.15 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-3.96
+Polat özsermaye: %-4.71 · BTC al-tut: %-3.94
 
 ## Öğrenme (walk-forward)
 
@@ -25,17 +25,17 @@ En az işe yarayan okumalar: btc_1H ×0.474, cift_dip_4H ×0.515, momentum_1H ×
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 17032, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 17005, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 8946
-- yetki: 220
-- gösterge aileleri aynı yönde değil: 178
+- ders: 8974
+- yetki: 223
+- gösterge aileleri aynı yönde değil: 177
 - büyük zaman dilimi trendi ters: 68
 - puan +0.131 eşiğin (0.3) altında: 60
 - puan +0.188 eşiğin (0.3) altında: 57
-- puan +0.128 eşiğin (0.3) altında: 55
+- puan +0.128 eşiğin (0.3) altında: 56
 - puan +0.160 eşiğin (0.3) altında: 55
 - puan +0.123 eşiğin (0.3) altında: 54
 - puan +0.129 eşiğin (0.3) altında: 53
@@ -91,7 +91,7 @@ Kapanmış işlem yok. Görülen kurulum: 17032, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 23022
+- ders: 23063
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2517
 - üst üste 3 zarar: 2345
@@ -100,7 +100,7 @@ Kapanmış işlem yok. Görülen kurulum: 17032, girilen: 0.
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
-- yetki: 220
+- yetki: 223
 
 **Hata sınıfları**
 
@@ -158,7 +158,7 @@ Kapanmış işlem yok. Görülen kurulum: 17032, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 23022
+- ders: 23063
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2517
 - üst üste 3 zarar: 2345
@@ -167,7 +167,7 @@ Kapanmış işlem yok. Görülen kurulum: 17032, girilen: 0.
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
-- yetki: 220
+- yetki: 223
 
 **Hata sınıfları**
 
