@@ -231,7 +231,7 @@ class Conn:
 class Feed:
     def __init__(self, cfg: dict, on_msg, on_disconnect=None):
         v = cfg["veri"]
-        self.stats = {"baglanti": {}, "kopma": {}, "son_hata": ""}
+        self.stats = {"baglanti": {}, "kopma": {}, "son_hata": "", "baglanti_telemetrisi": {}}
         names = [("piyasa", "ws_public"), ("defter", "ws_public"), ("tape", "ws_public"),
                  ("mum", "ws_business"), ("mum_genel", "ws_business")]
         self.on_disconnect = on_disconnect
