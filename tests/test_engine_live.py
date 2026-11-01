@@ -153,12 +153,12 @@ def test_tick_partial_trailing_and_circuit_breakers():
         # fiyat daha da iyi → iz süren stop ilerler
         sl0 = t["sl"]
         best = t["entry"] + sgn * 1.8 * abs(t["entry"] - t["sl_init"])   # hedefin (2R) hemen öncesi
-        e._on_tick("okx", t["inst"], best, best, best, int(time.time() * 1000))
+        e._on_tick("okx", t["inst"], best, best * 0.9999, best * 1.0001, int(time.time() * 1000))
         e.process_trailing()
         assert sgn * (t["sl"] - sl0) > 0
         # geri dönüş → iz stop ile kârla kapanış
         back = t["sl"] - sgn * t["entry"] * 0.001
-        e._on_tick("okx", t["inst"], back, back, back, int(time.time() * 1000))
+        e._on_tick("okx", t["inst"], back, back * 0.9999, back * 1.0001, int(time.time() * 1000))
         e.process_hits()
         c = next(x for x in e.ledger["closed"] if x["id"] == t["id"])
         assert c["outcome"] == "iz stop" and c["pnl_usd"] > 0
