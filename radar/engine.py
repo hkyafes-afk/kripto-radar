@@ -903,7 +903,7 @@ class Engine:
         if shared_path:
             from .unified.polat_bridge import read_snapshot
             result = read_snapshot(
-                shared_path, now_ms=now_ms, last_sequence=last_sequence,
+                shared_path, now_ms=now_ms, max_age_ms=45_000, last_sequence=last_sequence,
                 hmac_key=os.environ.get("UNIFIED_POLAT_BRIDGE_HMAC_KEY") or None,
                 require_hmac=bool(os.environ.get("UNIFIED_POLAT_BRIDGE_HMAC_KEY")),
             )
