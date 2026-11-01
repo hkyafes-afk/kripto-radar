@@ -59,7 +59,7 @@ def test_carry_funding_sign_and_four_leg_close_accounting(tmp_path):
     received = a.apply_funding("p1", rate=0.001, perp_mark=100, ts_ms=NOW+8*3_600_000)
     paid = a.apply_funding("p1", rate=-0.001, perp_mark=100, ts_ms=NOW+16*3_600_000)
     assert received == 0.1 and paid == -0.1
-    closed = a.close_pair("p1", spot=q("BTC-USDT"), perp=q("BTC-USDT-SWAP"), now_ms=NOW+24*3_600_000)
+    closed = a.close_pair("p1", spot=q("BTC-USDT", ts=NOW+24*3_600_000), perp=q("BTC-USDT-SWAP", ts=NOW+24*3_600_000), now_ms=NOW+24*3_600_000)
     assert closed["status"] == "closed" and closed["spot_qty"] == closed["perp_qty"] == 0
     assert closed["net_usd"] < 0  # round-trip fees/spread are charged
     assert a.reconcile()["ok"] and not a.positions and len(a.closed) == 1
