@@ -68,7 +68,18 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.POLAT_TELEGRAM_CHAT_ID || secrets.TELEGRAM_CHAT_ID }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEVIR: ${{ github.event.inputs.devir || '0' }}
-        run: python -m polat calis --kok polat_veri --sure 20400 --git-push-dk 1 ${{ github.event.inputs.devam == 'true' && '--devam' || '' }}
+          POLAT_UNIFIED_BRIDGE_PATH: ${{ runner.temp }}/polat-unified-bridge.json
+          POLAT_UNIFIED_BRIDGE_HMAC_KEY: ${{ secrets.POLAT_UNIFIED_BRIDGE_HMAC_KEY }}
+        run: |
+          set -euo pipefail
+          python scripts/polat_bridge_sync.py push-loop --path "$POLAT_UNIFIED_BRIDGE_PATH" --interval 30 > "$RUNNER_TEMP/polat-bridge-relay.log" 2>&1 &
+          RELAY_PID=$!
+          cleanup_relay() {
+            kill "$RELAY_PID" 2>/dev/null || true
+            wait "$RELAY_PID" 2>/dev/null || true
+          }
+          trap cleanup_relay EXIT
+          python -m polat calis --kok polat_veri --sure 20400 --git-push-dk 1 ${{ github.event.inputs.devam == 'true' && '--devam' || '' }}
 
       # Süreç sert çökerse (bellek, öldürülme) Python kendi temizliğini yapamaz. Nöbet BU koşudaysa son durumla
       # bırakılır; koşu ≥10 dk çalışmışsa yeni koşu başlatılır (açılışta çökme döngüsüne girmemek için).
