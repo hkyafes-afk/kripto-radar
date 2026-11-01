@@ -902,7 +902,11 @@ class Engine:
                 pass
         if shared_path:
             from .unified.polat_bridge import read_snapshot
-            result = read_snapshot(shared_path, now_ms=now_ms, last_sequence=last_sequence)
+            result = read_snapshot(
+                shared_path, now_ms=now_ms, last_sequence=last_sequence,
+                hmac_key=os.environ.get("UNIFIED_POLAT_BRIDGE_HMAC_KEY"),
+                require_hmac=True,
+            )
             if result.status == "fresh" and result.sequence is not None:
                 last_sequence = result.sequence
                 self._polat_bridge_last_sequence = result.sequence
