@@ -145,14 +145,14 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;paddin
       </div>
       <div class="tag" id="modeTag">Gerçek emir yok • Canlı piyasa • Sanal işlemler</div>
       <div class="fresh" id="fresh"></div>
-      <div id="warn"></div>
+      <div id="warn" aria-live="polite" aria-atomic="true"></div>
       <div class="kpis" id="kpis"></div>
       <div class="card" id="btc"></div>
       <div class="card" id="sys"></div>
     </div>
     <div class="col2">
       <div class="tabs" id="tabs"></div>
-      <div id="view"></div>
+      <div id="view" aria-live="polite"><div class="card empty" role="status">Gerçek PAPER ve piyasa verileri yükleniyor…</div></div>
       <div class="card" id="pf"></div>
       <div class="foot">Tek karar verici Baş Trader'dır; açma, red, bekleme, çıkış, boyut ve sermaye dağılımını yalnız o belirler.
         Trend, sıkışma kırılımı, kontrollü kırılım vb. yalnız strateji / sinyal kaynağı etiketidir. Bu sayfa yalnız canlı sistemin
