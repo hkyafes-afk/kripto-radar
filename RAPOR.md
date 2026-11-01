@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 3760 | %45.5 | -0.345 | -1296.67 |
+| polat_tum_sinyaller | 3762 | %45.5 | -0.345 | -1297.61 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 3747 | %45.5 | -0.345 | -1291.31 |
-| rastgele | 3744 | %42.5 | -0.409 | -1531.08 |
-| trend_naif | 3755 | %41.2 | -0.435 | -1635.02 |
+| polat_girilmeyen | 3749 | %45.5 | -0.345 | -1292.25 |
+| rastgele | 3747 | %42.5 | -0.409 | -1533.04 |
+| trend_naif | 3759 | %41.2 | -0.435 | -1633.6 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-3.95
+Polat özsermaye: %-4.71 · BTC al-tut: %-3.93
 
 ## Öğrenme (walk-forward)
 
@@ -25,12 +25,12 @@ En az işe yarayan okumalar: obv_egim_1H ×0.58, momentum_1H ×0.606, supertrend
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 23536, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 23660, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 11908
-- yetki: 540
+- ders: 12007
+- yetki: 557
 - gösterge aileleri aynı yönde değil: 224
 - büyük zaman dilimi trendi ters: 77
 - puan +0.131 eşiğin (0.3) altında: 76
@@ -91,7 +91,7 @@ Kapanmış işlem yok. Görülen kurulum: 23536, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 25421
+- ders: 25520
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2545
 - üst üste 3 zarar: 2345
@@ -99,7 +99,7 @@ Kapanmış işlem yok. Görülen kurulum: 23536, girilen: 0.
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
-- yetki: 540
+- yetki: 557
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
 
 **Hata sınıfları**
@@ -158,7 +158,7 @@ Kapanmış işlem yok. Görülen kurulum: 23536, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 25421
+- ders: 25520
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2545
 - üst üste 3 zarar: 2345
@@ -166,7 +166,7 @@ Kapanmış işlem yok. Görülen kurulum: 23536, girilen: 0.
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
-- yetki: 540
+- yetki: 557
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
 
 **Hata sınıfları**
