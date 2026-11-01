@@ -77,11 +77,18 @@ def push_once(path: Path) -> bool:
             old = b""
         if old == raw:
             return False
-    payload = {"message": f"Polat research snapshot seq={checked.sequence}",
-               "content": encoded, "branch": BRANCH}
-    if status == 200:
-        payload["sha"] = current["sha"]
-    _api("PUT", f"contents/{FILE_PATH}", payload)
+    # Publish an orphan/root commit and force-update the dedicated ref. Only the
+    # latest snapshot remains reachable; the relay does not grow an unbounded
+    # per-interval commit history.
+    _, blob = _api("POST", "git/blobs", {"content": encoded, "encoding": "base64"})
+    _, tree = _api("POST", "git/trees", {"tree": [
+        {"path": FILE_PATH, "mode": "100644", "type": "blob", "sha": blob["sha"]}
+    ]})
+    _, commit = _api("POST", "git/commits", {
+        "message": f"Polat research snapshot seq={checked.sequence}",
+        "tree": tree["sha"], "parents": [],
+    })
+    _api("PATCH", f"git/refs/heads/{BRANCH}", {"sha": commit["sha"], "force": True})
     return True
 
 
