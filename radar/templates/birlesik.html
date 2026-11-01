@@ -127,6 +127,11 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;paddin
 .dpre{white-space:pre-wrap;overflow-wrap:anywhere}
 .lvst{font-size:12px;margin-top:3px}
 .foot{color:var(--dim);font-size:12px;line-height:1.5;margin:6px 2px 16px}
+.sourcebar{display:flex;align-items:flex-start;justify-content:space-between;gap:8px 14px;flex-wrap:wrap;padding:10px 12px;margin:0 0 12px;background:var(--card2);border:1px solid var(--line);border-radius:12px;font-size:12.5px;line-height:1.45}
+.sourcebar b{font-weight:750}.sourcebar .mut{overflow-wrap:anywhere}.sourcebar-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sourcebar .st{font-size:11px}
+@media(max-width:420px){.sourcebar{padding:9px 10px}.sourcebar-meta{width:100%;justify-content:space-between}}
+
 </style>
 </head>
 <body>
@@ -484,29 +489,60 @@ function renderExperimentLab(K, st) {
   return h + `<div class="note">Bu alan yalnız mevcut shadow kapanış kayıtlarını raporlar. Örneklem yetersizse performans kanıtı veya strateji terfisi anlamına gelmez.</div>`;
 }
 
+function sourceMeta(title, path, status, ts, method) {
+  const state = Object.prototype.hasOwnProperty.call(STL, status) ? status : "yok";
+  const stamp = isNum(ts) && ts > 0 ? "Kaynak güncellemesi: " + ago(ts) : "Kaynak zaman damgası yok";
+  return `<div class="sourcebar" role="note"><div><b>${esc(title)}</b><div class="mut">${esc(path)}</div></div>
+    <div class="sourcebar-meta">${badge(state)}<span class="mut">${esc(stamp)}</span></div>
+    <div class="mut" style="width:100%">${esc(method)}</div></div>`;
+}
 function renderTabs(pos, closed, decs, data, st, durum, ozet, settings) {
   const T = [["firsat", "Fırsatlar"], ["portfoy", `Portföy (${durum ? pos.length : "—"})`],
     ["karar", "Karar Merkezi"], ["performans", "Performans"], ["deney", "Deney Laboratuvarı"],
     ["veri", "Veri Sağlığı"], ["ayarlar", "Ayarlar"], ["sistem", "Sistem"]];
   $("tabs").innerHTML = T.map(([k, n]) => `<button class="tab ${S.tab === k ? "on" : ""}" data-t="${k}">${n}</button>`).join("");
   $("tabs").querySelectorAll(".tab").forEach(b => b.onclick = () => setTab(b.dataset.t, false));
-  let h;
-  if (S.tab === "firsat") h = renderOpportunities(decs, st.dec);
-  else if (S.tab === "portfoy" || S.tab === "acik" || S.tab === "kapanan") {
+  let h, meta = "";
+  const lastDecision = decs.length ? (decs[0].kayit_ms || decs[0].ts_ms) : 0;
+  if (S.tab === "firsat") {
+    meta = sourceMeta("Fırsat akışı", "birlesik/kararlar-YYYY-MM-DD.jsonl", st.dec, lastDecision,
+      "Yalnız gerçek karar günlüğündeki OPEN, REDUCE_SIZE ve SHADOW kayıtları; tahmini sinyal üretilmez.");
+    h = renderOpportunities(decs, st.dec);
+  } else if (S.tab === "portfoy" || S.tab === "acik" || S.tab === "kapanan") {
+    meta = sourceMeta("Birleşik PAPER portföyü", "birlesik/durum.json → pozisyonlar / kapananlar", st.durum, durum && durum.ts,
+      "Yalnız UnifiedTrader PAPER defteri; legacy ve SHADOW kayıtları ana portföye eklenmez.");
     h = `<div class="hrow"><h2>Açık PAPER pozisyonları (${pos.length})</h2>${badge(st.durum)}</div>` +
       (pos.length ? pos.map(tradeCard).join("") : `<div class="card empty">${durum ? "Açık sanal işlem yok." : (STL[st.durum] || STL.yok)[0] + "."}</div>`) +
       `<div class="sec">Son kapanan PAPER işlemleri</div>` +
       (closed.length ? closed.slice(0, 20).map(closedCard).join("") : `<div class="card empty">${durum ? "Henüz kapanan sanal işlem yok." : (STL[st.durum] || STL.yok)[0] + "."}</div>`);
-  }
-  else if (S.tab === "karar") h = engelOzet(S.data && S.data.haz) + `<div class="hrow" style="margin:0 2px 8px"><h2>Son Kararlar (${decs.length})</h2>${badge(st.dec)}</div>` +
+  } else if (S.tab === "karar") {
+    meta = sourceMeta("Karar merkezi", "birlesik/kararlar-YYYY-MM-DD.jsonl + birlesik/hazirlik.json", st.dec, lastDecision,
+      "Karar gerekçeleri, engel kodları, eksik/bayat faktörler ve maliyet tahminleri kaynak kayıttan okunur.");
+    h = engelOzet(S.data && S.data.haz) + `<div class="hrow" style="margin:0 2px 8px"><h2>Son Kararlar (${decs.length})</h2>${badge(st.dec)}</div>` +
       (decs.length ? `<div class="card dl">${decs.slice(0, 80).map(decRow).join("")}</div>` : `<div class="card empty">${(STL[st.dec] || STL.yok)[0]}.</div>`);
-  else if (S.tab === "performans" || S.tab === "karne") h = renderKarne(data && data.karne, st.data);
-  else if (S.tab === "deney") h = renderExperimentLab(data && data.karne, st.data);
-  else if (S.tab === "veri") h = renderDataHealth(durum);
-  else if (S.tab === "ayarlar") h = renderSettings(settings);
-  else if (S.tab === "sistem") h = renderSysTab(data, durum, ozet, st);
-  else h = `<div class="card empty">Bu bölüm için gerçek veri henüz yayımlanmadı.</div>`;
-  $("view").innerHTML = h;
+  } else if (S.tab === "performans" || S.tab === "karne") {
+    meta = sourceMeta("Performans karnesi", "data.json → karne", st.data, data && data.generated_at,
+      "Yayımlanan kapanış istatistikleri; yetersiz örneklem kanıt veya kârlılık garantisi değildir.");
+    h = renderKarne(data && data.karne, st.data);
+  } else if (S.tab === "deney") {
+    meta = sourceMeta("Deney laboratuvarı", "data.json → karne.yeni_golge", st.data, data && data.generated_at,
+      "SHADOW sonuçları PAPER portföyünden ayrı tutulur; terfi iddiası için gerçek örneklem ve süre gerekir.");
+    h = renderExperimentLab(data && data.karne, st.data);
+  } else if (S.tab === "veri") {
+    const q = durum && durum.tanilama;
+    meta = sourceMeta("Veri sağlığı", "birlesik/durum.json → tanilama", st.durum, q && q.ts,
+      "Sunucu BBO kalite gözlemleri; tarayıcıdaki public ticker akışı karar motorunun veri kaynağı değildir.");
+    h = renderDataHealth(durum);
+  } else if (S.tab === "ayarlar") {
+    meta = sourceMeta("Ayar kataloğu", "birlesik/ayarlar.json", settings && settings.st, data && data.generated_at,
+      "Salt okunur keşif kataloğu; güvenlik ve PAPER ayarları dashboard'dan değiştirilemez.");
+    h = renderSettings(settings);
+  } else if (S.tab === "sistem") {
+    meta = sourceMeta("Sistem sağlık özeti", "data.json + birlesik/durum.json + public OKX ticker", st.data, data && data.generated_at,
+      "Statik snapshot ile tarayıcı public fiyat akışı ayrı gösterilir; kesintisiz 7/24 veya milisaniye SLA iddiası yoktur.");
+    h = renderSysTab(data, durum, ozet, st);
+  } else h = `<div class="card empty">Bu bölüm için gerçek veri henüz yayımlanmadı.</div>`;
+  $("view").innerHTML = meta + h;
 }
 
 function renderPf(durum, tot, dpl, start, st) {
