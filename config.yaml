@@ -278,8 +278,10 @@ birlesik:
     max_quote_age_ms: 5000     # her iki BBO için
     max_funding_age_ms: 32400000
     max_history_age_ms: 93600000
-    min_funding_30d_avg: 0\n    min_positive_funding_ratio: 0.75
-    expected_holding_hours: 72\n    hedge_buffer_bp: 10
+    min_funding_30d_avg: 0
+    min_positive_funding_ratio: 0.75
+    expected_holding_hours: 72
+    hedge_buffer_bp: 10
     slippage_bp: 5
     min_projected_net_usd: 0.10
   paper:                      # radar/unified/execution/paper.py (birleşik paper defteri: site/birlesik/yurutme.json)
