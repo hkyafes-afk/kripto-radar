@@ -221,7 +221,7 @@ def rollback_file_change(
         raise SettingsChangeError("Config, uygulamadan sonra değişmiş; güvenli geri alma için önce farkı incele.")
     updated, summary = apply_change(
         original, str(source.get("path")),
-        yaml.safe_dump(source.get("old_value"), allow_unicode=True).strip(),
+        str(source.get("old_value")),
     )
     return _commit_audited_change(target, audit_path, original=original, updated=updated,
                                   summary=summary, action="rollback", actor=actor,
