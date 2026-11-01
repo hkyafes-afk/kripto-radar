@@ -39,10 +39,6 @@ concurrency:
   group: secure-settings-change-${{ github.ref }}
   cancel-in-progress: false
 
-concurrency:
-  group: settings-change-request
-  cancel-in-progress: false
-
 jobs:
   propose:
     if: github.ref == 'refs/heads/main'
