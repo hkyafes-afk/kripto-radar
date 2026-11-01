@@ -72,8 +72,13 @@ async function main() {
         assert.ok(metrics.app <= width + 1, "app exceeds viewport at " + width + "px / " + tab + ": " + JSON.stringify(metrics));
         assert.ok(metrics.view <= width + 1, "view exceeds viewport at " + width + "px / " + tab + ": " + JSON.stringify(metrics));
         assert.ok(metrics.tabStrip <= width + 1, "tab strip exceeds viewport at " + width + "px / " + tab + ": " + JSON.stringify(metrics));
-        assert.ok(await page.locator("#view .metric-source").count() > 0,
-          "every metric tab needs source and freshness annotation: " + tab);
+        assert.equal(await page.locator("#view .sourcebar").count(), 1,
+          "every tab needs its source/status metadata bar: " + tab);
+        const metricLabels = await page.locator("#view .cell .l, #view .sg .l, #view .pf .l, #view .sysi .l, #view .dr").count();
+        if (metricLabels > 0) {
+          assert.ok(await page.locator("#view .metric-source").count() >= metricLabels,
+            "every rendered metric/row needs source and freshness annotation: " + tab);
+        }
         if (tab === "veri") {
           assert.match(await page.locator("#view").innerText(), /Polat → Unified/);
           assert.match(await page.locator("#view").innerText(), /araştırma\/teşhis telemetrisi/);
