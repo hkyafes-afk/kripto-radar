@@ -344,7 +344,7 @@ class UnifiedTrader:
                    "acik": len(self.adapter.positions), "acilan": opened, "cikislar": exits_done,
                    "dolumlar": len(fills), "risk": self.last_risk, "kararlar": len(decisions),
                    "hatalar": self.engine.errors[-5:], "kurtarma": self.recovery_notes,
-                   "operasyonel_nedenler": op_neden, "forward_paper_kaniti": forward_evidence}
+                   "operasyonel_nedenler": op_neden, "forward_paper_kaniti": forward_evidence,\n                   "elif_carry_paper": {"enabled": self.carry_paper.enabled, **self.carry_paper.reconcile()}}
         self.engine.errors.clear()
         self.recovery_notes = []
         self._write_status(summary)
