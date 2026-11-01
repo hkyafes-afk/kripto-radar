@@ -47,7 +47,7 @@ jobs:
 
       - name: Kütüphaneleri kur
         if: steps.nobet.outputs.calis == '1'
-        run: pip install -r requirements.txt
+        run: pip install -r requirements.txt -r polat/requirements.txt
 
       - name: Önceki durumu al (dashboard)
         if: steps.nobet.outputs.calis == '1'
@@ -60,9 +60,36 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           CALLMEBOT_PHONE: ${{ secrets.CALLMEBOT_PHONE }}
           CALLMEBOT_APIKEY: ${{ secrets.CALLMEBOT_APIKEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
           DEVIR: ${{ github.event.inputs.devir || '0' }}
-        run: python -m radar live --site site
+          POLAT_UNIFIED_BRIDGE_PATH: ${{ runner.temp }}/polat-unified-bridge.json
+          UNIFIED_POLAT_BRIDGE_PATH: ${{ runner.temp }}/polat-unified-bridge.json
+          POLAT_UNIFIED_BRIDGE_HMAC_KEY: ${{ github.token }}
+          UNIFIED_POLAT_BRIDGE_HMAC_KEY: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python scripts/polat_unified_sidecar.py > "$RUNNER_TEMP/polat-unified-sidecar.log" 2>&1 &
+          SIDECAR_PID=$!
+          cleanup_sidecar() {
+            kill "$SIDECAR_PID" 2>/dev/null || true
+            wait "$SIDECAR_PID" 2>/dev/null || true
+          }
+          trap cleanup_sidecar EXIT
+          for i in $(seq 1 45); do
+            if [ -s "$RUNNER_TEMP/polat-unified-bridge.json" ]; then break; fi
+            if ! kill -0 "$SIDECAR_PID" 2>/dev/null; then
+              cat "$RUNNER_TEMP/polat-unified-sidecar.log"
+              exit 1
+            fi
+            sleep 1
+          done
+          if [ ! -s "$RUNNER_TEMP/polat-unified-bridge.json" ]; then
+            cat "$RUNNER_TEMP/polat-unified-sidecar.log"
+            echo "::error::Polat research sidecar did not publish a fresh initial snapshot"
+            exit 1
+          fi
+          echo "Polat research sidecar is publishing to runner-local authenticated storage."
+          python -m radar live --site site
 
       - name: Son durumu yayınla
         if: always() && steps.nobet.outputs.calis == '1'
