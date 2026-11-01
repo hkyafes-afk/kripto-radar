@@ -46,7 +46,9 @@ def test_carry_one_stale_leg_rejects_both_without_partial_exposure(tmp_path):
     a = CarryPairPaper(CFG, tmp_path)
     r = a.open_pair(pair_id="p1", symbol="BTC", spot_inst="BTC-USDT", perp_inst="BTC-USDT-SWAP",
                     qty=1, spot=q("BTC-USDT", ts=NOW-10_000), perp=q("BTC-USDT-SWAP"),
-                    funding_rate=0.002, funding_interval_h=8, expected_holding_hours=24, now_ms=NOW)
+                    funding_rate=0.002, funding_30d_avg=0.001, positive_funding_ratio=0.9,
+                    funding_ts_ms=NOW, history_ts_ms=NOW,
+                    funding_interval_h=8, expected_holding_hours=24, now_ms=NOW)
     assert r["status"] == "rejected" and not a.positions and not a.path.exists()
 
 
