@@ -144,8 +144,17 @@ class Conn:
         while not self.stopping:
             url = self.urls[i % len(self.urls)]
             was_connected = False
+            telemetry = self.stats.setdefault("baglanti_telemetrisi", {}).setdefault(
+                self.name, {"attempts": 0, "connected": 0, "disconnects": 0,
+                            "last_attempt_ms": None, "last_connected_ms": None,
+                            "last_disconnected_ms": None, "last_error": None})
+            telemetry["attempts"] += 1
+            telemetry["last_attempt_ms"] = now_ms()
             try:
                 self.ws = await WS.connect(url)
+                telemetry["connected"] += 1
+                telemetry["last_connected_ms"] = now_ms()
+                telemetry["last_error"] = None
                 self.stats["baglanti"][self.name] = url
                 self.pend_sub.clear()
                 self.pend_unsub.clear()
@@ -167,6 +176,9 @@ class Conn:
                 self.stats["son_hata"] = f"{self.name}: {type(e).__name__}: {str(e)[:120]}"
             finally:
                 self.connected.clear()
+                if was_connected:
+                    telemetry["disconnects"] += 1
+                    telemetry["last_disconnected_ms"] = now_ms()
                 if was_connected and self.on_disconnect:
                     try:
                         self.on_disconnect(self.name, now_ms())
