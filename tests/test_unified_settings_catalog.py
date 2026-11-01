@@ -62,11 +62,13 @@ def test_catalog_exposes_only_verified_schema_metadata_without_guessing():
     periods = values["tarama.periyotlar"]
 
     assert result["schema_version"] == 3
-    assert risk["description"].startswith("config.yaml parametresi:")
+    assert "risk yüzdesi" in risk["description"]
     assert risk["schema"]["type"] == "number"
-    assert risk["schema"]["minimum"] is None and risk["schema"]["maximum"] is None
-    assert risk["schema"]["unit"] is None
+    assert risk["schema"]["minimum"] == 0.1 and risk["schema"]["maximum"] == 1.0
+    assert risk["schema"]["unit"] == "%"
+    assert risk["schema"]["validation"] == "fixed_allowlist_range"
     assert risk["schema"]["restart_requirement"] == "unknown"
+    assert periods["description"].startswith("config.yaml parametresi:")
     assert periods["schema"]["type"] == "array"
     assert periods["schema"]["item_types"] == ["string"]
     assert periods["schema"]["enum"] is None
