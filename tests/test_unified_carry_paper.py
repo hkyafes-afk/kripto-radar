@@ -10,7 +10,7 @@ CFG = {"ucret": {"spot_taker_yuzde": 0.1, "taker_yuzde": 0.06},
 
 
 def q(inst, bid=99.99, ask=100.01, ts=NOW):
-    return Quote(inst=inst, bid=bid, ask=ask, last=(bid + ask) / 2, ts_ms=ts)
+    return Quote(inst=inst, bid=bid, ask=ask, last=(bid + ask) / 2, ts_ms=ts, asks=((ask, 10.0),), bids=((bid, 10.0),))
 
 
 def test_carry_disabled_by_default_and_enabled_requires_positive_edge(tmp_path):
