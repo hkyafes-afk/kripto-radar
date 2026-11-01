@@ -263,7 +263,7 @@ function render() {
     k("Açık İşlemler", durum ? pos.length : "—", durum ? `<span class="up">+${win}</span> / <span class="down">-${lose}</span>` : badge(st.durum)) +
     k("Bugünkü Karar", decs.length ? decs.length : (st.dec === "ok" ? 0 : "—"), decs.length ? `Aç: <b class="up">${(c.OPEN || 0) + (c.REDUCE_SIZE || 0)}</b> &nbsp;Gölge: <b>${c.SHADOW || 0}</b> &nbsp;Red: <b class="down">${c.REJECT || 0}</b>` : badge(st.dec)) +
     k("Günlük PAPER K/Z", isNum(dpl) ? usd(dpl) : "—", isNum(dpl) && dstart ? `<span class="${cls(dpl)}">${sgn(dpl / dstart * 100, 2, "%")}</span>` : badge(st.durum), cls(dpl));
-  renderBtc(data, durum); renderSys(data, durum, st); renderTabs(pos, closed, decs, data, st, durum, ozet, S.data && S.data.ayarlar); renderPf(durum, tot, dpl, start, st); applyLive();
+  renderBtc(data, durum); renderSys(data, durum, st); renderTabs(pos, closed, decs, data, st, durum, ozet, S.data && S.data.ayarlar, S.data && S.data.polat); renderPf(durum, tot, dpl, start, st); applyLive();
 }
 
 function renderBtc(data, durum) {
@@ -422,6 +422,31 @@ function renderSysTab(data, durum, ozet, st) {
     ${row("Gerçek emir", "ok", "Kapalı: yalnız sanal yürütme; borsaya emir gönderilmez")}</div>`;
 }
 
+function renderPolatBridge(polat) {
+  const p = polat && polat.v;
+  const labels = {
+    fresh: ["Taze", "st-ok"], stale: ["Bayat", "st-bayat"],
+    missing: ["Snapshot yok", "st-yok"], disabled: ["Devre dışı", "st-yok"],
+    replay: ["Tekrar reddedildi", "st-kesik"], invalid: ["Geçersiz", "st-kesik"],
+    error: ["Okuma hatası", "st-kesik"]
+  };
+  if (!p) return '<div class="card empty"><b>Polat → Unified araştırma köprüsü</b><div class="t2">Köprü durum dosyası henüz yayınlanmadı. Bu, canlı aktarımın kurulu olduğu anlamına gelmez.</div></div>';
+  const state = labels[p.status] || ["Durum bilinmiyor", "st-yok"];
+  const age = isNum(p.age_ms) ? fmt(p.age_ms, 0) + " ms" : "—";
+  const received = isNum(p.received_at_ms) ? ago(p.received_at_ms) : "—";
+  const count = Number.isInteger(p.observation_count) ? p.observation_count : 0;
+  const source = p.source_run_id ? esc(p.source_run_id) : "—";
+  const reason = p.reason ? esc(p.reason) : "Yok";
+  return '<div class="card dl"><div class="hrow"><h2>Polat → Unified · araştırma köprüsü</h2><span class="st ' + state[1] + '">' + state[0] + '</span></div>' +
+    '<div class="cells"><div class="cell"><div class="l">Gözlem sayısı</div><div class="v num">' + count + '</div></div>' +
+    '<div class="cell"><div class="l">Snapshot yaşı</div><div class="v num">' + age + '</div></div>' +
+    '<div class="cell"><div class="l">Son okuma</div><div class="v">' + esc(received) + '</div></div>' +
+    '<div class="cell"><div class="l">Sıra</div><div class="v num">' + (p.sequence ?? "—") + '</div></div></div>' +
+    '<div class="dr"><div><b>Kaynak koşu</b></div><div class="tm">' + source + '</div></div>' +
+    '<div class="dr"><div><b>Durum nedeni</b></div><div class="tm">' + reason + '</div></div>' +
+    '<div class="note">Yalnız araştırma/teşhis telemetrisi. UnifiedTrader fiyatı, kararları, emirleri, portföy değerlemesi veya pozisyon yetkisini değiştirmez. Ortak kalıcı disk yolu kurulmadıysa köprü devre dışı veya eksik görünür.</div></div>';
+}
+
 function renderDataHealth(durum) {
   const q = durum && durum.tanilama;
   if (!q || q.hazir === false) return '<div class="card empty">Birleşik Baş Trader veri tanılaması henüz yayımlanmadı. Veri yok.</div>';
@@ -496,7 +521,7 @@ function sourceMeta(title, path, status, ts, method) {
     <div class="sourcebar-meta">${badge(state)}<span class="mut">${esc(stamp)}</span></div>
     <div class="mut" style="width:100%">${esc(method)}</div></div>`;
 }
-function renderTabs(pos, closed, decs, data, st, durum, ozet, settings) {
+function renderTabs(pos, closed, decs, data, st, durum, ozet, settings, polat) {
   const T = [["firsat", "Fırsatlar"], ["portfoy", `Portföy (${durum ? pos.length : "—"})`],
     ["karar", "Karar Merkezi"], ["performans", "Performans"], ["deney", "Deney Laboratuvarı"],
     ["veri", "Veri Sağlığı"], ["ayarlar", "Ayarlar"], ["sistem", "Sistem"]];
@@ -532,7 +557,7 @@ function renderTabs(pos, closed, decs, data, st, durum, ozet, settings) {
     const q = durum && durum.tanilama;
     meta = sourceMeta("Veri sağlığı", "birlesik/durum.json → tanilama", st.durum, q && q.ts,
       "Sunucu BBO kalite gözlemleri; tarayıcıdaki public ticker akışı karar motorunun veri kaynağı değildir.");
-    h = renderDataHealth(durum);
+    h = renderPolatBridge(polat) + renderDataHealth(durum);
   } else if (S.tab === "ayarlar") {
     meta = sourceMeta("Ayar kataloğu", "birlesik/ayarlar.json", settings && settings.st, data && data.generated_at,
       "Salt okunur keşif kataloğu; güvenlik ve PAPER ayarları dashboard'dan değiştirilemez.");
@@ -698,9 +723,10 @@ function applyLive() {
 window.__BT = {calcLive, cardState, instIds};
 
 async function load() {
-  const [D, duUnified, t0, t1, hz, ayarlar] = await Promise.all([
+  const [D, duUnified, t0, t1, hz, ayarlar, polat] = await Promise.all([
     get("data.json"), get("birlesik/durum.json"),
-    get(`birlesik/kararlar-${day(0)}.jsonl`, true), get(`birlesik/kararlar-${day(1)}.jsonl`, true), get("birlesik/hazirlik.json"), get("birlesik/ayarlar.json")]);
+    get(`birlesik/kararlar-${day(0)}.jsonl`, true), get(`birlesik/kararlar-${day(1)}.jsonl`, true),
+    get("birlesik/hazirlik.json"), get("birlesik/ayarlar.json"), get("birlesik/polat_kopru.json")]);
   const data = D.v;
   // Ana panel yalnız UnifiedTrader'ın 100 USDT PAPER portföyünü gösterir.
   // Eski shadow/legacy defterleri arşivdir; aktif hesap bakiyesi olarak kullanılmaz.
@@ -716,7 +742,7 @@ async function load() {
   for (const r of [...t1.v, ...t0.v]) seen.set(r.idempotency_key || (r.symbol + r.strategy + r.side), r);
   const decs = [...seen.values()].filter(r => (r.kayit_ms || r.ts_ms || 0) > Date.now() - 24 * 3600e3)
     .sort((a, b) => (b.kayit_ms || b.ts_ms) - (a.kayit_ms || a.ts_ms));
-  S.data = {data, durum, ozet, decs, st, haz: hz.v, ayarlar};
+  S.data = {data, durum, ozet, decs, st, haz: hz.v, ayarlar, polat};
   $("modePill").textContent = "PAPER · TEK OTORİTE";
   $("modeTag").textContent = durum ? "100 USDT PAPER • Deneysel doğrulama sürüyor • Gerçek OKX emirleri kapalı" : "100 USDT PAPER • Birleşik durum bekleniyor • Eski defterler arşivde • Gerçek OKX emirleri kapalı";
   render();
