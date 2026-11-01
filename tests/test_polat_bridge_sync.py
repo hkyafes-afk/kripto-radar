@@ -18,6 +18,7 @@ def test_pull_once_writes_atomic_snapshot_bytes(tmp_path, monkeypatch):
 
 
 def test_push_once_rejects_stale_or_invalid_snapshot(tmp_path, monkeypatch):
+    monkeypatch.setenv("POLAT_UNIFIED_BRIDGE_HMAC_KEY", "test-bridge-hmac-key-at-least-32-bytes-long")
     target = tmp_path / "bridge.json"
     target.write_text("{}", encoding="utf-8")
     monkeypatch.setattr(sync, "read_snapshot", lambda *a, **k: SimpleNamespace(status="stale", reason="stale"))
