@@ -4,37 +4,37 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.347R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.348R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 3827 | %45.4 | -0.347 | -1328.7 |
+| polat_tum_sinyaller | 3829 | %45.4 | -0.348 | -1332.37 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 3814 | %45.4 | -0.347 | -1323.34 |
-| rastgele | 3803 | %42.5 | -0.408 | -1550.42 |
-| trend_naif | 3826 | %41.1 | -0.436 | -1669.7 |
+| polat_girilmeyen | 3816 | %45.4 | -0.348 | -1327.01 |
+| rastgele | 3805 | %42.5 | -0.407 | -1550.46 |
+| trend_naif | 3829 | %41.1 | -0.437 | -1671.52 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-3.74
+Polat özsermaye: %-4.71 · BTC al-tut: %-3.65
 
 ## Öğrenme (walk-forward)
 
-Örnek 3800 (eğitim 2660, doğrulama 1140) · uygulanan katsayı 61 · doğrulamada tutmadığı için reddedilen 67
+Örnek 3827 (eğitim 2678, doğrulama 1149) · uygulanan katsayı 63 · doğrulamada tutmadığı için reddedilen 65
 
-En çok işe yarayan okumalar: tetik_psar_donus_15m ×1.306, uyusmazlik_macd_15m ×1.278, likidasyon_miknatisi ×1.215, tetik_macd_kesisim_15m ×1.154, cift_dip_1H ×1.145, mum_cimbiz_dip_15m ×1.13, tetik_trend_cizgisi_kirilim_15m ×1.125, duvar_alt ×1.123, hacim_oran_1H ×1.118, stoch_15m ×1.115
-En az işe yarayan okumalar: btc_1H ×0.52, supertrend_1H ×0.676, ultimate_1H ×0.678, yapi_4H ×0.731, uyusmazlik_macd_1H ×0.734, uyusmazlik_rsi_1H ×0.772, adx_di_4H ×0.784, dow_4H ×0.786, ema_1H ×0.813, long_short ×0.827
+En çok işe yarayan okumalar: tetik_psar_donus_15m ×1.308, likidasyon_miknatisi ×1.22, tetik_macd_kesisim_15m ×1.156, cift_dip_1H ×1.152, tetik_trend_cizgisi_kirilim_15m ×1.139, mum_cimbiz_dip_15m ×1.13, duvar_alt ×1.123, hacim_oran_1H ×1.121, stoch_15m ×1.115, mum_cimbiz_dip_5m ×1.106
+En az işe yarayan okumalar: btc_1H ×0.547, ultimate_1H ×0.669, supertrend_1H ×0.675, uyusmazlik_macd_1H ×0.729, yapi_4H ×0.738, uyusmazlik_rsi_1H ×0.778, dow_4H ×0.794, adx_di_4H ×0.797, ema_1H ×0.813, pvi_1H ×0.825
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 25186, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 25236, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 13089
+- ders: 13117
 - yetki: 660
 - gösterge aileleri aynı yönde değil: 226
 - büyük zaman dilimi trendi ters: 84
 - puan +0.131 eşiğin (0.3) altında: 77
-- puan +0.128 eşiğin (0.3) altında: 75
+- puan +0.128 eşiğin (0.3) altında: 76
 - puan +0.129 eşiğin (0.3) altında: 71
 - puan +0.121 eşiğin (0.3) altında: 69
 - puan +0.188 eşiğin (0.3) altında: 69
@@ -91,7 +91,7 @@ Kapanmış işlem yok. Görülen kurulum: 25186, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 26602
+- ders: 26630
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2547
 - üst üste 3 zarar: 2345
@@ -158,7 +158,7 @@ Kapanmış işlem yok. Görülen kurulum: 25186, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 26602
+- ders: 26630
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2547
 - üst üste 3 zarar: 2345
