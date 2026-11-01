@@ -16,12 +16,12 @@ def q(inst, bid=99.99, ask=100.01, ts=NOW):
 def test_carry_disabled_by_default_and_enabled_requires_positive_edge(tmp_path):
     disabled = CarryPairPaper({}, tmp_path / "off")
     r = disabled.open_pair(pair_id="p1", symbol="BTC", spot_inst="BTC-USDT", perp_inst="BTC-USDT-SWAP",
-                           qty=1, spot=q("BTC-USDT"), perp=q("BTC-USDT-SWAP"), funding_rate=0.001,
+                           qty=1, spot=q("BTC-USDT"), perp=q("BTC-USDT-SWAP"), funding_rate=0.002,
                            funding_interval_h=8, expected_holding_hours=24, now_ms=NOW)
     assert r["status"] == "blocked" and r["reason"] == "elif_carry_disabled"
     a = CarryPairPaper(CFG, tmp_path / "on")
     r = a.open_pair(pair_id="p1", symbol="BTC", spot_inst="BTC-USDT", perp_inst="BTC-USDT-SWAP",
-                    qty=1, spot=q("BTC-USDT"), perp=q("BTC-USDT-SWAP"), funding_rate=0.001,
+                    qty=1, spot=q("BTC-USDT"), perp=q("BTC-USDT-SWAP"), funding_rate=0.002,
                     funding_interval_h=8, expected_holding_hours=24, now_ms=NOW)
     assert r["status"] == "open" and r["spot_qty"] == r["perp_qty"] == 1
     assert a.reconcile()["ok"]
@@ -30,7 +30,7 @@ def test_carry_disabled_by_default_and_enabled_requires_positive_edge(tmp_path):
 def test_carry_pair_is_idempotent_and_persistent(tmp_path):
     a = CarryPairPaper(CFG, tmp_path)
     kwargs = dict(pair_id="p1", symbol="BTC", spot_inst="BTC-USDT", perp_inst="BTC-USDT-SWAP",
-                  qty=1, spot=q("BTC-USDT"), perp=q("BTC-USDT-SWAP"), funding_rate=0.001,
+                  qty=1, spot=q("BTC-USDT"), perp=q("BTC-USDT-SWAP"), funding_rate=0.002,
                   funding_interval_h=8, expected_holding_hours=24, now_ms=NOW)
     one = a.open_pair(**kwargs)
     two = a.open_pair(**kwargs)
@@ -43,14 +43,14 @@ def test_carry_one_stale_leg_rejects_both_without_partial_exposure(tmp_path):
     a = CarryPairPaper(CFG, tmp_path)
     r = a.open_pair(pair_id="p1", symbol="BTC", spot_inst="BTC-USDT", perp_inst="BTC-USDT-SWAP",
                     qty=1, spot=q("BTC-USDT", ts=NOW-10_000), perp=q("BTC-USDT-SWAP"),
-                    funding_rate=0.001, funding_interval_h=8, expected_holding_hours=24, now_ms=NOW)
+                    funding_rate=0.002, funding_interval_h=8, expected_holding_hours=24, now_ms=NOW)
     assert r["status"] == "rejected" and not a.positions and not a.path.exists()
 
 
 def test_carry_funding_sign_and_four_leg_close_accounting(tmp_path):
     a = CarryPairPaper(CFG, tmp_path)
     a.open_pair(pair_id="p1", symbol="BTC", spot_inst="BTC-USDT", perp_inst="BTC-USDT-SWAP",
-                qty=1, spot=q("BTC-USDT"), perp=q("BTC-USDT-SWAP"), funding_rate=0.001,
+                qty=1, spot=q("BTC-USDT"), perp=q("BTC-USDT-SWAP"), funding_rate=0.002,
                 funding_interval_h=8, expected_holding_hours=24, now_ms=NOW)
     received = a.apply_funding("p1", rate=0.001, perp_mark=100, ts_ms=NOW+8*3_600_000)
     paid = a.apply_funding("p1", rate=-0.001, perp_mark=100, ts_ms=NOW+16*3_600_000)
@@ -64,7 +64,24 @@ def test_carry_funding_sign_and_four_leg_close_accounting(tmp_path):
 def test_carry_close_fails_closed_if_one_leg_quote_is_missing(tmp_path):
     a = CarryPairPaper(CFG, tmp_path)
     a.open_pair(pair_id="p1", symbol="BTC", spot_inst="BTC-USDT", perp_inst="BTC-USDT-SWAP",
-                qty=1, spot=q("BTC-USDT"), perp=q("BTC-USDT-SWAP"), funding_rate=0.001,
+                qty=1, spot=q("BTC-USDT"), perp=q("BTC-USDT-SWAP"), funding_rate=0.002,
                 funding_interval_h=8, expected_holding_hours=24, now_ms=NOW)
     r = a.close_pair("p1", spot=q("BTC-USDT"), perp=None, now_ms=NOW+1000)
     assert r["status"] == "blocked" and "p1" in a.positions
+
+
+
+def test_elif_strategy_requires_fresh_two_leg_and_30d_positive_funding():
+    from radar.unified.carry import ElifCarryStrategy
+    s = ElifCarryStrategy(CFG)
+    kwargs = dict(symbol="BTC", spot=q("BTC-USDT"), perp=q("BTC-USDT-SWAP"),
+                  funding_rate=0.002, funding_ts_ms=NOW, funding_30d_avg=0.001,
+                  history_ts_ms=NOW, funding_interval_h=8, now_ms=NOW)
+    result = s.evaluate_pair(**kwargs)
+    assert result["status"] == "eligible"
+    assert result["direction"] == "spot_long_perp_short"
+    assert result["paper_execution_required"] is True
+    stale = s.evaluate_pair(**{**kwargs, "history_ts_ms": NOW-30*3_600_000})
+    assert stale["status"] == "blocked" and "stale" in stale["reason"]
+    negative = s.evaluate_pair(**{**kwargs, "funding_rate": -0.001})
+    assert negative["status"] == "rejected"
