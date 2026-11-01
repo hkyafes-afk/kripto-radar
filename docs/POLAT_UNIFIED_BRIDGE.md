@@ -63,3 +63,14 @@ The SHA-256 checksum covers the BBO observations **and** a strictly validated `t
 - `connections`: per-WebSocket-group attempts, successful connections, disconnects, last attempt/connect/disconnect timestamps and last error.
 
 Unknown fields, invalid state/count types, negative counters, NaN/Infinity, oversized telemetry and digest mismatches fail closed. The dashboard renders these values strictly as diagnostics. Sequence-gap-derived missing updates are not packet-capture measurements.
+
+
+## Sender authentication
+
+Runtime publishing and reading require the same secret, at least 32 UTF-8 bytes:
+
+- Polat: `POLAT_UNIFIED_BRIDGE_HMAC_KEY`
+- Unified: `UNIFIED_POLAT_BRIDGE_HMAC_KEY`
+
+Configure both as deployment secrets/environment variables, never in `config.yaml`, source control, dashboard JSON or logs. Runtime producer refuses to publish without a valid key; Unified consumer uses `require_hmac=True` and refuses unsigned snapshots, missing keys and mismatched HMACs. The plain SHA-256 digest remains an integrity checksum; the HMAC authenticates possession of the shared secret. Unit-level unkeyed snapshots exist only for isolated test utilities, not the runtime hooks.
+
