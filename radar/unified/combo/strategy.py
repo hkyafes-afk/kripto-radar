@@ -86,6 +86,11 @@ class ComboStrategy:
             return False
         changed = False
         for lot in list(self.paper.position.lots.values()):
+            if lot.source_order_id is not None:
+                source_order = self.paper.orders.get(lot.source_order_id)
+                if source_order is None or source_order.status is not ComboOrderStatus.FILLED:
+                    # A fixed 0.013 BTC DCA order gets its paired SELL only after full fill.
+                    continue
             if not self.paper.has_active_sell_for_lot(lot.lot_id):
                 self._arm_sell_for_lot(lot.lot_id, lot.level_index, now_ms)
                 changed = True
@@ -123,8 +128,10 @@ class ComboStrategy:
     def _process_counter_orders(self, fills, now_ms: int) -> None:
         for fill in fills:
             if fill.side == "buy":
-                # BUY kısmi dolumlarının her biri yalnız kendi oluşan lotuna SELL bağlar.
-                self._arm_sell_for_lot(fill.lot_id, fill.level_index, now_ms)
+                # Fixed 0.013 BTC DCA order is one aggregated lot; arm SELL only on full fill.
+                order = self.paper.orders.get(fill.order_id)
+                if order is not None and order.status is ComboOrderStatus.FILLED:
+                    self._arm_sell_for_lot(fill.lot_id, fill.level_index, now_ms)
             elif fill.side == "sell" and fill.level_index is not None:
                 # 0.013 BTC SELL tamamen dolmadan tam boy yeni BUY kurma; aksi halde
                 # küçük bir partial fill, daha büyük karşı DCA hacmi açabilir.
