@@ -72,9 +72,13 @@ async function main() {
         assert.ok(metrics.app <= width + 1, "app exceeds viewport at " + width + "px / " + tab + ": " + JSON.stringify(metrics));
         assert.ok(metrics.view <= width + 1, "view exceeds viewport at " + width + "px / " + tab + ": " + JSON.stringify(metrics));
         assert.ok(metrics.tabStrip <= width + 1, "tab strip exceeds viewport at " + width + "px / " + tab + ": " + JSON.stringify(metrics));
+        assert.ok(await page.locator("#view .metric-source").count() > 0,
+          "every metric tab needs source and freshness annotation: " + tab);
         if (tab === "veri") {
           assert.match(await page.locator("#view").innerText(), /Polat → Unified/);
           assert.match(await page.locator("#view").innerText(), /araştırma\/teşhis telemetrisi/);
+          assert.ok(await page.locator("#view .metric-source").count() > 0,
+            "Data Health metric labels must include source/freshness/calculation provenance");
         }
       }
       await page.close();
