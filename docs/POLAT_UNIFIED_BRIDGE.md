@@ -53,9 +53,9 @@ if snapshot.status == "fresh":
 
 `tests/test_polat_bridge.py` covers valid round-trip, replay, staleness, payload tampering and invalid BBO rejection.
 
-## Signed telemetry payload — schema v2
+## digest-protected telemetry payload — schema v2
 
-The SHA-256 digest covers the BBO observations **and** a strictly validated `telemetry` object:
+The SHA-256 checksum covers the BBO observations **and** a strictly validated `telemetry` object. It detects accidental/tampered content when the expected digest is trusted, but it is not keyed sender authentication:
 
 - `channels`: per-channel symbol count, LIVE/STALE/INVALID/UNKNOWN/DISCONNECTED distribution, maximum event age.
 - `channel_counters`: observation/state counters, duplicate events and trade IDs, out-of-order events, order-book sequence gaps, estimated missing sequence updates and disconnect marks.
