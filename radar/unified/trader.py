@@ -21,6 +21,7 @@ from typing import Any, Iterable, Mapping
 
 from .. import ledger as lg
 from .decision import UnifiedDecisionEngine
+from .carry import CarryPairPaper
 from .execution.base import Quote
 from .execution.paper import PaperExecutionAdapter
 from .exits import evaluate_exits
@@ -56,6 +57,8 @@ class UnifiedTrader:
         self.engine = engine or UnifiedDecisionEngine(self.cfg)
         self.risk = RiskGate(self.cfg)
         self.adapter = PaperExecutionAdapter(self.cfg, root=self.root)
+        # Elif'in ayrı spot+perp defteri UnifiedTrader tarafından sahiplenilir; varsayılan kapalıdır.
+        self.carry_paper = CarryPairPaper(self.cfg, root=self.root / "elif_carry")
         self.mode = mode
         self.journal_root = Path(journal_root) if journal_root else self.root
         self.journal = DecisionJournal(self.journal_root, keep_days=int(u.get("gunluk_saklama_gun", 14)))
