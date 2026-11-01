@@ -85,3 +85,16 @@ def test_elif_strategy_requires_fresh_two_leg_and_30d_positive_funding():
     assert stale["status"] == "blocked" and "stale" in stale["reason"]
     negative = s.evaluate_pair(**{**kwargs, "funding_rate": -0.001})
     assert negative["status"] == "rejected"
+
+
+
+def test_carry_never_assumes_fills_without_both_orderbook_depths(tmp_path):
+    from radar.unified.execution.base import Quote
+    a = CarryPairPaper(CFG, tmp_path)
+    spot = Quote("BTC-USDT", 99.99, 100.01, 100.0, NOW)
+    r = a.open_pair(pair_id="p1", symbol="BTC", spot_inst="BTC-USDT", perp_inst="BTC-USDT-SWAP",
+                    qty=1, spot=spot, perp=q("BTC-USDT-SWAP"), funding_rate=0.002,
+                    funding_interval_h=8, expected_holding_hours=24, now_ms=NOW)
+    assert r["status"] == "rejected"
+    assert r["reason"] == "entry_orderbook_depth_insufficient_or_missing"
+    assert not a.positions
