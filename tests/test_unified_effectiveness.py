@@ -167,7 +167,7 @@ def test_bootstrap_ci_and_top3_concentration_match_independent_numpy_calculation
     means = rs[rng.integers(0, len(rs), size=(2_000, len(rs)))].mean(axis=1)
     assert snapshot.ci_low_r == float(np.quantile(means, 0.025))
     assert snapshot.ci_high_r == float(np.quantile(means, 0.975))
-    assert snapshot.top3_share == (4.0 + 2.0 + 1.0) / (4.0 + 2.0 + 1.0 + 0.25)
+    assert snapshot.top3_share == (4.0 + 2.0 + 1.0) / (4.0 + 2.0 + 1.0 + 0.25 + 0.5 + 0.1)
     assert snapshot.n_trades == len(returns)
 
 
