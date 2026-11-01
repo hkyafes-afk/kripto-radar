@@ -108,7 +108,7 @@
   "yapi_1H": 0.277,
   "ema_1H": 0.3115,
   "ema200_1H": 0.267,
-  "psar_1H": 1.6995,
+  "psar_1H": 1.6994,
   "supertrend_1H": 0.3433,
   "konum": 0.2574,
   "vwap": 0.25,
@@ -193,7 +193,7 @@
   "tetik_psar_donus_15m": 0.5868,
   "mum_dis_mum_5m": 0.3825,
   "cci_1H": 0.6701,
-  "mfi_1H": 1.6388,
+  "mfi_1H": 1.6389,
   "tetik_geri_cekilme": 0.3532,
   "tetik_geri_test_1H": 1.8995,
   "tetik_uyusmazlik_donus_cci": 0.9318,
@@ -558,8 +558,8 @@
    "karar": null
   },
   "psar_donus|short|btc:yatay": {
-   "n": 47,
-   "sumR": -13.8562,
+   "n": 48,
+   "sumR": -13.8573,
    "gercek": 0,
    "karar": null
   },
@@ -992,7 +992,6 @@
    0.2458
   ],
   "temel": [
-   -1.5537,
    -1.802,
    -1.1044,
    -1.4099,
@@ -1091,7 +1090,8 @@
    -1.8222,
    -2.0047,
    -1.3512,
-   -0.3513
+   -0.3513,
+   -0.0011
   ]
  },
  "ayar": {
