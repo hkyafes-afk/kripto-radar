@@ -133,6 +133,15 @@ def test_sell_grid_realizes_lot_pnl_and_rearms_lower_buy():
     assert strategy.paper.realized_gross_usdt > 0
     assert strategy.paper.position.qty == pytest.approx(0.0)
     assert any(o.active and o.side == "buy" for o in strategy.paper.orders.values())
+    filled_sells = [o for o in strategy.paper.orders.values()
+                    if o.side == "sell" and o.role == "sell_grid"
+                    and o.status is ComboOrderStatus.FILLED]
+    counter_buys = [o for o in strategy.paper.orders.values()
+                    if o.active and o.side == "buy"
+                    and o.parent_order_id in {sell.order_id for sell in filled_sells}]
+    assert len(filled_sells) == 2
+    assert len(counter_buys) == 2
+    assert sum(o.qty for o in counter_buys) == pytest.approx(0.026)
     assert all(o.reduce_only for o in strategy.paper.orders.values() if o.side == "sell")
 
 
@@ -216,6 +225,7 @@ def test_paper_state_recovers_without_crossing_unified_ledger(tmp_path):
     assert two.paper.snapshot()["active_orders"] == orders
     assert two.paper.snapshot()["capital_usdt"] == 2_500
     assert two.paper.last_quote_ts_ms == NOW
+    assert two.paper.grid_seeded is True
     duplicate = two.on_quote(quote(ts=NOW), now_ms=NOW + 2)
     assert duplicate["status"] == "duplicate_quote"
 
@@ -333,3 +343,78 @@ def test_okx_public_feed_preserves_legacy_callback_and_labels_swap_sizes():
     assert observed[0]["size_unit"] == "contracts_for_swap"
     assert observed[0]["bid_size_contracts"] == 5.0
     assert observed[0]["ask_size_contracts"] == 7.0
+
+
+
+def test_crash_after_base_order_recovers_initial_grid_seed(tmp_path):
+    cfg = ComboConfig()
+    first = ComboPaperAdapter(cfg, root=tmp_path)
+    lot = first.open_base_market(quote(), NOW)
+    assert lot is not None
+    assert first.initialized is True
+    assert first.grid_seeded is False
+    assert first.grid_anchor_price == pytest.approx(78_000.0)
+
+    restarted = ComboStrategy(cfg, root=tmp_path)
+    result = restarted.on_quote(quote(ts=NOW + 1_000), now_ms=NOW + 1_000)
+    assert result["status"] == "grid_recovered"
+    assert result["position_qty_btc"] == pytest.approx(0.013)
+    assert result["grid_seeded"] is True
+    assert any(o.active and o.side == "sell" for o in restarted.paper.orders.values())
+    assert any(o.active and o.side == "buy" for o in restarted.paper.orders.values())
+
+
+def test_crash_after_dca_fill_recovers_missing_reduce_only_sell(tmp_path):
+    cfg = ComboConfig()
+    first = ComboStrategy(cfg, root=tmp_path)
+    first.on_quote(quote(), now_ms=NOW)
+    dca = max((o for o in first.paper.orders.values() if o.active and o.side == "buy"),
+              key=lambda o: o.price)
+    first.paper.match_limit_orders(
+        quote(last=dca.price - 0.15, bid=dca.price - 0.2, ask=dca.price - 0.1,
+              ask_size=0.013, ts=NOW + 1_000),
+        NOW + 1_000,
+    )
+    new_lot = next(l for l in first.paper.position.lots.values() if l.level_index == dca.level_index)
+    assert not first.paper.has_active_sell_for_lot(new_lot.lot_id)
+
+    restarted = ComboStrategy(cfg, root=tmp_path)
+    result = restarted.on_quote(
+        quote(last=dca.price - 0.15, bid=dca.price - 0.2, ask=dca.price - 0.1,
+              ask_size=0.05, ts=NOW + 2_000),
+        now_ms=NOW + 2_000,
+    )
+    assert result["status"] == "active"
+    paired = [o for o in restarted.paper.orders.values()
+              if o.active and o.side == "sell" and o.lot_id == new_lot.lot_id]
+    assert len(paired) == 1
+    assert paired[0].reduce_only is True
+
+
+def test_crash_after_sell_fill_recovers_missing_counter_buy(tmp_path):
+    cfg = ComboConfig()
+    first = ComboStrategy(cfg, root=tmp_path)
+    first.on_quote(quote(), now_ms=NOW)
+    sell = next(o for o in first.paper.orders.values()
+                if o.active and o.side == "sell" and o.role == "sell_grid")
+    first.paper.match_limit_orders(
+        quote(last=sell.price, bid=sell.price, ask=sell.price + 0.2,
+              bid_size=0.013, ask_size=0.05, ts=NOW + 1_000),
+        NOW + 1_000,
+    )
+    assert first.paper.orders[sell.order_id].status is ComboOrderStatus.FILLED
+    assert not any(o.side == "buy" and o.parent_order_id == sell.order_id
+                   for o in first.paper.orders.values())
+
+    restarted = ComboStrategy(cfg, root=tmp_path)
+    result = restarted.on_quote(
+        quote(last=sell.price, bid=sell.price, ask=sell.price + 0.2,
+              bid_size=0.05, ask_size=0.05, ts=NOW + 2_000),
+        now_ms=NOW + 2_000,
+    )
+    assert result["status"] == "active"
+    counter = [o for o in restarted.paper.orders.values()
+               if o.active and o.side == "buy" and o.parent_order_id == sell.order_id]
+    assert len(counter) == 1
+    assert counter[0].qty == pytest.approx(0.013)
+    assert counter[0].level_index == sell.level_index - 1
