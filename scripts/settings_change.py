@@ -154,6 +154,16 @@ def _atomic_write(target: Path, content: str) -> None:
             handle.flush()
             os.fsync(handle.fileno())
         os.replace(temp_name, target)
+        # Persist the directory entry as well as the file contents where supported.
+        try:
+            dir_fd = os.open(target.parent, os.O_RDONLY)
+            try:
+                os.fsync(dir_fd)
+            finally:
+                os.close(dir_fd)
+        except OSError:
+            # Some filesystems do not allow directory fsync; file fsync still succeeded.
+            pass
     finally:
         if os.path.exists(temp_name):
             os.unlink(temp_name)
@@ -163,11 +173,20 @@ def _append_audit(audit_path: Path, record: dict) -> None:
     audit_path.parent.mkdir(parents=True, exist_ok=True)
     line = (json.dumps(record, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n").encode("utf-8")
     fd = os.open(audit_path, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600)
+    start = os.lseek(fd, 0, os.SEEK_END)
     try:
-        written = os.write(fd, line)
-        if written != len(line):
-            raise OSError("audit_record_write_incomplete")
+        remaining = memoryview(line)
+        while remaining:
+            written = os.write(fd, remaining)
+            if written <= 0:
+                raise OSError("audit_record_write_incomplete")
+            remaining = remaining[written:]
         os.fsync(fd)
+    except OSError:
+        # A torn final JSONL row must not poison all later audit reads.
+        os.ftruncate(fd, start)
+        os.fsync(fd)
+        raise
     finally:
         os.close(fd)
 
