@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.336R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.338R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 3588 | %45.7 | -0.336 | -1206.86 |
+| polat_tum_sinyaller | 3591 | %45.6 | -0.338 | -1213.51 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 3575 | %45.6 | -0.336 | -1201.5 |
-| rastgele | 3565 | %42.6 | -0.403 | -1435.41 |
-| trend_naif | 3586 | %40.9 | -0.436 | -1563.03 |
+| polat_girilmeyen | 3578 | %45.6 | -0.338 | -1208.15 |
+| rastgele | 3567 | %42.6 | -0.404 | -1440.11 |
+| trend_naif | 3588 | %40.9 | -0.436 | -1565.41 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-3.93
+Polat özsermaye: %-4.71 · BTC al-tut: %-3.84
 
 ## Öğrenme (walk-forward)
 
@@ -25,19 +25,19 @@ En az işe yarayan okumalar: cift_dip_4H ×0.525, momentum_1H ×0.589, adx_di_1H
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 20836, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 20873, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 10310
+- ders: 10329
 - yetki: 267
 - gösterge aileleri aynı yönde değil: 211
 - büyük zaman dilimi trendi ters: 76
 - puan +0.131 eşiğin (0.3) altında: 73
 - puan +0.121 eşiğin (0.3) altında: 63
+- puan +0.128 eşiğin (0.3) altında: 63
 - puan +0.129 eşiğin (0.3) altında: 62
 - puan +0.123 eşiğin (0.3) altında: 61
-- puan +0.128 eşiğin (0.3) altında: 61
 - puan +0.188 eşiğin (0.3) altında: 61
 
 ## Son 50 gün
@@ -91,7 +91,7 @@ Kapanmış işlem yok. Görülen kurulum: 20836, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 23823
+- ders: 23842
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2532
 - üst üste 3 zarar: 2345
@@ -158,7 +158,7 @@ Kapanmış işlem yok. Görülen kurulum: 20836, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 23823
+- ders: 23842
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2532
 - üst üste 3 zarar: 2345
