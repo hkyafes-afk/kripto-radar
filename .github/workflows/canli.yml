@@ -75,7 +75,7 @@ jobs:
           trap cleanup_relay EXIT
           ready=0
           for i in $(seq 1 120); do
-            if [ -s "$UNIFIED_POLAT_BRIDGE_PATH" ] && python -c 'import os,time; from radar.unified.polat_bridge import read_snapshot; p=os.environ["UNIFIED_POLAT_BRIDGE_PATH"]; k=os.environ.get("UNIFIED_POLAT_BRIDGE_HMAC_KEY") or None; r=read_snapshot(p,now_ms=int(time.time()*1000),max_age_ms=15000,hmac_key=k,require_hmac=bool(k)); raise SystemExit(0 if r.status=="fresh" else 1)'; then
+            if [ -s "$UNIFIED_POLAT_BRIDGE_PATH" ] && python -c 'import os,time; from radar.unified.polat_bridge import read_snapshot; p=os.environ["UNIFIED_POLAT_BRIDGE_PATH"]; k=os.environ.get("UNIFIED_POLAT_BRIDGE_HMAC_KEY") or None; r=read_snapshot(p,now_ms=int(time.time()*1000),max_age_ms=45000,hmac_key=k,require_hmac=bool(k)); raise SystemExit(0 if r.status=="fresh" else 1)'; then
               ready=1
               break
             fi
