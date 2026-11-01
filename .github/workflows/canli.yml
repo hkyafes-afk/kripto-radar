@@ -83,10 +83,10 @@ jobs:
           done
           if [ "$ready" != "1" ]; then
             cat "$RUNNER_TEMP/polat-bridge-pull.log"
-            echo "::error::No fresh Polat cross-runner research snapshot; UnifiedTrader remains fail-closed."
-            exit 1
+            echo "::warning::No fresh Polat research snapshot; Polat telemetry is UNKNOWN and excluded. UnifiedTrader will continue using only its own trusted execution feed."
+          else
+            echo "Fresh Polat research snapshot received from the dedicated GitHub bridge branch."
           fi
-          echo "Fresh Polat research snapshot received from the dedicated GitHub bridge branch."
           python -m radar live --site site
 
       - name: Son durumu yayınla
