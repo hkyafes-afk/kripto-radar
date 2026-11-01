@@ -75,7 +75,7 @@ def test_elif_strategy_requires_fresh_two_leg_and_30d_positive_funding():
     from radar.unified.carry import ElifCarryStrategy
     s = ElifCarryStrategy(CFG)
     kwargs = dict(symbol="BTC", spot=q("BTC-USDT"), perp=q("BTC-USDT-SWAP"),
-                  funding_rate=0.002, funding_ts_ms=NOW, funding_30d_avg=0.001,
+                  funding_rate=0.002, funding_ts_ms=NOW, funding_30d_avg=0.001, positive_funding_ratio=0.9,
                   history_ts_ms=NOW, funding_interval_h=8, now_ms=NOW)
     result = s.evaluate_pair(**kwargs)
     assert result["status"] == "eligible"
