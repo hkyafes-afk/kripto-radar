@@ -54,6 +54,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;paddin
 .cells{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}
 .cell{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:8px 9px;min-width:0}
 .cell .l{color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.metric-source{font-size:10px;color:var(--muted);opacity:.85;line-height:1.25;margin-top:3px;overflow-wrap:anywhere}
 .cell .v{font-weight:800;font-size:16px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sys{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}
 @media (max-width:420px){.sys{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -568,6 +569,27 @@ function renderTabs(pos, closed, decs, data, st, durum, ozet, settings, polat) {
     h = renderSysTab(data, durum, ozet, st);
   } else h = `<div class="card empty">Bu bölüm için gerçek veri henüz yayımlanmadı.</div>`;
   $("view").innerHTML = meta + h;
+  const provenance = {
+    firsat: {path:"birlesik/kararlar-YYYY-MM-DD.jsonl", ts:lastDecision, method:"OPEN / REDUCE_SIZE / SHADOW adetleri; yalnız gerçek karar kayıtları."},
+    portfoy: {path:"birlesik/durum.json", ts:durum && durum.ts, method:"Açık/kapanan Unified PAPER defteri; K/Z bakiye ve başlangıç sermayesi farkından."},
+    karar: {path:"kararlar-YYYY-MM-DD.jsonl + hazirlik.json", ts:lastDecision, method:"Karar ve engel sayıları kaynak günlükteki kayıtların sınıflandırılmasıdır."},
+    performans: {path:"data.json → karne", ts:data && data.generated_at, method:"Yayınlanan kapanış örneklemi; R, net sonuç ve %95 aralık karne hesaplamasından."},
+    deney: {path:"data.json → karne.yeni_golge", ts:data && data.generated_at, method:"Ayrı Unified SHADOW kapanışları; PAPER portföyüne dahil edilmez."},
+    veri: {path:"birlesik/durum.json → tanilama; polat_kopru.json", ts:durum && durum.tanilama && durum.tanilama.ts, method:"Sunucu BBO kalite gözlemleri; Polat snapshot yaşı ve sıra kontrolü ayrı araştırma telemetrisidir."},
+    ayarlar: {path:"birlesik/ayarlar.json", ts:data && data.generated_at, method:"Config keşif kataloğu; kaynakta tanımlı olmayan birim, sınır veya restart etkisi bilinmiyor."},
+    sistem: {path:"data.json + birlesik/durum.json + karar özeti", ts:data && data.generated_at, method:"Her kaynak kendi timestamp ve bağlantı durumuyla değerlendirilir; tek timestamp hepsini temsil etmez."}
+  }[S.tab];
+  if (provenance) {
+    const stamp = isNum(provenance.ts) && provenance.ts > 0 ? "Güncelleme: " + ago(provenance.ts) : "Güncelleme zamanı yok";
+    const line = provenance.path + " · " + stamp + " · " + provenance.method;
+    $("view").querySelectorAll(".cell .l, .sg .l, .pf .l, .sysi .l").forEach(label => {
+      const detail = document.createElement("div");
+      detail.className = "metric-source";
+      detail.textContent = line;
+      label.insertAdjacentElement("afterend", detail);
+      label.title = line;
+    });
+  }
 }
 
 function renderPf(durum, tot, dpl, start, st) {
