@@ -17,6 +17,18 @@ from typing import Mapping
 from .execution.base import Quote
 
 
+def _four_leg_costs(cfg: Mapping, notional: float, spot: Quote, perp: Quote, slippage_bp: float) -> float:
+    fees_cfg = cfg.get("ucret") or {}
+    spot_fee = float(fees_cfg.get("spot_taker_yuzde", 0.10)) / 100.0
+    perp_fee = float(fees_cfg.get("taker_yuzde", 0.06)) / 100.0
+    fees = 2 * notional * (spot_fee + perp_fee)
+    spreads = notional * ((spot.ask - spot.bid) / spot.mid + (perp.ask - perp.bid) / perp.mid)
+    slippage = 4 * notional * (slippage_bp / 10_000)
+    carry_cfg = ((cfg.get("birlesik") or {}).get("elif_carry") or {})
+    hedge_buffer = notional * float(carry_cfg.get("hedge_buffer_bp", 10.0)) / 10_000
+    return fees + spreads + slippage + hedge_buffer
+
+
 class CarryPairPaper:
     def __init__(self, cfg: Mapping | None, root: str | Path):
         self.cfg = dict(cfg or {})
@@ -91,13 +103,8 @@ class CarryPairPaper:
         return bool(valid) and sum(size for _, size in valid) + 1e-12 >= qty
 
     def _costs(self, notional: float, spot: Quote, perp: Quote) -> float:
-        slip = self.slippage_bp / 10_000
-        # Four taker legs (spot/perp open and close) plus conservative full-spread crossing.
-        fees = 2 * notional * (self.spot_fee_rate + self.perp_fee_rate)
-        spreads = notional * ((spot.ask - spot.bid) / spot.mid + (perp.ask - perp.bid) / perp.mid)
-        slippage = 4 * notional * slip
-        hedge_buffer = notional * float(((self.cfg.get("birlesik") or {}).get("elif_carry") or {}).get("hedge_buffer_bp", 10.0)) / 10_000
-        return fees + spreads + slippage + hedge_buffer
+        # Four taker legs plus spread, slippage and a hedge-divergence buffer.
+        return _four_leg_costs(self.cfg, notional, spot, perp, self.slippage_bp)
 
     def open_pair(self, *, pair_id: str, symbol: str, spot_inst: str, perp_inst: str,
                   qty: float, spot: Quote | None, perp: Quote | None, funding_rate: float,
@@ -221,15 +228,14 @@ class ElifCarryStrategy:
         self.min_positive_ratio = float(c.get("min_positive_funding_ratio", 0.75))
         self.expected_holding_hours = float(c.get("expected_holding_hours", 72.0))
         self.min_projected_net_usd = float(c.get("min_projected_net_usd", 0.10))
-        estimate_cfg = {**self.cfg, "birlesik": {**(self.cfg.get("birlesik") or {}),
-                        "elif_carry": {**c, "enabled": False}}}
-        self.paper = CarryPairPaper(estimate_cfg, Path(tempfile.gettempdir()) / "kripto-radar-carry-estimate")
+        self.max_notional_usd = float(c.get("max_notional_usd", 25.0))
+        self.slippage_bp = float(c.get("slippage_bp", 5.0))
 
     def evaluate_pair(self, *, symbol: str, spot: Quote | None, perp: Quote | None,
                       funding_rate: float | None, funding_ts_ms: int | None,
                       funding_30d_avg: float | None, positive_funding_ratio: float | None,
                       history_ts_ms: int | None, funding_interval_h: float, now_ms: int) -> dict:
-        if not self.paper._fresh(spot, now_ms) or not self.paper._fresh(perp, now_ms):
+        if not CarryPairPaper._fresh(spot, now_ms) or not CarryPairPaper._fresh(perp, now_ms):
             return {"status": "blocked", "reason": "both_spot_and_perp_quotes_must_be_fresh"}
         if (type(funding_ts_ms) is not int or now_ms - funding_ts_ms < -1_000
                 or now_ms - funding_ts_ms > self.max_funding_age_ms):
@@ -245,9 +251,9 @@ class ElifCarryStrategy:
                 or type(funding_interval_h) not in (int, float) or not math.isfinite(funding_interval_h)
                 or funding_interval_h <= 0):
             return {"status": "rejected", "reason": "funding_not_positive_and_stable"}
-        notional = min(self.paper.max_notional_usd, 100.0)
+        notional = min(self.max_notional_usd, 100.0)
         projected_funding = notional * funding_rate * (self.expected_holding_hours / funding_interval_h)
-        estimated_cost = self.paper._costs(notional, spot, perp)
+        estimated_cost = _four_leg_costs(self.cfg, notional, spot, perp, self.slippage_bp)
         projected_net = projected_funding - estimated_cost
         if projected_net <= self.min_projected_net_usd:
             return {"status": "rejected", "reason": "carry_net_edge_below_minimum",
