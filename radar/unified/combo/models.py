@@ -50,6 +50,7 @@ class ComboOrder:
     created_ts_ms: int = 0
     updated_ts_ms: int = 0
     reason: str = ""
+    parent_order_id: str | None = None
 
     @property
     def remaining_qty(self) -> float:
