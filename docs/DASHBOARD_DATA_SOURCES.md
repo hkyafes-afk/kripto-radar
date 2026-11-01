@@ -37,3 +37,8 @@ Bu belge, dashboard bölümlerinin hangi yayımlanmış dosyalardan beslendiğin
 - Settings için dashboard PAT saklamaz. GitHub kimlik doğrulamalı workflow yalnız yedi allowlisted sayısal parametreye taslak PR açar; aralık dışı değerler reddedilir ve hiçbir değişiklik otomatik uygulanmaz.
 - Research Lab altyapısı `scripts/unified_research.py` ile CSV üzerinden purged walk-forward, untouched holdout, DSR/multiple-testing ve maliyet/provenance attestation raporu üretir. Otomatik terfi yoktur.
 - Unified PAPER terfi adaylığına 100 kapanmış işlem ve istatistik eşiklerine ek olarak 14 günlük forward kapanış kanıtı şartı eklendi. Bu zaman ve örneklem, kod tarafından sentetik şekilde tamamlanmaz.
+
+
+## Sekme üstü kaynak açıklaması — 2026-11-01
+
+Dashboard her sekmede gerçek dosya yolunu, kaynağın son zaman damgasını ve görünümün kapsam/yöntem notunu gösterir. Zaman damgası yoksa "Kaynak zaman damgası yok" görünür; eksik veri sıfıra çevrilmez. Mobil kaynak şeridi dar ekranlarda satır sarar. Yükleniyor ve uyarı bölgeleri erişilebilir canlı bildirim olarak işaretlidir.

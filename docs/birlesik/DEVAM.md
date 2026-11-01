@@ -1,21 +1,16 @@
-> **GÜNCEL DURUM / ÖNCELİKLİ KAYIT — 2026-10-31**
-> Bu dosyanın aşağıdaki eski PR sıralaması ve cutover notları tarihsel kalmıştır; yeni çalışma için bunları talimat olarak izleme.
-> Güncel üretim yapılandırması `config.yaml → birlesik.karar_modu: unified`, yürütme `paper`; tek yeni pozisyon yetkilisi UnifiedTrader'dır.
-> Eski PR #2–#6 sıralamasını tekrar merge etmeye çalışma. Güncel çalışma PR #23'tür:
-> https://github.com/hkyafes-afk/kripto-radar/pull/23
-> Kalan tüm işler ve kabul kapıları: https://github.com/hkyafes-afk/kripto-radar/issues/24
->
-> PR #23 dalı: `feat/realtime-data-control-center`. Son kod head'i `193aeb2f7d21af673b4b4a9410ae2b9acdf4b5ca` için GitHub Actions: UnifiedTrader `187 passed, 3 skipped`; tam depo `338 passed, 10 skipped` (ikisi de başarılı).
-> Ardından yalnız ücretsiz çalışma modeli dokümantasyonu eklendi; bu doküman commit'leri için CI yeniden çalıştırılacak.
-> Ek ücretli sunucu/hosting/kişisel PC varsayımı yoktur. Ücretsiz çalışma sınırları `docs/FREE_ONLY_OPERATIONAL_MODEL.md` içinde kayıtlıdır.
-> PR açık ve taslak; main'e merge edilmedi. Main tabanı `69a6239d4d6c9846db7defd01101a377e71ea170`.
->
-> Polat, UnifiedTrader değildir ve ana portföyü yönetmez. Polat'ın `yetki.yeni_pozisyon` değeri false; kodda eksik yetki de fail-closed'dur.
-> Polat'ın eski sanal pozisyon yönetimi/araştırma kaydı ayrı kalır. Polat verisi UnifiedTrader'a ortak feed olarak bağlıymış gibi gösterilmez.
-> Gerçek OKX emir/private API kapalı; PAPER dışı yürütme yok. Eski defter ve portföyler ayrı korunur.
->
-> **Sıradaki adım:** Issue #24'teki ilk açık kabul maddesinden ilerle. Her kod diliminden sonra hem UnifiedTrader hem tam depo testlerini çalıştır; son commit için sonuçlar yeşil değilse tamamlandı deme. Tüm kabul maddeleri kanıtlanmadan PR #23 merge edilmez.
->
+> **GÜNCEL DURUM / DEVAM NOKTASI — 2026-11-01**
+> Bu bölüm yeni sohbet açıldığında önce okunacak güncel proje kaydıdır. Aşağıdaki eski PR sıralaması tarihsel kayıttır.
+> Depo: https://github.com/hkyafes-afk/kripto-radar
+> Ana çalışma: PR #23 — https://github.com/hkyafes-afk/kripto-radar/pull/23
+> Tek yeni pozisyon ve PAPER otoritesi UnifiedTrader'dır. Polat yalnız araştırma/challenger ve kendi ayrı geçmiş sanal kayıtlarıdır; ana portföyü yönetmez.
+> Üretim yapılandırması: `birlesik.karar_modu: unified`, `birlesik.yurutme_modu: paper`, 100 USDT sanal başlangıç. Gerçek OKX emir/private API kapalıdır.
+> 2026-11-01 çalışma notu yazılmadan önce branch head `981aa0fbd088a1565d5b2dc87b84de2888871eef` idi; main `74173b00965e15360ca9801d51f977100700d839` ile senkronize edildi. Bu doküman güncellemesi branch head'ini yeniden ilerletir; işe başlamadan GitHub'dan gerçek head'i doğrula.
+> Son kod head'i `a52f3623b4f676b0b5a8b7011e953917262e243e` üzerinde UnifiedTrader CI `208 passed, 3 skipped`, tam depo CI `373 passed, 10 skipped` başarılıdır. Ardından main'deki en yeni öğrenme/hakem snapshot'ları merge commit ile branch'e alındı; merge commit ve bu doküman güncellemesi için CI yeniden doğrulanmalıdır.
+> Dashboard: `radar/templates/birlesik.html`; sekme bazlı kaynak/güncellik/yöntem şeritleri ve erişilebilir yükleniyor/uyarı durumları eklendi. Bunlar PR #23'te, henüz gh-pages'e yayınlanmadı.
+> Mevcut gh-pages erken PAPER sürümüdür: Unified / PAPER / 100 USDT. Bu, kârlılık kanıtı veya 7/24/milisaniye SLA değildir.
+> **Açık yayın kapıları:** Polat→Unified cross-process canlı transport/fan-out; Elif Carry iki bacaklı spot+perp PAPER ve uzlaştırma; eksiksiz kanal reconnect/dropped/duplicate telemetrisi; tam ayar şeması/audit/rollback; mobil gerçek tarayıcı testleri; gerçek 14 günlük forward PAPER ve en az 100 uygun kapanmış işlem/karar örneklemi; son head'in tam CI ve operasyonel yayın doğrulaması.
+> 14 günlük süre ve 100 işlem sentetik veriyle doldurulamaz. Ücretsiz GitHub Actions/Pages kalıcı 7/24 runtime veya canlı push/SSE garantisi sağlamaz. Bu sınırlar tamamlanmış gibi gösterilmeyecek.
+> PR #23 taslak kalır; bütün kabul kapıları kanıtlanmadan main'e merge edilmez. Gerçek emir yolu açılmaz.
 > ---
 >
 # DEVAM NOTU — Birleşik Baş Trader dönüşümü (yarıda kalırsa buradan devam)
