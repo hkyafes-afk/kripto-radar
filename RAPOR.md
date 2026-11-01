@@ -8,10 +8,10 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 3560 | %45.9 | -0.331 | -1177.06 |
+| polat_tum_sinyaller | 3561 | %45.9 | -0.331 | -1178.53 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 3547 | %45.9 | -0.33 | -1171.7 |
-| rastgele | 3533 | %42.7 | -0.399 | -1411.03 |
+| polat_girilmeyen | 3548 | %45.9 | -0.331 | -1173.17 |
+| rastgele | 3536 | %42.7 | -0.399 | -1411.82 |
 | trend_naif | 3560 | %41.0 | -0.434 | -1545.85 |
 
 Polat özsermaye: %-4.71 · BTC al-tut: %-3.83
@@ -25,17 +25,17 @@ En az işe yarayan okumalar: momentum_1H ×0.59, supertrend_1H ×0.666, willr_1H
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 16785, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 16786, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 8914
+- ders: 8925
 - yetki: 264
-- gösterge aileleri aynı yönde değil: 117
+- gösterge aileleri aynı yönde değil: 115
 - büyük zaman dilimi trendi ters: 72
 - puan +0.131 eşiğin (0.3) altında: 68
 - puan +0.188 eşiğin (0.3) altında: 59
-- puan +0.129 eşiğin (0.3) altında: 57
+- puan +0.129 eşiğin (0.3) altında: 58
 - puan +0.160 eşiğin (0.3) altında: 57
 - puan +0.121 eşiğin (0.3) altında: 56
 - puan +0.123 eşiğin (0.3) altında: 56
@@ -91,9 +91,9 @@ Kapanmış işlem yok. Görülen kurulum: 16785, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 23341
+- ders: 23368
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 2526
+- gösterge aileleri aynı yönde değil: 2527
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2025
 - aynı yönde pozisyon tavanı: 1426
@@ -158,9 +158,9 @@ Kapanmış işlem yok. Görülen kurulum: 16785, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 23341
+- ders: 23368
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 2526
+- gösterge aileleri aynı yönde değil: 2527
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2025
 - aynı yönde pozisyon tavanı: 1426
