@@ -2,9 +2,13 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
+import json
 import math
 import os
 import tempfile
+import time
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -91,25 +95,161 @@ def apply_change(text: str, path: str, raw_value: str) -> tuple[str, dict]:
                      "range": [minimum, maximum], "approval": "pull_request_required"}
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--path", required=True)
-    parser.add_argument("--value", required=True)
-    parser.add_argument("--file", default="config.yaml")
-    args = parser.parse_args()
-    target = Path(args.file)
-    original = target.read_text(encoding="utf-8")
-    updated, summary = apply_change(original, args.path, args.value)
+
+def _sha256(value: str) -> str:
+    return hashlib.sha256(value.encode("utf-8")).hexdigest()
+
+
+def _atomic_write(target: Path, content: str) -> None:
+    target.parent.mkdir(parents=True, exist_ok=True)
+    mode = target.stat().st_mode & 0o777 if target.exists() else 0o600
     fd, temp_name = tempfile.mkstemp(prefix=target.name + ".", dir=str(target.parent))
     try:
+        os.fchmod(fd, mode)
         with os.fdopen(fd, "w", encoding="utf-8", newline="") as handle:
-            handle.write(updated)
+            handle.write(content)
             handle.flush()
             os.fsync(handle.fileno())
         os.replace(temp_name, target)
     finally:
         if os.path.exists(temp_name):
             os.unlink(temp_name)
+
+
+def _append_audit(audit_path: Path, record: dict) -> None:
+    audit_path.parent.mkdir(parents=True, exist_ok=True)
+    line = (json.dumps(record, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n").encode("utf-8")
+    fd = os.open(audit_path, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600)
+    try:
+        written = os.write(fd, line)
+        if written != len(line):
+            raise OSError("audit_record_write_incomplete")
+        os.fsync(fd)
+    finally:
+        os.close(fd)
+
+
+def _audit_records(audit_path: Path) -> list[dict]:
+    try:
+        lines = audit_path.read_text(encoding="utf-8").splitlines()
+    except FileNotFoundError:
+        return []
+    except OSError as exc:
+        raise SettingsChangeError(f"Ayar denetim kaydı okunamadı: {exc}") from exc
+    records = []
+    for number, line in enumerate(lines, 1):
+        try:
+            record = json.loads(line)
+        except ValueError as exc:
+            raise SettingsChangeError(f"Ayar denetim kaydı bozuk (satır {number}).") from exc
+        if not isinstance(record, dict):
+            raise SettingsChangeError(f"Ayar denetim kaydı nesne değil (satır {number}).")
+        records.append(record)
+    return records
+
+
+def _commit_audited_change(
+    target: Path, audit_path: Path, *, original: str, updated: str,
+    summary: dict, action: str, actor: str | None = None,
+    run_id: str | None = None, rollback_of: str | None = None,
+) -> dict:
+    if target.resolve() == audit_path.resolve():
+        raise SettingsChangeError("Config dosyası ve denetim dosyası aynı olamaz.")
+    before_hash, after_hash = _sha256(original), _sha256(updated)
+    try:
+        current = target.read_text(encoding="utf-8")
+    except OSError as exc:
+        raise SettingsChangeError(f"Config yeniden okunamadı: {exc}") from exc
+    if _sha256(current) != before_hash:
+        raise SettingsChangeError("Config eşzamanlı değişti; yeni sürümü okuyup talebi yeniden oluştur.")
+    record = {
+        "event_id": f"{run_id or 'local'}-{time.time_ns()}",
+        "action": action, "path": summary["path"],
+        "target": str(target.resolve()), "old_value": summary["old_value"],
+        "new_value": summary["new_value"], "before_sha256": before_hash,
+        "after_sha256": after_hash,
+        "actor": actor or os.environ.get("GITHUB_ACTOR") or "local",
+        "run_id": run_id or os.environ.get("GITHUB_RUN_ID"),
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "approval": "pull_request_required",
+    }
+    if rollback_of:
+        record["rollback_of"] = rollback_of
+    _atomic_write(target, updated)
+    try:
+        _append_audit(audit_path, record)
+    except OSError as exc:
+        try:
+            if _sha256(target.read_text(encoding="utf-8")) == after_hash:
+                _atomic_write(target, original)
+        except OSError:
+            pass
+        raise SettingsChangeError(f"Denetim kaydı yazılamadı; config geri alınmaya çalışıldı: {exc}") from exc
+    return {**summary, **record}
+
+
+def apply_file_change(
+    file_path: str | Path, path: str, raw_value: str, *,
+    audit_file: str | Path, expected_sha256: str | None = None,
+    actor: str | None = None, run_id: str | None = None,
+) -> dict:
+    target, audit_path = Path(file_path), Path(audit_file)
+    original = target.read_text(encoding="utf-8")
+    before_hash = _sha256(original)
+    if expected_sha256 and before_hash != expected_sha256:
+        raise SettingsChangeError("Config SHA-256 beklenen sürümle eşleşmiyor; eşzamanlı değişiklik reddedildi.")
+    updated, summary = apply_change(original, path, raw_value)
+    return _commit_audited_change(target, audit_path, original=original, updated=updated,
+                                  summary=summary, action="apply", actor=actor, run_id=run_id)
+
+
+def rollback_file_change(
+    file_path: str | Path, audit_file: str | Path, rollback_id: str, *,
+    actor: str | None = None, run_id: str | None = None,
+) -> dict:
+    target, audit_path = Path(file_path), Path(audit_file)
+    if not rollback_id.strip():
+        raise SettingsChangeError("Geri alma kimliği boş olamaz.")
+    records = _audit_records(audit_path)
+    source = next((r for r in records if r.get("event_id") == rollback_id), None)
+    if source is None or source.get("action") != "apply":
+        raise SettingsChangeError("Geri alınacak uygulama denetim kaydı bulunamadı.")
+    if source.get("target") != str(target.resolve()):
+        raise SettingsChangeError("Denetim kaydı farklı config dosyasına ait.")
+    original = target.read_text(encoding="utf-8")
+    if _sha256(original) != source.get("after_sha256"):
+        raise SettingsChangeError("Config, uygulamadan sonra değişmiş; güvenli geri alma için önce farkı incele.")
+    updated, summary = apply_change(
+        original, str(source.get("path")),
+        yaml.safe_dump(source.get("old_value"), allow_unicode=True).strip(),
+    )
+    return _commit_audited_change(target, audit_path, original=original, updated=updated,
+                                  summary=summary, action="rollback", actor=actor,
+                                  run_id=run_id, rollback_of=rollback_id)
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--path")
+    parser.add_argument("--value")
+    parser.add_argument("--file", default="config.yaml")
+    parser.add_argument("--audit-file", default=".settings-change-audit.jsonl")
+    parser.add_argument("--expected-sha256")
+    parser.add_argument("--rollback-id")
+    args = parser.parse_args()
+    try:
+        if args.rollback_id:
+            if args.path is not None or args.value is not None:
+                raise SettingsChangeError("--rollback-id ile --path/--value birlikte kullanılamaz.")
+            summary = rollback_file_change(args.file, args.audit_file, args.rollback_id)
+        else:
+            if not args.path or args.value is None:
+                raise SettingsChangeError("Uygulama için --path ve --value zorunludur.")
+            summary = apply_file_change(args.file, args.path, args.value,
+                                        audit_file=args.audit_file,
+                                        expected_sha256=args.expected_sha256)
+    except (SettingsChangeError, OSError) as exc:
+        parser.error(str(exc))
     print(yaml.safe_dump(summary, allow_unicode=True, sort_keys=True).strip())
     return 0
 
