@@ -54,7 +54,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;paddin
 .cells{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}
 .cell{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:8px 9px;min-width:0}
 .cell .l{color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.metric-source{font-size:10px;color:var(--muted);opacity:.85;line-height:1.25;margin-top:3px;overflow-wrap:anywhere}
+.metric-source{font-size:10px;color:var(--muted);opacity:.85;line-height:1.25;margin-top:3px;overflow-wrap:anywhere;grid-column:1 / -1}
 .cell .v{font-weight:800;font-size:16px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sys{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}
 @media (max-width:420px){.sys{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -582,7 +582,7 @@ function renderTabs(pos, closed, decs, data, st, durum, ozet, settings, polat) {
   if (provenance) {
     const stamp = isNum(provenance.ts) && provenance.ts > 0 ? "Güncelleme: " + ago(provenance.ts) : "Güncelleme zamanı yok";
     const line = provenance.path + " · " + stamp + " · " + provenance.method;
-    $("view").querySelectorAll(".cell .l, .sg .l, .pf .l, .sysi .l").forEach(label => {
+    $("view").querySelectorAll(".cell .l, .sg .l, .pf .l, .sysi .l, .dr").forEach(label => {
       const detail = document.createElement("div");
       detail.className = "metric-source";
       detail.textContent = line;
