@@ -921,6 +921,23 @@ class Engine:
         self.polat_bridge_status = status
         return status
 
+    def _safe_poll_polat_research_bridge(self) -> dict:
+        """Bridge diagnostics are non-critical and must never stop the UnifiedTrader cycle."""
+        try:
+            return self._poll_polat_research_bridge()
+        except Exception as exc:  # noqa: BLE001
+            status = {
+                "source": "polat", "scope": "research_only", "status": "error",
+                "reason": f"status_publish_failed:{type(exc).__name__}",
+                "last_sequence": getattr(self, "_polat_bridge_last_sequence", None),
+                "sequence": None, "generated_at_ms": None,
+                "received_at_ms": int(time.time() * 1000), "age_ms": None,
+                "observation_count": 0, "source_run_id": None,
+            }
+            self.polat_bridge_status = status
+            print("[polat bridge telemetry] error:", type(exc).__name__, str(exc)[:180])
+            return status
+
     def _unified_step(self, ctxs: list[dict]):
         """Birleşik Baş Trader kancası. `birlesik.karar_modu`:
           legacy  → hiçbir şey yapmaz (varsayılan)
@@ -935,7 +952,7 @@ class Engine:
             if mode is DecisionMode.LEGACY:
                 return
             # Polat telemetry is published separately for research/diagnostics only.
-            self._poll_polat_research_bridge()
+            self._safe_poll_polat_research_bridge()
             from .unified.trader import UnifiedTrader, quote_from_book
             if mode is DecisionMode.SHADOW:
                 tr = getattr(self, "_golge_trader", None)
