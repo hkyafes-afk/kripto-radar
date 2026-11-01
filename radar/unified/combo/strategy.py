@@ -8,7 +8,7 @@ from typing import Any
 
 from .config import ComboConfig
 from .grid import GridBuilder
-from .models import ComboQuote
+from .models import ComboOrderStatus, ComboQuote
 from .paper import ComboPaperAdapter
 
 
@@ -78,9 +78,14 @@ class ComboStrategy:
     def _process_counter_orders(self, fills, now_ms: int) -> None:
         for fill in fills:
             if fill.side == "buy":
+                # BUY kısmi dolumlarının her biri yalnız kendi oluşan lotuna SELL bağlar.
                 self._arm_sell_for_lot(fill.lot_id, fill.level_index, now_ms)
             elif fill.side == "sell" and fill.level_index is not None:
-                self._arm_buy_level(fill.level_index - 1, now_ms)
+                # 0.013 BTC SELL tamamen dolmadan tam boy yeni BUY kurma; aksi halde
+                # küçük bir partial fill, daha büyük karşı DCA hacmi açabilir.
+                order = self.paper.orders.get(fill.order_id)
+                if order is not None and order.status is ComboOrderStatus.FILLED:
+                    self._arm_buy_level(fill.level_index - 1, now_ms)
 
     def _handle_hard_stop(self, quote: ComboQuote, now_ms: int) -> None:
         if not self.paper.halted:
