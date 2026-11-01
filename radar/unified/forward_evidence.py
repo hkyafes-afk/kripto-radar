@@ -85,7 +85,7 @@ class ForwardPaperEvidence:
                 eligible.append(row)
         elapsed = max(0, now_ms - int(start)) if start is not None else 0
         recent = last is not None and 0 <= now_ms - int(last) <= self.max_gap_ms
-        days_ok = elapsed >= self.required_days * DAY_MS and recent
+        days_ok = elapsed >= self.required_days * DAY_MS and recent and self.state.get("last_reason") == "observing"
         trades_ok = len(eligible) >= self.required_closed
         return {
             "status": "eligible" if days_ok and trades_ok else "observing",
