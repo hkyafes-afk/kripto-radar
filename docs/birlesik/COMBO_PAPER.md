@@ -23,7 +23,9 @@
 ## Dolum ve veri dürüstlüğü
 
 - radar.ws.OKXFeed ticker akışına ek bir observer kanalı sağlar; mevcut on_tick callback sözleşmesi değişmez. COMBO listener var olan Feed'e enjekte edilebilir veya ayrı bir public-only OKX feed'i açabilir.
-- Dolum için bidSz/askSz BBO miktarı gerekir. Miktar yoksa dolum varsayılmaz. Aynı quote içindeki emirler, ilgili BBO miktarını paylaşır; yetersiz miktar kısmi dolum bırakır.
+- Listener, kimlik doğrulaması gerektirmeyen OKX `GET /api/v5/public/instruments` uç noktasından enstrüman metadata'sını alır. Enstrüman `linear`, `BTC` değer para birimli ve `live` değilse feed kabul edilmez; gerçek `tickSz` ayarıyla eşleşmelidir.
+- SWAP ticker BBO miktarı kontrat adedidir; PAPER motorunun defteri BTC tuttuğundan miktar `contract_count × ctVal` ile BTC'ye normalize edilir. Metadata alınamazsa veya birim etiketi doğrulanmazsa dolum yapılmaz. Aynı quote içindeki emirler, ilgili BBO miktarını paylaşır; yetersiz miktar kısmi dolum bırakır.
+- Emir defterindeki PAPER miktarları BTC cinsindendir. OKX'in gerçek vadeli emirlerinde miktar kontrat ve `lotSz/minSz` kurallarına tabidir; `btc_to_contracts()` dönüşüm kontrolü sağlar, ancak ilk sürüm hiçbir miktarı borsaya göndermez veya canlı emir uygunluğu iddia etmez.
 - Bu PAPER fill modeli tam order-book kuyruğunu, derinliğin sonraki seviyelerini veya gerçek borsadaki emir önceliğini modellemez. Bu yüzden sonuçlar gerçek işlem/performans kanıtı değildir.
 - Varsayılan ücretler proje radar.ledger.fees_cfg varsayılanlarıyla uyumlu: maker %0.02, taker %0.05. Gerçek hesap ücreti farklıysa ayrıca ayarlanmalıdır.
 - Quote bayatsa, sembol farklıysa, fiyat/BBO geçersizse veya WebSocket tick zamanı tekrar/geriye gidiyorsa işlem/dolum yapılmaz.
