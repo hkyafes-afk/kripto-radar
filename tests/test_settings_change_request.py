@@ -195,7 +195,8 @@ def test_settings_workflow_yaml_has_unique_keys_and_keeps_pr_review_boundary():
         yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, construct_unique_mapping,
     )
     document = yaml.load(raw, Loader=UniqueKeyLoader)
-    dispatch = document["on"]["workflow_dispatch"]["inputs"]
+    triggers = document.get("on", document.get(True))
+    dispatch = triggers["workflow_dispatch"]["inputs"]
     assert set(dispatch["change_mode"]["options"]) == {"apply", "rollback"}
     assert dispatch["parameter_path"]["required"] is False
     assert set(document["permissions"]) == {"contents", "pull-requests"}
