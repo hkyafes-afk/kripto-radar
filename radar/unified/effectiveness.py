@@ -146,18 +146,37 @@ class EffectivenessAuditor:
 
     def trials(self) -> dict[str, int]:
         p = self.trials_path
-        try:
-            return {k: int(v) for k, v in json.loads(p.read_text(encoding="utf-8")).items()} if p and p.exists() else {}
-        except (OSError, ValueError):
+        if p is None or not p.exists():
             return {}
+        try:
+            raw = json.loads(p.read_text(encoding="utf-8"))
+        except (OSError, ValueError) as exc:
+            # Missing/malformed trial history must never silently become one trial (looser DSR).
+            raise ValueError(f"deneme geçmişi okunamadı; DSR hesabı durduruldu: {exc}") from exc
+        if not isinstance(raw, dict):
+            raise ValueError("deneme geçmişi JSON nesnesi değil; DSR hesabı durduruldu")
+        validated: dict[str, int] = {}
+        for strategy, count in raw.items():
+            if (not isinstance(strategy, str) or not strategy.strip()
+                    or type(count) is not int or count < 1):
+                raise ValueError("deneme geçmişi içinde geçersiz strateji/deneme sayısı; DSR hesabı durduruldu")
+            validated[strategy] = count
+        return validated
 
     def register_trials(self, strategy: str, n: int) -> int:
         """Bir strateji için denenen kural/parametre varyantı sayısını artırır (aynı veride her deneme sayılır)."""
+        if not isinstance(strategy, str) or not strategy.strip():
+            raise ValueError("strateji kimliği boş olamaz")
+        if type(n) is not int or n < 1:
+            raise ValueError("deneme artışı pozitif tam sayı olmalı")
         t = self.trials()
-        t[strategy] = t.get(strategy, 0) + int(n)
+        t[strategy] = t.get(strategy, 0) + n
         if self.trials_path:
             self.root.mkdir(parents=True, exist_ok=True)
-            self.trials_path.write_text(json.dumps(t, ensure_ascii=False, indent=1), encoding="utf-8")
+            target = self.trials_path
+            tmp = target.with_suffix(".tmp")
+            tmp.write_text(json.dumps(t, ensure_ascii=False, sort_keys=True, indent=1), encoding="utf-8")
+            tmp.replace(target)
         return t[strategy]
 
     # değerlendirme -----------------------------------------------------
