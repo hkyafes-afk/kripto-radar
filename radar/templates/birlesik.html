@@ -438,6 +438,37 @@ function renderPolatBridge(polat) {
   const count = Number.isInteger(p.observation_count) ? p.observation_count : 0;
   const source = p.source_run_id ? esc(p.source_run_id) : "—";
   const reason = p.reason ? esc(p.reason) : "Yok";
+  const t = p.telemetry && typeof p.telemetry === "object" ? p.telemetry : {};
+  const channels = t.channels && typeof t.channels === "object" ? t.channels : {};
+  const counters = t.channel_counters && typeof t.channel_counters === "object" ? t.channel_counters : {};
+  const latency = t.latency && typeof t.latency === "object" ? t.latency : {};
+  const connections = t.connections && typeof t.connections === "object" ? t.connections : {};
+  const metric = (v, suffix) => isNum(v) ? fmt(v, 1) + (suffix || "") : "—";
+  const channelRows = Object.keys(channels).sort().map(name => {
+    const row = channels[name] || {}, states = row.durumlar || {}, c = counters[name] || {};
+    return '<div class="dr"><div style="min-width:0"><b>' + esc(name) + '</b>' +
+      '<div class="t2">Sembol: ' + (Number.isInteger(row.sembol_sayisi) ? row.sembol_sayisi : "—") +
+      ' · LIVE ' + (states.LIVE ?? 0) + ' · STALE ' + (states.STALE ?? 0) +
+      ' · INVALID ' + (states.INVALID ?? 0) + ' · Kopuk ' + (states.DISCONNECTED ?? 0) +
+      ' · UNKNOWN ' + (states.UNKNOWN ?? 0) + '</div>' +
+      '<div class="t2">Duplicate ' + (c.duplicate ?? 0) + ' · ID duplicate ' + (c.duplicate_event_id ?? 0) +
+      ' · Sıra dışı ' + (c.out_of_order ?? 0) + ' · Sequence gap ' + (c.sequence_gap ?? 0) +
+      ' · Tahmini eksik update ' + (c.dropped_sequence_updates ?? 0) + '</div></div>' +
+      '<div class="tm num">' + metric(row.son_olay_yasi_ms_max, " ms") + '</div></div>';
+  }).join("");
+  const latencyRows = [
+    ["Feed gecikme p50 / p95 / p99 / max", ["gecikme_ms_p50","gecikme_ms_p95","gecikme_ms_p99","gecikme_ms_max"].map(k => metric(latency[k], " ms")).join(" / ")],
+    ["İşleme p50 / p95 / p99 / max", ["isleme_us_p50","isleme_us_p95","isleme_us_p99","isleme_us_max"].map(k => metric(latency[k], " µs")).join(" / ")],
+    ["Örnek sayısı (feed / işlem)", (latency.gecikme_ornek_sayisi ?? 0) + " / " + (latency.isleme_ornek_sayisi ?? 0)]
+  ].map(row => '<div class="dr"><div><b>' + esc(row[0]) + '</b></div><div class="tm num">' + esc(row[1]) + '</div></div>').join("");
+  const connectionRows = Object.keys(connections).sort().map(name => {
+    const c = connections[name] || {};
+    const error = c.last_error ? ' · Son hata: ' + esc(c.last_error) : "";
+    return '<div class="dr"><div style="min-width:0"><b>' + esc(name) + '</b><div class="t2">Deneme ' +
+      (c.attempts ?? 0) + ' · Bağlandı ' + (c.connected ?? 0) + ' · Koptu ' + (c.disconnects ?? 0) +
+      error + '</div></div><div class="tm">' +
+      (isNum(c.last_connected_ms) ? ago(c.last_connected_ms) : "Bağlantı yok") + '</div></div>';
+  }).join("");
   return '<div class="card dl"><div class="hrow"><h2>Polat → Unified · araştırma köprüsü</h2><span class="st ' + state[1] + '">' + state[0] + '</span></div>' +
     '<div class="cells"><div class="cell"><div class="l">Gözlem sayısı</div><div class="v num">' + count + '</div></div>' +
     '<div class="cell"><div class="l">Snapshot yaşı</div><div class="v num">' + age + '</div></div>' +
@@ -445,9 +476,13 @@ function renderPolatBridge(polat) {
     '<div class="cell"><div class="l">Sıra</div><div class="v num">' + (p.sequence ?? "—") + '</div></div></div>' +
     '<div class="dr"><div><b>Kaynak koşu</b></div><div class="tm">' + source + '</div></div>' +
     '<div class="dr"><div><b>Durum nedeni</b></div><div class="tm">' + reason + '</div></div>' +
-    '<div class="note">Yalnız araştırma/teşhis telemetrisi. UnifiedTrader fiyatı, kararları, emirleri, portföy değerlemesi veya pozisyon yetkisini değiştirmez. Ortak kalıcı disk yolu kurulmadıysa köprü devre dışı veya eksik görünür.</div></div>';
+    '<div class="sec">Kanal kalite durumu ve olay sayaçları</div>' +
+    (channelRows || '<div class="card empty">İmzalı snapshot içinde kanal telemetrisi yok.</div>') +
+    '<div class="sec">Gecikme dağılımı</div>' + latencyRows +
+    '<div class="sec">WebSocket bağlantı sağlığı</div>' +
+    (connectionRows || '<div class="card empty">Bağlantı telemetrisi yok.</div>') +
+    '<div class="note">Yalnız araştırma/teşhis telemetrisi. UnifiedTrader fiyatı, kararları, emirleri, portföy değerlemesi veya pozisyon yetkisini değiştirmez. Ortak kalıcı disk yolu kurulmadıysa köprü devre dışı veya eksik görünür. Sequence gap, paket seviyesinde kayıp ölçümü değil; borsa sıra numarasından türetilmiş eksik update tahminidir.</div></div>';
 }
-
 function renderDataHealth(durum) {
   const q = durum && durum.tanilama;
   if (!q || q.hazir === false) return '<div class="card empty">Birleşik Baş Trader veri tanılaması henüz yayımlanmadı. Veri yok.</div>';
