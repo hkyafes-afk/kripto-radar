@@ -12,6 +12,8 @@ from radar.unified.combo.paper import ComboPaperAdapter
 from radar.unified.combo.position import LongLot
 from radar.unified.combo.strategy import ComboStrategy
 from radar.unified.combo.feed import ComboWebSocketListener
+from radar.unified.combo.models import ComboOrderStatus
+from radar.ws import OKXFeed
 from radar.unified.combo.instrument import OKXInstrumentMetadata
 
 NOW = 1_800_000_000_000
@@ -281,3 +283,53 @@ def test_websocket_listener_consumes_contract_size_and_converts_to_btc():
     assert listener.last_result["status"] == "base_opened"
     assert strategy.paper.position.qty == pytest.approx(0.013)
     assert listener.status()["execution_mode"] == "PAPER_ONLY"
+
+
+
+def test_partial_sell_does_not_rearm_full_size_buy_until_fully_filled():
+    strategy = ComboStrategy()
+    strategy.on_quote(quote(), now_ms=NOW)
+    sell = next(o for o in strategy.paper.orders.values()
+                if o.active and o.side == "sell" and o.role == "sell_grid")
+    counter_level = sell.level_index - 1
+    existing_buy = next(o for o in strategy.paper.orders.values()
+                        if o.active and o.side == "buy" and o.level_index == counter_level)
+    existing_buy.status = ComboOrderStatus.CANCELLED
+
+    partial = strategy.on_quote(
+        quote(last=sell.price, bid=sell.price, ask=sell.price + 0.2,
+              bid_size=0.005, ask_size=0.05, ts=NOW + 1_000),
+        now_ms=NOW + 1_000,
+    )
+    assert partial["position_qty_btc"] == pytest.approx(0.008)
+    assert strategy.paper.orders[sell.order_id].status is ComboOrderStatus.PARTIALLY_FILLED
+    assert not any(o.active and o.side == "buy" and o.level_index == counter_level
+                   for o in strategy.paper.orders.values())
+
+    complete = strategy.on_quote(
+        quote(last=sell.price, bid=sell.price, ask=sell.price + 0.2,
+              bid_size=0.008, ask_size=0.05, ts=NOW + 2_000),
+        now_ms=NOW + 2_000,
+    )
+    assert complete["position_qty_btc"] == pytest.approx(0.0)
+    assert strategy.paper.orders[sell.order_id].status is ComboOrderStatus.FILLED
+    assert any(o.active and o.side == "buy" and o.level_index == counter_level
+               and o.qty == pytest.approx(0.013) for o in strategy.paper.orders.values())
+
+
+def test_okx_public_feed_preserves_legacy_callback_and_labels_swap_sizes():
+    legacy_ticks = []
+    observed = []
+    feed = OKXFeed(on_tick=lambda *args: legacy_ticks.append(args))
+    feed.add_tick_listener(observed.append)
+    feed.handle({
+        "arg": {"channel": "tickers", "instId": "BTC-USDT-SWAP"},
+        "data": [{
+            "instId": "BTC-USDT-SWAP", "last": "78000", "bidPx": "77999.9",
+            "askPx": "78000.1", "bidSz": "5", "askSz": "7", "ts": str(NOW),
+        }],
+    })
+    assert legacy_ticks == [("okx", "BTC-USDT-SWAP", 78000.0, 77999.9, 78000.1, NOW)]
+    assert observed[0]["size_unit"] == "contracts_for_swap"
+    assert observed[0]["bid_size_contracts"] == 5.0
+    assert observed[0]["ask_size_contracts"] == 7.0
