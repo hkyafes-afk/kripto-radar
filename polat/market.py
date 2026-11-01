@@ -115,6 +115,8 @@ class Coin:
         self.tick_ts = 0
         self.book = OrderBook()
         self.tape: deque = deque(maxlen=5000)         # (ts, px, baz, +1 alım / −1 satım)
+        self.trade_ids: deque = deque(maxlen=5000)
+        self.trade_id_set: set[str] = set()
         self.cvd = 0.0                                # kümülatif agresif alım − satım (USDT)
         self.cvd_hist: deque = deque(maxlen=2000)     # (ts, cvd, px) her işlemde değil, 1 sn'de bir
         self.big_trades: deque = deque(maxlen=200)
@@ -214,7 +216,7 @@ class Market:
         counters = self.channel_counters.setdefault(channel, {
             "observations": 0, "live": 0, "stale": 0, "invalid": 0, "unknown": 0,
             "duplicate": 0, "out_of_order": 0, "sequence_gap": 0,
-            "disconnected": 0, "dropped_sequence_updates": 0,
+            "disconnected": 0, "dropped_sequence_updates": 0, "duplicate_event_id": 0,
         })
         counters["observations"] += 1
         if obs.state is QualityState.LIVE:
@@ -409,13 +411,32 @@ class Market:
         try:
             px, sz = float(d["px"]), float(d["sz"]) * c.ct
             ts = int(d.get("ts") or 0)
+            trade_id = str(d.get("tradeId") or "").strip()
         except (KeyError, TypeError, ValueError, OverflowError):
             self._observe_quality(inst, "trades", None, recv_ms, valid=False)
             return
-        valid = isfinite(px) and isfinite(sz) and px > 0 and sz > 0 and ts > 0 and d.get("side") in ("buy", "sell")
-        self._observe_quality(inst, "trades", ts or None, recv_ms, valid=valid)
+        valid = (isfinite(px) and isfinite(sz) and px > 0 and sz > 0 and ts > 0
+                 and d.get("side") in ("buy", "sell") and bool(trade_id))
+        if not valid:
+            self._observe_quality(inst, "trades", ts or None, recv_ms, valid=False)
+            return
+        if trade_id in c.trade_id_set:
+            self._observe_quality(inst, "trades", ts, recv_ms, valid=False)
+            counters = self.channel_counters.setdefault("trades", {
+                "observations": 0, "live": 0, "stale": 0, "invalid": 0, "unknown": 0,
+                "duplicate": 0, "out_of_order": 0, "sequence_gap": 0,
+                "disconnected": 0, "dropped_sequence_updates": 0, "duplicate_event_id": 0,
+            })
+            counters["duplicate"] += 1
+            counters["duplicate_event_id"] += 1
+            return
+        self._observe_quality(inst, "trades", ts, recv_ms, valid=True)
         if self.quality_latest[(inst, "trades")].state is not QualityState.LIVE:
             return
+        if len(c.trade_ids) == c.trade_ids.maxlen:
+            c.trade_id_set.discard(c.trade_ids[0])
+        c.trade_ids.append(trade_id)
+        c.trade_id_set.add(trade_id)
         sgn = 1 if d.get("side") == "buy" else -1
         c.tape.append((ts, px, sz, sgn))
         usd = px * sz
