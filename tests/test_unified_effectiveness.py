@@ -153,3 +153,49 @@ def test_unified_paper_fourteen_day_evidence_requires_entry_provenance():
     item = report["kapsamlar"]["strateji:swing_trend:birlesik:paper"]
     assert item["evidence_window_days"] == 0.0
     assert item["karar"] == "kanit_yetersiz"
+
+
+def test_bootstrap_ci_and_top3_concentration_match_independent_numpy_calculation():
+    import numpy as np
+
+    from radar.unified.models import EffectivenessSnapshot
+
+    returns = [4.0, 2.0, 1.0, 0.25, -0.5, -0.75, -1.0, 0.5, 0.1, -0.2]
+    snapshot = EffectivenessSnapshot.from_r("independent", NOW, returns, n_boot=2_000, alpha=0.05, seed=7)
+    rs = np.asarray(returns, dtype=float)
+    rng = np.random.default_rng(7)
+    means = rs[rng.integers(0, len(rs), size=(2_000, len(rs)))].mean(axis=1)
+    assert snapshot.ci_low_r == float(np.quantile(means, 0.025))
+    assert snapshot.ci_high_r == float(np.quantile(means, 0.975))
+    assert snapshot.top3_share == (4.0 + 2.0 + 1.0) / (4.0 + 2.0 + 1.0 + 0.25)
+    assert snapshot.n_trades == len(returns)
+
+
+def test_effectiveness_trial_history_corruption_never_falls_back_to_one_trial(tmp_path):
+    auditor = EffectivenessAuditor(root=tmp_path)
+    (tmp_path / "denemeler.json").write_text("{broken", encoding="utf-8")
+    import pytest
+
+    with pytest.raises(ValueError, match="DSR hesabı durduruldu"):
+        auditor.audit(legacy("kemal", sentetik_r(40, 0.2)), now_ms=NOW)
+
+
+def test_effectiveness_trial_registration_rejects_zero_negative_bool_and_empty_strategy(tmp_path):
+    import pytest
+
+    auditor = EffectivenessAuditor(root=tmp_path)
+    for strategy, count in [("swing_trend", 0), ("swing_trend", -1),
+                            ("swing_trend", True), ("", 2)]:
+        with pytest.raises(ValueError):
+            auditor.register_trials(strategy, count)
+    assert auditor.trials() == {}
+
+
+def test_effectiveness_trial_history_rejects_string_and_boolean_counts(tmp_path):
+    import pytest
+
+    path = tmp_path / "denemeler.json"
+    for payload in ['{"swing_trend": "500"}', '{"swing_trend": true}', '[]']:
+        path.write_text(payload, encoding="utf-8")
+        with pytest.raises(ValueError, match="DSR hesabı durduruldu"):
+            EffectivenessAuditor(root=tmp_path).trials()
