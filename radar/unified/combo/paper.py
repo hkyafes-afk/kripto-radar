@@ -270,8 +270,11 @@ class ComboPaperAdapter:
             qty = min(order.remaining_qty, ask_left)
             px = min(order.price, quote.ask)
             fee = qty * px * self.cfg.maker_fee_rate
-            lot_id = f"{order.order_id}-lot-{len([f for f in self.fills if f.order_id == order.order_id]) + 1}"
-            self.position.add(LongLot(lot_id, px, qty, order.level_index, now_ms))
+            # Partial fills of one fixed-size BUY order aggregate into one inventory lot.
+            lot_id = f"{order.order_id}-lot-1"
+            self.position.add(LongLot(
+                lot_id, px, qty, order.level_index, now_ms, source_order_id=order.order_id
+            ))
             self.fees_paid_usdt += fee
             order.filled_qty += qty
             order.updated_ts_ms = now_ms
