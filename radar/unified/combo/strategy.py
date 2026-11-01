@@ -124,6 +124,11 @@ class ComboStrategy:
             self.paper._event("quote_stale", self.last_data_issue, now)
             self.paper.save()
             return {"status": "stale_quote", **self.paper.snapshot()}
+        if self.paper.last_quote_ts_ms is not None and quote.ts_ms <= self.paper.last_quote_ts_ms:
+            self.paper._event("quote_duplicate", "Eski/tekrarlanan WebSocket tick'i işlenmedi", now)
+            self.paper.save()
+            return {"status": "duplicate_quote", **self.paper.snapshot()}
+        self.paper.last_quote_ts_ms = quote.ts_ms
         self.last_data_issue = None
         self.paper.last_mark = quote.last
 
