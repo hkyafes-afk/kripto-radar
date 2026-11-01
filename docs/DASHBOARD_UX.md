@@ -52,3 +52,10 @@
 - birlesik.karar_modu: unified durumunda ana sayfa birlesik/durum.json dosyasını kullanır; önceki shadow durumu birlesik/golge/durum.json ayrı kalır.
 - Durum seçimi zaman damgasına göre yapılır; eski shadow portföyü yeni paper portföyü gibi gösterilmez.
 - Unified mod etiketi PAPER · TEK OTORİTE olarak görünür. Legacy Radar ve Polat arşiv/management-only durumundadır; portföyleri birleşik 100 USDT bakiyesine eklenmez.
+
+
+## Dashboard veri kaynağı ve güncellik şeritleri — 2026-11-01
+
+Her ana sekmenin üstünde, o görünümün gerçek kaynak yolu, kaynak zaman damgası ve hesaplama kapsamı gösterilir. Fırsat/Karar günlükleri JSONL kayıt zamanını; Portföy yalnız Unified PAPER durum dosyasını; Performans yayımlanmış karne snapshot'ını; Deney Laboratuvarı ayrı SHADOW sonuçlarını; Veri Sağlığı sunucu BBO tanılamasını; Ayarlar salt-okunur katalog dosyasını kullanır.
+
+Mobilde kaynak şeridi satır sarar; ilk veri beklenirken erişilebilir yükleniyor durumu, uyarılarda aria-live bildirimi bulunur. Tarayıcıdaki public OKX ticker akışı karar motoru kaynağı değildir ve statik snapshot'a gerçek zamanlılık garantisi eklemez.

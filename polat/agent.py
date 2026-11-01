@@ -25,13 +25,15 @@ from .journal import DISCLAIMER, Journal, report, report_md
 from .market import Market
 from .okx import Feed, Rest, TF_MS, now_ms
 from .risk import Risk, utc_day as _utc_day
+from radar.unified.market_data import normalize_bbo
+from radar.unified.polat_bridge import write_snapshot
 
 VERSION = "2.0"
 
 
 def new_position_authorized(cfg: dict) -> bool:
     """Eski bağımsız ajanlar varsayılan olarak challenger'dır; yeni pozisyon yetkisi açıkça verilir."""
-    return bool((cfg.get("yetki") or {}).get("yeni_pozisyon", True))
+    return bool((cfg.get("yetki") or {}).get("yeni_pozisyon", False))
 
 
 class Notifier:
@@ -98,6 +100,13 @@ class Polat:
         self.lease_gate = None
         # Durum diskten yüklenmeden save() çağrılmaz: başlatma yarıda kalırsa boş defter gerçek durumun üstüne yazılmaz.
         self.state_ready = False
+        # Optional shared-volume bridge: always research-only; never an execution price source.
+        bridge_value = os.environ.get("POLAT_UNIFIED_BRIDGE_PATH", "").strip()
+        self.bridge_path = Path(bridge_value) if bridge_value else None
+        self.bridge_hmac_key = os.environ.get("POLAT_UNIFIED_BRIDGE_HMAC_KEY") or None
+        self.bridge_sequence = 0
+        self.bridge_run_id = str(os.environ.get("GITHUB_RUN_ID") or f"local-{os.getpid()}-{self.started}")
+        self.bridge_stats = {"published": 0, "failed": 0, "last_published_ms": None, "last_error": None}
 
     # ===================================================================================== durum
     @property
@@ -147,7 +156,15 @@ class Polat:
                                                                          "r", "pnl_net", "sure_saat", "hatalar", "ts")}
                                                     for x in self.recent_closes[-30:]][::-1],
                 "izlenen": sorted(self.deep), "risk": self.risk.to_state(), "veri": m.stats() if m else {},
-                "baglanti": self.feed.stats if self.feed else {}, "sayac": self.counters,
+                "baglanti": self.feed.stats if self.feed else {},
+                "unified_bridge": {
+                    "configured": self.bridge_path is not None,
+                    "scope": "research_only",
+                    "execution_authority": False,
+                    "hmac_configured": bool(self.bridge_hmac_key and len(self.bridge_hmac_key.encode("utf-8")) >= 32),
+                    **self.bridge_stats,
+                },
+                "sayac": self.counters,
                 "rest": {"istek": getattr(self.rest, "calls", 0), "tekrar": getattr(self.rest, "retries", 0),
                          "rtt_ms": {k: round(v, 1) for k, v in (getattr(self.rest, "rtt", {}) or {}).items()}},
                 "likidasyon_kalibrasyon": m.liq_calib if m else None, "global": m.global_ if m else {},
@@ -170,7 +187,8 @@ class Polat:
         except Exception:  # noqa: BLE001
             pass
         meta = await self.rest.instruments()
-        self.market = m = Market(self.cfg, meta)
+        journal_path = Path(os.getenv("TMPDIR", "/tmp")) / f"polat-market-events-{os.getpid()}.jsonl"
+        self.market = m = Market(self.cfg, meta, event_journal_path=journal_path)
         m.on_close = self._on_close
         m.on_trade = self._on_trade
         m.on_book_bad = self._on_book_bad
@@ -188,7 +206,7 @@ class Polat:
         if not self.learner.bench.get("btc_baslangic") and btc and btc.last:
             self.learner.bench.update(btc_baslangic=btc.last, baslangic_ts=now_ms())
             self.learner.save_weights()
-        self.feed = self.feed_cls(self.cfg, m.handle)
+        self.feed = self.feed_cls(self.cfg, m.handle, on_disconnect=m.disconnect_channels)
         self.feed.start()
         await self.feed.market_wide(list(meta))
         keep = {p["inst"] for p in self.broker.positions.values()}
@@ -206,6 +224,8 @@ class Polat:
                                f" · açık pozisyon {len(self.broker.positions)}")
         loops = [self._loop_select(), self._loop_second(), self._loop_save(), self._loop_ls(), self._loop_extras(),
                  self._bootstrap_h1_all(list(meta)), self._loop_eval(), self._loop_learn(), self._loop_fast()]
+        if self.bridge_path is not None:
+            loops.append(self._loop_bridge())
         self.tasks = [asyncio.create_task(x) for x in loops]
         if run_seconds:
             await asyncio.sleep(run_seconds)
@@ -219,6 +239,8 @@ class Polat:
             t.cancel()
         if self.feed:
             await self.feed.stop()
+        if self.market:
+            self.market.close()
         self.save()
         self.journal.write("olaylar", {"olay": "durdu", "neden": reason, "veri": self.market.stats() if self.market else {}})
         self.journal.flush()
@@ -252,9 +274,11 @@ class Polat:
         self.standby = False
         for t in self.tasks:
             t.cancel()
-        self.tasks = [asyncio.create_task(x) for x in (
-            self._loop_select(), self._loop_second(), self._loop_save(), self._loop_ls(), self._loop_extras(),
-            self._loop_eval(), self._loop_learn(), self._loop_fast())]
+        loops = [self._loop_select(), self._loop_second(), self._loop_save(), self._loop_ls(), self._loop_extras(),
+                 self._loop_eval(), self._loop_learn(), self._loop_fast()]
+        if self.bridge_path is not None:
+            loops.append(self._loop_bridge())
+        self.tasks = [asyncio.create_task(x) for x in loops]
         gap = (now_ms() - st["saved"]) / 1000 if st else None
         self.journal.write("olaylar", {"olay": "devraldi", "bosluk_sn": gap, "pozisyon": len(self.broker.positions)})
         return {"bosluk_sn": gap}
@@ -518,6 +542,87 @@ class Polat:
                 if ev:
                     ev["reason"] = act[1]
                     self._closed(c, ev)
+
+    def _publish_research_bridge(self) -> bool:
+        """Publish only fresh, quality-approved Polat tickers to an explicitly mounted shared path."""
+        if self.bridge_path is None or self.market is None:
+            return False
+        if not self.bridge_hmac_key or len(self.bridge_hmac_key.encode("utf-8")) < 32:
+            self.bridge_stats["failed"] += 1
+            self.bridge_stats["last_error"] = "bridge_hmac_key_missing_or_too_short"
+            return False
+        generated = now_ms()
+        observations = []
+        for inst, coin in list(self.market.coins.items()):
+            quality = self.market.quality_latest.get((inst, "tickers"))
+            if quality is None or quality.state.value != "LIVE" or not coin.tick_ts:
+                continue
+            if generated - coin.tick_ts < -1_000 or generated - coin.tick_ts > 5_000:
+                continue
+            item = normalize_bbo(
+                venue="okx", symbol=inst, last=coin.last, bid=coin.bid,
+                ask=coin.ask, event_ts_ms=coin.tick_ts,
+            )
+            if item.valid:
+                observations.append(item)
+        if not observations:
+            return False
+        observations.sort(key=lambda item: item.symbol)
+        # Unix-millisecond sequence survives normal process/runner restarts; never resets to 1.
+        sequence = max(generated, self.bridge_sequence + 1)
+        try:
+            metrics = self.market.stats()
+            quality = metrics.get("kalite_telemetrisi") or {}
+            feed_stats = self.feed.stats if self.feed else {}
+            connections = feed_stats.get("baglanti_telemetrisi") or {}
+            telemetry = {
+                "channels": quality.get("kanallar") or {},
+                "channel_counters": quality.get("kanal_sayaclari") or {},
+                "latency": {
+                    key: metrics.get(key) for key in (
+                        "gecikme_ornek_sayisi", "gecikme_ms_p50", "gecikme_ms_p95",
+                        "gecikme_ms_p99", "gecikme_ms_max", "isleme_ornek_sayisi",
+                        "isleme_us_p50", "isleme_us_p95", "isleme_us_p99", "isleme_us_max",
+                    )
+                },
+                "connections": {
+                    name: {
+                        "attempts": row.get("attempts", 0),
+                        "connected": row.get("connected", 0),
+                        "disconnects": row.get("disconnects", 0),
+                        "last_attempt_ms": row.get("last_attempt_ms"),
+                        "last_connected_ms": row.get("last_connected_ms"),
+                        "last_disconnected_ms": row.get("last_disconnected_ms"),
+                        "last_error": (str(row.get("last_error"))[:200] if row.get("last_error") is not None else None),
+                    }
+                    for name, row in connections.items()
+                },
+            }
+            write_snapshot(
+                self.bridge_path, sequence=sequence, generated_at_ms=generated,
+                observations=observations[:500], source_run_id=self.bridge_run_id,
+                telemetry=telemetry, hmac_key=self.bridge_hmac_key,
+            )
+        except (OSError, ValueError, TypeError) as exc:
+            self.bridge_stats["failed"] += 1
+            self.bridge_stats["last_error"] = f"{type(exc).__name__}: {str(exc)[:180]}"
+            return False
+        self.bridge_sequence = sequence
+        self.bridge_stats.update(published=self.bridge_stats["published"] + 1,
+                                 last_published_ms=generated, last_error=None)
+        return True
+
+    async def _loop_bridge(self):
+        """One-second research snapshot loop; absent shared storage, no bridge is advertised as active."""
+        while True:
+            await asyncio.sleep(1)
+            if getattr(self, "standby", False):
+                continue
+            try:
+                self._publish_research_bridge()
+            except Exception as exc:  # noqa: BLE001
+                self.bridge_stats["failed"] += 1
+                self.bridge_stats["last_error"] = f"{type(exc).__name__}: {str(exc)[:180]}"
 
     async def _loop_second(self):
         while True:

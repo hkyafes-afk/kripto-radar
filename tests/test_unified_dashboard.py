@@ -27,13 +27,41 @@ def test_site_birlesik_panelini_kopyalar_ve_baglar(tmp_path):
     assert page == alias
     assert "Kripto Radar" in legacy and "/*__DATA__*/null" not in legacy
     assert "Veri yok" in page and "Bayat" in page and "Bağlantı kesik" in page and "PAPER · TEK OTORİTE" in page
+    assert "renderForwardEvidence" in page and 'id="forwardEvidence"' in page
+    assert "14 gün ve 100 kapanış yalnız doğrulama/terfi kanıtıdır" in page
+    assert "PAPER işlemlerinin açılmasını engellemez" in page
+    assert "closed_paper_trades" in page
+    assert "Ayarlar" in page and "renderSettings" in page and "birlesik/ayarlar.json" in page
+    assert "Yeniden başlatma" in page and "doğrulanmadı" in page
+    assert "Veri Sağlığı" in page and "renderDataHealth" in page and "tanilama" in page
+    assert "renderPolatBridge" in page and "birlesik/polat_kopru.json" in page
+    assert "Yalnız araştırma/teşhis telemetrisi" in page and "Gözlem sayısı" in page
+    assert "Kanal kalite durumu ve olay sayaçları" in page
+    assert "Gecikme dağılımı" in page and "WebSocket bağlantı sağlığı" in page
+    assert "dropped_sequence_updates" in page and "duplicate_event_id" in page
+    assert all(label in page for label in ("Fırsatlar", "Portföy", "Karar Merkezi", "Performans", "Deney Laboratuvarı"))
+    assert "renderOpportunities" in page and "renderExperimentLab" in page
+    assert "renderKarne(data && data.karne" in page
+    assert "function sourceMeta" in page and "Kaynak güncellemesi" in page and "sourcebar" in page
+    assert "birlesik/durum.json → pozisyonlar / kapananlar" in page
+    assert "data.json → karne.yeni_golge" in page
+    assert 'role="status"' in page and 'aria-live="polite"' in page
     assert 'id="modeTag"' in page and "Deneysel doğrulama sürüyor" in page
     assert (tmp_path / "polat.html").exists()
+    settings = json.loads((tmp_path / "birlesik" / "ayarlar.json").read_text(encoding="utf-8"))
+    assert settings["mode"] == "read_only_discovery"
+    assert settings["write_enabled"] is False
+    assert settings["write_ready_count"] == 0
+    params = {item["path"]: item for item in settings["parameters"]}
+    assert params["birlesik.paper.baslangic_bakiye"]["value"] == 100
+    assert params["birlesik.yurutme_modu"]["protected"] is True
 
 
 def test_panel_dis_kaynak_yuklemez():
     page = (Path(__file__).resolve().parent.parent / "radar" / "templates" / "birlesik.html").read_text(encoding="utf-8")
-    assert "<script src" not in page and "http://" not in page and "https://" not in page
+    assert "<script src" not in page and "http://" not in page
+    assert page.count("https://") == 1
+    assert "https://github.com/hkyafes-afk/kripto-radar/actions/workflows/settings-change-request.yml" in page
 
 
 def test_sentetik_golge_ozeti_yazilir(tmp_path):

@@ -15,7 +15,7 @@ from typing import Any, Mapping
 from . import coverage as cov
 from .flags import unified_cfg
 from .models import (CandleContext, CoinClass, DataQualityContext, DerivativesContext, LiquidityContext, MarketContext,
-                     MarketStructure, RegimeContext, Trend, VolumeContext, is_finite_number)
+                     MarketStructure, RegimeContext, Trend, VolumeContext, Horizon, is_finite_number)
 
 DAY_MS = 86_400_000
 
@@ -95,9 +95,13 @@ class FactorEngine:
         factors = cov.factors_from_legacy_ctx(extended, now_ms=now_ms, specs=cov.SWING_SPECS,
                                               bar_close_ms=(now_ms if not complete else bar_open_ms + DAY_MS),
                                               live_ts_ms=live_ts_ms, static_ts_ms=now_ms)
-        coverage = cov.compute_coverage(cov.SWING_SPECS, factors, now_ms=now_ms, min_ratio=self.min_ratio)
+        coverage_by_horizon = {
+            horizon: cov.compute_coverage(specs, factors, now_ms=now_ms, min_ratio=self.min_ratio)
+            for horizon, specs in cov.DEFAULT_SPECS.items()
+        }
+        coverage = coverage_by_horizon[Horizon.SWING]
         return MarketContext(symbol=str(ctx.get("sym") or ""), inst=str(ctx.get("inst") or ""), ts_ms=int(now_ms),
                              timeframe=tf, candles={tf: candle}, structure={tf: structure}, volume=volume,
                              liquidity=_liquidity(ctx, ws_healthy), derivatives=deriv, regime=regime,
                              data_quality=dq, coin_class=cls, coin_age_days=age_days, factors=factors,
-                             coverage=coverage, raw=dict(ctx))
+                             coverage=coverage, coverage_by_horizon=coverage_by_horizon, raw=dict(ctx))

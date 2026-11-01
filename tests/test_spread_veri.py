@@ -51,12 +51,22 @@ def test_eksik_ve_bayat_bid_ask_gerçek_spread_olmaz():
 
 
 def test_motor_defterinden_bbo_okunur():
+    from radar.unified.quality import ChannelRule, MarketDataQualityEngine
     fe = Engine.__new__(Engine)
+    fe.BBO_MAX_AGE_S = 15.0
     fe.book = {"X-USDT-SWAP": (100.0, 99.5, 100.5, __import__("time").time() - 2.0)}
+    fe.bbo_quality = MarketDataQualityEngine({"ws_ticker": ChannelRule(max_age_ms=15_000)})
+    fe.bbo_quality_latest = {}
+    event_ms = int(fe.book["X-USDT-SWAP"][3] * 1000)
+    receive_ms = int(__import__("time").time() * 1000)
+    fe.bbo_quality_latest[("okx", "X-USDT-SWAP")] = fe.bbo_quality.observe(
+        symbol="X-USDT-SWAP", channel="ws_ticker", event_ts_ms=event_ms,
+        receive_ts_ms=receive_ms, valid=True,
+    )
     b = fe._book_ctx("X-USDT-SWAP")
     assert b["bid"] == 99.5 and b["ask"] == 100.5 and 1.5 < b["book_age_s"] < 10
     y = fe._book_ctx("YOK-USDT-SWAP")
-    assert y["bid"] is None and y["ask"] is None and y["book_age_s"] is None and y["bbo_kaynak"] == "yok"
+    assert y["bid"] is None and y["ask"] is None and y["book_age_s"] is None
 
 
 INST_T = "X-USDT-SWAP"
@@ -69,6 +79,9 @@ def _fe_rest(site, tickers, book=None):
     fe = fake_engine(site)
     fe.book = dict(book or {})
     fe.feeds = {}
+    # OKX public ticker fixture'ları gerçek borsa zaman damgası taşır.
+    for ticker in tickers:
+        ticker.setdefault("ts", str(int(_t.time() * 1000)))
     fe.client = NS(tickers=lambda t: tickers)               # YALNIZ public tickers; başka çağrı varsa hata
     fe.bbo_rest = {}
     fe.meta[INST_T] = {**fe.meta.get(INST_T, {}), "ct_val": 1.0, "lot_sz": 0.001, "min_sz": 0.001, "max_lev": 20.0}
@@ -89,7 +102,7 @@ def test_bayat_ws_ve_rest_yoksa_spread_gecmez(tmp_path):
     fe = _fe_rest(tmp_path, [], book={"X-USDT-SWAP": (100.0, 99.0, 101.0, _t.time() - 60)})
     fe._bbo_snapshot({"X-USDT-SWAP"})
     b = fe._book_ctx("X-USDT-SWAP")
-    assert b["bid"] is None and b["ask"] is None and b["bbo_kaynak"] in ("yok", "ws_eski")
+    assert b["bid"] is None and b["ask"] is None and b["bbo_kaynak"] == "kalite_yok"
 
 
 def test_tanilama_dosyasi_yazilir(tmp_path):

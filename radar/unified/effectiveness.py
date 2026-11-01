@@ -98,10 +98,14 @@ def _unified_rows(closed: Iterable[Mapping]) -> list[dict]:
         r = c.get("r")
         if not is_finite_number(r):
             continue
-        rows.append({"kaynak": "birlesik", "strategy": c.get("strategy") or "?", "mgr": None, "golge": False,
+        raw_scope = str(c.get("execution_scope") or "unknown")
+        mode = "paper" if raw_scope == "unified" else ("golge" if raw_scope == "shadow" else "unknown")
+        rows.append({"kaynak": "birlesik", "strategy": c.get("strategy") or "?", "mgr": None,
+                     "golge": mode == "shadow", "mode": mode,
                      "r": float(r), "net_usd": float(c.get("net_usd") or 0.0), "cost_usd": float(c.get("fees_usd") or 0.0),
                      "funding_usd": float(c.get("funding_usd") or 0.0), "rejim": c.get("regime") or "?",
-                     "ufuk": c.get("horizon") or _horizon(c.get("timeframe")), "ts": int(c.get("closed_ts") or 0),
+                     "ufuk": c.get("horizon") or _horizon(c.get("timeframe")),
+                     "entry_ts": int(c.get("opened_ts") or 0), "ts": int(c.get("closed_ts") or 0),
                      "carry": False})
     return rows
 
@@ -142,18 +146,37 @@ class EffectivenessAuditor:
 
     def trials(self) -> dict[str, int]:
         p = self.trials_path
-        try:
-            return {k: int(v) for k, v in json.loads(p.read_text(encoding="utf-8")).items()} if p and p.exists() else {}
-        except (OSError, ValueError):
+        if p is None or not p.exists():
             return {}
+        try:
+            raw = json.loads(p.read_text(encoding="utf-8"))
+        except (OSError, ValueError) as exc:
+            # Missing/malformed trial history must never silently become one trial (looser DSR).
+            raise ValueError(f"deneme geçmişi okunamadı; DSR hesabı durduruldu: {exc}") from exc
+        if not isinstance(raw, dict):
+            raise ValueError("deneme geçmişi JSON nesnesi değil; DSR hesabı durduruldu")
+        validated: dict[str, int] = {}
+        for strategy, count in raw.items():
+            if (not isinstance(strategy, str) or not strategy.strip()
+                    or type(count) is not int or count < 1):
+                raise ValueError("deneme geçmişi içinde geçersiz strateji/deneme sayısı; DSR hesabı durduruldu")
+            validated[strategy] = count
+        return validated
 
     def register_trials(self, strategy: str, n: int) -> int:
         """Bir strateji için denenen kural/parametre varyantı sayısını artırır (aynı veride her deneme sayılır)."""
+        if not isinstance(strategy, str) or not strategy.strip():
+            raise ValueError("strateji kimliği boş olamaz")
+        if type(n) is not int or n < 1:
+            raise ValueError("deneme artışı pozitif tam sayı olmalı")
         t = self.trials()
-        t[strategy] = t.get(strategy, 0) + int(n)
+        t[strategy] = t.get(strategy, 0) + n
         if self.trials_path:
             self.root.mkdir(parents=True, exist_ok=True)
-            self.trials_path.write_text(json.dumps(t, ensure_ascii=False, indent=1), encoding="utf-8")
+            target = self.trials_path
+            tmp = target.with_suffix(".tmp")
+            tmp.write_text(json.dumps(t, ensure_ascii=False, sort_keys=True, indent=1), encoding="utf-8")
+            tmp.replace(target)
         return t[strategy]
 
     # değerlendirme -----------------------------------------------------
@@ -168,6 +191,31 @@ class EffectivenessAuditor:
         d["maliyet_payi"] = (cost / gross) if gross > 0 else None             # brüt kârın ne kadarı maliyete gitti
         d["dsr"] = deflated_sharpe(rs, n_trials)
         d["karar"], d["karar_tr"] = self.verdict(snap, d["dsr"])
+        if scope.startswith("strateji:") and ":birlesik:paper" in scope:
+            # Forward evidence spans actual PAPER entry → final exit timestamps.
+            # Missing entry provenance means the 14-day requirement is not proven.
+            entries = [int(row.get("entry_ts") or 0) for row in rows]
+            exits = [int(row.get("ts") or 0) for row in rows]
+            evidence_ok = bool(entries) and all(ts > 0 for ts in entries + exits)
+            d["evidence_window_days"] = (
+                round((max(exits) - min(entries)) / 86_400_000, 2) if evidence_ok else 0.0
+            )
+        else:
+            timestamps = [int(row.get("ts") or 0) for row in rows if int(row.get("ts") or 0) > 0]
+            d["evidence_window_days"] = (
+                round((max(timestamps) - min(timestamps)) / 86_400_000, 2)
+                if len(timestamps) >= 2 else 0.0
+            )
+        # Unified PAPER için 100 kapanmış işlem ve istatistiksel kanıt tek başına
+        # yeterli değildir: gerçek forward kayıtları en az 14 güne yayılmalıdır.
+        # Legacy/backtest sınıfları bu canlı PAPER kapısını taklit edemez.
+        if (scope.startswith("strateji:") and ":birlesik:paper" in scope
+                and d["karar"] == "terfi_adayi" and d["evidence_window_days"] < 14.0):
+            d["karar"] = "kanit_yetersiz"
+            d["karar_tr"] = (
+                f"100 işlem ve istatistik eşiği sağlandı; ancak Unified PAPER forward kanıtı "
+                f"{d['evidence_window_days']:.2f}/14 gün. Gözlem sürmeli."
+            )
         return d
 
     def verdict(self, snap: EffectivenessSnapshot, dsr: dict | None) -> tuple[str, str]:
@@ -202,7 +250,7 @@ class EffectivenessAuditor:
             if r["carry"]:
                 add("carry", r)
                 continue
-            mode = "golge" if r["golge"] else "paper"
+            mode = r.get("mode") if r["kaynak"] == "birlesik" else ("golge" if r["golge"] else "paper")
             add(f"sistem:{r['kaynak']}:{mode}", r)
             add(f"strateji:{r['strategy']}:{r['kaynak']}:{mode}", r)
             add(f"rejim:{r['rejim']}:{r['kaynak']}:{mode}", r)

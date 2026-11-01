@@ -54,6 +54,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;paddin
 .cells{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}
 .cell{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:8px 9px;min-width:0}
 .cell .l{color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.metric-source{font-size:10px;color:var(--muted);opacity:.85;line-height:1.25;margin-top:3px;overflow-wrap:anywhere;grid-column:1 / -1}
 .cell .v{font-weight:800;font-size:16px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sys{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}
 @media (max-width:420px){.sys{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -127,6 +128,16 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;paddin
 .dpre{white-space:pre-wrap;overflow-wrap:anywhere}
 .lvst{font-size:12px;margin-top:3px}
 .foot{color:var(--dim);font-size:12px;line-height:1.5;margin:6px 2px 16px}
+.sourcebar{display:flex;align-items:flex-start;justify-content:space-between;gap:8px 14px;flex-wrap:wrap;padding:10px 12px;margin:0 0 12px;background:var(--card2);border:1px solid var(--line);border-radius:12px;font-size:12.5px;line-height:1.45}
+.sourcebar b{font-weight:750}.sourcebar .mut{overflow-wrap:anywhere}.sourcebar-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sourcebar .st{font-size:11px}
+.evidence-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+.evidence-item{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:10px;min-width:0}
+.evidence-item .l{font-size:12px;color:var(--muted)} .evidence-item .v{font-size:20px;font-weight:800;margin-top:4px}
+.evidence-track{height:7px;border-radius:8px;background:var(--line);overflow:hidden;margin-top:8px}
+.evidence-track i{display:block;height:100%;background:var(--blue);border-radius:8px}
+@media(max-width:420px){.sourcebar{padding:9px 10px}.sourcebar-meta{width:100%;justify-content:space-between}}
+
 </style>
 </head>
 <body>
@@ -140,14 +151,15 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;paddin
       </div>
       <div class="tag" id="modeTag">Gerçek emir yok • Canlı piyasa • Sanal işlemler</div>
       <div class="fresh" id="fresh"></div>
-      <div id="warn"></div>
+      <div id="warn" aria-live="polite" aria-atomic="true"></div>
       <div class="kpis" id="kpis"></div>
+      <div id="forwardEvidence"></div>
       <div class="card" id="btc"></div>
       <div class="card" id="sys"></div>
     </div>
     <div class="col2">
       <div class="tabs" id="tabs"></div>
-      <div id="view"></div>
+      <div id="view" aria-live="polite"><div class="card empty" role="status">Gerçek PAPER ve piyasa verileri yükleniyor…</div></div>
       <div class="card" id="pf"></div>
       <div class="foot">Tek karar verici Baş Trader'dır; açma, red, bekleme, çıkış, boyut ve sermaye dağılımını yalnız o belirler.
         Trend, sıkışma kırılımı, kontrollü kırılım vb. yalnız strateji / sinyal kaynağı etiketidir. Bu sayfa yalnız canlı sistemin
@@ -157,10 +169,10 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;paddin
 </div>
 <nav class="bnav" id="bnav">
   <button data-go="home" class="on"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3 2 11h3v9h6v-6h2v6h6v-9h3z"/></svg>Ana Sayfa</button>
-  <button data-go="acik"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h13l-3-3M20 17H7l3 3"/></svg>İşlemler</button>
+  <button data-go="portfoy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h13l-3-3M20 17H7l3 3"/></svg>Portföy</button>
   <button data-go="karar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="m8 12 3 3 5-6"/></svg>Kararlar</button>
-  <button data-go="karne"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 20V10M10 20V4M15 20v-7M20 20V8"/></svg>Karne</button>
-  <button data-go="sistem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>Sistem</button>
+  <button data-go="performans"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 20V10M10 20V4M15 20v-7M20 20V8"/></svg>Performans</button>
+  <button data-go="veri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>Veri</button>
 </nav>
 <script>
 "use strict";
@@ -190,8 +202,8 @@ const COLORS = ["#14b8a6", "#c2a633", "#8b5cf6", "#ec4899", "#0ea5e9", "#f97316"
 const coinIcon = s => { s = String(s || "?"); let h = 0; for (const c of s) h = (h * 31 + c.charCodeAt(0)) >>> 0;
   const col = s === "BTC" ? "#f7931a" : s === "ETH" ? "#627eea" : COLORS[h % COLORS.length];
   return `<div class="coin" style="background:${col}">${esc(s.slice(0, 1))}</div>`; };
-const S = {tab: "acik", range: 24, data: null};
-try { const t = localStorage.getItem("bt_tab"); if (t) S.tab = t; } catch (e) {}
+const S = {tab: "portfoy", range: 24, data: null};
+try { const t = localStorage.getItem("bt_tab"); if (t) S.tab = (t === "acik" || t === "kapanan") ? "portfoy" : t === "karne" ? "performans" : t; } catch (e) {}
 
 async function get(p, lines = false) {
   try { const r = await fetch(p + "?t=" + Date.now(), {cache: "no-store"});
@@ -234,6 +246,33 @@ function areaChart(h, H, fmtY, base) {
     <text x="${W - pr + 6}" y="${y(last) + 4}" fill="#fff" font-size="12" font-weight="700">${esc(fmtY(last))}</text></svg>`;
 }
 
+function renderForwardEvidence(durum) {
+  const root = $("forwardEvidence");
+  if (!root) return;
+  const e = durum && durum.forward_paper_kaniti;
+  if (!e || typeof e !== "object") {
+    root.innerHTML = '<div class="card"><div class="hrow"><h2>İleri PAPER doğrulaması</h2><span class="st st-yok">Henüz yayımlanmadı</span></div><div class="note">14 günlük gözlem ve kapanmış işlem kanıtı henüz durum dosyasında yok. Bu sayaç işlem açma izni değildir; PAPER yürütmesini engellemez.</div></div>';
+    return;
+  }
+  const days = isNum(e.elapsed_days) ? Math.max(0, e.elapsed_days) : null;
+  const requiredDays = isNum(e.required_days) && e.required_days > 0 ? e.required_days : 14;
+  const trades = Number.isInteger(e.closed_paper_trades) ? Math.max(0, e.closed_paper_trades) : null;
+  const requiredTrades = Number.isInteger(e.required_closed_trades) && e.required_closed_trades > 0 ? e.required_closed_trades : 100;
+  const dayPct = days == null ? 0 : Math.min(100, days / requiredDays * 100);
+  const tradePct = trades == null ? 0 : Math.min(100, trades / requiredTrades * 100);
+  const ready = e.promotion_evidence_ready === true;
+  const state = ready ? '<span class="st st-ok">Kanıt hazır</span>' : '<span class="st st-bayat">Gözlem sürüyor</span>';
+  const dayText = days == null ? 'Veri yok' : fmt(days, 2) + ' / ' + fmt(requiredDays, 0) + ' gün';
+  const tradeText = trades == null ? 'Veri yok' : trades + ' / ' + requiredTrades + ' kapanış';
+  const reset = Number.isInteger(e.window_resets) ? e.window_resets : '—';
+  const reason = e.last_reason ? esc(e.last_reason) : '—';
+  root.innerHTML = '<div class="card"><div class="hrow"><h2>İleri PAPER doğrulaması</h2>' + state + '</div>' +
+    '<div class="evidence-grid"><div class="evidence-item"><div class="l">Kesintisiz gözlem</div><div class="v num">' + dayText + '</div><div class="evidence-track"><i style="width:' + dayPct.toFixed(1) + '%"></i></div></div>' +
+    '<div class="evidence-item"><div class="l">Gerçek kapanmış Unified PAPER</div><div class="v num">' + tradeText + '</div><div class="evidence-track"><i style="width:' + tradePct.toFixed(1) + '%"></i></div></div></div>' +
+    '<div class="note">Son durum: ' + reason + ' · Gözlem sıfırlanma sayısı: ' + reset + '</div>' +
+    '<div class="note"><b>Önemli:</b> 14 gün ve 100 kapanış yalnız doğrulama/terfi kanıtıdır. PAPER işlemlerinin açılmasını engellemez; her işlem yine normal piyasa verisi ve risk kapılarından geçer. Gerçek emirler kapalıdır.</div></div>';
+}
+
 function render() {
   const D = S.data; if (!D) return;
   const {data, durum, ozet, decs, st} = D;
@@ -258,7 +297,8 @@ function render() {
     k("Açık İşlemler", durum ? pos.length : "—", durum ? `<span class="up">+${win}</span> / <span class="down">-${lose}</span>` : badge(st.durum)) +
     k("Bugünkü Karar", decs.length ? decs.length : (st.dec === "ok" ? 0 : "—"), decs.length ? `Aç: <b class="up">${(c.OPEN || 0) + (c.REDUCE_SIZE || 0)}</b> &nbsp;Gölge: <b>${c.SHADOW || 0}</b> &nbsp;Red: <b class="down">${c.REJECT || 0}</b>` : badge(st.dec)) +
     k("Günlük PAPER K/Z", isNum(dpl) ? usd(dpl) : "—", isNum(dpl) && dstart ? `<span class="${cls(dpl)}">${sgn(dpl / dstart * 100, 2, "%")}</span>` : badge(st.durum), cls(dpl));
-  renderBtc(data, durum); renderSys(data, durum, st); renderTabs(pos, closed, decs, data, st, durum, ozet); renderPf(durum, tot, dpl, start, st); applyLive();
+  renderForwardEvidence(durum);
+  renderBtc(data, durum); renderSys(data, durum, st); renderTabs(pos, closed, decs, data, st, durum, ozet, S.data && S.data.ayarlar, S.data && S.data.polat); renderPf(durum, tot, dpl, start, st); applyLive();
 }
 
 function renderBtc(data, durum) {
@@ -412,28 +452,217 @@ function renderSysTab(data, durum, ozet, st) {
   return `<div class="card dl">${row("Canlı döngü (site)", st.data, data ? "son yayın " + ago(data.generated_at) : "data.json okunamadı")}
     ${row("OKX canlı fiyat akışı", st.okx, okx ? "son mesaj " + (isNum(okx.last_msg_age_s) ? okx.last_msg_age_s + " sn önce" : "—") + " · yeniden bağlanma " + (okx.reconnects ?? "—") : "akış bilgisi yok")}
     ${row("Karar motoru", st.ozet, ozet ? "son tur " + ago(ozet.ts) + " · " + (ozet.coin ?? "—") + " coin" : "özet yok")}
-    ${row("Gölge sanal portföy", st.durum, durum ? "son güncelleme " + ago(durum.ts) + " · açık " + (durum.pozisyonlar || []).length : "durum dosyası yok")}
+    ${row("UnifiedTrader PAPER portföyü", st.durum, durum ? "son güncelleme " + ago(durum.ts) + " · açık " + (durum.pozisyonlar || []).length : "durum dosyası yok")}
     ${row("Karar günlüğü", st.dec, st.dec === "ok" ? "kararlar-" + day(0) + ".jsonl" : "bugünün dosyası yok")}
     ${row("Gerçek emir", "ok", "Kapalı: yalnız sanal yürütme; borsaya emir gönderilmez")}</div>`;
 }
 
-function renderTabs(pos, closed, decs, data, st, durum, ozet) {
-  const T = [["acik", `Açık İşlemler (${durum ? pos.length : "—"})`], ["karar", "Son Kararlar"], ["kapanan", "Kapananlar"], ["karne", "Karne"], ["sistem", "Sistem"]];
+function renderPolatBridge(polat) {
+  const p = polat && polat.v;
+  const labels = {
+    fresh: ["Taze", "st-ok"], stale: ["Bayat", "st-bayat"],
+    missing: ["Snapshot yok", "st-yok"], disabled: ["Devre dışı", "st-yok"],
+    replay: ["Tekrar reddedildi", "st-kesik"], invalid: ["Geçersiz", "st-kesik"],
+    error: ["Okuma hatası", "st-kesik"]
+  };
+  if (!p) return '<div class="card empty"><b>Polat → Unified araştırma köprüsü</b><div class="t2">Köprü durum dosyası henüz yayınlanmadı. Bu, canlı aktarımın kurulu olduğu anlamına gelmez.</div></div>';
+  const state = labels[p.status] || ["Durum bilinmiyor", "st-yok"];
+  const age = isNum(p.age_ms) ? fmt(p.age_ms, 0) + " ms" : "—";
+  const received = isNum(p.received_at_ms) ? ago(p.received_at_ms) : "—";
+  const count = Number.isInteger(p.observation_count) ? p.observation_count : 0;
+  const source = p.source_run_id ? esc(p.source_run_id) : "—";
+  const reason = p.reason ? esc(p.reason) : "Yok";
+  const t = p.telemetry && typeof p.telemetry === "object" ? p.telemetry : {};
+  const channels = t.channels && typeof t.channels === "object" ? t.channels : {};
+  const counters = t.channel_counters && typeof t.channel_counters === "object" ? t.channel_counters : {};
+  const latency = t.latency && typeof t.latency === "object" ? t.latency : {};
+  const connections = t.connections && typeof t.connections === "object" ? t.connections : {};
+  const metric = (v, suffix) => isNum(v) ? fmt(v, 1) + (suffix || "") : "—";
+  const channelRows = Object.keys(channels).sort().map(name => {
+    const row = channels[name] || {}, states = row.durumlar || {}, c = counters[name] || {};
+    return '<div class="dr"><div style="min-width:0"><b>' + esc(name) + '</b>' +
+      '<div class="t2">Sembol: ' + (Number.isInteger(row.sembol_sayisi) ? row.sembol_sayisi : "—") +
+      ' · LIVE ' + (states.LIVE ?? 0) + ' · STALE ' + (states.STALE ?? 0) +
+      ' · INVALID ' + (states.INVALID ?? 0) + ' · Kopuk ' + (states.DISCONNECTED ?? 0) +
+      ' · UNKNOWN ' + (states.UNKNOWN ?? 0) + '</div>' +
+      '<div class="t2">Duplicate ' + (c.duplicate ?? 0) + ' · ID duplicate ' + (c.duplicate_event_id ?? 0) +
+      ' · Sıra dışı ' + (c.out_of_order ?? 0) + ' · Sequence gap ' + (c.sequence_gap ?? 0) +
+      ' · Tahmini eksik update ' + (c.dropped_sequence_updates ?? 0) + '</div></div>' +
+      '<div class="tm num">' + metric(row.son_olay_yasi_ms_max, " ms") + '</div></div>';
+  }).join("");
+  const latencyRows = [
+    ["Feed gecikme p50 / p95 / p99 / max", ["gecikme_ms_p50","gecikme_ms_p95","gecikme_ms_p99","gecikme_ms_max"].map(k => metric(latency[k], " ms")).join(" / ")],
+    ["İşleme p50 / p95 / p99 / max", ["isleme_us_p50","isleme_us_p95","isleme_us_p99","isleme_us_max"].map(k => metric(latency[k], " µs")).join(" / ")],
+    ["Örnek sayısı (feed / işlem)", (latency.gecikme_ornek_sayisi ?? 0) + " / " + (latency.isleme_ornek_sayisi ?? 0)]
+  ].map(row => '<div class="dr"><div><b>' + esc(row[0]) + '</b></div><div class="tm num">' + esc(row[1]) + '</div></div>').join("");
+  const connectionRows = Object.keys(connections).sort().map(name => {
+    const c = connections[name] || {};
+    const error = c.last_error ? ' · Son hata: ' + esc(c.last_error) : "";
+    return '<div class="dr"><div style="min-width:0"><b>' + esc(name) + '</b><div class="t2">Deneme ' +
+      (c.attempts ?? 0) + ' · Bağlandı ' + (c.connected ?? 0) + ' · Koptu ' + (c.disconnects ?? 0) +
+      error + '</div></div><div class="tm">' +
+      (isNum(c.last_connected_ms) ? ago(c.last_connected_ms) : "Bağlantı yok") + '</div></div>';
+  }).join("");
+  return '<div class="card dl"><div class="hrow"><h2>Polat → Unified · araştırma köprüsü</h2><span class="st ' + state[1] + '">' + state[0] + '</span></div>' +
+    '<div class="cells"><div class="cell"><div class="l">Gözlem sayısı</div><div class="v num">' + count + '</div></div>' +
+    '<div class="cell"><div class="l">Snapshot yaşı</div><div class="v num">' + age + '</div></div>' +
+    '<div class="cell"><div class="l">Son okuma</div><div class="v">' + esc(received) + '</div></div>' +
+    '<div class="cell"><div class="l">Sıra</div><div class="v num">' + (p.sequence ?? "—") + '</div></div></div>' +
+    '<div class="dr"><div><b>Kaynak koşu</b></div><div class="tm">' + source + '</div></div>' +
+    '<div class="dr"><div><b>Durum nedeni</b></div><div class="tm">' + reason + '</div></div>' +
+    '<div class="sec">Kanal kalite durumu ve olay sayaçları</div>' +
+    (channelRows || '<div class="card empty">SHA-256 özeti doğrulanmış snapshot içinde kanal telemetrisi yok.</div>') +
+    '<div class="sec">Gecikme dağılımı</div>' + latencyRows +
+    '<div class="sec">WebSocket bağlantı sağlığı</div>' +
+    (connectionRows || '<div class="card empty">Bağlantı telemetrisi yok.</div>') +
+    '<div class="note">Yalnız araştırma/teşhis telemetrisi. UnifiedTrader fiyatı, kararları, emirleri, portföy değerlemesi veya pozisyon yetkisini değiştirmez. Ortak kalıcı disk yolu kurulmadıysa köprü devre dışı veya eksik görünür. Sequence gap, paket seviyesinde kayıp ölçümü değil; borsa sıra numarasından türetilmiş eksik update tahminidir.</div></div>';
+}
+function renderDataHealth(durum) {
+  const q = durum && durum.tanilama;
+  if (!q || q.hazir === false) return '<div class="card empty">Birleşik Baş Trader veri tanılaması henüz yayımlanmadı. Veri yok.</div>';
+  if (q.hata) return '<div class="card empty">Veri tanılaması hatası: ' + esc(q.hata) + '</div>';
+  const spread = q.spread_durum_sayim || {};
+  const spreadText = Object.keys(spread).sort().map(k => esc(k) + ': ' + spread[k]).join(' · ') || 'henüz yok';
+  const age = isNum(q.ts) ? Math.max(0, Math.round((Date.now() - q.ts) / 1000)) + ' sn önce' : '—';
+  const rows = (q.ornek || []).map(x => '<div class="dr"><div style="min-width:0"><b>' + esc(x.decision_inst || '—') +
+    '</b><div class="t2">Feed: ' + (x.feed_inst ? 'abone' : 'abone değil') + ' · Defter: ' +
+    (x.book_exists ? 'var' : 'yok') + ' · Kaynak: ' + esc(x.bbo_kaynak || '—') +
+    ' · Spread: ' + esc(x.spread_status || '—') + ' · Kalite: ' + esc(x.quality_state || 'UNKNOWN') +
+    (x.quality_reason ? ' (' + esc(x.quality_reason) + ')' : '') + '</div></div><div class="tm num">' +
+    (isNum(x.ws_book_age) ? fmt(x.ws_book_age, 1) + ' sn' : '—') + '</div></div>').join('');
+  return '<div class="card dl">' +
+    '<div class="hrow"><h2>OKX BBO / veri akışı</h2>' + badge(q.ws_healthy === true ? 'Bağlı' : q.ws_healthy === false ? 'Kopuk' : 'Bilinmiyor') + '</div>' +
+    '<div class="cells"><div class="cell"><div class="l">Tanılama güncellemesi</div><div class="v num">' + age + '</div></div>' +
+    '<div class="cell"><div class="l">Son tick sayacı</div><div class="v num">' + (q.tick_count ?? '—') + '</div></div>' +
+    '<div class="cell"><div class="l">Feed sembolü</div><div class="v num">' + (q.feed_symbols ?? '—') + '</div></div>' +
+    '<div class="cell"><div class="l">Karar coini / defter</div><div class="v num">' + (q.decision_coins ?? '—') + ' / ' + (q.book_entries ?? '—') + '</div></div></div>' +
+    '<div class="dr"><div><b>Son tick yaşı</b></div><div class="tm num">' + (isNum(q.last_tick_age) ? fmt(q.last_tick_age, 1) + ' sn' : '—') + '</div></div>' +
+    '<div class="dr"><div><b>Spread kalite dağılımı</b></div><div class="tm">' + spreadText + '</div></div>' +
+    (q.bbo_rest_hata ? '<div class="note">REST BBO hatası: ' + esc(q.bbo_rest_hata) + '</div>' : '') +
+    '</div>' + (rows ? '<div class="sec">Karar evreninden gerçek BBO örnekleri</div><div class="card dl">' + rows + '</div>' : '<div class="card empty">Karar evreni BBO örneği yok.</div>') +
+    '<div class="note">Bu görünüm sunucunun gerçek BBO/akış tanılamasıdır. Tarayıcıdaki ek OKX ticker akışıyla karıştırılmaz; gecikme garantisi vermez.</div>';
+}
+
+function renderSettings(settings) {
+  if (!settings || settings.st !== "ok" || !settings.v) return '<div class="card empty">Ayar kataloğu henüz yayımlanmadı.</div>';
+  const catalog = settings.v;
+  const labels = {capital:"Sermaye", indicators:"Göstergeler", strategies:"Stratejiler", risk:"Risk", market:"Piyasa", derivatives:"Türev Veriler", data:"Veri", costs:"Maliyetler", notifications:"Bildirimler", dashboard:"Dashboard", general:"Genel"};
+  const groups = {};
+  for (const p of (catalog.parameters || [])) (groups[p.category] ||= []).push(p);
+  let html = '<div class="card"><div class="hrow"><h2>⚙️ Parametre kataloğu</h2>' + badge("Güvenli talep akışı") + '</div><div class="note">Ayarlar doğrudan dashboard üzerinden değiştirilmez. Yetkili GitHub Actions talebi yalnızca izin listesinde ve sabit sınırlar içindeki sayısal ayarlar için taslak PR açar; otomatik uygulama yoktur. PAPER modu, tek karar otoritesi, API anahtarları ve canlı işlem ayarları kilitlidir. Bu akış PR main dalına alındıktan sonra kullanılabilir.</div><p><a href="https://github.com/hkyafes-afk/kripto-radar/actions/workflows/settings-change-request.yml" target="_blank" rel="noopener">Güvenli ayar değişikliği talebi (GitHub Actions) ↗</a></p><div class="cells"><div class="cell"><div class="l">Keşfedilen</div><div class="v num">' + catalog.parameter_count + '</div></div><div class="cell"><div class="l">Korunan</div><div class="v num">' + (catalog.parameters || []).filter(x => x.protected).length + '</div></div><div class="cell"><div class="l">Yazılabilir</div><div class="v num">0</div></div><div class="cell"><div class="l">Şema sürümü</div><div class="v num">' + catalog.schema_version + '</div></div></div></div>';
+  for (const key of Object.keys(groups).sort()) {
+    html += '<div class="sec">' + esc(labels[key] || key) + '</div><div class="card dl">' + groups[key].map(p => {
+      const value = typeof p.value === "string" ? p.value : JSON.stringify(p.value);
+      const status = p.protected ? "KORUNAN" : "KEŞFEDİLDİ · YAZMA KAPALI";
+      const schema = p.schema || {};
+      const details = 'Birim: ' + (schema.unit || 'doğrulanmadı') + ' · Sınırlar: ' +
+        (schema.minimum == null && schema.maximum == null ? 'doğrulanmadı' : [schema.minimum, schema.maximum].join('–')) +
+        ' · Yeniden başlatma: ' + (schema.restart_requirement || 'bilinmiyor');
+      return '<div class="dr"><div>⚙️</div><div style="min-width:0"><div class="t1"><b>' + esc(p.label) + '</b><span class="chip">' + esc(p.value_type) + '</span><span class="chip">' + status + '</span></div><div class="t2">' + esc(p.path) + ' · Değer: <span class="num">' + esc(value) + '</span></div><div class="t2">' + esc(p.description || 'Açıklama doğrulanmadı') + '</div><div class="t2">' + esc(details) + '</div></div><div class="tm">' + (p.protected ? "Kilitli" : "Salt okunur") + '</div></div>';
+    }).join("") + '</div>';
+  }
+  return html;
+}
+
+function renderOpportunities(decs, st) {
+  const rows = decs.filter(x => ["OPEN", "REDUCE_SIZE", "SHADOW"].includes(x.decision));
+  const counts = rows.reduce((a, x) => (a[x.decision] = (a[x.decision] || 0) + 1, a), {});
+  return `<div class="hrow"><h2>Fırsat akışı · son 24 saat</h2>${badge(st.dec)}</div>` +
+    `<div class="cells"><div class="cell"><div class="l">Kabul</div><div class="v num">${counts.OPEN || 0}</div></div>` +
+    `<div class="cell"><div class="l">Boyut azalt</div><div class="v num">${counts.REDUCE_SIZE || 0}</div></div>` +
+    `<div class="cell"><div class="l">Gölge / challenger</div><div class="v num">${counts.SHADOW || 0}</div></div></div>` +
+    (rows.length ? `<div class="card dl">${rows.slice(0, 80).map(decRow).join("")}</div>` :
+      `<div class="card empty">${(STL[st] || STL.yok)[0]}. Son 24 saatte kabul edilmiş veya gölgeye alınmış karar kaydı yok.</div>`) +
+    `<div class="note">Bu görünüm karar günlüğündeki gerçek OPEN/REDUCE_SIZE/SHADOW kayıtlarını gösterir; tahmini sinyal veya otomatik fırsat üretmez.</div>`;
+}
+
+function renderExperimentLab(K, st) {
+  if (!K) return `<div class="card empty">${(STL[st] || STL.yok)[0]}. Deney/SHADOW karne verisi henüz yayımlanmadı.</div>`;
+  let h = statBox(K.yeni_golge, "UnifiedTrader · ayrı SHADOW defteri", "Ücret, kayma ve funding düşülmüş sanal sonuçlar; legacy ve PAPER portföyüne karıştırılmaz.");
+  if ((K.yeni_kaynaklar || []).length) h += `<div class="sec">Strateji / sinyal kaynağı</div>` +
+    K.yeni_kaynaklar.map(r => statBox(r.golge_sanal, esc(r.etiket), "Ayrı shadow sonuçları")).join("");
+  return h + `<div class="note">Bu alan yalnız mevcut shadow kapanış kayıtlarını raporlar. Örneklem yetersizse performans kanıtı veya strateji terfisi anlamına gelmez.</div>`;
+}
+
+function sourceMeta(title, path, status, ts, method) {
+  const state = Object.prototype.hasOwnProperty.call(STL, status) ? status : "yok";
+  const stamp = isNum(ts) && ts > 0 ? "Kaynak güncellemesi: " + ago(ts) : "Kaynak zaman damgası yok";
+  return `<div class="sourcebar" role="note"><div><b>${esc(title)}</b><div class="mut">${esc(path)}</div></div>
+    <div class="sourcebar-meta">${badge(state)}<span class="mut">${esc(stamp)}</span></div>
+    <div class="mut" style="width:100%">${esc(method)}</div></div>`;
+}
+function renderTabs(pos, closed, decs, data, st, durum, ozet, settings, polat) {
+  const T = [["firsat", "Fırsatlar"], ["portfoy", `Portföy (${durum ? pos.length : "—"})`],
+    ["karar", "Karar Merkezi"], ["performans", "Performans"], ["deney", "Deney Laboratuvarı"],
+    ["veri", "Veri Sağlığı"], ["ayarlar", "Ayarlar"], ["sistem", "Sistem"]];
   $("tabs").innerHTML = T.map(([k, n]) => `<button class="tab ${S.tab === k ? "on" : ""}" data-t="${k}">${n}</button>`).join("");
   $("tabs").querySelectorAll(".tab").forEach(b => b.onclick = () => setTab(b.dataset.t, false));
-  let h;
-  if (S.tab === "acik") h = pos.length ? pos.map(tradeCard).join("")
-      : `<div class="card empty">${durum ? "Açık sanal işlem yok. Baş Trader açma kararı verdiğinde burada görünür." : (STL[st.durum] || STL.yok)[0] + "."}</div>`;
-  else if (S.tab === "kapanan") h = closed.length ? closed.map(closedCard).join("") : `<div class="card empty">${durum ? "Henüz kapanan sanal işlem yok." : (STL[st.durum] || STL.yok)[0] + "."}</div>`;
-  else if (S.tab === "karar") h = engelOzet(S.data && S.data.haz) + `<div class="hrow" style="margin:0 2px 8px"><h2>Son Kararlar (${decs.length})</h2>${badge(st.dec)}</div>` +
+  let h, meta = "";
+  const lastDecision = decs.length ? (decs[0].kayit_ms || decs[0].ts_ms) : 0;
+  if (S.tab === "firsat") {
+    meta = sourceMeta("Fırsat akışı", "birlesik/kararlar-YYYY-MM-DD.jsonl", st.dec, lastDecision,
+      "Yalnız gerçek karar günlüğündeki OPEN, REDUCE_SIZE ve SHADOW kayıtları; tahmini sinyal üretilmez.");
+    h = renderOpportunities(decs, st.dec);
+  } else if (S.tab === "portfoy" || S.tab === "acik" || S.tab === "kapanan") {
+    meta = sourceMeta("Birleşik PAPER portföyü", "birlesik/durum.json → pozisyonlar / kapananlar", st.durum, durum && durum.ts,
+      "Yalnız UnifiedTrader PAPER defteri; legacy ve SHADOW kayıtları ana portföye eklenmez.");
+    h = `<div class="hrow"><h2>Açık PAPER pozisyonları (${pos.length})</h2>${badge(st.durum)}</div>` +
+      (pos.length ? pos.map(tradeCard).join("") : `<div class="card empty">${durum ? "Açık sanal işlem yok." : (STL[st.durum] || STL.yok)[0] + "."}</div>`) +
+      `<div class="sec">Son kapanan PAPER işlemleri</div>` +
+      (closed.length ? closed.slice(0, 20).map(closedCard).join("") : `<div class="card empty">${durum ? "Henüz kapanan sanal işlem yok." : (STL[st.durum] || STL.yok)[0] + "."}</div>`);
+  } else if (S.tab === "karar") {
+    meta = sourceMeta("Karar merkezi", "birlesik/kararlar-YYYY-MM-DD.jsonl + birlesik/hazirlik.json", st.dec, lastDecision,
+      "Karar gerekçeleri, engel kodları, eksik/bayat faktörler ve maliyet tahminleri kaynak kayıttan okunur.");
+    h = engelOzet(S.data && S.data.haz) + `<div class="hrow" style="margin:0 2px 8px"><h2>Son Kararlar (${decs.length})</h2>${badge(st.dec)}</div>` +
       (decs.length ? `<div class="card dl">${decs.slice(0, 80).map(decRow).join("")}</div>` : `<div class="card empty">${(STL[st.dec] || STL.yok)[0]}.</div>`);
-  else if (S.tab === "karne") h = renderKarne(data && data.karne, st.data);
-  else h = renderSysTab(data, durum, ozet, st);
-  $("view").innerHTML = h;
+  } else if (S.tab === "performans" || S.tab === "karne") {
+    meta = sourceMeta("Performans karnesi", "data.json → karne", st.data, data && data.generated_at,
+      "Yayımlanan kapanış istatistikleri; yetersiz örneklem kanıt veya kârlılık garantisi değildir.");
+    h = renderKarne(data && data.karne, st.data);
+  } else if (S.tab === "deney") {
+    meta = sourceMeta("Deney laboratuvarı", "data.json → karne.yeni_golge", st.data, data && data.generated_at,
+      "SHADOW sonuçları PAPER portföyünden ayrı tutulur; terfi iddiası için gerçek örneklem ve süre gerekir.");
+    h = renderExperimentLab(data && data.karne, st.data);
+  } else if (S.tab === "veri") {
+    const q = durum && durum.tanilama;
+    meta = sourceMeta("Veri sağlığı", "birlesik/durum.json → tanilama", st.durum, q && q.ts,
+      "Sunucu BBO kalite gözlemleri; tarayıcıdaki public ticker akışı karar motorunun veri kaynağı değildir.");
+    h = renderPolatBridge(polat) + renderDataHealth(durum);
+  } else if (S.tab === "ayarlar") {
+    meta = sourceMeta("Ayar kataloğu", "birlesik/ayarlar.json", settings && settings.st, data && data.generated_at,
+      "Salt okunur keşif kataloğu; güvenlik ve PAPER ayarları dashboard'dan değiştirilemez.");
+    h = renderSettings(settings);
+  } else if (S.tab === "sistem") {
+    meta = sourceMeta("Sistem sağlık özeti", "data.json + birlesik/durum.json + public OKX ticker", st.data, data && data.generated_at,
+      "Statik snapshot ile tarayıcı public fiyat akışı ayrı gösterilir; kesintisiz 7/24 veya milisaniye SLA iddiası yoktur.");
+    h = renderSysTab(data, durum, ozet, st);
+  } else h = `<div class="card empty">Bu bölüm için gerçek veri henüz yayımlanmadı.</div>`;
+  $("view").innerHTML = meta + h;
+  const provenance = {
+    firsat: {path:"birlesik/kararlar-YYYY-MM-DD.jsonl", ts:lastDecision, method:"OPEN / REDUCE_SIZE / SHADOW adetleri; yalnız gerçek karar kayıtları."},
+    portfoy: {path:"birlesik/durum.json", ts:durum && durum.ts, method:"Açık/kapanan Unified PAPER defteri; K/Z bakiye ve başlangıç sermayesi farkından."},
+    karar: {path:"kararlar-YYYY-MM-DD.jsonl + hazirlik.json", ts:lastDecision, method:"Karar ve engel sayıları kaynak günlükteki kayıtların sınıflandırılmasıdır."},
+    performans: {path:"data.json → karne", ts:data && data.generated_at, method:"Yayınlanan kapanış örneklemi; R, net sonuç ve %95 aralık karne hesaplamasından."},
+    deney: {path:"data.json → karne.yeni_golge", ts:data && data.generated_at, method:"Ayrı Unified SHADOW kapanışları; PAPER portföyüne dahil edilmez."},
+    veri: {path:"birlesik/durum.json → tanilama; polat_kopru.json", ts:durum && durum.tanilama && durum.tanilama.ts, method:"Sunucu BBO kalite gözlemleri; Polat snapshot yaşı ve sıra kontrolü ayrı araştırma telemetrisidir."},
+    ayarlar: {path:"birlesik/ayarlar.json", ts:data && data.generated_at, method:"Config keşif kataloğu; kaynakta tanımlı olmayan birim, sınır veya restart etkisi bilinmiyor."},
+    sistem: {path:"data.json + birlesik/durum.json + karar özeti", ts:data && data.generated_at, method:"Her kaynak kendi timestamp ve bağlantı durumuyla değerlendirilir; tek timestamp hepsini temsil etmez."}
+  }[S.tab];
+  if (provenance) {
+    const stamp = isNum(provenance.ts) && provenance.ts > 0 ? "Güncelleme: " + ago(provenance.ts) : "Güncelleme zamanı yok";
+    const line = provenance.path + " · " + stamp + " · " + provenance.method;
+    $("view").querySelectorAll(".cell .l, .sg .l, .pf .l, .sysi .l, .dr").forEach(label => {
+      const detail = document.createElement("div");
+      detail.className = "metric-source";
+      detail.textContent = line;
+      label.insertAdjacentElement("afterend", detail);
+      label.title = line;
+    });
+  }
 }
 
 function renderPf(durum, tot, dpl, start, st) {
-  $("pf").innerHTML = `<div class="hrow"><h2>💼 Portföy Özeti (Sanal)</h2><button class="btn" data-go="karne">Karne ›</button></div>
+  $("pf").innerHTML = `<div class="hrow"><h2>💼 Portföy Özeti (Sanal)</h2><button class="btn" data-go="performans">Performans ›</button></div>
     <div class="pf"><div><div class="l">Günlük K/Z</div><div class="v num ${cls(dpl)}">${usd(dpl)}</div>
       <div class="s num ${cls(dpl)}">${isNum(dpl) && durum.gun_basi ? sgn(dpl / durum.gun_basi * 100, 2, "%") : badge(st.durum)}</div></div>
       <div><div class="l">Toplam K/Z</div><div class="v num ${cls(tot)}">${usd(tot)}</div>
@@ -444,6 +673,8 @@ function renderPf(durum, tot, dpl, start, st) {
 }
 
 function setTab(t, scroll = true) {
+  if (t === "acik" || t === "kapanan") t = "portfoy";
+  if (t === "karne") t = "performans";
   S.tab = t; try { localStorage.setItem("bt_tab", t); } catch (e) {}
   render();
   document.querySelectorAll(".bnav button").forEach(b => b.classList.toggle("on", b.dataset.go === t));
@@ -583,9 +814,10 @@ function applyLive() {
 window.__BT = {calcLive, cardState, instIds};
 
 async function load() {
-  const [D, duUnified, t0, t1, hz] = await Promise.all([
+  const [D, duUnified, t0, t1, hz, ayarlar, polat] = await Promise.all([
     get("data.json"), get("birlesik/durum.json"),
-    get(`birlesik/kararlar-${day(0)}.jsonl`, true), get(`birlesik/kararlar-${day(1)}.jsonl`, true), get("birlesik/hazirlik.json")]);
+    get(`birlesik/kararlar-${day(0)}.jsonl`, true), get(`birlesik/kararlar-${day(1)}.jsonl`, true),
+    get("birlesik/hazirlik.json"), get("birlesik/ayarlar.json"), get("birlesik/polat_kopru.json")]);
   const data = D.v;
   // Ana panel yalnız UnifiedTrader'ın 100 USDT PAPER portföyünü gösterir.
   // Eski shadow/legacy defterleri arşivdir; aktif hesap bakiyesi olarak kullanılmaz.
@@ -601,7 +833,7 @@ async function load() {
   for (const r of [...t1.v, ...t0.v]) seen.set(r.idempotency_key || (r.symbol + r.strategy + r.side), r);
   const decs = [...seen.values()].filter(r => (r.kayit_ms || r.ts_ms || 0) > Date.now() - 24 * 3600e3)
     .sort((a, b) => (b.kayit_ms || b.ts_ms) - (a.kayit_ms || a.ts_ms));
-  S.data = {data, durum, ozet, decs, st, haz: hz.v};
+  S.data = {data, durum, ozet, decs, st, haz: hz.v, ayarlar, polat};
   $("modePill").textContent = "PAPER · TEK OTORİTE";
   $("modeTag").textContent = durum ? "100 USDT PAPER • Deneysel doğrulama sürüyor • Gerçek OKX emirleri kapalı" : "100 USDT PAPER • Birleşik durum bekleniyor • Eski defterler arşivde • Gerçek OKX emirleri kapalı";
   render();

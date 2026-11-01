@@ -21,9 +21,11 @@ from typing import Any, Iterable, Mapping
 
 from .. import ledger as lg
 from .decision import UnifiedDecisionEngine
+from .carry import CarryPairPaper, ElifCarryStrategy
 from .execution.base import Quote
 from .execution.paper import PaperExecutionAdapter
 from .exits import evaluate_exits
+from .forward_evidence import ForwardPaperEvidence
 from .factors import FactorEngine
 from .flags import execution_mode, unified_cfg
 from .journal import DecisionJournal
@@ -56,6 +58,10 @@ class UnifiedTrader:
         self.engine = engine or UnifiedDecisionEngine(self.cfg)
         self.risk = RiskGate(self.cfg)
         self.adapter = PaperExecutionAdapter(self.cfg, root=self.root)
+        # Elif'in ayrı spot+perp defteri UnifiedTrader tarafından sahiplenilir; varsayılan kapalıdır.
+        self.carry_paper = CarryPairPaper(self.cfg, root=self.root / "elif_carry")
+        self.carry_strategy = ElifCarryStrategy(self.cfg)  # pair-only evaluator; not registered as a one-leg signal
+        self.forward_evidence = ForwardPaperEvidence(self.root / "forward_paper_evidence.json")
         self.mode = mode
         self.journal_root = Path(journal_root) if journal_root else self.root
         self.journal = DecisionJournal(self.journal_root, keep_days=int(u.get("gunluk_saklama_gun", 14)))
@@ -282,7 +288,18 @@ class UnifiedTrader:
             pf = self.portfolio(now, prices, data_issue=gi)
             raw = raw_by_inst.get(inst) or {}
             q = quotes.get(inst)
-            mr = MarketRisk(inst=inst, price=q.last if q else None, vol24_usd=raw.get("vol24_usd"),
+            # Karar motoru bağlam fiyatı üretmiş olsa bile, PAPER emri için güncel ve
+            # tutarlı BBO zorunludur. Bu kapı yalnız yeni girişe uygulanır; yukarıdaki
+            # açık pozisyon çıkış/koruma yönetimini durdurmaz.
+            if (q is None or not q.valid or
+                    not all(isinstance(v, (int, float)) and 0 < v < float("inf")
+                            for v in (q.bid, q.ask, q.last)) or q.bid >= q.ask):
+                risk_log.append({"sym": d.symbol, "strateji": d.strategy, "karar": Decision.REJECT.value,
+                                 "kodlar": ["GIRIS_BBO_YOK"], "aciklama":
+                                 "Yeni PAPER girişi için güncel, pozitif ve çapraz olmayan bid/ask gerekli.",
+                                 "operasyonel": operational})
+                continue
+            mr = MarketRisk(inst=inst, price=q.last, vol24_usd=raw.get("vol24_usd"),
                             high_vol=bool(raw.get("high_vol")), cluster=(clusters or {}).get(inst),
                             meta=(meta or {}).get(inst))
             rd = self.risk.evaluate(d_use, pf, mr)
@@ -311,6 +328,11 @@ class UnifiedTrader:
                       or prices.get("BTC-USDT-SWAP"))
         self._save()
         self.adapter.save()
+        forward_evidence = self.forward_evidence.record(
+            now_ms=now, mode="unified" if self.mode == "unified" else self.mode,
+            ws_healthy=ws_healthy, global_issue=global_issue, quotes=quotes,
+            closed=self.adapter.closed,
+        )
         counts: dict[str, int] = {}
         for d in decisions:
             counts[d.decision.value] = counts.get(d.decision.value, 0) + 1
@@ -322,7 +344,8 @@ class UnifiedTrader:
                    "acik": len(self.adapter.positions), "acilan": opened, "cikislar": exits_done,
                    "dolumlar": len(fills), "risk": self.last_risk, "kararlar": len(decisions),
                    "hatalar": self.engine.errors[-5:], "kurtarma": self.recovery_notes,
-                   "operasyonel_nedenler": op_neden}
+                   "operasyonel_nedenler": op_neden, "forward_paper_kaniti": forward_evidence,
+                   "elif_carry_paper": {"enabled": self.carry_paper.enabled, **self.carry_paper.reconcile()}}
         self.engine.errors.clear()
         self.recovery_notes = []
         self._write_status(summary)
@@ -338,7 +361,8 @@ class UnifiedTrader:
         md = {"strategy": d.strategy, "strategies": list(d.strategies or (d.strategy,)), "stop": d.stop,
               "targets": list(d.targets), "risk_usd": rd.risk_usd,
               "leverage": rd.leverage, "horizon": plan.get("horizon"), "max_holding_hours": plan.get("max_holding_hours"),
-              "cluster": cluster, "timeframe": d.timeframe}
+              "cluster": cluster, "timeframe": d.timeframe,
+              "execution_scope": "shadow" if self.mode == "shadow" else "unified"}
         it = ExecutionIntent(idempotency_key=d.idempotency_key, symbol=d.symbol, inst=inst, side=d.side, action="open",
                              order_type=otype, qty=rd.qty, price=price, created_ts_ms=now, expires_ts_ms=exp,
                              metadata=md)

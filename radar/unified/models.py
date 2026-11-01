@@ -517,16 +517,21 @@ class MarketContext:
     coin_age_days: float | None = None
     factors: Mapping[str, FactorValue] = field(default_factory=dict)
     coverage: FactorCoverage | None = None
+    coverage_by_horizon: Mapping[Horizon, FactorCoverage] = field(default_factory=dict)
     raw: Mapping[str, Any] = field(default_factory=dict)   # legacy bağlam (salt okunur); yalnız legacy sarmalayıcılar okur
 
     def __post_init__(self):
-        for f_ in ("candles", "structure", "factors", "raw"):
+        for f_ in ("candles", "structure", "factors", "coverage_by_horizon", "raw"):
             object.__setattr__(self, f_, _frozen_map(getattr(self, f_)))
+
+    def coverage_for(self, horizon: Horizon) -> FactorCoverage | None:
+        """Use the opportunity horizon's own required/optional factor contract."""
+        return self.coverage_by_horizon.get(horizon, self.coverage)
 
     def factor(self, name: str) -> FactorValue | None:
         return self.factors.get(name)
 
-    def value(self, name: str, default: Any = None) -> Any:
+    def value(self, name: str, default: Any = None):
         f = self.factors.get(name)
         return f.value if f is not None and f.usable else default
 

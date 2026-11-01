@@ -53,10 +53,10 @@ def feed_series(s: Series, rows):
         s.on_candle(r)
 
 
-def book_msg(px, spread=0.01, levels=30, size="500"):
+def book_msg(px, spread=0.01, levels=30, size="500", ts=T0, seq_id=1):
     bids = [[f"{px - spread / 2 - i * 0.01:.4f}", size, "0", "1"] for i in range(levels)]
     asks = [[f"{px + spread / 2 + i * 0.01:.4f}", size, "0", "1"] for i in range(levels)]
-    d = {"bids": bids, "asks": asks, "ts": "1"}
+    d = {"bids": bids, "asks": asks, "ts": str(ts), "seqId": str(seq_id)}
     b = OrderBook()
     b.apply(d, True)
     bb, aa = b.top(25)
@@ -284,11 +284,11 @@ def test_flow_divergence_and_walls():
         px = 100 + (i * 0.01 if i < 30 else (0.3 + (i - 30) * 0.02))
         cvd = i * 100 if i < 30 else 2800 - (i - 30) * 50
         c.cvd_hist.append((now - 900_000 + i * 15_000, cvd, px))
-    d = book_msg(100.0)
+    d = book_msg(100.0, ts=now - 60_000)
     d["asks"][3][1] = "20000"                      # büyük satış duvarı
     del d["checksum"]
     m._book("X-USDT-SWAP", [d], "snapshot", now - 60_000)
-    m._book("X-USDT-SWAP", [{"bids": [], "asks": [], "ts": "3"}], "update", now)
+    m._book("X-USDT-SWAP", [{"bids": [], "asks": [], "ts": str(now), "seqId": "2", "prevSeqId": "1"}], "update", now)
     c.last = 100.0
     f = brain.flow(c, now, atr=0.5, persist_s=30)
     assert f["ayrisma"] == "ayi"
@@ -448,7 +448,7 @@ class FakeRest:
     async def tickers(self):
         k = lambda d: d["1m"][-1][4] if "1m" in d else d["1D"][-1][4]
         return [{"instId": i, "last": str(k(d)), "bidPx": str(k(d) - 0.01),
-                 "askPx": str(k(d) + 0.01), "volCcy24h": "5000000", "ts": "0"} for i, d in self.data.items()]
+                 "askPx": str(k(d) + 0.01), "volCcy24h": "5000000", "ts": str(agent_mod.now_ms())} for i, d in self.data.items()]
 
     async def candles(self, inst, tf, limit=300):
         return [r[:] for r in self.data[inst][tf][-limit:]]
@@ -465,8 +465,9 @@ class FakeRest:
 
 
 class FakeFeed:
-    def __init__(self, cfg, on_msg):
+    def __init__(self, cfg, on_msg, on_disconnect=None):
         self.stats = {"baglanti": {}, "kopma": {}, "son_hata": ""}
+        self.on_disconnect = on_disconnect
         self.watched = set()
 
     def start(self):
@@ -509,10 +510,11 @@ def _uptrend_data(inst_px=100.0):
 
 def _prime_live(m, inst, px, now):
     c = m.coins[inst]
-    m._book(inst, [book_msg(px, levels=40, size="500000")], "snapshot", now)
+    m._book(inst, [book_msg(px, levels=40, size="500000", ts=now)], "snapshot", now)
     c.last, c.bid, c.ask, c.tick_ts = px, px - 0.005, px + 0.005, now
     for i in range(40):
-        m._trade({"instId": inst, "px": str(px), "sz": "100", "side": "buy", "ts": str(now - 800_000 + i * 20_000)}, now)
+        m._trade({"instId": inst, "tradeId": str(10_000 + i), "px": str(px), "sz": "100",
+                  "side": "buy", "ts": str(now - 800_000 + i * 20_000)}, now)
     c.funding, c.next_funding_ts = 0.00001, now + 8 * H
     c.mark, c.index = px * 1.0002, px
     c.ls_ratio = 0.8
@@ -550,9 +552,12 @@ def test_agent_every_reading_votes_and_full_cycle():
         need = {"trend", "seviye", "momentum", "hacim", "turev", "akis", "piyasa"}
         assert need <= cats, f"oy vermeyen kategori: {need - cats}"
         names = set(dec["oylar"])
+        # 5 dk CVD oyu, son 5 dk için yeterli taze tape örneği varsa üretilir.
+        # Fixture'ın 30 sn tazelik kapısı daha eski sentetik trade olaylarını doğru biçimde reddeder.
+        assert rd["akis"]["cvd_5dk"] is None
         for must in ("yapi_1D", "adx_di_4H", "psar_1H", "supertrend_4H", "trix_1H", "rsi_15m", "stoch_15m", "cci_1H",
                      "willr_15m", "ultimate_1H", "macd_hist_15m", "obv_egim_1H", "mfi_15m", "pvi_1H", "demand_15m",
-                     "oi_fiyat", "fonlama", "basis", "long_short", "cvd_5dk", "defter_dengesi", "btc_4H",
+                     "oi_fiyat", "fonlama", "basis", "long_short", "defter_dengesi", "btc_4H",
                      "btc_dominans", "stablecoin", "haber_tepkisi", "konum"):
             assert must in names, f"{must} oy vermedi"
         assert dec["yon"] == 1 and dec["kategoriler"]["trend"] > 0, dec["kategoriler"]
@@ -717,6 +722,6 @@ if __name__ == "__main__":
 def test_polat_yeni_pozisyon_yetkisi_varsayilan_ve_challenger():
     from polat.agent import new_position_authorized
 
-    assert new_position_authorized({})
+    assert not new_position_authorized({})  # Eksik yetki yapılandırması fail-closed davranır.
     assert new_position_authorized({"yetki": {"yeni_pozisyon": True}})
     assert not new_position_authorized({"yetki": {"yeni_pozisyon": False}})

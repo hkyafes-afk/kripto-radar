@@ -81,7 +81,24 @@ def test_sentetik_100_usdt_minimum_kontrat_buyukse_islem_yok(tmp_path):
 def test_sentetik_fiyat_yoksa_acilmaz(tmp_path):
     t = trader(tmp_path)
     s = t.step([kemal_ctx()], {}, now_ms=NOW, meta=META)
-    assert s["acik"] == 0 and s["acilan"][0]["durum"] == "rejected"
+    assert s["acik"] == 0 and s["acilan"] == []
+    assert any("GIRIS_BBO_YOK" in r["kodlar"] for r in s["risk"])
+
+
+def test_crossed_bbo_rejects_new_entry(tmp_path):
+    t = trader(tmp_path)
+    crossed = Quote(inst=INST, bid=102.0, ask=101.0, last=101.5, ts_ms=NOW)
+    s = t.step([kemal_ctx()], {INST: crossed}, now_ms=NOW, meta=META)
+    assert s["acik"] == 0 and s["acilan"] == []
+    assert any("GIRIS_BBO_YOK" in r["kodlar"] for r in s["risk"])
+
+
+def test_locked_bbo_rejects_new_entry(tmp_path):
+    t = trader(tmp_path)
+    locked = Quote(inst=INST, bid=101.0, ask=101.0, last=101.0, ts_ms=NOW)
+    s = t.step([kemal_ctx()], {INST: locked}, now_ms=NOW, meta=META)
+    assert s["acik"] == 0 and s["acilan"] == []
+    assert any("GIRIS_BBO_YOK" in r["kodlar"] for r in s["risk"])
 
 
 def test_sentetik_veri_sorununda_acilmaz(tmp_path):

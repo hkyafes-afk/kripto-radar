@@ -43,3 +43,14 @@ def test_sentetik_ic_ice_ayar_birlesimi():
     assert u["maliyet"]["belirsizlik_tamponu_bp"]["swing"] == 15.0
     assert u["maliyet"]["belirsizlik_tamponu_bp"]["intraday"] == 20.0        # diğerleri varsayılan kalır
     assert F.DEFAULTS["maliyet"]["belirsizlik_tamponu_bp"]["swing"] == 10.0  # varsayılanlar bozulmadı
+
+
+
+def test_adapter_factory_never_creates_exchange_execution():
+    """UnifiedTrader yürütme fabrikası her ayarda PAPER döndürür; borsa adaptörü oluşturmaz."""
+    from radar.unified.execution import PaperExecutionAdapter, make_adapter, OKXDemoAdapter
+
+    adapter = make_adapter({"birlesik": {"yurutme_modu": "okx_live"}})
+    assert isinstance(adapter, PaperExecutionAdapter)
+    with pytest.raises(F.ExecutionModeError):
+        OKXDemoAdapter({})

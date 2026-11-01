@@ -1,16 +1,16 @@
-"""Canlı motor: sürekli açık kalan, gecikmesiz döngü.
+"""Canlı motor process'i: yalnızca başlatıldığı GitHub Actions çalışması boyunca döngü yürütür.
 
-  WebSocket (OKX)   → her fiyat değişiminde (~100 ms) stop/hedef kontrolü, gerçek bid/ask, canlı funding
-  WebSocket (Bitget)→ ikinci borsa fiyatı ve funding (borsalar arası fark)
-  Telegram          → long polling ile komutlara anında cevap, gönderim kuyruğu + yeniden deneme
-  Ana döngü (0,5 sn)→ tetiklenen stop/hedefleri kapat, süre dolanları kapat, funding kesimlerini uygula,
-                      elle kapatma isteklerini işle, gerekirse yayınla
-  Arka plan işçisi  → 15dk/1S/4S mum kapanır kapanmaz tarama (+2 sn, mum kesinleşene kadar tekrar),
-                      15 dk'da bir funding, saatte bir coin listesi/BTC rejimi/OI/harvest/diğer borsalar
-  Yedek             → WebSocket koparsa REST ile 5 sn'de bir fiyat; her dakika 1 dk'lık mumlarla kontrol
+  WebSocket (OKX)    → bağlantı varken fiyat/defter olaylarını işler; bağlantı ve olay ritmi garanti edilmez.
+  WebSocket (Bitget) → yapılandırılmışsa ikinci borsa fiyatı/funding teyidi.
+  Telegram           → yapılandırılmışsa long polling; ağ ve workflow süresince kullanılabilir.
+  Ana döngü          → açık pozisyon koruma/çıkışlarını ve süre/funding kontrollerini yürütür.
+  Arka plan işçisi   → yapılandırılmış mum/periyot taramaları ve piyasa araştırması.
+  Yedek              → tanımlı REST yedekleri; kaynak erişilemezse veri UNKNOWN/STALE kalmalıdır.
 
-Aynı sınıf, test ve elle çalıştırma için tek seferlik taramayı da yapar (run_once).
+GitHub Actions lease zinciri kalıcı sunucu değildir: runner değişimi, timeout, iptal, cron
+gecikmesi ve kota nedeniyle kesinti olabilir. Bu modül 7/24 veya milisaniyelik SLA vaat etmez.
 """
+
 from __future__ import annotations
 
 import os
@@ -48,6 +48,8 @@ from . import other_exchanges as ox
 from . import signals as sg
 from . import store
 from .config import ROOT, load_config
+from .unified.quality import ChannelRule, MarketDataQualityEngine, QualityState
+from .unified.market_data import normalize_bbo
 from .scan import (VERSION, _f, _interval_h, btc_info, build_universe, fetch_funding, karne_md,
                    msg_daily, oi_changes, summary_md)
 
@@ -126,6 +128,12 @@ class Engine:
         self.skipped: list[dict] = []
         # canlı veri
         self.book: dict[str, tuple] = {}        # inst → (last, bid, ask, alındığı an)
+        self.bbo_quality = MarketDataQualityEngine({
+            "ws_ticker": ChannelRule(max_age_ms=int(self.BBO_MAX_AGE_S * 1000)),
+            "bitget_ticker": ChannelRule(max_age_ms=int(self.BBO_MAX_AGE_S * 1000)),
+            "rest_ticker": ChannelRule(max_age_ms=int(self.BBO_MAX_AGE_S * 1000)),
+        })
+        self.bbo_quality_latest: dict[tuple[str, str], object] = {}
         self.bg_book: dict[str, tuple] = {}     # baz coin → Bitget (last, bid, ask, an)
         self.fund_cur: dict[str, tuple] = {}    # inst → (oran, kesim_ms, kaynak)
         self.fund_events: list[tuple] = []      # (inst, oran, kesim_ms) geçmiş kesimler
@@ -208,19 +216,32 @@ class Engine:
     # ── canlı akış geri çağrıları (WS thread'lerinden) ────────────────
     def _on_tick(self, venue, key, last, bid, ask, ts):
         now = time.time()
+        receive_ms = int(now * 1000)
+        normalized = normalize_bbo(
+            venue=venue, symbol=key, last=last, bid=bid, ask=ask, event_ts_ms=ts,
+        )
+        channel = "bitget_ticker" if venue == "bitget" else "ws_ticker"
+        observation = self.bbo_quality.observe(
+            symbol=key, channel=channel, event_ts_ms=normalized.event_ts_ms,
+            receive_ts_ms=receive_ms, valid=normalized.valid,
+        )
+        self.bbo_quality_latest[(venue, key)] = observation
+        # Kaynağın timestamp'i veya BBO'su güvenilmezse fiyat; izleme, limit dolumu
+        # ya da strateji kararına hiçbir şekilde aktarılmaz.
+        if observation.state is not QualityState.LIVE:
+            return
+        decision_ts = normalized.event_ts_ms
         if venue == "bitget":
-            self.bg_book[key] = (last, bid, ask, now)
+            self.bg_book[key] = (normalized.last, normalized.bid, normalized.ask, now)
             return
-        if last <= 0:
-            return
-        self.book[key] = (last, bid, ask, now)
-        self.prices[key] = last
-        self._check_watch(key, last, bid, ask, ts)
+        self.book[key] = (normalized.last, normalized.bid, normalized.ask, now)
+        self.prices[key] = normalized.last
+        self._check_watch(key, normalized.last, normalized.bid, normalized.ask, decision_ts)
         ow = self.order_watch.get(key)
         if ow:
             for oid, side, px in ow:
-                if oid not in self.order_hits and ((side == "long" and last < px) or (side == "short" and last > px)):
-                    self.order_hits[oid] = (px, ts)        # limit emir: fiyat seviyenin içinden geçti → doldu
+                if oid not in self.order_hits and ((side == "long" and normalized.last < px) or (side == "short" and normalized.last > px)):
+                    self.order_hits[oid] = (px, decision_ts)  # limit emir: doğrulanmış fiyat seviyesi geçti → doldu
 
     def _check_watch(self, inst, last, bid, ask, ts):
         w = self.watch.get(inst)
@@ -755,28 +776,38 @@ class Engine:
         ask = ask if ask and ask > 0 else None
         return bid, ask, (round(time.time() - ts, 3) if ts else None)
 
+    def _trusted_bbo(self, inst: str, now: float | None = None):
+        """Yalnız borsa timestamp'i doğrulanmış ve 15 sn içinde olan BBO'yu döndür."""
+        now = time.time() if now is None else now
+        latest = getattr(self, "bbo_quality_latest", {})
+        ws_obs = latest.get(("okx", inst))
+        ws = getattr(self, "book", {}).get(inst)
+        if ws and ws_obs and ws_obs.state is QualityState.LIVE:
+            age = now - ws[3]
+            if age >= 0 and age <= self.BBO_MAX_AGE_S and ws[1] > 0 and ws[2] > 0 and ws[1] < ws[2]:
+                return ws, "ws"
+        rest_obs = latest.get(("rest", inst))
+        rb = (getattr(self, "bbo_rest", {}) or {}).get(inst)
+        if rb and rest_obs and rest_obs.state is QualityState.LIVE:
+            age = now - rb[2]
+            if age >= 0 and age <= self.BBO_MAX_AGE_S and rb[0] > 0 and rb[1] > 0 and rb[0] < rb[1]:
+                return ((rb[0] + rb[1]) / 2, rb[0], rb[1], rb[2]), "rest"
+        return None, "kalite_yok"
+
     def _book_ctx(self, inst: str) -> dict:
-        """Public BBO → karar bağlamı (bid, ask, yaş, kaynak). Öncelik: taze WS defteri; yoksa/bozuksa aynı turda
-        çekilmiş REST tickers anlık görüntüsü (gerçek public veri). Eski veri spread'i geçirmez."""
-        bid, ask, age = self._ws_bbo(inst)
-        src = "ws"
-        if not (bid and ask and age is not None and age <= self.BBO_MAX_AGE_S):
-            rb = (getattr(self, "bbo_rest", {}) or {}).get(inst)
-            if rb and rb[0] and rb[1] and time.time() - rb[2] <= self.BBO_MAX_AGE_S:
-                bid, ask, age, src = rb[0], rb[1], round(time.time() - rb[2], 3), "rest"
-            else:
-                src = "yok"
-                if bid and ask:
-                    src = "ws_eski"
-                return {"bid": None, "ask": None, "book_age_s": None, "bbo_kaynak": src}
-        return {"bid": bid, "ask": ask, "book_age_s": age, "bbo_kaynak": src}
+        """Unified kararına yalnız event timestamp'i doğrulanmış, taze ve çapraz olmayan BBO ver."""
+        now = time.time()
+        book, src = self._trusted_bbo(inst, now)
+        if not book:
+            return {"bid": None, "ask": None, "book_age_s": None, "bbo_kaynak": src}
+        return {"bid": book[1], "ask": book[2], "book_age_s": round(now - book[3], 3), "bbo_kaynak": src}
 
     def _bbo_snapshot(self, insts: set[str]) -> None:
         """WS defteri eksik/bayat olan karar coinleri için TEK bir REST tickers çağrısı (public, anlık BBO)."""
         need = set()
         for i in insts:
-            bid, ask, age = self._ws_bbo(i) if i else (None, None, None)
-            if not (bid and ask and age is not None and age <= self.BBO_MAX_AGE_S):
+            trusted, _ = self._trusted_bbo(i) if i else (None, "kalite_yok")
+            if not trusted:
                 need.add(i)
         if not need:
             return
@@ -789,7 +820,13 @@ class Engine:
                 iid = x.get("instId")
                 if iid in need:
                     bid, ask = _f(x.get("bidPx"), 0.0), _f(x.get("askPx"), 0.0)
-                    if bid > 0 and ask > 0:
+                    event_ts = int(_f(x.get("ts"), 0.0)) or None
+                    obs = self.bbo_quality.observe(
+                        symbol=iid, channel="rest_ticker", event_ts_ms=event_ts,
+                        receive_ts_ms=int(now * 1000), valid=bid > 0 and ask > 0 and bid < ask,
+                    )
+                    self.bbo_quality_latest[("rest", iid)] = obs
+                    if obs.state is QualityState.LIVE:
                         rest[iid] = (bid, ask, now)
         except Exception as e:  # noqa: BLE001
             self._bbo_err = f"{type(e).__name__}: {e}"
@@ -809,16 +846,22 @@ class Engine:
                 bid, ask, age = self._ws_bbo(inst)
                 st, _ = spread_status(c.get("bid"), c.get("ask"), c.get("book_age_s"))
                 durum[st] = durum.get(st, 0) + 1
+                quality = getattr(self, "bbo_quality_latest", {}).get(("okx", inst))
                 if len(rows) < 12:
                     rows.append({"decision_inst": inst, "feed_inst": inst in feed_syms, "book_exists": inst in self.book,
                                  "ws_bid": bid, "ws_ask": ask, "ws_book_age": age, "bid": c.get("bid"),
                                  "ask": c.get("ask"), "book_age": c.get("book_age_s"),
-                                 "bbo_kaynak": c.get("bbo_kaynak"), "spread_status": st})
+                                 "bbo_kaynak": c.get("bbo_kaynak"), "spread_status": st,
+                                 "quality_state": quality.state.value if quality else "UNKNOWN",
+                                 "quality_reason": quality.reason_code if quality else "observation_missing"})
+            qstates = {}
+            for observation in getattr(self, "bbo_quality_latest", {}).values():
+                qstates[observation.state.value] = qstates.get(observation.state.value, 0) + 1
             self._bbo_diag = {"ts": int(now * 1000), "ws_healthy": self.okx_live(),
                               "tick_count": getattr(f, "ticks", None),
                               "last_tick_age": round(now - f.last_msg, 1) if f is not None and getattr(f, "last_msg", 0) else None,
                               "feed_symbols": len(feed_syms), "decision_coins": len(ctxs or []),
-                              "book_entries": len(self.book), "spread_durum_sayim": durum,
+                              "book_entries": len(self.book), "spread_durum_sayim": durum, "bbo_quality_states": qstates,
                               "bbo_rest_hata": getattr(self, "_bbo_err", None), "ornek": rows}
         except Exception as e:  # noqa: BLE001 — tanılama karar akışını durdurmaz; hata durum.json'a yazılır
             self._bbo_diag = {"hata": f"{type(e).__name__}: {e}"}
@@ -836,6 +879,70 @@ class Engine:
         self._unified_step(ctxs)
         self._unified_audit()
 
+    def _poll_polat_research_bridge(self) -> dict:
+        """Read Polat telemetry into a separate status file; never feed it into execution quotes."""
+        target = self.site / "birlesik" / "polat_kopru.json"
+        shared_path = (os.environ.get("UNIFIED_POLAT_BRIDGE_PATH")
+                       or os.environ.get("POLAT_UNIFIED_BRIDGE_PATH") or "").strip()
+        now_ms = int(time.time() * 1000)
+        status = {
+            "source": "polat", "scope": "research_only", "status": "disabled",
+            "reason": "shared_path_not_configured", "last_sequence": None,
+            "sequence": None, "generated_at_ms": None, "received_at_ms": now_ms,
+            "age_ms": None, "observation_count": 0, "source_run_id": None, "telemetry": {},
+        }
+        last_sequence = getattr(self, "_polat_bridge_last_sequence", None)
+        if last_sequence is None:
+            try:
+                previous = json.loads(target.read_text(encoding="utf-8"))
+                value = previous.get("last_sequence")
+                if type(value) is int and value >= 0:
+                    last_sequence = value
+            except (OSError, ValueError, AttributeError):
+                pass
+        if shared_path:
+            from .unified.polat_bridge import read_snapshot
+            result = read_snapshot(
+                shared_path, now_ms=now_ms, max_age_ms=45_000, last_sequence=last_sequence,
+                hmac_key=os.environ.get("UNIFIED_POLAT_BRIDGE_HMAC_KEY") or None,
+                require_hmac=True,
+            )
+            if result.status == "fresh" and result.sequence is not None:
+                last_sequence = result.sequence
+                self._polat_bridge_last_sequence = result.sequence
+            status.update({
+                "status": result.status, "reason": result.reason,
+                "last_sequence": last_sequence, "sequence": result.sequence,
+                "generated_at_ms": result.generated_at_ms,
+                "age_ms": (now_ms - result.generated_at_ms) if result.generated_at_ms else None,
+                "observation_count": len(result.observations),
+                "source_run_id": result.source_run_id,
+                "telemetry": result.telemetry or {},
+            })
+        target.parent.mkdir(parents=True, exist_ok=True)
+        temporary = target.with_suffix(target.suffix + ".tmp")
+        temporary.write_text(json.dumps(status, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+        temporary.replace(target)
+        self.polat_bridge_status = status
+        return status
+
+    def _safe_poll_polat_research_bridge(self) -> dict:
+        """Bridge diagnostics are non-critical and must never stop the UnifiedTrader cycle."""
+        try:
+            return self._poll_polat_research_bridge()
+        except Exception as exc:  # noqa: BLE001
+            status = {
+                "source": "polat", "scope": "research_only", "status": "error",
+                "reason": f"status_publish_failed:{type(exc).__name__}",
+                "last_sequence": getattr(self, "_polat_bridge_last_sequence", None),
+                "sequence": None, "generated_at_ms": None,
+                "received_at_ms": int(time.time() * 1000), "age_ms": None,
+                "observation_count": 0, "source_run_id": None,
+            }
+            self.polat_bridge_status = status
+            print("[polat bridge telemetry] error:", type(exc).__name__, str(exc)[:180])
+            return status
+
     def _unified_step(self, ctxs: list[dict]):
         """Birleşik Baş Trader kancası. `birlesik.karar_modu`:
           legacy  → hiçbir şey yapmaz (varsayılan)
@@ -849,6 +956,8 @@ class Engine:
             mode = decision_mode(self.cfg)
             if mode is DecisionMode.LEGACY:
                 return
+            # Polat telemetry is published separately for research/diagnostics only.
+            self._safe_poll_polat_research_bridge()
             from .unified.trader import UnifiedTrader, quote_from_book
             if mode is DecisionMode.SHADOW:
                 tr = getattr(self, "_golge_trader", None)
@@ -859,14 +968,7 @@ class Engine:
                 now = time.time()
                 insts = {c.get("inst") for c in ctxs} | set(tr.adapter.positions) | \
                     {o["intent"]["inst"] for o in tr.adapter.open_orders()}
-                book = dict(getattr(self, "book", {}) or {})
-                for i in insts:                                 # dolum fiyatı da karar BBO'suyla aynı kaynaktan
-                    if not i:
-                        continue
-                    ws_ok = (b := book.get(i)) and b[1] and b[2] and time.time() - b[3] <= self.BBO_MAX_AGE_S
-                    rb = (getattr(self, "bbo_rest", {}) or {}).get(i)
-                    if not ws_ok and rb and rb[0] and rb[1] and time.time() - rb[2] <= self.BBO_MAX_AGE_S:
-                        book[i] = ((rb[0] + rb[1]) / 2, rb[0], rb[1], rb[2])
+                book = {i: trusted for i in insts if i and (trusted := self._trusted_bbo(i)[0])}
                 quotes = {i: q for i in insts if i and (q := quote_from_book(i, book.get(i), now))}
                 ev, self.golge_fund_events = list(getattr(self, "golge_fund_events", [])), []
                 okx = (getattr(self, "feeds", {}) or {}).get("okx")
@@ -879,10 +981,11 @@ class Engine:
             tr = getattr(self, "_unified_trader", None)
             if tr is None:
                 tr = self._unified_trader = UnifiedTrader(self.cfg, self.site / "birlesik")
+            tr.diag = getattr(self, "_bbo_diag", None)
             now = time.time()
             insts = {c.get("inst") for c in ctxs} | set(tr.adapter.positions) | \
                 {o["intent"]["inst"] for o in tr.adapter.open_orders()}
-            book = getattr(self, "book", {}) or {}
+            book = {i: trusted for i in insts if i and (trusted := self._trusted_bbo(i)[0])}
             quotes = {i: q for i in insts if i and (q := quote_from_book(i, book.get(i), now))}
             okx = (getattr(self, "feeds", {}) or {}).get("okx")
             out = tr.step(ctxs, quotes, meta=self.meta, closed_bars=getattr(self, "unified_closed_bars", {}),

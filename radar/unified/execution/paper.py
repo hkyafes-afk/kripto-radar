@@ -178,7 +178,7 @@ class PaperExecutionAdapter(ExecutionAdapter):
                     "max_holding_hours": meta.get("max_holding_hours"), "best_px": px, "partials": [],
                     "notional_usd": qty * px, "margin_usd": qty * px / float(meta.get("leverage") or 1.0),
                     "cluster": meta.get("cluster"), "timeframe": meta.get("timeframe"), "slip_usd": slip,
-                    "strategies": meta.get("strategies")}
+                    "strategies": meta.get("strategies"), "execution_scope": meta.get("execution_scope", "unknown")}
             else:
                 tot = pos["qty"] + qty
                 pos["entry"] = (pos["entry"] * pos["qty"] + px * qty) / tot

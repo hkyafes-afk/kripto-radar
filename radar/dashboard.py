@@ -11,6 +11,8 @@ import shutil
 from pathlib import Path
 
 from . import store
+from .config import load_config
+from .unified.settings import discover_settings
 
 TEMPLATES = Path(__file__).resolve().parent / "templates"
 LEGACY_TEMPLATE = TEMPLATES / "index.html"
@@ -23,6 +25,14 @@ def write_site(site: Path, payload: dict) -> None:
     clean = store.clean(payload)
     data = json.dumps(clean, ensure_ascii=False, separators=(",", ":"))
     (site / "data.json").write_text(data, encoding="utf-8")
+
+    # Parametre kataloğu keşif amaçlıdır; dashboard buradan config yazamaz.
+    settings_dir = site / "birlesik"
+    settings_dir.mkdir(parents=True, exist_ok=True)
+    settings = discover_settings(load_config())
+    (settings_dir / "ayarlar.json").write_text(
+        json.dumps(settings, ensure_ascii=False, separators=(",", ":")), encoding="utf-8"
+    )
 
     bt = site / "backtest.json"
     repo_bt = Path(__file__).resolve().parent.parent / "data" / "backtest.json"

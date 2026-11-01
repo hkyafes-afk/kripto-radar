@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import copy
+from dataclasses import replace
 import sys
 from pathlib import Path
 
@@ -11,7 +12,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from radar.config import load_config  # noqa: E402
 from radar.unified.decision import UnifiedDecisionEngine, exit_rule_tr  # noqa: E402
 from radar.unified.factors import FactorEngine  # noqa: E402
-from radar.unified.models import Decision, Horizon, Opportunity, StrategyAuthority  # noqa: E402
+from radar.unified.models import Decision, FactorCoverage, Horizon, Opportunity, StrategyAuthority  # noqa: E402
 from radar.unified.strategies import Strategy, SwingTrendStrategy  # noqa: E402
 from test_unified_strategies import kemal_ctx  # noqa: E402
 
@@ -166,3 +167,25 @@ def test_politika_motoru_hatasi_fail_closed(monkeypatch):
     assert ds and ds[0].decision is Decision.SHADOW
     assert any(code.startswith("POLITIKA:POLITIKA_HATASI") for code in ds[0].reason_codes)
     assert any("sentetik politika hatası" in error for error in eng.errors)
+
+
+def test_channel_coverage_failure_blocks_only_its_strategy_horizon():
+    context = mctx()
+    swing_ok = context.coverage_for(Horizon.SWING)
+    intraday_bad = FactorCoverage(
+        expected_total=6, present=5, required_total=6, required_ok=5,
+        coverage_ratio=5 / 6, min_ratio=0.8, required_missing=("close_1H",),
+        sufficient_for_paper=False, reason_codes=("ZORUNLU_EKSIK:close_1H",),
+    )
+    context = replace(context, coverage_by_horizon={
+        Horizon.SWING: swing_ok, Horizon.POSITION: swing_ok,
+        Horizon.INTRADAY: intraday_bad,
+    })
+    swing = opp(strategy="swing-channel")
+    intraday = replace(opp(strategy="intraday-channel"), horizon=Horizon.INTRADAY, timeframe="1H")
+    strategy = SentetikStrateji(CFG, [swing, intraday], name="two-horizon")
+    decisions = {d.strategy: d for d in UnifiedDecisionEngine(
+        no_policy_cfg(), strategies=[strategy]).decide([context], NOW)}
+    assert decisions["swing-channel"].decision is Decision.OPEN
+    assert decisions["intraday-channel"].decision is Decision.SHADOW
+    assert "ZORUNLU_EKSIK:close_1H" in decisions["intraday-channel"].reason_codes

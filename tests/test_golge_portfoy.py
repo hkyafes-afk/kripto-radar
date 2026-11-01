@@ -16,6 +16,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from radar import karne  # noqa: E402
 from radar.config import load_config  # noqa: E402
 from radar.engine import Engine  # noqa: E402
+from radar.unified.quality import ChannelRule, MarketDataQualityEngine  # noqa: E402
 from test_unified_strategies import kemal_ctx  # noqa: E402
 
 CFG = load_config()
@@ -28,11 +29,24 @@ def fake_engine(site, cfg=CFG):
     fe.cfg.setdefault("birlesik", {})["karar_modu"] = "shadow"
     fe.meta = {INST: {"list_ts": (time.time() - 2000 * 86400) * 1000}}
     fe.book, fe.ledger, fe.golge_fund_events = {}, {"closed": [], "open": []}, []
+    fe.BBO_MAX_AGE_S = 15.0
+    fe.bbo_quality = MarketDataQualityEngine({
+        "ws_ticker": ChannelRule(max_age_ms=15_000),
+        "bitget_ticker": ChannelRule(max_age_ms=15_000),
+        "rest_ticker": ChannelRule(max_age_ms=15_000),
+    })
+    fe.bbo_quality_latest = {}
     return fe
 
 
 def tick(fe, px):
-    fe.book[INST] = (px, px * 0.9997, px * 1.0003, time.time())
+    now = time.time()
+    receive_ms = int(now * 1000)
+    fe.book[INST] = (px, px * 0.9997, px * 1.0003, now)
+    fe.bbo_quality_latest[("okx", INST)] = fe.bbo_quality.observe(
+        symbol=INST, channel="ws_ticker", event_ts_ms=receive_ms,
+        receive_ts_ms=receive_ms, valid=True,
+    )
 
 
 def golge(site):

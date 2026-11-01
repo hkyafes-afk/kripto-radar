@@ -133,8 +133,9 @@ class UnifiedDecisionEngine:
         if ctx.data_quality.fail_closed:
             codes += [f"VERI_SORUNU:{c}" for c in ctx.data_quality.critical]
             return Decision.SHADOW, codes + list(cost.reason_codes)
-        if ctx.coverage is not None and not ctx.coverage.sufficient_for_paper:
-            codes += list(ctx.coverage.reason_codes)
+        coverage = ctx.coverage_for(o.horizon)
+        if coverage is not None and not coverage.sufficient_for_paper:
+            codes += list(coverage.reason_codes)
             return Decision.SHADOW, codes + list(cost.reason_codes)
         # YETKI_GOLGE ilk engel olsa da politika ve yaş sınıfı da hesaplanır (kararı değiştirmez; izleme için)
         if all(x.authority is not StrategyAuthority.PAPER for x in ops):
@@ -206,7 +207,7 @@ class UnifiedDecisionEngine:
         strategies = tuple(dict.fromkeys(x.strategy for x in ops))
         ev_for = tuple(dict.fromkeys(e for x in ops for e in x.evidence_for))
         ev_against = tuple(dict.fromkeys(e for x in ops for e in x.evidence_against))
-        cov = ctx.coverage
+        cov = ctx.coverage_for(d["primary"].horizon)
         missing = tuple(cov.missing) if cov else ()
         stale = tuple(cov.stale) if cov else ()
         mult = {Decision.OPEN: 1.0, Decision.REDUCE_SIZE: 0.5}.get(decision, 0.0)

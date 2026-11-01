@@ -296,7 +296,7 @@ class OKXFeed(Feed):
             if ch == "tickers":
                 self.ticks += 1
                 self.on_tick("okx", inst, _f(d.get("last")), _f(d.get("bidPx")), _f(d.get("askPx")),
-                             int(_f(d.get("ts"))) or int(time.time() * 1000))
+                             int(_f(d.get("ts"))) or None)
             elif ch == "funding-rate":
                 self.on_funding("okx", inst, _f(d.get("fundingRate")), int(_f(d.get("fundingTime"))),
                                 int(_f(d.get("nextFundingTime"))))
