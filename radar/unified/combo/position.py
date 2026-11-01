@@ -12,6 +12,7 @@ class LongLot:
     qty: float
     level_index: int | None
     opened_ts_ms: int
+    source_order_id: str | None = None
 
 
 class ComboPosition:
@@ -32,8 +33,17 @@ class ComboPosition:
     def add(self, lot: LongLot) -> None:
         if lot.qty <= 0 or lot.entry_price <= 0:
             raise ValueError("LONG lot miktarı ve fiyatı pozitif olmalı")
-        if lot.lot_id in self.lots:
-            raise ValueError(f"Tekrarlanan lot kimliği: {lot.lot_id}")
+        existing = self.lots.get(lot.lot_id)
+        if existing is not None:
+            if existing.source_order_id != lot.source_order_id or existing.level_index != lot.level_index:
+                raise ValueError(f"Farklı BUY kaynağı aynı lot kimliğini kullandı: {lot.lot_id}")
+            total_qty = existing.qty + lot.qty
+            existing.entry_price = (
+                existing.entry_price * existing.qty + lot.entry_price * lot.qty
+            ) / total_qty
+            existing.qty = total_qty
+            existing.opened_ts_ms = min(existing.opened_ts_ms, lot.opened_ts_ms)
+            return
         self.lots[lot.lot_id] = lot
 
     def available_qty(self, lot_id: str) -> float:
