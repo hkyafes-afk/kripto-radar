@@ -271,6 +271,17 @@ birlesik:
   cikis:                      # radar/unified/exits.py
     veri_sorunu_cikis_dk: 60            # coin verisi 60 dk'dan uzun güvenilmezse pozisyonu kapat
     rejim_cikisi: true                  # long krizde / short boğada kapanır
+  elif_carry:                 # Elif: ayrı spot-long + perpetual-short PAPER defteri; veri adaptörü tamamlanana dek kapalı
+    enabled: false             # otomatik açılış KAPALI; tek bacaklı Strategy registry'ye eklenmez
+    max_notional_usd: 25       # ayrı carry alt-defterinin nominal tavanı
+    leverage: 1                # perp ayağında varsayılan 1x
+    max_quote_age_ms: 5000     # her iki BBO için
+    max_funding_age_ms: 32400000
+    max_history_age_ms: 93600000
+    min_funding_30d_avg: 0
+    expected_holding_hours: 72
+    slippage_bp: 5
+    min_projected_net_usd: 0.10
   paper:                      # radar/unified/execution/paper.py (birleşik paper defteri: site/birlesik/yurutme.json)
     baslangic_bakiye: 100       # birleşik trader'ın hedef sanal sermayesi (USDT); legacy demo bakiyesinden bağımsız
     kote_max_yas_sn: 15                 # bundan eski fiyatla dolum varsayılmaz
