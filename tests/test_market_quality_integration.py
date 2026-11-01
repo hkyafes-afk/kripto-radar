@@ -297,4 +297,4 @@ def test_trade_without_exchange_trade_id_fails_closed():
     market.handle({"arg": {"channel": "trades", "instId": "BTC-USDT-SWAP"},
                    "data": [{"instId": "BTC-USDT-SWAP", "px": "100", "sz": "2",
                              "side": "buy", "ts": "1000"}]}, recv_ms=1_010)
-    assert market.coins["BTC-USDT-SWAP"].tape == []
+    assert list(market.coins["BTC-USDT-SWAP"].tape) == []
