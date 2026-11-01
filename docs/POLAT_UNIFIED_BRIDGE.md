@@ -1,6 +1,6 @@
 # Polat → Unified research snapshot bridge
 
-`radar.unified.polat_bridge` provides a versioned, atomic JSON snapshot contract for two processes that share a filesystem.
+`radar.unified.polat_bridge` provides a versioned (schema v2), atomic JSON snapshot contract for two processes that share a filesystem.
 
 ## Contract
 
@@ -52,3 +52,14 @@ if snapshot.status == "fresh":
 ## Tests
 
 `tests/test_polat_bridge.py` covers valid round-trip, replay, staleness, payload tampering and invalid BBO rejection.
+
+## Signed telemetry payload — schema v2
+
+The SHA-256 digest covers the BBO observations **and** a strictly validated `telemetry` object:
+
+- `channels`: per-channel symbol count, LIVE/STALE/INVALID/UNKNOWN/DISCONNECTED distribution, maximum event age.
+- `channel_counters`: observation/state counters, duplicate events and trade IDs, out-of-order events, order-book sequence gaps, estimated missing sequence updates and disconnect marks.
+- `latency`: event-to-receive p50/p95/p99/max and sample count; processing-time microsecond p50/p95/p99/max and sample count. Empty samples remain null.
+- `connections`: per-WebSocket-group attempts, successful connections, disconnects, last attempt/connect/disconnect timestamps and last error.
+
+Unknown fields, invalid state/count types, negative counters, NaN/Infinity, oversized telemetry and digest mismatches fail closed. The dashboard renders these values strictly as diagnostics. Sequence-gap-derived missing updates are not packet-capture measurements.
