@@ -879,6 +879,48 @@ class Engine:
         self._unified_step(ctxs)
         self._unified_audit()
 
+    def _poll_polat_research_bridge(self) -> dict:
+        """Read Polat telemetry into a separate status file; never feed it into execution quotes."""
+        target = self.site / "birlesik" / "polat_kopru.json"
+        shared_path = (os.environ.get("UNIFIED_POLAT_BRIDGE_PATH")
+                       or os.environ.get("POLAT_UNIFIED_BRIDGE_PATH") or "").strip()
+        now_ms = int(time.time() * 1000)
+        status = {
+            "source": "polat", "scope": "research_only", "status": "disabled",
+            "reason": "shared_path_not_configured", "last_sequence": None,
+            "sequence": None, "generated_at_ms": None, "received_at_ms": now_ms,
+            "age_ms": None, "observation_count": 0, "source_run_id": None,
+        }
+        last_sequence = getattr(self, "_polat_bridge_last_sequence", None)
+        if last_sequence is None:
+            try:
+                previous = json.loads(target.read_text(encoding="utf-8"))
+                value = previous.get("last_sequence")
+                if type(value) is int and value >= 0:
+                    last_sequence = value
+            except (OSError, ValueError, AttributeError):
+                pass
+        if shared_path:
+            from .unified.polat_bridge import read_snapshot
+            result = read_snapshot(shared_path, now_ms=now_ms, last_sequence=last_sequence)
+            if result.status == "fresh" and result.sequence is not None:
+                last_sequence = result.sequence
+                self._polat_bridge_last_sequence = result.sequence
+            status.update({
+                "status": result.status, "reason": result.reason,
+                "last_sequence": last_sequence, "sequence": result.sequence,
+                "generated_at_ms": result.generated_at_ms,
+                "age_ms": (now_ms - result.generated_at_ms) if result.generated_at_ms else None,
+                "observation_count": len(result.observations),
+                "source_run_id": result.source_run_id,
+            })
+        target.parent.mkdir(parents=True, exist_ok=True)
+        temporary = target.with_suffix(target.suffix + ".tmp")
+        temporary.write_text(json.dumps(status, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+        temporary.replace(target)
+        self.polat_bridge_status = status
+        return status
+
     def _unified_step(self, ctxs: list[dict]):
         """Birleşik Baş Trader kancası. `birlesik.karar_modu`:
           legacy  → hiçbir şey yapmaz (varsayılan)
@@ -892,6 +934,8 @@ class Engine:
             mode = decision_mode(self.cfg)
             if mode is DecisionMode.LEGACY:
                 return
+            # Polat telemetry is published separately for research/diagnostics only.
+            self._poll_polat_research_bridge()
             from .unified.trader import UnifiedTrader, quote_from_book
             if mode is DecisionMode.SHADOW:
                 tr = getattr(self, "_golge_trader", None)
