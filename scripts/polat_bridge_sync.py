@@ -59,8 +59,10 @@ def push_once(path: Path) -> bool:
     if not raw or len(raw) > MAX_BYTES:
         raise RuntimeError("bridge_snapshot_empty_or_over_github_contents_limit")
     # Verify before publishing: never relay malformed, stale, replayed or unsigned-invalid data.
-    checked = read_snapshot(path, now_ms=int(time.time() * 1000), max_age_ms=15_000)
-    if checked.status != "live":
+    key = os.environ.get("POLAT_UNIFIED_BRIDGE_HMAC_KEY") or None
+    checked = read_snapshot(path, now_ms=int(time.time() * 1000), max_age_ms=15_000,
+                            hmac_key=key, require_hmac=bool(key))
+    if checked.status != "fresh":
         raise RuntimeError(f"bridge_snapshot_not_live:{checked.reason}")
     _ensure_branch()
     status, current = _api("GET", f"contents/{FILE_PATH}?ref={BRANCH}")
@@ -130,8 +132,10 @@ def main() -> int:
             else:
                 pull_once(path)
                 if path.exists():
-                    result = read_snapshot(path, now_ms=int(time.time() * 1000), max_age_ms=15_000)
-                    if result.status == "live":
+                    key = os.environ.get("UNIFIED_POLAT_BRIDGE_HMAC_KEY") or None
+                    result = read_snapshot(path, now_ms=int(time.time() * 1000), max_age_ms=15_000,
+                                           hmac_key=key, require_hmac=bool(key))
+                    if result.status == "fresh":
                         print(f"Polat bridge LIVE seq={result.sequence}", flush=True)
             last_error_at = 0.0
         except Exception as exc:  # noqa: BLE001
