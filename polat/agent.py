@@ -103,7 +103,7 @@ class Polat:
         # Optional shared-volume bridge: always research-only; never an execution price source.
         bridge_value = os.environ.get("POLAT_UNIFIED_BRIDGE_PATH", "").strip()
         self.bridge_path = Path(bridge_value) if bridge_value else None
-        self.bridge_hmac_key = os.environ.get("POLAT_UNIFIED_BRIDGE_HMAC_KEY")
+        self.bridge_hmac_key = os.environ.get("POLAT_UNIFIED_BRIDGE_HMAC_KEY") or None
         self.bridge_sequence = 0
         self.bridge_run_id = str(os.environ.get("GITHUB_RUN_ID") or f"local-{os.getpid()}-{self.started}")
         self.bridge_stats = {"published": 0, "failed": 0, "last_published_ms": None, "last_error": None}
