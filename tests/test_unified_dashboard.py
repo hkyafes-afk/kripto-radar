@@ -31,7 +31,7 @@ def test_site_birlesik_panelini_kopyalar_ve_baglar(tmp_path):
     assert "Yeniden başlatma" in page and "doğrulanmadı" in page
     assert "Veri Sağlığı" in page and "renderDataHealth" in page and "tanilama" in page
     assert "renderPolatBridge" in page and "birlesik/polat_kopru.json" in page
-    assert "research_only" in page and "Gözlem sayısı" in page
+    assert "Yalnız araştırma/teşhis telemetrisi" in page and "Gözlem sayısı" in page
     assert all(label in page for label in ("Fırsatlar", "Portföy", "Karar Merkezi", "Performans", "Deney Laboratuvarı"))
     assert "renderOpportunities" in page and "renderExperimentLab" in page
     assert "renderKarne(data && data.karne" in page
