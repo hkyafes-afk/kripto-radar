@@ -91,8 +91,9 @@ async function main() {
           assert.match(await page.locator("#view").innerText(), /Polat → Unified/);
           assert.match(await page.locator("#view").innerText(), /araştırma\/teşhis telemetrisi/);
           const renderedBridge = await page.locator("#view").innerText();
-          assert.match(renderedBridge, /Kanal kalite durumu/i);
-          assert.match(renderedBridge, /WebSocket bağlantı sağlığı/i);
+          const sectionText = (await page.locator("#view .sec").allTextContents()).join(" ");
+          assert.match(sectionText, /Kanal kalite durumu/);
+          assert.match(sectionText, /WebSocket bağlantı sağlığı/);
           assert.match(await page.locator("#view").innerText(), /Sequence gap/);
           assert.match(await page.locator("#view").innerText(), /Feed gecikme p50/);
           assert.ok(await page.locator("#view .metric-source").count() > 0,
