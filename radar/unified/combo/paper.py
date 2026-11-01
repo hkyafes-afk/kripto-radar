@@ -28,6 +28,8 @@ class ComboPaperAdapter:
         self.last_mark: float | None = None
         self.last_quote_ts_ms: int | None = None
         self.initialized = False
+        self.grid_seeded = False
+        self.grid_anchor_price: float | None = None
         self.halted = False
         self.halt_reason: str | None = None
         self.tp_triggered = False
@@ -66,6 +68,8 @@ class ComboPaperAdapter:
         self.last_mark = raw.get("last_mark")
         self.last_quote_ts_ms = raw.get("last_quote_ts_ms")
         self.initialized = bool(raw.get("initialized", False))
+        self.grid_seeded = bool(raw.get("grid_seeded", False))
+        self.grid_anchor_price = raw.get("grid_anchor_price")
         self.halted = bool(raw.get("halted", False))
         self.halt_reason = raw.get("halt_reason")
         self.tp_triggered = bool(raw.get("tp_triggered", False))
@@ -84,7 +88,8 @@ class ComboPaperAdapter:
             "events": [asdict(event) for event in self.events[-2000:]],
             "realized_gross_usdt": self.realized_gross_usdt, "fees_paid_usdt": self.fees_paid_usdt,
             "last_mark": self.last_mark, "last_quote_ts_ms": self.last_quote_ts_ms,
-            "initialized": self.initialized, "halted": self.halted,
+            "initialized": self.initialized, "grid_seeded": self.grid_seeded,
+            "grid_anchor_price": self.grid_anchor_price, "halted": self.halted,
             "halt_reason": self.halt_reason, "tp_triggered": self.tp_triggered,
             "tp_order": self.tp_order, "next_order_id": self.next_order_id,
         }
@@ -142,7 +147,8 @@ class ComboPaperAdapter:
                    for order in self.orders.values())
 
     def place_limit(self, *, side: str, price: float, qty: float, role: str, level_index: int | None,
-                    now_ms: int, lot_id: str | None = None, reduce_only: bool = False) -> ComboOrder | None:
+                    now_ms: int, lot_id: str | None = None, reduce_only: bool = False,
+                    parent_order_id: str | None = None) -> ComboOrder | None:
         if side not in ("buy", "sell") or price <= 0 or qty <= 0:
             raise ValueError("COMBO limit emri yönü, fiyatı ve miktarı geçerli olmalı")
         if side == "sell":
@@ -159,9 +165,23 @@ class ComboPaperAdapter:
         else:
             if reduce_only or lot_id is not None:
                 raise ValueError("BUY DCA emirleri reduce-only veya lot bağlı olamaz")
-            if level_index is not None and self.has_active_buy_at(level_index):
+            if level_index is not None and parent_order_id is None and self.has_active_buy_at(level_index):
                 return next(o for o in self.orders.values()
                             if o.active and o.side == "buy" and o.level_index == level_index)
+            if parent_order_id is not None:
+                existing_child = next((o for o in self.orders.values()
+                                       if o.side == "buy" and o.parent_order_id == parent_order_id
+                                       and o.status not in (ComboOrderStatus.CANCELLED, ComboOrderStatus.REJECTED)), None)
+                if existing_child is not None:
+                    return existing_child
+                unclaimed = next((o for o in self.orders.values()
+                                  if o.active and o.side == "buy" and o.level_index == level_index
+                                  and o.parent_order_id is None), None)
+                if unclaimed is not None:
+                    unclaimed.parent_order_id = parent_order_id
+                    unclaimed.updated_ts_ms = now_ms
+                    self.save()
+                    return unclaimed
             px = self._mark()
             required_margin = price * qty / self.cfg.leverage_simulation
             projected_notional = (self.position.qty * px + self.reserved_buy_margin_usdt()
@@ -177,7 +197,7 @@ class ComboPaperAdapter:
         order = ComboOrder(
             order_id=self._new_id(), side=side, price=price, qty=qty, role=role,
             level_index=level_index, lot_id=lot_id, reduce_only=reduce_only,
-            created_ts_ms=now_ms, updated_ts_ms=now_ms,
+            created_ts_ms=now_ms, updated_ts_ms=now_ms, parent_order_id=parent_order_id,
         )
         self.orders[order.order_id] = order
         self._event("order_accepted", f"{side.upper()} {role} limit PAPER emri kabul edildi",
@@ -221,6 +241,8 @@ class ComboPaperAdapter:
         self._event("base_filled", "PAPER market Base Order doldu; LONG lot açıldı",
                     now_ms, order_id, qty, quote.ask)
         self.initialized = True
+        self.grid_anchor_price = quote.last
+        self.grid_seeded = False
         self.last_mark = quote.last
         self.save()
         return lot
