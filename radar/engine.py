@@ -905,7 +905,7 @@ class Engine:
             result = read_snapshot(
                 shared_path, now_ms=now_ms, max_age_ms=45_000, last_sequence=last_sequence,
                 hmac_key=os.environ.get("UNIFIED_POLAT_BRIDGE_HMAC_KEY") or None,
-                require_hmac=bool(os.environ.get("UNIFIED_POLAT_BRIDGE_HMAC_KEY")),
+                require_hmac=True,
             )
             if result.status == "fresh" and result.sequence is not None:
                 last_sequence = result.sequence
