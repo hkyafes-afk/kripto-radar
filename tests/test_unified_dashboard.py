@@ -27,6 +27,10 @@ def test_site_birlesik_panelini_kopyalar_ve_baglar(tmp_path):
     assert page == alias
     assert "Kripto Radar" in legacy and "/*__DATA__*/null" not in legacy
     assert "Veri yok" in page and "Bayat" in page and "Bağlantı kesik" in page and "PAPER · TEK OTORİTE" in page
+    assert "renderForwardEvidence" in page and 'id="forwardEvidence"' in page
+    assert "14 gün ve 100 kapanış yalnız doğrulama/terfi kanıtıdır" in page
+    assert "PAPER işlemlerinin açılmasını engellemez" in page
+    assert "closed_paper_trades" in page
     assert "Ayarlar" in page and "renderSettings" in page and "birlesik/ayarlar.json" in page
     assert "Yeniden başlatma" in page and "doğrulanmadı" in page
     assert "Veri Sağlığı" in page and "renderDataHealth" in page and "tanilama" in page
