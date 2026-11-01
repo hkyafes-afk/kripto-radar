@@ -513,7 +513,8 @@ def _prime_live(m, inst, px, now):
     m._book(inst, [book_msg(px, levels=40, size="500000", ts=now)], "snapshot", now)
     c.last, c.bid, c.ask, c.tick_ts = px, px - 0.005, px + 0.005, now
     for i in range(40):
-        m._trade({"instId": inst, "px": str(px), "sz": "100", "side": "buy", "ts": str(now - 800_000 + i * 20_000)}, now)
+        m._trade({"instId": inst, "tradeId": str(10_000 + i), "px": str(px), "sz": "100",
+                  "side": "buy", "ts": str(now - 800_000 + i * 20_000)}, now)
     c.funding, c.next_funding_ts = 0.00001, now + 8 * H
     c.mark, c.index = px * 1.0002, px
     c.ls_ratio = 0.8
