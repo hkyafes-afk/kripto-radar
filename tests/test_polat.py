@@ -551,9 +551,12 @@ def test_agent_every_reading_votes_and_full_cycle():
         need = {"trend", "seviye", "momentum", "hacim", "turev", "akis", "piyasa"}
         assert need <= cats, f"oy vermeyen kategori: {need - cats}"
         names = set(dec["oylar"])
+        # 5 dk CVD oyu, son 5 dk için yeterli taze tape örneği varsa üretilir.
+        # Fixture'ın 30 sn tazelik kapısı daha eski sentetik trade olaylarını doğru biçimde reddeder.
+        assert rd["akis"]["cvd_5dk"] is None
         for must in ("yapi_1D", "adx_di_4H", "psar_1H", "supertrend_4H", "trix_1H", "rsi_15m", "stoch_15m", "cci_1H",
                      "willr_15m", "ultimate_1H", "macd_hist_15m", "obv_egim_1H", "mfi_15m", "pvi_1H", "demand_15m",
-                     "oi_fiyat", "fonlama", "basis", "long_short", "cvd_5dk", "defter_dengesi", "btc_4H",
+                     "oi_fiyat", "fonlama", "basis", "long_short", "defter_dengesi", "btc_4H",
                      "btc_dominans", "stablecoin", "haber_tepkisi", "konum"):
             assert must in names, f"{must} oy vermedi"
         assert dec["yon"] == 1 and dec["kategoriler"]["trend"] > 0, dec["kategoriler"]
