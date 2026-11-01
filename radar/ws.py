@@ -318,7 +318,8 @@ class OKXFeed(Feed):
                 self.on_tick("okx", inst, last, bid, ask, ts_ms)
                 self._publish_tick({
                     "exchange": "okx", "inst": inst, "last": last, "bid": bid, "ask": ask,
-                    "bid_size": _f(d.get("bidSz")), "ask_size": _f(d.get("askSz")), "ts_ms": ts_ms,
+                    "bid_size_contracts": _f(d.get("bidSz")), "ask_size_contracts": _f(d.get("askSz")),
+                    "size_unit": "contracts_for_swap", "ts_ms": ts_ms,
                 })
             elif ch == "funding-rate":
                 self.on_funding("okx", inst, _f(d.get("fundingRate")), int(_f(d.get("fundingTime"))),
