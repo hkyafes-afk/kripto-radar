@@ -8,11 +8,11 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 3386 | %46.2 | -0.32 | -1084.33 |
+| polat_tum_sinyaller | 3392 | %46.2 | -0.32 | -1086.17 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 3373 | %46.2 | -0.32 | -1078.96 |
-| rastgele | 3361 | %43.1 | -0.39 | -1310.42 |
-| trend_naif | 3392 | %41.2 | -0.425 | -1441.92 |
+| polat_girilmeyen | 3379 | %46.2 | -0.32 | -1080.81 |
+| rastgele | 3370 | %43.1 | -0.39 | -1314.84 |
+| trend_naif | 3398 | %41.2 | -0.425 | -1445.2 |
 
 Polat özsermaye: %-4.71 · BTC al-tut: %-4.09
 
@@ -25,11 +25,11 @@ En az işe yarayan okumalar: btc_1H ×0.474, cift_dip_4H ×0.511, momentum_1H ×
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 16987, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 17028, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 8069
+- ders: 8093
 - gösterge aileleri aynı yönde değil: 178
 - yetki: 165
 - büyük zaman dilimi trendi ters: 70
@@ -37,7 +37,7 @@ Kapanmış işlem yok. Görülen kurulum: 16987, girilen: 0.
 - puan +0.123 eşiğin (0.3) altında: 53
 - puan +0.131 eşiğin (0.3) altında: 53
 - puan +0.129 eşiğin (0.3) altında: 50
-- puan +0.130 eşiğin (0.3) altında: 49
+- puan +0.130 eşiğin (0.3) altında: 50
 - puan +0.160 eşiğin (0.3) altında: 49
 
 ## Son 50 gün
@@ -91,7 +91,7 @@ Kapanmış işlem yok. Görülen kurulum: 16987, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 21582
+- ders: 21606
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2499
 - üst üste 3 zarar: 2345
@@ -158,7 +158,7 @@ Kapanmış işlem yok. Görülen kurulum: 16987, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 21582
+- ders: 21606
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2499
 - üst üste 3 zarar: 2345
