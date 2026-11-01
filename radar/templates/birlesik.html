@@ -131,6 +131,11 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;paddin
 .sourcebar{display:flex;align-items:flex-start;justify-content:space-between;gap:8px 14px;flex-wrap:wrap;padding:10px 12px;margin:0 0 12px;background:var(--card2);border:1px solid var(--line);border-radius:12px;font-size:12.5px;line-height:1.45}
 .sourcebar b{font-weight:750}.sourcebar .mut{overflow-wrap:anywhere}.sourcebar-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .sourcebar .st{font-size:11px}
+.evidence-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+.evidence-item{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:10px;min-width:0}
+.evidence-item .l{font-size:12px;color:var(--muted)} .evidence-item .v{font-size:20px;font-weight:800;margin-top:4px}
+.evidence-track{height:7px;border-radius:8px;background:var(--line);overflow:hidden;margin-top:8px}
+.evidence-track i{display:block;height:100%;background:var(--blue);border-radius:8px}
 @media(max-width:420px){.sourcebar{padding:9px 10px}.sourcebar-meta{width:100%;justify-content:space-between}}
 
 </style>
@@ -148,6 +153,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;paddin
       <div class="fresh" id="fresh"></div>
       <div id="warn" aria-live="polite" aria-atomic="true"></div>
       <div class="kpis" id="kpis"></div>
+      <div id="forwardEvidence"></div>
       <div class="card" id="btc"></div>
       <div class="card" id="sys"></div>
     </div>
@@ -240,6 +246,33 @@ function areaChart(h, H, fmtY, base) {
     <text x="${W - pr + 6}" y="${y(last) + 4}" fill="#fff" font-size="12" font-weight="700">${esc(fmtY(last))}</text></svg>`;
 }
 
+function renderForwardEvidence(durum) {
+  const root = $("forwardEvidence");
+  if (!root) return;
+  const e = durum && durum.forward_paper_kaniti;
+  if (!e || typeof e !== "object") {
+    root.innerHTML = '<div class="card"><div class="hrow"><h2>İleri PAPER doğrulaması</h2><span class="st st-yok">Henüz yayımlanmadı</span></div><div class="note">14 günlük gözlem ve kapanmış işlem kanıtı henüz durum dosyasında yok. Bu sayaç işlem açma izni değildir; PAPER yürütmesini engellemez.</div></div>';
+    return;
+  }
+  const days = isNum(e.elapsed_days) ? Math.max(0, e.elapsed_days) : null;
+  const requiredDays = isNum(e.required_days) && e.required_days > 0 ? e.required_days : 14;
+  const trades = Number.isInteger(e.closed_paper_trades) ? Math.max(0, e.closed_paper_trades) : null;
+  const requiredTrades = Number.isInteger(e.required_closed_trades) && e.required_closed_trades > 0 ? e.required_closed_trades : 100;
+  const dayPct = days == null ? 0 : Math.min(100, days / requiredDays * 100);
+  const tradePct = trades == null ? 0 : Math.min(100, trades / requiredTrades * 100);
+  const ready = e.promotion_evidence_ready === true;
+  const state = ready ? '<span class="st st-ok">Kanıt hazır</span>' : '<span class="st st-bayat">Gözlem sürüyor</span>';
+  const dayText = days == null ? 'Veri yok' : fmt(days, 2) + ' / ' + fmt(requiredDays, 0) + ' gün';
+  const tradeText = trades == null ? 'Veri yok' : trades + ' / ' + requiredTrades + ' kapanış';
+  const reset = Number.isInteger(e.window_resets) ? e.window_resets : '—';
+  const reason = e.last_reason ? esc(e.last_reason) : '—';
+  root.innerHTML = '<div class="card"><div class="hrow"><h2>İleri PAPER doğrulaması</h2>' + state + '</div>' +
+    '<div class="evidence-grid"><div class="evidence-item"><div class="l">Kesintisiz gözlem</div><div class="v num">' + dayText + '</div><div class="evidence-track"><i style="width:' + dayPct.toFixed(1) + '%"></i></div></div>' +
+    '<div class="evidence-item"><div class="l">Gerçek kapanmış Unified PAPER</div><div class="v num">' + tradeText + '</div><div class="evidence-track"><i style="width:' + tradePct.toFixed(1) + '%"></i></div></div></div>' +
+    '<div class="note">Son durum: ' + reason + ' · Gözlem sıfırlanma sayısı: ' + reset + '</div>' +
+    '<div class="note"><b>Önemli:</b> 14 gün ve 100 kapanış yalnız doğrulama/terfi kanıtıdır. PAPER işlemlerinin açılmasını engellemez; her işlem yine normal piyasa verisi ve risk kapılarından geçer. Gerçek emirler kapalıdır.</div></div>';
+}
+
 function render() {
   const D = S.data; if (!D) return;
   const {data, durum, ozet, decs, st} = D;
@@ -264,6 +297,7 @@ function render() {
     k("Açık İşlemler", durum ? pos.length : "—", durum ? `<span class="up">+${win}</span> / <span class="down">-${lose}</span>` : badge(st.durum)) +
     k("Bugünkü Karar", decs.length ? decs.length : (st.dec === "ok" ? 0 : "—"), decs.length ? `Aç: <b class="up">${(c.OPEN || 0) + (c.REDUCE_SIZE || 0)}</b> &nbsp;Gölge: <b>${c.SHADOW || 0}</b> &nbsp;Red: <b class="down">${c.REJECT || 0}</b>` : badge(st.dec)) +
     k("Günlük PAPER K/Z", isNum(dpl) ? usd(dpl) : "—", isNum(dpl) && dstart ? `<span class="${cls(dpl)}">${sgn(dpl / dstart * 100, 2, "%")}</span>` : badge(st.durum), cls(dpl));
+  renderForwardEvidence(durum);
   renderBtc(data, durum); renderSys(data, durum, st); renderTabs(pos, closed, decs, data, st, durum, ozet, S.data && S.data.ayarlar, S.data && S.data.polat); renderPf(durum, tot, dpl, start, st); applyLive();
 }
 
