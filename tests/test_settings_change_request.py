@@ -167,3 +167,43 @@ def test_settings_audit_write_failure_restores_original_config(tmp_path, monkeyp
     with pytest.raises(SettingsChangeError, match="geri alınmaya çalışıldı"):
         apply_file_change(target, "risk.risk_yuzde", "0.75", audit_file=audit)
     assert target.read_text(encoding="utf-8") == CONFIG
+
+
+def test_settings_workflow_yaml_has_unique_keys_and_keeps_pr_review_boundary():
+    import yaml
+    from pathlib import Path
+
+    workflow_path = Path(__file__).resolve().parents[1] / ".github" / "workflows" / "settings-change-request.yml"
+    raw = workflow_path.read_text(encoding="utf-8")
+
+    class UniqueKeyLoader(yaml.SafeLoader):
+        pass
+
+    def construct_unique_mapping(loader, node, deep=False):
+        mapping = {}
+        for key_node, value_node in node.value:
+            key = loader.construct_object(key_node, deep=deep)
+            if key in mapping:
+                raise yaml.constructor.ConstructorError(
+                    "while constructing a mapping", node.start_mark,
+                    f"duplicate key {key!r}", key_node.start_mark,
+                )
+            mapping[key] = loader.construct_object(value_node, deep=deep)
+        return mapping
+
+    UniqueKeyLoader.add_constructor(
+        yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, construct_unique_mapping,
+    )
+    document = yaml.load(raw, Loader=UniqueKeyLoader)
+    dispatch = document["on"]["workflow_dispatch"]["inputs"]
+    assert set(dispatch["change_mode"]["options"]) == {"apply", "rollback"}
+    assert dispatch["parameter_path"]["required"] is False
+    assert set(document["permissions"]) == {"contents", "pull-requests"}
+    assert document["concurrency"]["cancel-in-progress"] is False
+    propose = document["jobs"]["propose"]
+    assert propose["if"] == "github.ref == 'refs/heads/main'"
+    create_pr = next(step for step in propose["steps"] if step["name"] == "Open a draft pull request for human review")
+    assert create_pr["with"]["draft"] is True
+    assert create_pr["with"]["base"] == "main"
+    assert "config.yaml" in create_pr["with"]["add-paths"]
+    assert ".settings-change-audit.jsonl" in create_pr["with"]["add-paths"]
