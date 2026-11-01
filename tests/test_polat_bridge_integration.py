@@ -11,6 +11,25 @@ from radar.unified.polat_bridge import read_snapshot
 from radar.unified.quality import QualityState
 
 
+def _polat_telemetry():
+    return {
+        "kalite_telemetrisi": {
+            "kanallar": {"tickers": {"sembol_sayisi": 1, "durumlar": {
+                "LIVE": 1, "STALE": 0, "INVALID": 0, "UNKNOWN": 0, "DISCONNECTED": 0
+            }, "son_olay_yasi_ms_max": 0}},
+            "kanal_sayaclari": {"tickers": {
+                "observations": 1, "live": 1, "stale": 0, "invalid": 0, "unknown": 0,
+                "duplicate": 0, "out_of_order": 0, "sequence_gap": 0, "disconnected": 0,
+                "dropped_sequence_updates": 0, "duplicate_event_id": 0
+            }},
+        },
+        "gecikme_ornek_sayisi": 1, "gecikme_ms_p50": 1.0, "gecikme_ms_p95": 1.0,
+        "gecikme_ms_p99": 1.0, "gecikme_ms_max": 1.0,
+        "isleme_ornek_sayisi": 1, "isleme_us_p50": 1.0, "isleme_us_p95": 1.0,
+        "isleme_us_p99": 1.0, "isleme_us_max": 1.0,
+    }
+
+
 def test_polat_publisher_exports_only_fresh_live_quality_tickers(tmp_path, monkeypatch):
     now = 10_000
     monkeypatch.setattr(polat_agent, "now_ms", lambda: now)
@@ -26,7 +45,9 @@ def test_polat_publisher_exports_only_fresh_live_quality_tickers(tmp_path, monke
             ("BTC-USDT-SWAP", "tickers"): SimpleNamespace(state=QualityState.LIVE),
             ("ETH-USDT-SWAP", "tickers"): SimpleNamespace(state=QualityState.LIVE),
         },
+        stats=_polat_telemetry,
     )
+    agent.feed = None
     agent.bridge_stats = {"published": 0, "failed": 0, "last_published_ms": None, "last_error": None}
 
     assert agent._publish_research_bridge() is True
@@ -34,6 +55,8 @@ def test_polat_publisher_exports_only_fresh_live_quality_tickers(tmp_path, monke
     assert result.status == "fresh"
     assert [item.symbol for item in result.observations] == ["BTC-USDT-SWAP"]
     assert result.source_run_id == "polat-run-1"
+    assert result.telemetry["channels"]["tickers"]["durumlar"]["LIVE"] == 1
+    assert result.telemetry["latency"]["gecikme_ms_p95"] == 1.0
     assert agent.bridge_stats["published"] == 1
 
 
@@ -48,7 +71,9 @@ def test_polat_publisher_does_not_publish_when_no_fresh_live_tickers(tmp_path, m
     agent.market = SimpleNamespace(
         coins={"BTC-USDT-SWAP": coin},
         quality_latest={("BTC-USDT-SWAP", "tickers"): SimpleNamespace(state=QualityState.STALE)},
+        stats=_polat_telemetry,
     )
+    agent.feed = None
     assert agent._publish_research_bridge() is False
     assert not agent.bridge_path.exists()
 
