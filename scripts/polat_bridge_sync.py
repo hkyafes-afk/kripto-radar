@@ -63,9 +63,11 @@ def push_once(path: Path) -> bool:
     if not raw or len(raw) > MAX_BYTES:
         raise RuntimeError("bridge_snapshot_empty_or_over_github_contents_limit")
     # Verify before publishing: never relay malformed, stale, replayed or unsigned-invalid data.
-    key = os.environ.get("POLAT_UNIFIED_BRIDGE_HMAC_KEY") or None
+    key = os.environ.get("POLAT_UNIFIED_BRIDGE_HMAC_KEY") or ""
+    if len(key.encode("utf-8")) < 32:
+        raise RuntimeError("bridge_hmac_key_missing_or_invalid")
     checked = read_snapshot(path, now_ms=int(time.time() * 1000), max_age_ms=45_000,
-                            hmac_key=key, require_hmac=bool(key))
+                            hmac_key=key, require_hmac=True)
     if checked.status != "fresh":
         raise RuntimeError(f"bridge_snapshot_not_live:{checked.reason}")
     _ensure_branch()
@@ -145,7 +147,7 @@ def main() -> int:
                 if path.exists():
                     key = os.environ.get("UNIFIED_POLAT_BRIDGE_HMAC_KEY") or None
                     result = read_snapshot(path, now_ms=int(time.time() * 1000), max_age_ms=45_000,
-                                           hmac_key=key, require_hmac=bool(key))
+                                           hmac_key=key, require_hmac=True)
                     if result.status == "fresh":
                         print(f"Polat bridge LIVE seq={result.sequence}", flush=True)
             last_error_at = 0.0
