@@ -25,6 +25,7 @@ from .carry import CarryPairPaper
 from .execution.base import Quote
 from .execution.paper import PaperExecutionAdapter
 from .exits import evaluate_exits
+from .forward_evidence import ForwardPaperEvidence
 from .factors import FactorEngine
 from .flags import execution_mode, unified_cfg
 from .journal import DecisionJournal
@@ -59,6 +60,7 @@ class UnifiedTrader:
         self.adapter = PaperExecutionAdapter(self.cfg, root=self.root)
         # Elif'in ayrı spot+perp defteri UnifiedTrader tarafından sahiplenilir; varsayılan kapalıdır.
         self.carry_paper = CarryPairPaper(self.cfg, root=self.root / "elif_carry")
+        self.forward_evidence = ForwardPaperEvidence(self.root / "forward_paper_evidence.json")
         self.mode = mode
         self.journal_root = Path(journal_root) if journal_root else self.root
         self.journal = DecisionJournal(self.journal_root, keep_days=int(u.get("gunluk_saklama_gun", 14)))
@@ -325,6 +327,11 @@ class UnifiedTrader:
                       or prices.get("BTC-USDT-SWAP"))
         self._save()
         self.adapter.save()
+        forward_evidence = self.forward_evidence.record(
+            now_ms=now, mode="unified" if self.mode == "unified" else self.mode,
+            ws_healthy=ws_healthy, global_issue=global_issue, quotes=quotes,
+            closed=self.adapter.closed,
+        )
         counts: dict[str, int] = {}
         for d in decisions:
             counts[d.decision.value] = counts.get(d.decision.value, 0) + 1
@@ -336,7 +343,7 @@ class UnifiedTrader:
                    "acik": len(self.adapter.positions), "acilan": opened, "cikislar": exits_done,
                    "dolumlar": len(fills), "risk": self.last_risk, "kararlar": len(decisions),
                    "hatalar": self.engine.errors[-5:], "kurtarma": self.recovery_notes,
-                   "operasyonel_nedenler": op_neden}
+                   "operasyonel_nedenler": op_neden, "forward_paper_kaniti": forward_evidence}
         self.engine.errors.clear()
         self.recovery_notes = []
         self._write_status(summary)
