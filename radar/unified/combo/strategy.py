@@ -94,7 +94,7 @@ class ComboStrategy:
                     and order.status is ComboOrderStatus.FILLED and order.level_index is not None):
                 has_child = any(
                     child.side == "buy" and child.parent_order_id == order.order_id
-                    and child.status not in (child.status.CANCELLED, child.status.REJECTED)
+                    and child.status not in (ComboOrderStatus.CANCELLED, ComboOrderStatus.REJECTED)
                     for child in self.paper.orders.values()
                 )
                 if not has_child:
