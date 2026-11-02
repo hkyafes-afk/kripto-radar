@@ -25,12 +25,12 @@ En az işe yarayan okumalar: btc_1H ×0.574, obv_egim_1H ×0.586, adx_di_1H ×0.
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 25831, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 25911, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 20299
-- yetki: 841
+- ders: 20368
+- yetki: 846
 - gösterge aileleri aynı yönde değil: 97
 - büyük zaman dilimi trendi ters: 89
 - puan +0.133 eşiğin (0.3) altında: 37
@@ -91,13 +91,13 @@ Kapanmış işlem yok. Görülen kurulum: 25831, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 41468
+- ders: 41537
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2582
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2103
 - aynı yönde pozisyon tavanı: 1426
-- yetki: 981
+- yetki: 986
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
@@ -158,13 +158,13 @@ Kapanmış işlem yok. Görülen kurulum: 25831, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 41468
+- ders: 41537
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2582
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2103
 - aynı yönde pozisyon tavanı: 1426
-- yetki: 981
+- yetki: 986
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
