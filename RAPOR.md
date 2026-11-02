@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.352R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.353R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 4180 | %45.6 | -0.352 | -1470.01 |
+| polat_tum_sinyaller | 4186 | %45.6 | -0.353 | -1477.96 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 4167 | %45.6 | -0.351 | -1464.65 |
-| rastgele | 4156 | %42.5 | -0.413 | -1716.71 |
-| trend_naif | 4169 | %41.7 | -0.431 | -1795.22 |
+| polat_girilmeyen | 4173 | %45.6 | -0.353 | -1472.59 |
+| rastgele | 4164 | %42.5 | -0.414 | -1725.66 |
+| trend_naif | 4172 | %41.7 | -0.431 | -1799.05 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-3.53
+Polat özsermaye: %-4.71 · BTC al-tut: %-3.68
 
 ## Öğrenme (walk-forward)
 
@@ -25,12 +25,12 @@ En az işe yarayan okumalar: btc_1H ×0.574, ultimate_1H ×0.653, adx_di_1H ×0.
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 16383, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 16481, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 12311
-- yetki: 544
+- ders: 12405
+- yetki: 545
 - gösterge aileleri aynı yönde değil: 62
 - puan +0.133 eşiğin (0.3) altında: 37
 - puan +0.128 eşiğin (0.3) altında: 36
@@ -91,14 +91,14 @@ Kapanmış işlem yok. Görülen kurulum: 16383, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 33480
+- ders: 33574
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2547
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2042
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
-- yetki: 684
+- yetki: 685
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
 
@@ -158,14 +158,14 @@ Kapanmış işlem yok. Görülen kurulum: 16383, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 33480
+- ders: 33574
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2547
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2042
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
-- yetki: 684
+- yetki: 685
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
 
