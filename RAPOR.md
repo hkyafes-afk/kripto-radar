@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.354R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.352R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 4474 | %45.8 | -0.354 | -1582.09 |
+| polat_tum_sinyaller | 4485 | %45.9 | -0.352 | -1577.77 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 4461 | %45.7 | -0.353 | -1576.73 |
-| rastgele | 4456 | %42.5 | -0.417 | -1857.33 |
-| trend_naif | 4465 | %42.1 | -0.427 | -1906.51 |
+| polat_girilmeyen | 4472 | %45.8 | -0.352 | -1572.41 |
+| rastgele | 4460 | %42.6 | -0.416 | -1854.68 |
+| trend_naif | 4474 | %42.2 | -0.425 | -1902.35 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-3.82
+Polat özsermaye: %-4.71 · BTC al-tut: %-3.64
 
 ## Öğrenme (walk-forward)
 
@@ -25,20 +25,20 @@ En az işe yarayan okumalar: btc_1H ×0.574, adx_di_1H ×0.662, supertrend_1H ×
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 23262, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 23327, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 18064
+- ders: 18147
 - yetki: 783
 - gösterge aileleri aynı yönde değil: 80
 - büyük zaman dilimi trendi ters: 78
 - puan +0.133 eşiğin (0.3) altında: 37
-- puan +0.128 eşiğin (0.3) altında: 36
-- puan +0.126 eşiğin (0.3) altında: 33
+- puan +0.128 eşiğin (0.3) altında: 34
 - puan +0.134 eşiğin (0.3) altında: 33
 - puan +0.135 eşiğin (0.3) altında: 33
-- puan +0.136 eşiğin (0.3) altında: 33
+- puan +0.126 eşiğin (0.3) altında: 32
+- puan +0.136 eşiğin (0.3) altında: 32
 
 ## Son 50 gün
 
@@ -91,7 +91,7 @@ Kapanmış işlem yok. Görülen kurulum: 23262, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 39482
+- ders: 39585
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2565
 - üst üste 3 zarar: 2345
@@ -158,7 +158,7 @@ Kapanmış işlem yok. Görülen kurulum: 23262, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 39482
+- ders: 39585
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2565
 - üst üste 3 zarar: 2345
