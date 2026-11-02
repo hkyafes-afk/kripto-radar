@@ -18,18 +18,18 @@ Polat özsermaye: %-4.71 · BTC al-tut: %-4.43
 
 ## Öğrenme (walk-forward)
 
-Örnek 4782 (eğitim 3347, doğrulama 1435) · uygulanan katsayı 50 · doğrulamada tutmadığı için reddedilen 79
+Örnek 4800 (eğitim 3360, doğrulama 1440) · uygulanan katsayı 51 · doğrulamada tutmadığı için reddedilen 78
 
-En çok işe yarayan okumalar: btc_dominans ×1.352, uyusmazlik_macd_15m ×1.243, mum_dis_mum_15m ×1.197, duvar_alt ×1.195, likidasyon_miknatisi ×1.19, hacim_oran_1H ×1.163, mum_cimbiz_dip_5m ×1.155, stoch_1H ×1.14, cift_dip_15m ×1.101, canli_mum_15m ×1.073
-En az işe yarayan okumalar: btc_1H ×0.574, obv_egim_1H ×0.594, adx_di_1H ×0.674, supertrend_1H ×0.7, yapi_4H ×0.729, adx_di_4H ×0.74, dow_4H ×0.744, uyusmazlik_macd_1H ×0.772, ema_4H ×0.802, ema200_1H ×0.821
+En çok işe yarayan okumalar: btc_dominans ×1.352, uyusmazlik_rsi_15m ×1.268, uyusmazlik_macd_15m ×1.239, mum_dis_mum_15m ×1.195, duvar_alt ×1.195, likidasyon_miknatisi ×1.189, mum_cimbiz_dip_5m ×1.163, hacim_oran_1H ×1.159, stoch_1H ×1.141, cift_dip_15m ×1.105
+En az işe yarayan okumalar: cift_dip_4H ×0.534, btc_1H ×0.574, obv_egim_1H ×0.592, adx_di_1H ×0.673, supertrend_1H ×0.696, yapi_4H ×0.726, adx_di_4H ×0.735, dow_4H ×0.742, uyusmazlik_macd_1H ×0.77, ema_4H ×0.798
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 30673, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 30808, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 24607
+- ders: 24742
 - yetki: 997
 - gösterge aileleri aynı yönde değil: 124
 - büyük zaman dilimi trendi ters: 94
@@ -91,7 +91,7 @@ Kapanmış işlem yok. Görülen kurulum: 30673, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 45776
+- ders: 45911
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2609
 - üst üste 3 zarar: 2345
@@ -158,7 +158,7 @@ Kapanmış işlem yok. Görülen kurulum: 30673, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 45776
+- ders: 45911
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2609
 - üst üste 3 zarar: 2345
