@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 4686 | %42.4 | -0.42 | -1966.85 |
 | trend_naif | 4699 | %42.1 | -0.43 | -2020.65 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-3.5
+Polat özsermaye: %-4.71 · BTC al-tut: %-3.61
 
 ## Öğrenme (walk-forward)
 
@@ -25,14 +25,14 @@ En az işe yarayan okumalar: btc_1H ×0.574, obv_egim_1H ×0.595, momentum_1H ×
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 28498, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 28570, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 22741
-- yetki: 929
-- gösterge aileleri aynı yönde değil: 100
-- büyük zaman dilimi trendi ters: 89
+- ders: 22790
+- yetki: 937
+- gösterge aileleri aynı yönde değil: 104
+- büyük zaman dilimi trendi ters: 90
 - puan +0.133 eşiğin (0.3) altında: 37
 - puan +0.128 eşiğin (0.3) altında: 36
 - puan +0.135 eşiğin (0.3) altında: 35
@@ -91,13 +91,13 @@ Kapanmış işlem yok. Görülen kurulum: 28498, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 43910
+- ders: 43959
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 2585
+- gösterge aileleri aynı yönde değil: 2589
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 2103
+- büyük zaman dilimi trendi ters: 2104
 - aynı yönde pozisyon tavanı: 1426
-- yetki: 1069
+- yetki: 1077
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
@@ -158,13 +158,13 @@ Kapanmış işlem yok. Görülen kurulum: 28498, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 43910
+- ders: 43959
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 2585
+- gösterge aileleri aynı yönde değil: 2589
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 2103
+- büyük zaman dilimi trendi ters: 2104
 - aynı yönde pozisyon tavanı: 1426
-- yetki: 1069
+- yetki: 1077
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
