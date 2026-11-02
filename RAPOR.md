@@ -4,33 +4,33 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.352R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.349R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 4878 | %46.0 | -0.352 | -1717.84 |
+| polat_tum_sinyaller | 4896 | %46.2 | -0.349 | -1709.13 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 4865 | %45.9 | -0.352 | -1712.48 |
-| rastgele | 4872 | %42.8 | -0.415 | -2023.86 |
-| trend_naif | 4870 | %42.8 | -0.417 | -2029.24 |
+| polat_girilmeyen | 4883 | %46.1 | -0.349 | -1703.76 |
+| rastgele | 4882 | %42.9 | -0.413 | -2018.13 |
+| trend_naif | 4887 | %43.0 | -0.414 | -2021.97 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-5.29
+Polat özsermaye: %-4.71 · BTC al-tut: %-5.09
 
 ## Öğrenme (walk-forward)
 
-Örnek 4872 (eğitim 3410, doğrulama 1462) · uygulanan katsayı 53 · doğrulamada tutmadığı için reddedilen 76
+Örnek 4896 (eğitim 3427, doğrulama 1469) · uygulanan katsayı 51 · doğrulamada tutmadığı için reddedilen 78
 
-En çok işe yarayan okumalar: btc_dominans ×1.352, uyusmazlik_cci_15m ×1.271, uyusmazlik_macd_15m ×1.22, mum_dis_mum_15m ×1.208, duvar_alt ×1.208, likidasyon_miknatisi ×1.181, mum_cimbiz_dip_5m ×1.169, cci_15m ×1.164, hacim_oran_1H ×1.164, stoch_1H ×1.133
-En az işe yarayan okumalar: cift_dip_4H ×0.532, btc_1H ×0.574, adx_di_1H ×0.683, supertrend_1H ×0.704, yapi_4H ×0.725, adx_di_4H ×0.731, dow_4H ×0.733, uyusmazlik_macd_1H ×0.755, ema_4H ×0.797, supertrend_4H ×0.811
+En çok işe yarayan okumalar: btc_dominans ×1.352, uyusmazlik_macd_15m ×1.218, mum_dis_mum_15m ×1.208, duvar_alt ×1.208, momentum_15m ×1.196, likidasyon_miknatisi ×1.18, mum_cimbiz_dip_5m ×1.169, cci_15m ×1.163, hacim_oran_1H ×1.163, stoch_1H ×1.129
+En az işe yarayan okumalar: cift_dip_4H ×0.532, btc_1H ×0.574, adx_di_1H ×0.687, supertrend_1H ×0.71, yapi_4H ×0.727, adx_di_4H ×0.732, dow_4H ×0.733, uyusmazlik_macd_1H ×0.754, ema_4H ×0.796, supertrend_4H ×0.811
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 35601, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 35719, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 29481
-- yetki: 1021
+- ders: 29592
+- yetki: 1026
 - gösterge aileleri aynı yönde değil: 124
 - büyük zaman dilimi trendi ters: 94
 - puan +0.133 eşiğin (0.3) altında: 37
@@ -91,13 +91,13 @@ Kapanmış işlem yok. Görülen kurulum: 35601, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 50650
+- ders: 50761
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2609
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2108
 - aynı yönde pozisyon tavanı: 1426
-- yetki: 1161
+- yetki: 1166
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
@@ -158,13 +158,13 @@ Kapanmış işlem yok. Görülen kurulum: 35601, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 50650
+- ders: 50761
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2609
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2108
 - aynı yönde pozisyon tavanı: 1426
-- yetki: 1161
+- yetki: 1166
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
