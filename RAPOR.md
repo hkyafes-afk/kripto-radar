@@ -8,28 +8,28 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 4599 | %45.8 | -0.352 | -1619.02 |
+| polat_tum_sinyaller | 4602 | %45.8 | -0.352 | -1617.67 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 4586 | %45.7 | -0.352 | -1613.65 |
+| polat_girilmeyen | 4589 | %45.8 | -0.351 | -1612.31 |
 | rastgele | 4580 | %42.6 | -0.415 | -1902.88 |
-| trend_naif | 4585 | %42.3 | -0.423 | -1940.36 |
+| trend_naif | 4588 | %42.4 | -0.423 | -1939.01 |
 
 Polat özsermaye: %-4.71 · BTC al-tut: %-3.87
 
 ## Öğrenme (walk-forward)
 
-Örnek 4593 (eğitim 3215, doğrulama 1378) · uygulanan katsayı 58 · doğrulamada tutmadığı için reddedilen 69
+Örnek 4599 (eğitim 3219, doğrulama 1380) · uygulanan katsayı 58 · doğrulamada tutmadığı için reddedilen 69
 
-En çok işe yarayan okumalar: btc_dominans ×1.352, obv_egim_15m ×1.271, uyusmazlik_macd_15m ×1.268, momentum_15m ×1.21, likidasyon_miknatisi ×1.208, cci_15m ×1.191, mum_dis_mum_15m ×1.19, mum_cimbiz_dip_5m ×1.179, duvar_alt ×1.163, stoch_1H ×1.163
-En az işe yarayan okumalar: btc_1H ×0.574, obv_egim_1H ×0.588, momentum_1H ×0.652, supertrend_1H ×0.703, yapi_4H ×0.73, adx_di_4H ×0.755, dow_4H ×0.759, uyusmazlik_macd_1H ×0.787, ema_4H ×0.817, tetik_stoch_kesisim_15m ×0.82
+En çok işe yarayan okumalar: btc_dominans ×1.352, obv_egim_15m ×1.275, uyusmazlik_macd_15m ×1.268, momentum_15m ×1.211, likidasyon_miknatisi ×1.21, mum_dis_mum_15m ×1.19, cci_15m ×1.189, mum_cimbiz_dip_5m ×1.173, duvar_alt ×1.163, stoch_1H ×1.161
+En az işe yarayan okumalar: btc_1H ×0.574, obv_egim_1H ×0.588, momentum_1H ×0.65, supertrend_1H ×0.702, yapi_4H ×0.73, adx_di_4H ×0.755, dow_4H ×0.757, uyusmazlik_macd_1H ×0.79, ema_4H ×0.816, tetik_stoch_kesisim_15m ×0.82
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 27021, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 27103, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 21454
+- ders: 21533
 - yetki: 864
 - gösterge aileleri aynı yönde değil: 97
 - büyük zaman dilimi trendi ters: 89
@@ -91,7 +91,7 @@ Kapanmış işlem yok. Görülen kurulum: 27021, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 42623
+- ders: 42702
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2582
 - üst üste 3 zarar: 2345
@@ -158,7 +158,7 @@ Kapanmış işlem yok. Görülen kurulum: 27021, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 42623
+- ders: 42702
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2582
 - üst üste 3 zarar: 2345
