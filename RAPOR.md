@@ -11,10 +11,10 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 4543 | %45.8 | -0.352 | -1596.94 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
 | polat_girilmeyen | 4530 | %45.7 | -0.351 | -1591.58 |
-| rastgele | 4507 | %42.6 | -0.415 | -1870.13 |
+| rastgele | 4509 | %42.6 | -0.415 | -1869.05 |
 | trend_naif | 4523 | %42.2 | -0.425 | -1924.34 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-3.29
+Polat özsermaye: %-4.71 · BTC al-tut: %-3.43
 
 ## Öğrenme (walk-forward)
 
@@ -25,17 +25,17 @@ En az işe yarayan okumalar: btc_1H ×0.574, obv_egim_1H ×0.586, adx_di_1H ×0.
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 23542, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 23544, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 18544
-- yetki: 748
-- büyük zaman dilimi trendi ters: 88
-- gösterge aileleri aynı yönde değil: 80
+- ders: 18576
+- yetki: 741
+- büyük zaman dilimi trendi ters: 89
+- gösterge aileleri aynı yönde değil: 76
 - puan +0.133 eşiğin (0.3) altında: 36
-- puan +0.128 eşiğin (0.3) altında: 33
 - puan +0.126 eşiğin (0.3) altında: 32
+- puan +0.128 eşiğin (0.3) altında: 32
 - puan +0.134 eşiğin (0.3) altında: 32
 - puan +0.165 eşiğin (0.3) altında: 31
 - puan +0.135 eşiğin (0.3) altında: 30
@@ -91,11 +91,11 @@ Kapanmış işlem yok. Görülen kurulum: 23542, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 40197
+- ders: 40257
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2572
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 2102
+- büyük zaman dilimi trendi ters: 2103
 - aynı yönde pozisyon tavanı: 1426
 - yetki: 926
 - bu coinde zaten pozisyon var: 794
@@ -158,11 +158,11 @@ Kapanmış işlem yok. Görülen kurulum: 23542, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 40197
+- ders: 40257
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2572
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 2102
+- büyük zaman dilimi trendi ters: 2103
 - aynı yönde pozisyon tavanı: 1426
 - yetki: 926
 - bu coinde zaten pozisyon var: 794
