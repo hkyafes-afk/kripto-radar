@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 4732 | %45.4 | -0.362 | -1711.79 |
+| polat_tum_sinyaller | 4751 | %45.4 | -0.362 | -1717.75 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 4719 | %45.4 | -0.362 | -1706.42 |
-| rastgele | 4709 | %42.5 | -0.419 | -1972.45 |
-| trend_naif | 4715 | %42.2 | -0.428 | -2018.38 |
+| polat_girilmeyen | 4738 | %45.4 | -0.361 | -1712.39 |
+| rastgele | 4723 | %42.6 | -0.417 | -1971.05 |
+| trend_naif | 4735 | %42.3 | -0.426 | -2018.83 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-3.96
+Polat özsermaye: %-4.71 · BTC al-tut: %-3.61
 
 ## Öğrenme (walk-forward)
 
@@ -25,12 +25,12 @@ En az işe yarayan okumalar: btc_1H ×0.574, obv_egim_1H ×0.593, momentum_1H ×
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 29004, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 29093, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 23104
-- yetki: 957
+- ders: 23181
+- yetki: 961
 - gösterge aileleri aynı yönde değil: 119
 - büyük zaman dilimi trendi ters: 93
 - puan +0.133 eşiğin (0.3) altında: 37
@@ -91,13 +91,13 @@ Kapanmış işlem yok. Görülen kurulum: 29004, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 44273
+- ders: 44350
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2604
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2107
 - aynı yönde pozisyon tavanı: 1426
-- yetki: 1097
+- yetki: 1101
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
@@ -158,13 +158,13 @@ Kapanmış işlem yok. Görülen kurulum: 29004, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 44273
+- ders: 44350
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2604
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2107
 - aynı yönde pozisyon tavanı: 1426
-- yetki: 1097
+- yetki: 1101
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
