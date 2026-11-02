@@ -4,15 +4,15 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.361R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.36R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 4380 | %45.3 | -0.361 | -1581.48 |
+| polat_tum_sinyaller | 4384 | %45.4 | -0.36 | -1578.68 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 4367 | %45.3 | -0.361 | -1576.12 |
-| rastgele | 4357 | %42.6 | -0.415 | -1807.27 |
-| trend_naif | 4369 | %41.7 | -0.434 | -1897.33 |
+| polat_girilmeyen | 4371 | %45.3 | -0.36 | -1573.32 |
+| rastgele | 4360 | %42.6 | -0.414 | -1804.75 |
+| trend_naif | 4372 | %41.8 | -0.434 | -1896.3 |
 
 Polat özsermaye: %-4.71 · BTC al-tut: %-3.13
 
@@ -25,13 +25,13 @@ En az işe yarayan okumalar: btc_1H ×0.574, ultimate_1H ×0.635, adx_di_1H ×0.
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 19773, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 19839, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 14751
+- ders: 14796
 - yetki: 760
-- büyük zaman dilimi trendi ters: 75
+- büyük zaman dilimi trendi ters: 77
 - gösterge aileleri aynı yönde değil: 68
 - puan +0.133 eşiğin (0.3) altında: 37
 - puan +0.128 eşiğin (0.3) altında: 36
@@ -91,11 +91,11 @@ Kapanmış işlem yok. Görülen kurulum: 19773, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 35920
+- ders: 35965
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2553
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 2089
+- büyük zaman dilimi trendi ters: 2091
 - aynı yönde pozisyon tavanı: 1426
 - yetki: 900
 - bu coinde zaten pozisyon var: 794
@@ -158,11 +158,11 @@ Kapanmış işlem yok. Görülen kurulum: 19773, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 35920
+- ders: 35965
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2553
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 2089
+- büyük zaman dilimi trendi ters: 2091
 - aynı yönde pozisyon tavanı: 1426
 - yetki: 900
 - bu coinde zaten pozisyon var: 794
