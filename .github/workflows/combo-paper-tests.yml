@@ -1,0 +1,35 @@
+name: COMBO PAPER tests
+
+on:
+  pull_request:
+    paths:
+      - "radar/unified/combo/**"
+      - "radar/ws.py"
+      - "tests/test_combo_paper.py"
+      - ".github/workflows/combo-paper-tests.yml"
+  push:
+    branches:
+      - "feature/combo-paper-v1"
+    paths:
+      - "radar/unified/combo/**"
+      - "radar/ws.py"
+      - "tests/test_combo_paper.py"
+      - ".github/workflows/combo-paper-tests.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  combo-paper:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install test runner
+        run: python -m pip install --upgrade pytest
+      - name: Run COMBO PAPER tests
+        run: python -m pytest -q tests/test_combo_paper.py

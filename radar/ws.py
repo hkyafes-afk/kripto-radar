@@ -166,6 +166,24 @@ class Feed(threading.Thread):
         self.error = ""
         self._url_i = 0
         self._lock = threading.Lock()
+        self._tick_listeners = []
+
+    def add_tick_listener(self, callback):
+        """Add an observer without changing the legacy on_tick callback contract."""
+        if not callable(callback):
+            raise TypeError("tick listener callable olmalı")
+        with self._lock:
+            if callback not in self._tick_listeners:
+                self._tick_listeners.append(callback)
+
+    def _publish_tick(self, event: dict):
+        with self._lock:
+            listeners = tuple(self._tick_listeners)
+        for callback in listeners:
+            try:
+                callback(dict(event))
+            except Exception as exc:  # noqa: BLE001
+                self.error = f"tick listener: {type(exc).__name__}: {exc}"
 
     # alt sınıflar
     def sub_messages(self, symbols: list[str], op: str = "subscribe") -> list[str]:
@@ -295,8 +313,14 @@ class OKXFeed(Feed):
             inst = d.get("instId") or arg.get("instId")
             if ch == "tickers":
                 self.ticks += 1
-                self.on_tick("okx", inst, _f(d.get("last")), _f(d.get("bidPx")), _f(d.get("askPx")),
-                             int(_f(d.get("ts"))) or None)
+                ts_ms = int(_f(d.get("ts"))) or None
+                last, bid, ask = _f(d.get("last")), _f(d.get("bidPx")), _f(d.get("askPx"))
+                self.on_tick("okx", inst, last, bid, ask, ts_ms)
+                self._publish_tick({
+                    "exchange": "okx", "inst": inst, "last": last, "bid": bid, "ask": ask,
+                    "bid_size_contracts": _f(d.get("bidSz")), "ask_size_contracts": _f(d.get("askSz")),
+                    "size_unit": "contracts_for_swap", "ts_ms": ts_ms,
+                })
             elif ch == "funding-rate":
                 self.on_funding("okx", inst, _f(d.get("fundingRate")), int(_f(d.get("fundingTime"))),
                                 int(_f(d.get("nextFundingTime"))))
