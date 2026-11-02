@@ -8,37 +8,37 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 4543 | %45.8 | -0.352 | -1596.94 |
+| polat_tum_sinyaller | 4546 | %45.7 | -0.352 | -1601.13 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 4530 | %45.7 | -0.351 | -1591.58 |
-| rastgele | 4509 | %42.6 | -0.415 | -1869.05 |
-| trend_naif | 4523 | %42.2 | -0.425 | -1924.34 |
+| polat_girilmeyen | 4533 | %45.7 | -0.352 | -1595.77 |
+| rastgele | 4512 | %42.6 | -0.415 | -1870.88 |
+| trend_naif | 4526 | %42.2 | -0.426 | -1926.38 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-3.43
+Polat özsermaye: %-4.71 · BTC al-tut: %-3.38
 
 ## Öğrenme (walk-forward)
 
-Örnek 4513 (eğitim 3159, doğrulama 1354) · uygulanan katsayı 58 · doğrulamada tutmadığı için reddedilen 70
+Örnek 4546 (eğitim 3182, doğrulama 1364) · uygulanan katsayı 61 · doğrulamada tutmadığı için reddedilen 67
 
-En çok işe yarayan okumalar: btc_dominans ×1.352, uyusmazlik_macd_15m ×1.278, obv_egim_15m ×1.261, likidasyon_miknatisi ×1.211, momentum_15m ×1.205, mum_dis_mum_15m ×1.193, cci_15m ×1.191, oi_fiyat ×1.179, mum_cimbiz_dip_5m ×1.173, duvar_alt ×1.172
-En az işe yarayan okumalar: btc_1H ×0.574, obv_egim_1H ×0.586, adx_di_1H ×0.661, supertrend_1H ×0.697, yapi_4H ×0.724, adx_di_4H ×0.757, dow_4H ×0.758, uyusmazlik_macd_1H ×0.788, ema_4H ×0.815, pvi_1H ×0.819
+En çok işe yarayan okumalar: btc_dominans ×1.352, uyusmazlik_macd_15m ×1.277, obv_egim_15m ×1.27, likidasyon_miknatisi ×1.212, momentum_15m ×1.208, cci_15m ×1.194, mum_dis_mum_15m ×1.19, mum_cimbiz_dip_5m ×1.179, duvar_alt ×1.157, tetik_macd_kesisim_15m ×1.136
+En az işe yarayan okumalar: btc_1H ×0.574, obv_egim_1H ×0.586, adx_di_1H ×0.664, supertrend_1H ×0.702, yapi_4H ×0.727, adx_di_4H ×0.759, dow_4H ×0.76, uyusmazlik_macd_1H ×0.786, long_short ×0.806, tetik_stoch_kesisim_15m ×0.816
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 23544, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 23520, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 18576
-- yetki: 741
+- ders: 18597
+- yetki: 728
 - büyük zaman dilimi trendi ters: 89
 - gösterge aileleri aynı yönde değil: 76
-- puan +0.133 eşiğin (0.3) altında: 36
+- puan +0.133 eşiğin (0.3) altında: 35
 - puan +0.126 eşiğin (0.3) altında: 32
 - puan +0.128 eşiğin (0.3) altında: 32
 - puan +0.134 eşiğin (0.3) altında: 32
-- puan +0.165 eşiğin (0.3) altında: 31
 - puan +0.135 eşiğin (0.3) altında: 30
+- puan +0.165 eşiğin (0.3) altında: 30
 
 ## Son 50 gün
 
@@ -91,13 +91,13 @@ Kapanmış işlem yok. Görülen kurulum: 23544, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 40257
+- ders: 40309
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2572
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2103
 - aynı yönde pozisyon tavanı: 1426
-- yetki: 926
+- yetki: 928
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
@@ -158,13 +158,13 @@ Kapanmış işlem yok. Görülen kurulum: 23544, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 40257
+- ders: 40309
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2572
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2103
 - aynı yönde pozisyon tavanı: 1426
-- yetki: 926
+- yetki: 928
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
