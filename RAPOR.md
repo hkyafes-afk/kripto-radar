@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 4264 | %45.5 | -0.357 | -1520.56 |
+| polat_tum_sinyaller | 4266 | %45.5 | -0.357 | -1523.21 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 4251 | %45.5 | -0.356 | -1515.2 |
-| rastgele | 4241 | %42.5 | -0.414 | -1754.75 |
-| trend_naif | 4258 | %41.8 | -0.431 | -1834.6 |
+| polat_girilmeyen | 4253 | %45.5 | -0.357 | -1517.85 |
+| rastgele | 4242 | %42.5 | -0.414 | -1756.08 |
+| trend_naif | 4259 | %41.8 | -0.431 | -1834.42 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-3.14
+Polat özsermaye: %-4.71 · BTC al-tut: %-3.26
 
 ## Öğrenme (walk-forward)
 
@@ -25,14 +25,14 @@ En az işe yarayan okumalar: cift_dip_4H ×0.527, btc_1H ×0.574, ultimate_1H ×
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 17779, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 17851, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 13426
+- ders: 13481
 - yetki: 591
 - gösterge aileleri aynı yönde değil: 62
-- büyük zaman dilimi trendi ters: 47
+- büyük zaman dilimi trendi ters: 48
 - puan +0.133 eşiğin (0.3) altında: 37
 - puan +0.128 eşiğin (0.3) altında: 36
 - puan +0.135 eşiğin (0.3) altında: 35
@@ -91,11 +91,11 @@ Kapanmış işlem yok. Görülen kurulum: 17779, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 34595
+- ders: 34650
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2547
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 2061
+- büyük zaman dilimi trendi ters: 2062
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - yetki: 731
@@ -158,11 +158,11 @@ Kapanmış işlem yok. Görülen kurulum: 17779, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 34595
+- ders: 34650
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2547
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 2061
+- büyük zaman dilimi trendi ters: 2062
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - yetki: 731
