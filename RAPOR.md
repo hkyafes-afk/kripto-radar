@@ -8,11 +8,11 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 4725 | %45.4 | -0.362 | -1711.01 |
+| polat_tum_sinyaller | 4726 | %45.3 | -0.362 | -1712.12 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 4712 | %45.3 | -0.362 | -1705.65 |
-| rastgele | 4696 | %42.5 | -0.419 | -1968.25 |
-| trend_naif | 4701 | %42.1 | -0.429 | -2018.99 |
+| polat_girilmeyen | 4713 | %45.3 | -0.362 | -1706.76 |
+| rastgele | 4697 | %42.5 | -0.419 | -1966.8 |
+| trend_naif | 4704 | %42.1 | -0.429 | -2017.65 |
 
 Polat özsermaye: %-4.71 · BTC al-tut: %-3.76
 
@@ -25,12 +25,12 @@ En az işe yarayan okumalar: btc_1H ×0.574, obv_egim_1H ×0.593, momentum_1H ×
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 28648, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 28698, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 22831
-- yetki: 941
+- ders: 22866
+- yetki: 944
 - gösterge aileleri aynı yönde değil: 112
 - büyük zaman dilimi trendi ters: 92
 - puan +0.133 eşiğin (0.3) altında: 37
@@ -91,13 +91,13 @@ Kapanmış işlem yok. Görülen kurulum: 28648, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 44000
+- ders: 44035
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2597
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2106
 - aynı yönde pozisyon tavanı: 1426
-- yetki: 1081
+- yetki: 1084
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
@@ -158,13 +158,13 @@ Kapanmış işlem yok. Görülen kurulum: 28648, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 44000
+- ders: 44035
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2597
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2106
 - aynı yönde pozisyon tavanı: 1426
-- yetki: 1081
+- yetki: 1084
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
