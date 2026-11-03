@@ -11,10 +11,10 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 5066 | %46.3 | -0.349 | -1765.83 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
 | polat_girilmeyen | 5053 | %46.3 | -0.348 | -1760.47 |
-| rastgele | 5050 | %43.0 | -0.413 | -2084.62 |
+| rastgele | 5051 | %43.0 | -0.413 | -2086.1 |
 | trend_naif | 5055 | %43.3 | -0.41 | -2070.08 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-5.03
+Polat özsermaye: %-4.71 · BTC al-tut: %-5.25
 
 ## Öğrenme (walk-forward)
 
@@ -25,13 +25,13 @@ En az işe yarayan okumalar: cift_dip_4H ×0.539, btc_1H ×0.574, adx_di_1H ×0.
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 24654, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 24799, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 22203
-- yetki: 580
-- gösterge aileleri aynı yönde değil: 85
+- ders: 22333
+- yetki: 587
+- gösterge aileleri aynı yönde değil: 87
 - büyük zaman dilimi trendi ters: 81
 - puan +0.125 eşiğin (0.25) altında: 18
 - puan +0.135 eşiğin (0.25) altında: 18
@@ -91,13 +91,13 @@ Kapanmış işlem yok. Görülen kurulum: 24654, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 55555
+- ders: 55685
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 2632
+- gösterge aileleri aynı yönde değil: 2634
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2118
 - aynı yönde pozisyon tavanı: 1426
-- yetki: 1264
+- yetki: 1271
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
@@ -158,13 +158,13 @@ Kapanmış işlem yok. Görülen kurulum: 24654, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 55555
+- ders: 55685
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 2632
+- gösterge aileleri aynı yönde değil: 2634
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2118
 - aynı yönde pozisyon tavanı: 1426
-- yetki: 1264
+- yetki: 1271
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
