@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.345R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.346R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 5099 | %46.5 | -0.345 | -1760.12 |
+| polat_tum_sinyaller | 5101 | %46.5 | -0.346 | -1762.5 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 5086 | %46.5 | -0.345 | -1754.76 |
-| rastgele | 5081 | %43.0 | -0.413 | -2098.24 |
-| trend_naif | 5088 | %43.5 | -0.407 | -2068.77 |
+| polat_girilmeyen | 5088 | %46.5 | -0.345 | -1757.14 |
+| rastgele | 5083 | %43.0 | -0.413 | -2100.62 |
+| trend_naif | 5090 | %43.5 | -0.407 | -2071.15 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-5.13
+Polat özsermaye: %-4.71 · BTC al-tut: %-5.04
 
 ## Öğrenme (walk-forward)
 
@@ -25,13 +25,13 @@ En az işe yarayan okumalar: cift_dip_4H ×0.539, btc_1H ×0.57, adx_di_1H ×0.6
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 26347, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 26386, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 23845
+- ders: 23883
 - yetki: 593
-- gösterge aileleri aynı yönde değil: 93
+- gösterge aileleri aynı yönde değil: 94
 - büyük zaman dilimi trendi ters: 81
 - puan +0.125 eşiğin (0.25) altında: 18
 - puan +0.135 eşiğin (0.25) altında: 18
@@ -91,9 +91,9 @@ Kapanmış işlem yok. Görülen kurulum: 26347, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 57197
+- ders: 57235
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 2640
+- gösterge aileleri aynı yönde değil: 2641
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2118
 - aynı yönde pozisyon tavanı: 1426
@@ -158,9 +158,9 @@ Kapanmış işlem yok. Görülen kurulum: 26347, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 57197
+- ders: 57235
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 2640
+- gösterge aileleri aynı yönde değil: 2641
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2118
 - aynı yönde pozisyon tavanı: 1426
