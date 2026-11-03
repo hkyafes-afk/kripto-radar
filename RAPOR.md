@@ -11,10 +11,10 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 5286 | %46.3 | -0.351 | -1854.48 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
 | polat_girilmeyen | 5273 | %46.3 | -0.351 | -1849.12 |
-| rastgele | 5256 | %42.9 | -0.417 | -2189.93 |
+| rastgele | 5257 | %42.9 | -0.416 | -2188.55 |
 | trend_naif | 5280 | %43.3 | -0.413 | -2182.42 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-4.93
+Polat özsermaye: %-4.71 · BTC al-tut: %-4.83
 
 ## Öğrenme (walk-forward)
 
@@ -25,13 +25,13 @@ En az işe yarayan okumalar: cift_dip_4H ×0.538, btc_1H ×0.637, adx_di_1H ×0.
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 31111, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 31139, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 28212
-- yetki: 627
-- gösterge aileleri aynı yönde değil: 128
+- ders: 28223
+- yetki: 629
+- gösterge aileleri aynı yönde değil: 134
 - büyük zaman dilimi trendi ters: 84
 - puan +0.137 eşiğin (0.25) altında: 24
 - puan +0.125 eşiğin (0.25) altında: 22
@@ -91,13 +91,13 @@ Kapanmış işlem yok. Görülen kurulum: 31111, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 61564
+- ders: 61575
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 2675
+- gösterge aileleri aynı yönde değil: 2681
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2121
 - aynı yönde pozisyon tavanı: 1426
-- yetki: 1311
+- yetki: 1313
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
@@ -158,13 +158,13 @@ Kapanmış işlem yok. Görülen kurulum: 31111, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 61564
+- ders: 61575
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 2675
+- gösterge aileleri aynı yönde değil: 2681
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2121
 - aynı yönde pozisyon tavanı: 1426
-- yetki: 1311
+- yetki: 1313
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
