@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 5422 | %43.0 | -0.414 | -2246.9 |
 | trend_naif | 5437 | %42.9 | -0.421 | -2288.5 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-4.17
+Polat özsermaye: %-4.71 · BTC al-tut: %-4.33
 
 ## Öğrenme (walk-forward)
 
@@ -25,19 +25,19 @@ En az işe yarayan okumalar: btc_1H ×0.59, momentum_1H ×0.695, adx_di_1H ×0.7
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 33357, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 33452, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 28846
-- yetki: 913
-- büyük zaman dilimi trendi ters: 236
-- gösterge aileleri aynı yönde değil: 173
+- ders: 28874
+- yetki: 935
+- büyük zaman dilimi trendi ters: 239
+- gösterge aileleri aynı yönde değil: 175
 - puan +0.137 eşiğin (0.25) altında: 39
 - puan +0.135 eşiğin (0.25) altında: 37
-- puan +0.143 eşiğin (0.25) altında: 31
+- puan +0.143 eşiğin (0.25) altında: 33
+- puan +0.130 eşiğin (0.25) altında: 31
 - puan +0.124 eşiğin (0.25) altında: 30
-- puan +0.130 eşiğin (0.25) altında: 30
 - puan +0.138 eşiğin (0.25) altında: 30
 
 ## Son 50 gün
@@ -91,12 +91,12 @@ Kapanmış işlem yok. Görülen kurulum: 33357, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 62198
+- ders: 62226
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 2720
+- gösterge aileleri aynı yönde değil: 2722
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 2273
-- yetki: 1597
+- büyük zaman dilimi trendi ters: 2276
+- yetki: 1619
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
@@ -158,12 +158,12 @@ Kapanmış işlem yok. Görülen kurulum: 33357, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 62198
+- ders: 62226
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 2720
+- gösterge aileleri aynı yönde değil: 2722
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 2273
-- yetki: 1597
+- büyük zaman dilimi trendi ters: 2276
+- yetki: 1619
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
