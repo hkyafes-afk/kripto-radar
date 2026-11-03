@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.353R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.354R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 5594 | %46.3 | -0.353 | -1974.77 |
+| polat_tum_sinyaller | 5601 | %46.3 | -0.354 | -1983.6 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 5581 | %46.3 | -0.353 | -1969.41 |
-| rastgele | 5570 | %43.1 | -0.414 | -2307.85 |
-| trend_naif | 5587 | %43.2 | -0.417 | -2330.36 |
+| polat_girilmeyen | 5588 | %46.2 | -0.354 | -1978.24 |
+| rastgele | 5582 | %43.1 | -0.415 | -2317.79 |
+| trend_naif | 5601 | %43.2 | -0.419 | -2344.75 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-4.15
+Polat özsermaye: %-4.71 · BTC al-tut: %-3.91
 
 ## Öğrenme (walk-forward)
 
@@ -25,12 +25,12 @@ En az işe yarayan okumalar: cift_dip_4H ×0.538, btc_1H ×0.582, supertrend_1H 
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 37006, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 37049, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 31587
-- yetki: 1169
+- ders: 31622
+- yetki: 1174
 - büyük zaman dilimi trendi ters: 263
 - gösterge aileleri aynı yönde değil: 209
 - puan +0.137 eşiğin (0.25) altında: 40
@@ -91,12 +91,12 @@ Kapanmış işlem yok. Görülen kurulum: 37006, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 64939
+- ders: 64974
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2756
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2300
-- yetki: 1853
+- yetki: 1858
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
@@ -158,12 +158,12 @@ Kapanmış işlem yok. Görülen kurulum: 37006, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 64939
+- ders: 64974
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2756
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2300
-- yetki: 1853
+- yetki: 1858
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
