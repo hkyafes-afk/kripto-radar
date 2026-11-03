@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 5478 | %46.5 | -0.349 | -1909.26 |
+| polat_tum_sinyaller | 5480 | %46.5 | -0.349 | -1911.48 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 5465 | %46.5 | -0.348 | -1903.9 |
-| rastgele | 5455 | %43.0 | -0.416 | -2266.59 |
+| polat_girilmeyen | 5467 | %46.5 | -0.349 | -1906.11 |
+| rastgele | 5457 | %43.0 | -0.415 | -2267.29 |
 | trend_naif | 5473 | %43.0 | -0.42 | -2296.19 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-4.5
+Polat özsermaye: %-4.71 · BTC al-tut: %-4.49
 
 ## Öğrenme (walk-forward)
 
@@ -25,14 +25,14 @@ En az işe yarayan okumalar: cift_dip_4H ×0.538, btc_1H ×0.608, supertrend_1H 
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 34540, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 34593, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 29472
-- yetki: 1075
+- ders: 29509
+- yetki: 1083
 - büyük zaman dilimi trendi ters: 247
-- gösterge aileleri aynı yönde değil: 196
+- gösterge aileleri aynı yönde değil: 197
 - puan +0.137 eşiğin (0.25) altında: 39
 - puan +0.135 eşiğin (0.25) altında: 38
 - puan +0.154 eşiğin (0.25) altında: 36
@@ -91,12 +91,12 @@ Kapanmış işlem yok. Görülen kurulum: 34540, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 62824
+- ders: 62861
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 2743
+- gösterge aileleri aynı yönde değil: 2744
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2284
-- yetki: 1759
+- yetki: 1767
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
@@ -158,12 +158,12 @@ Kapanmış işlem yok. Görülen kurulum: 34540, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 62824
+- ders: 62861
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 2743
+- gösterge aileleri aynı yönde değil: 2744
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2284
-- yetki: 1759
+- yetki: 1767
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
