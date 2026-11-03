@@ -12,24 +12,24 @@ _Yatırım tavsiyesi değildir._
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
 | polat_girilmeyen | 5268 | %46.3 | -0.35 | -1845.74 |
 | rastgele | 5252 | %43.0 | -0.416 | -2185.86 |
-| trend_naif | 5275 | %43.3 | -0.412 | -2175.76 |
+| trend_naif | 5276 | %43.3 | -0.413 | -2176.9 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-4.89
+Polat özsermaye: %-4.71 · BTC al-tut: %-4.9
 
 ## Öğrenme (walk-forward)
 
-Örnek 5276 (eğitim 3693, doğrulama 1583) · uygulanan katsayı 48 · doğrulamada tutmadığı için reddedilen 80
+Örnek 5281 (eğitim 3696, doğrulama 1585) · uygulanan katsayı 53 · doğrulamada tutmadığı için reddedilen 75
 
-En çok işe yarayan okumalar: btc_dominans ×1.314, uyusmazlik_cci_15m ×1.243, uyusmazlik_macd_15m ×1.204, hacim_oran_1H ×1.203, tetik_uyusmazlik_donus_macd ×1.178, mum_dis_mum_15m ×1.157, cci_15m ×1.134, stoch_1H ×1.133, tetik_uyusmazlik_donus_rsi ×1.1, tetik_trend_cizgisi_kirilim_15m ×1.098
-En az işe yarayan okumalar: cift_dip_4H ×0.538, btc_1H ×0.635, adx_di_1H ×0.714, yapi_4H ×0.714, adx_di_4H ×0.716, dow_4H ×0.724, uyusmazlik_macd_1H ×0.751, ema_4H ×0.787, supertrend_4H ×0.799, ema200_1H ×0.813
+En çok işe yarayan okumalar: btc_dominans ×1.305, uyusmazlik_cci_15m ×1.243, uyusmazlik_macd_15m ×1.204, hacim_oran_1H ×1.196, likidasyon_miknatisi ×1.19, tetik_uyusmazlik_donus_macd ×1.178, mum_cimbiz_dip_5m ×1.159, mum_dis_mum_15m ×1.157, cci_15m ×1.136, stoch_1H ×1.134
+En az işe yarayan okumalar: cift_dip_4H ×0.538, btc_1H ×0.637, adx_di_1H ×0.716, yapi_4H ×0.717, adx_di_4H ×0.72, dow_4H ×0.727, uyusmazlik_macd_1H ×0.749, ema_4H ×0.789, supertrend_4H ×0.801, ema200_1H ×0.815
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 31012, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 31049, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 28163
+- ders: 28189
 - yetki: 623
 - gösterge aileleri aynı yönde değil: 122
 - büyük zaman dilimi trendi ters: 84
@@ -37,8 +37,8 @@ Kapanmış işlem yok. Görülen kurulum: 31012, girilen: 0.
 - puan +0.125 eşiğin (0.25) altında: 22
 - puan +0.135 eşiğin (0.25) altında: 20
 - puan +0.154 eşiğin (0.25) altında: 20
-- puan +0.165 eşiğin (0.25) altında: 19
-- puan +0.172 eşiğin (0.25) altında: 19
+- puan +0.126 eşiğin (0.25) altında: 19
+- puan +0.143 eşiğin (0.25) altında: 19
 
 ## Son 50 gün
 
@@ -91,7 +91,7 @@ Kapanmış işlem yok. Görülen kurulum: 31012, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 61515
+- ders: 61541
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2669
 - üst üste 3 zarar: 2345
@@ -158,7 +158,7 @@ Kapanmış işlem yok. Görülen kurulum: 31012, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 61515
+- ders: 61541
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2669
 - üst üste 3 zarar: 2345
