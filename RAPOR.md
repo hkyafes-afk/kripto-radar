@@ -25,12 +25,12 @@ En az işe yarayan okumalar: btc_1H ×0.56, supertrend_1H ×0.724, yapi_4H ×0.7
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 38937, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 38990, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - ders: 32360
-- yetki: 1316
+- yetki: 1323
 - gösterge aileleri aynı yönde değil: 331
 - büyük zaman dilimi trendi ters: 263
 - puan +0.137 eşiğin (0.25) altında: 44
@@ -96,7 +96,7 @@ Kapanmış işlem yok. Görülen kurulum: 38937, girilen: 0.
 - gösterge aileleri aynı yönde değil: 2878
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2300
-- yetki: 2000
+- yetki: 2007
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
@@ -163,7 +163,7 @@ Kapanmış işlem yok. Görülen kurulum: 38937, girilen: 0.
 - gösterge aileleri aynı yönde değil: 2878
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2300
-- yetki: 2000
+- yetki: 2007
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
