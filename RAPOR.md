@@ -25,20 +25,20 @@ En az işe yarayan okumalar: btc_1H ×0.576, supertrend_1H ×0.723, adx_di_1H ×
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 38531, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 38590, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - ders: 32360
-- yetki: 1266
-- gösterge aileleri aynı yönde değil: 321
+- yetki: 1267
+- gösterge aileleri aynı yönde değil: 330
 - büyük zaman dilimi trendi ters: 263
-- puan +0.137 eşiğin (0.25) altında: 43
+- puan +0.137 eşiğin (0.25) altında: 44
 - puan +0.135 eşiğin (0.25) altında: 40
 - puan +0.130 eşiğin (0.25) altında: 39
+- puan +0.154 eşiğin (0.25) altında: 39
 - puan +0.138 eşiğin (0.25) altında: 38
 - puan +0.143 eşiğin (0.25) altında: 38
-- puan +0.154 eşiğin (0.25) altında: 38
 
 ## Son 50 gün
 
@@ -93,10 +93,10 @@ Kapanmış işlem yok. Görülen kurulum: 38531, girilen: 0.
 
 - ders: 65712
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 2868
+- gösterge aileleri aynı yönde değil: 2877
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2300
-- yetki: 1950
+- yetki: 1951
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
@@ -160,10 +160,10 @@ Kapanmış işlem yok. Görülen kurulum: 38531, girilen: 0.
 
 - ders: 65712
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 2868
+- gösterge aileleri aynı yönde değil: 2877
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2300
-- yetki: 1950
+- yetki: 1951
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
