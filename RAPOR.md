@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.349R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.35R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 4961 | %46.2 | -0.349 | -1730.32 |
+| polat_tum_sinyaller | 4972 | %46.2 | -0.35 | -1741.21 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 4948 | %46.2 | -0.349 | -1724.95 |
-| rastgele | 4940 | %43.1 | -0.41 | -2025.32 |
-| trend_naif | 4949 | %43.1 | -0.413 | -2042.2 |
+| polat_girilmeyen | 4959 | %46.1 | -0.35 | -1735.85 |
+| rastgele | 4947 | %43.0 | -0.411 | -2034.42 |
+| trend_naif | 4961 | %43.1 | -0.414 | -2052.77 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-5.11
+Polat özsermaye: %-4.71 · BTC al-tut: %-5.02
 
 ## Öğrenme (walk-forward)
 
@@ -25,17 +25,17 @@ En az işe yarayan okumalar: cift_dip_4H ×0.534, btc_1H ×0.574, adx_di_1H ×0.
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 22172, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 22215, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 19970
+- ders: 20006
 - yetki: 514
 - büyük zaman dilimi trendi ters: 71
 - gösterge aileleri aynı yönde değil: 62
 - puan +0.125 eşiğin (0.25) altında: 18
+- puan +0.137 eşiğin (0.25) altında: 17
 - puan +0.172 eşiğin (0.25) altında: 17
-- puan +0.137 eşiğin (0.25) altında: 16
 - puan +0.143 eşiğin (0.25) altında: 16
 - puan +0.154 eşiğin (0.25) altında: 15
 - puan +0.135 eşiğin (0.25) altında: 14
@@ -91,7 +91,7 @@ Kapanmış işlem yok. Görülen kurulum: 22172, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 53322
+- ders: 53358
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2609
 - üst üste 3 zarar: 2345
@@ -158,7 +158,7 @@ Kapanmış işlem yok. Görülen kurulum: 22172, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 53322
+- ders: 53358
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2609
 - üst üste 3 zarar: 2345
