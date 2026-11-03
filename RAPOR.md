@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 5149 | %46.6 | -0.343 | -1766.61 |
+| polat_tum_sinyaller | 5150 | %46.6 | -0.343 | -1767.66 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 5136 | %46.6 | -0.343 | -1761.25 |
+| polat_girilmeyen | 5137 | %46.6 | -0.343 | -1762.3 |
 | rastgele | 5135 | %43.0 | -0.415 | -2128.86 |
 | trend_naif | 5139 | %43.6 | -0.404 | -2076.72 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-5.28
+Polat özsermaye: %-4.71 · BTC al-tut: %-5.4
 
 ## Öğrenme (walk-forward)
 
@@ -25,12 +25,12 @@ En az işe yarayan okumalar: cift_dip_4H ×0.542, btc_1H ×0.589, adx_di_1H ×0.
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 27650, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 27729, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 25099
-- yetki: 599
+- ders: 25163
+- yetki: 601
 - gösterge aileleri aynı yönde değil: 101
 - büyük zaman dilimi trendi ters: 81
 - puan +0.135 eşiğin (0.25) altında: 19
@@ -91,13 +91,13 @@ Kapanmış işlem yok. Görülen kurulum: 27650, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 58451
+- ders: 58515
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2648
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2118
 - aynı yönde pozisyon tavanı: 1426
-- yetki: 1283
+- yetki: 1285
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
@@ -158,13 +158,13 @@ Kapanmış işlem yok. Görülen kurulum: 27650, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 58451
+- ders: 58515
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 2648
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2118
 - aynı yönde pozisyon tavanı: 1426
-- yetki: 1283
+- yetki: 1285
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
 - yüksek etkili ABD verisi yakın (takvim sessizliği): 258
