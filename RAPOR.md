@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 6454 | %46.5 | -0.344 | -2219.86 |
+| polat_tum_sinyaller | 6455 | %46.5 | -0.344 | -2219.37 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 6441 | %46.5 | -0.344 | -2214.5 |
-| rastgele | 6415 | %43.2 | -0.41 | -2632.9 |
-| trend_naif | 6462 | %43.1 | -0.411 | -2655.32 |
+| polat_girilmeyen | 6442 | %46.5 | -0.344 | -2214.01 |
+| rastgele | 6416 | %43.2 | -0.41 | -2632.41 |
+| trend_naif | 6463 | %43.2 | -0.411 | -2654.83 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-0.48
+Polat özsermaye: %-4.71 · BTC al-tut: %-0.46
 
 ## Öğrenme (walk-forward)
 
@@ -25,19 +25,19 @@ En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.553, yapi_4H ×0.73, dow
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 40240, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 40307, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 19395
-- yetki: 8204
+- ders: 19441
+- yetki: 8209
 - gösterge aileleri aynı yönde değil: 1266
 - büyük zaman dilimi trendi ters: 734
-- puan +0.137 eşiğin (0.25) altında: 73
-- puan +0.128 eşiğin (0.25) altında: 70
-- puan +0.132 eşiğin (0.25) altında: 70
+- puan +0.137 eşiğin (0.25) altında: 74
+- puan +0.128 eşiğin (0.25) altında: 71
+- puan +0.132 eşiğin (0.25) altında: 71
 - puan +0.138 eşiğin (0.25) altında: 69
-- puan +0.135 eşiğin (0.25) altında: 66
+- puan +0.135 eşiğin (0.25) altında: 68
 - puan +0.122 eşiğin (0.25) altında: 65
 
 ## Son 50 gün
@@ -91,8 +91,8 @@ Kapanmış işlem yok. Görülen kurulum: 40240, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 72554
-- yetki: 9401
+- ders: 72600
+- yetki: 9406
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 3875
 - büyük zaman dilimi trendi ters: 2842
@@ -158,8 +158,8 @@ Kapanmış işlem yok. Görülen kurulum: 40240, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 72554
-- yetki: 9401
+- ders: 72600
+- yetki: 9406
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 3875
 - büyük zaman dilimi trendi ters: 2842
