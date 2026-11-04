@@ -696,3 +696,4 @@
 {"olay": "nabiz_gonderilemedi", "seri": 1, "hata": "     \nremote: Request ID 300A:457C1:66D33E:929465:6AEB1128        \nremote: Time 2026-11-04T11:04:09Z\nTo https://github.com/hkyafes-afk/kripto-radar.git\n ! [remote rejected] HEAD -> polat-veri (Internal Server Error)\nerror: failed to push some refs to 'https://github.com/hkyafes-afk/kripto-radar.git'", "ts": 1793790249922}
 {"olay": "halef_cagrildi", "ok": true, "sonuc": "HTTP 204", "ts": 1793790455042}
 {"olay": "nabiz_gonderilemedi", "seri": 1, "hata": "    \nremote: Request ID 3009:1051ED:5C904A:867526:6AEB1458        \nremote: Time 2026-11-04T11:17:44Z\nTo https://github.com/hkyafes-afk/kripto-radar.git\n ! [remote rejected] HEAD -> polat-veri (Internal Server Error)\nerror: failed to push some refs to 'https://github.com/hkyafes-afk/kripto-radar.git'", "ts": 1793791064963}
+{"olay": "halef_gorulmedi", "ts": 1793791324943}
