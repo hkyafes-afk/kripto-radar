@@ -166,3 +166,4 @@
 {"olay": "yol", "yol": "canli_ret|short|btc:yatay", "karar": null, "n": 34, "ort_R": -0.31, "ts": 1793799832157}
 {"olay": "yol", "yol": "psar_donus|short|btc:yatay", "karar": null, "n": 94, "ort_R": -0.259, "ts": 1793802672008}
 {"olay": "yol", "yol": "stoch_kesisim|long|btc:yatay", "karar": null, "n": 40, "ort_R": -0.295, "ts": 1793815422256}
+{"olay": "yol", "yol": "stoch_kesisim|long|btc:yatay", "karar": "kacin", "n": 41, "ort_R": -0.316, "ts": 1793821775033}
