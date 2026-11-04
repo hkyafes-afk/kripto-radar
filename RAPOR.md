@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 6543 | %46.4 | -0.344 | -2249.49 |
+| polat_tum_sinyaller | 6546 | %46.4 | -0.344 | -2252.81 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 6530 | %46.4 | -0.344 | -2244.13 |
-| rastgele | 6501 | %43.3 | -0.407 | -2645.39 |
-| trend_naif | 6548 | %43.0 | -0.412 | -2697.35 |
+| polat_girilmeyen | 6533 | %46.4 | -0.344 | -2247.45 |
+| rastgele | 6503 | %43.3 | -0.407 | -2646.2 |
+| trend_naif | 6552 | %43.0 | -0.412 | -2700.44 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-1.2
+Polat özsermaye: %-4.71 · BTC al-tut: %-1.03
 
 ## Öğrenme (walk-forward)
 
@@ -25,14 +25,14 @@ En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.553, yapi_4H ×0.733, do
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 42251, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 42307, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 21172
+- ders: 21214
 - yetki: 8222
-- gösterge aileleri aynı yönde değil: 1285
-- büyük zaman dilimi trendi ters: 746
+- gösterge aileleri aynı yönde değil: 1292
+- büyük zaman dilimi trendi ters: 747
 - puan +0.137 eşiğin (0.25) altında: 75
 - puan +0.128 eşiğin (0.25) altında: 73
 - puan +0.132 eşiğin (0.25) altında: 71
@@ -91,11 +91,11 @@ Kapanmış işlem yok. Görülen kurulum: 42251, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 74331
+- ders: 74373
 - yetki: 9419
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 3894
-- büyük zaman dilimi trendi ters: 2854
+- gösterge aileleri aynı yönde değil: 3901
+- büyük zaman dilimi trendi ters: 2855
 - üst üste 3 zarar: 2345
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
@@ -158,11 +158,11 @@ Kapanmış işlem yok. Görülen kurulum: 42251, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 74331
+- ders: 74373
 - yetki: 9419
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 3894
-- büyük zaman dilimi trendi ters: 2854
+- gösterge aileleri aynı yönde değil: 3901
+- büyük zaman dilimi trendi ters: 2855
 - üst üste 3 zarar: 2345
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
