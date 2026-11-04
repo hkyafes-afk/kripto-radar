@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 5994 | %46.6 | -0.345 | -2066.86 |
+| polat_tum_sinyaller | 5995 | %46.7 | -0.345 | -2065.31 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 5981 | %46.6 | -0.345 | -2061.5 |
-| rastgele | 5960 | %43.2 | -0.412 | -2457.92 |
-| trend_naif | 5972 | %43.7 | -0.407 | -2431.3 |
+| polat_girilmeyen | 5982 | %46.6 | -0.344 | -2059.95 |
+| rastgele | 5966 | %43.3 | -0.411 | -2452.04 |
+| trend_naif | 5973 | %43.7 | -0.407 | -2429.75 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-5.39
+Polat özsermaye: %-4.71 · BTC al-tut: %-5.23
 
 ## Öğrenme (walk-forward)
 
@@ -25,16 +25,16 @@ En az işe yarayan okumalar: btc_1H ×0.545, yapi_4H ×0.73, supertrend_1H ×0.7
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 26179, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 26247, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - ders: 13381
-- yetki: 5952
-- gösterge aileleri aynı yönde değil: 804
+- yetki: 5958
+- gösterge aileleri aynı yönde değil: 819
 - büyük zaman dilimi trendi ters: 259
+- puan +0.137 eşiğin (0.25) altında: 31
 - puan +0.122 eşiğin (0.25) altında: 30
-- puan +0.137 eşiğin (0.25) altında: 30
 - puan +0.123 eşiğin (0.25) altında: 30
 - puan +0.159 eşiğin (0.25) altında: 29
 - puan +0.127 eşiğin (0.25) altında: 27
@@ -93,8 +93,8 @@ Kapanmış işlem yok. Görülen kurulum: 26179, girilen: 0.
 
 - ders: 66540
 - günlük işlem tavanı (8): 7185
-- yetki: 7149
-- gösterge aileleri aynı yönde değil: 3413
+- yetki: 7155
+- gösterge aileleri aynı yönde değil: 3428
 - büyük zaman dilimi trendi ters: 2367
 - üst üste 3 zarar: 2345
 - aynı yönde pozisyon tavanı: 1426
@@ -160,8 +160,8 @@ Kapanmış işlem yok. Görülen kurulum: 26179, girilen: 0.
 
 - ders: 66540
 - günlük işlem tavanı (8): 7185
-- yetki: 7149
-- gösterge aileleri aynı yönde değil: 3413
+- yetki: 7155
+- gösterge aileleri aynı yönde değil: 3428
 - büyük zaman dilimi trendi ters: 2367
 - üst üste 3 zarar: 2345
 - aynı yönde pozisyon tavanı: 1426
