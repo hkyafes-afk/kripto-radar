@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 6211 | %46.5 | -0.346 | -2149.91 |
+| polat_tum_sinyaller | 6212 | %46.6 | -0.346 | -2149.55 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 6198 | %46.5 | -0.346 | -2144.55 |
+| polat_girilmeyen | 6199 | %46.5 | -0.346 | -2144.19 |
 | rastgele | 6183 | %43.3 | -0.41 | -2537.15 |
-| trend_naif | 6216 | %43.1 | -0.416 | -2587.74 |
+| trend_naif | 6218 | %43.1 | -0.416 | -2588.55 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-2.96
+Polat özsermaye: %-4.71 · BTC al-tut: %-2.95
 
 ## Öğrenme (walk-forward)
 
@@ -25,20 +25,20 @@ En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.553, adx_di_1H ×0.731, 
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 31820, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 31895, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - ders: 14508
-- yetki: 6831
+- yetki: 6835
 - gösterge aileleri aynı yönde değil: 1042
 - büyük zaman dilimi trendi ters: 528
+- puan +0.138 eşiğin (0.25) altında: 62
 - puan +0.130 eşiğin (0.25) altında: 61
-- puan +0.138 eşiğin (0.25) altında: 61
-- puan +0.132 eşiğin (0.25) altında: 59
+- puan +0.132 eşiğin (0.25) altında: 60
 - puan +0.137 eşiğin (0.25) altında: 58
-- puan +0.148 eşiğin (0.25) altında: 57
-- puan +0.122 eşiğin (0.25) altında: 56
+- puan +0.148 eşiğin (0.25) altında: 58
+- puan +0.122 eşiğin (0.25) altında: 57
 
 ## Son 50 gün
 
@@ -92,7 +92,7 @@ Kapanmış işlem yok. Görülen kurulum: 31820, girilen: 0.
 **Girilmeyen kurulumlar (engel)**
 
 - ders: 67667
-- yetki: 8028
+- yetki: 8032
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 3651
 - büyük zaman dilimi trendi ters: 2636
@@ -159,7 +159,7 @@ Kapanmış işlem yok. Görülen kurulum: 31820, girilen: 0.
 **Girilmeyen kurulumlar (engel)**
 
 - ders: 67667
-- yetki: 8028
+- yetki: 8032
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 3651
 - büyük zaman dilimi trendi ters: 2636
