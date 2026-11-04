@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 6603 | %46.3 | -0.347 | -2293.5 |
+| polat_tum_sinyaller | 6604 | %46.3 | -0.347 | -2294.71 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 6590 | %46.3 | -0.347 | -2288.14 |
+| polat_girilmeyen | 6591 | %46.2 | -0.347 | -2289.34 |
 | rastgele | 6564 | %43.2 | -0.409 | -2686.88 |
-| trend_naif | 6616 | %42.9 | -0.415 | -2742.84 |
+| trend_naif | 6617 | %42.9 | -0.415 | -2744.05 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-0.67
+Polat özsermaye: %-4.71 · BTC al-tut: %-0.6
 
 ## Öğrenme (walk-forward)
 
@@ -25,11 +25,11 @@ En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.553, yapi_4H ×0.728, do
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 44080, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 44106, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 21931
+- ders: 21942
 - yetki: 8342
 - gösterge aileleri aynı yönde değil: 1297
 - büyük zaman dilimi trendi ters: 751
@@ -91,7 +91,7 @@ Kapanmış işlem yok. Görülen kurulum: 44080, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 75090
+- ders: 75101
 - yetki: 9539
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 3906
@@ -158,7 +158,7 @@ Kapanmış işlem yok. Görülen kurulum: 44080, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 75090
+- ders: 75101
 - yetki: 9539
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 3906
