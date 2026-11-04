@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 6185 | %43.3 | -0.41 | -2538.05 |
 | trend_naif | 6219 | %43.1 | -0.416 | -2588.0 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-2.91
+Polat özsermaye: %-4.71 · BTC al-tut: %-2.92
 
 ## Öğrenme (walk-forward)
 
@@ -25,20 +25,20 @@ En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.553, adx_di_1H ×0.731, 
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 32020, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 32075, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 14521
-- yetki: 6844
-- gösterge aileleri aynı yönde değil: 1043
-- büyük zaman dilimi trendi ters: 529
+- ders: 14540
+- yetki: 6850
+- gösterge aileleri aynı yönde değil: 1046
+- büyük zaman dilimi trendi ters: 532
+- puan +0.130 eşiğin (0.25) altında: 63
+- puan +0.138 eşiğin (0.25) altında: 63
 - puan +0.132 eşiğin (0.25) altında: 62
-- puan +0.138 eşiğin (0.25) altında: 62
-- puan +0.130 eşiğin (0.25) altında: 61
 - puan +0.137 eşiğin (0.25) altında: 60
+- puan +0.148 eşiğin (0.25) altında: 59
 - puan +0.122 eşiğin (0.25) altında: 58
-- puan +0.128 eşiğin (0.25) altında: 58
 
 ## Son 50 gün
 
@@ -91,11 +91,11 @@ Kapanmış işlem yok. Görülen kurulum: 32020, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 67680
-- yetki: 8041
+- ders: 67699
+- yetki: 8047
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 3652
-- büyük zaman dilimi trendi ters: 2637
+- gösterge aileleri aynı yönde değil: 3655
+- büyük zaman dilimi trendi ters: 2640
 - üst üste 3 zarar: 2345
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
@@ -158,11 +158,11 @@ Kapanmış işlem yok. Görülen kurulum: 32020, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 67680
-- yetki: 8041
+- ders: 67699
+- yetki: 8047
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 3652
-- büyük zaman dilimi trendi ters: 2637
+- gösterge aileleri aynı yönde değil: 3655
+- büyük zaman dilimi trendi ters: 2640
 - üst üste 3 zarar: 2345
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
