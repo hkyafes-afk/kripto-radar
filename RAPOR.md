@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 5761 | %45.9 | -0.362 | -2085.9 |
+| polat_tum_sinyaller | 5764 | %45.9 | -0.362 | -2085.16 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 5748 | %45.9 | -0.362 | -2080.53 |
-| rastgele | 5740 | %43.0 | -0.419 | -2404.98 |
-| trend_naif | 5746 | %42.8 | -0.426 | -2449.1 |
+| polat_girilmeyen | 5751 | %45.9 | -0.362 | -2079.8 |
+| rastgele | 5743 | %43.0 | -0.419 | -2405.61 |
+| trend_naif | 5750 | %42.9 | -0.426 | -2449.45 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-4.39
+Polat özsermaye: %-4.71 · BTC al-tut: %-4.31
 
 ## Öğrenme (walk-forward)
 
@@ -25,13 +25,13 @@ En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.541, supertrend_1H ×0.7
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 18133, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 18278, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - ders: 12553
-- yetki: 908
-- gösterge aileleri aynı yönde değil: 289
+- yetki: 944
+- gösterge aileleri aynı yönde değil: 298
 - büyük zaman dilimi trendi ters: 192
 - puan +0.137 eşiğin (0.25) altında: 28
 - puan +0.122 eşiğin (0.25) altında: 27
@@ -93,10 +93,10 @@ Kapanmış işlem yok. Görülen kurulum: 18133, girilen: 0.
 
 - ders: 65712
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 2898
+- gösterge aileleri aynı yönde değil: 2907
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2300
-- yetki: 2105
+- yetki: 2141
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
@@ -160,10 +160,10 @@ Kapanmış işlem yok. Görülen kurulum: 18133, girilen: 0.
 
 - ders: 65712
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 2898
+- gösterge aileleri aynı yönde değil: 2907
 - üst üste 3 zarar: 2345
 - büyük zaman dilimi trendi ters: 2300
-- yetki: 2105
+- yetki: 2141
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
