@@ -157,3 +157,4 @@
 {"olay": "geri_alindi", "ogrenilmis_ort_R": 0.29, "temel_ort_R": 0.394, "neden": "öğrenilmiş katsayılar temel halden kötü sonuç verdi", "ts": 1793765088671}
 {"olay": "yol", "yol": "yapi_bozulmasi|short|btc:asagi", "karar": null, "n": 120, "ort_R": 0.268, "ts": 1793765623190}
 {"olay": "yol", "yol": "geri_test|short|btc:asagi", "karar": "kacin", "n": 51, "ort_R": -0.313, "ts": 1793767665460}
+{"olay": "yol", "yol": "yapi_bozulmasi|long|btc:asagi", "karar": "kacin", "n": 20, "ort_R": -0.606, "ts": 1793776561772}
