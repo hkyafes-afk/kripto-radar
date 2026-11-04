@@ -11,10 +11,10 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 6387 | %46.4 | -0.348 | -2222.81 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
 | polat_girilmeyen | 6374 | %46.4 | -0.348 | -2217.44 |
-| rastgele | 6353 | %43.1 | -0.413 | -2622.09 |
-| trend_naif | 6395 | %43.0 | -0.415 | -2656.03 |
+| rastgele | 6354 | %43.1 | -0.413 | -2623.22 |
+| trend_naif | 6396 | %43.0 | -0.415 | -2657.16 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-2.19
+Polat özsermaye: %-4.71 · BTC al-tut: %-1.83
 
 ## Öğrenme (walk-forward)
 
@@ -25,14 +25,14 @@ En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.553, yapi_4H ×0.734, ad
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 35979, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 36172, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 17653
-- yetki: 7072
-- gösterge aileleri aynı yönde değil: 1067
-- büyük zaman dilimi trendi ters: 616
+- ders: 17680
+- yetki: 7158
+- gösterge aileleri aynı yönde değil: 1075
+- büyük zaman dilimi trendi ters: 644
 - puan +0.138 eşiğin (0.25) altında: 67
 - puan +0.130 eşiğin (0.25) altında: 63
 - puan +0.132 eşiğin (0.25) altında: 62
@@ -91,11 +91,11 @@ Kapanmış işlem yok. Görülen kurulum: 35979, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 70812
-- yetki: 8269
+- ders: 70839
+- yetki: 8355
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 3676
-- büyük zaman dilimi trendi ters: 2724
+- gösterge aileleri aynı yönde değil: 3684
+- büyük zaman dilimi trendi ters: 2752
 - üst üste 3 zarar: 2345
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
@@ -158,11 +158,11 @@ Kapanmış işlem yok. Görülen kurulum: 35979, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 70812
-- yetki: 8269
+- ders: 70839
+- yetki: 8355
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 3676
-- büyük zaman dilimi trendi ters: 2724
+- gösterge aileleri aynı yönde değil: 3684
+- büyük zaman dilimi trendi ters: 2752
 - üst üste 3 zarar: 2345
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
