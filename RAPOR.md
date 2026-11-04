@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.361R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.359R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 5793 | %46.0 | -0.361 | -2093.49 |
+| polat_tum_sinyaller | 5801 | %46.0 | -0.359 | -2085.19 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 5780 | %46.0 | -0.361 | -2088.13 |
-| rastgele | 5769 | %42.9 | -0.42 | -2423.81 |
-| trend_naif | 5776 | %42.9 | -0.425 | -2456.08 |
+| polat_girilmeyen | 5788 | %46.0 | -0.359 | -2079.83 |
+| rastgele | 5776 | %43.0 | -0.418 | -2416.5 |
+| trend_naif | 5783 | %43.0 | -0.423 | -2448.24 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-4.69
+Polat özsermaye: %-4.71 · BTC al-tut: %-4.7
 
 ## Öğrenme (walk-forward)
 
@@ -25,14 +25,14 @@ En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.541, supertrend_1H ×0.7
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 19053, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 19241, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 12623
-- yetki: 1263
-- gösterge aileleri aynı yönde değil: 348
-- büyük zaman dilimi trendi ters: 201
+- ders: 12654
+- yetki: 1355
+- gösterge aileleri aynı yönde değil: 361
+- büyük zaman dilimi trendi ters: 205
 - puan +0.122 eşiğin (0.25) altında: 29
 - puan +0.137 eşiğin (0.25) altında: 28
 - puan +0.123 eşiğin (0.25) altında: 28
@@ -91,12 +91,12 @@ Kapanmış işlem yok. Görülen kurulum: 19053, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 65782
+- ders: 65813
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 2957
-- yetki: 2460
+- gösterge aileleri aynı yönde değil: 2970
+- yetki: 2552
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 2309
+- büyük zaman dilimi trendi ters: 2313
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
@@ -158,12 +158,12 @@ Kapanmış işlem yok. Görülen kurulum: 19053, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 65782
+- ders: 65813
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 2957
-- yetki: 2460
+- gösterge aileleri aynı yönde değil: 2970
+- yetki: 2552
 - üst üste 3 zarar: 2345
-- büyük zaman dilimi trendi ters: 2309
+- büyük zaman dilimi trendi ters: 2313
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
 - emir defteri doğrulanmadı: 593
