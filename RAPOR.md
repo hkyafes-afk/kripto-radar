@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 6216 | %46.5 | -0.346 | -2153.3 |
+| polat_tum_sinyaller | 6219 | %46.6 | -0.346 | -2152.45 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 6203 | %46.5 | -0.346 | -2147.94 |
-| rastgele | 6186 | %43.3 | -0.41 | -2539.21 |
-| trend_naif | 6221 | %43.1 | -0.416 | -2591.01 |
+| polat_girilmeyen | 6206 | %46.6 | -0.346 | -2147.09 |
+| rastgele | 6189 | %43.3 | -0.41 | -2538.36 |
+| trend_naif | 6222 | %43.1 | -0.416 | -2590.33 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-2.86
+Polat özsermaye: %-4.71 · BTC al-tut: %-2.95
 
 ## Öğrenme (walk-forward)
 
@@ -25,15 +25,15 @@ En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.553, adx_di_1H ×0.731, 
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 32191, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 32239, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 14601
-- yetki: 6854
-- gösterge aileleri aynı yönde değil: 1051
+- ders: 14603
+- yetki: 6861
+- gösterge aileleri aynı yönde değil: 1054
 - büyük zaman dilimi trendi ters: 532
-- puan +0.138 eşiğin (0.25) altında: 65
+- puan +0.138 eşiğin (0.25) altında: 66
 - puan +0.130 eşiğin (0.25) altında: 63
 - puan +0.132 eşiğin (0.25) altında: 62
 - puan +0.137 eşiğin (0.25) altında: 60
@@ -91,10 +91,10 @@ Kapanmış işlem yok. Görülen kurulum: 32191, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 67760
-- yetki: 8051
+- ders: 67762
+- yetki: 8058
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 3660
+- gösterge aileleri aynı yönde değil: 3663
 - büyük zaman dilimi trendi ters: 2640
 - üst üste 3 zarar: 2345
 - aynı yönde pozisyon tavanı: 1426
@@ -158,10 +158,10 @@ Kapanmış işlem yok. Görülen kurulum: 32191, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 67760
-- yetki: 8051
+- ders: 67762
+- yetki: 8058
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 3660
+- gösterge aileleri aynı yönde değil: 3663
 - büyük zaman dilimi trendi ters: 2640
 - üst üste 3 zarar: 2345
 - aynı yönde pozisyon tavanı: 1426
