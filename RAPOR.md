@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 6173 | %46.6 | -0.345 | -2132.14 |
+| polat_tum_sinyaller | 6176 | %46.6 | -0.345 | -2128.54 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 6160 | %46.6 | -0.345 | -2126.77 |
-| rastgele | 6140 | %43.3 | -0.41 | -2515.51 |
-| trend_naif | 6173 | %43.2 | -0.414 | -2558.56 |
+| polat_girilmeyen | 6163 | %46.6 | -0.345 | -2123.18 |
+| rastgele | 6143 | %43.3 | -0.409 | -2513.53 |
+| trend_naif | 6175 | %43.2 | -0.414 | -2556.83 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-3.12
+Polat özsermaye: %-4.71 · BTC al-tut: %-3.19
 
 ## Öğrenme (walk-forward)
 
@@ -25,20 +25,20 @@ En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.553, adx_di_1H ×0.729, 
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 30690, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 30759, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 14398
-- yetki: 6644
-- gösterge aileleri aynı yönde değil: 1018
+- ders: 14419
+- yetki: 6664
+- gösterge aileleri aynı yönde değil: 1020
 - büyük zaman dilimi trendi ters: 497
 - puan +0.138 eşiğin (0.25) altında: 53
 - puan +0.127 eşiğin (0.25) altında: 50
 - puan +0.130 eşiğin (0.25) altında: 50
 - puan +0.148 eşiğin (0.25) altında: 50
+- puan +0.128 eşiğin (0.25) altında: 49
 - puan +0.132 eşiğin (0.25) altında: 49
-- puan +0.122 eşiğin (0.25) altında: 48
 
 ## Son 50 gün
 
@@ -91,10 +91,10 @@ Kapanmış işlem yok. Görülen kurulum: 30690, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 67557
-- yetki: 7841
+- ders: 67578
+- yetki: 7861
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 3627
+- gösterge aileleri aynı yönde değil: 3629
 - büyük zaman dilimi trendi ters: 2605
 - üst üste 3 zarar: 2345
 - aynı yönde pozisyon tavanı: 1426
@@ -158,10 +158,10 @@ Kapanmış işlem yok. Görülen kurulum: 30690, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 67557
-- yetki: 7841
+- ders: 67578
+- yetki: 7861
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 3627
+- gösterge aileleri aynı yönde değil: 3629
 - büyük zaman dilimi trendi ters: 2605
 - üst üste 3 zarar: 2345
 - aynı yönde pozisyon tavanı: 1426
