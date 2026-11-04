@@ -153,3 +153,4 @@
 {"olay": "yol", "yol": "yapi_bozulmasi|short|btc:asagi", "karar": "benimse", "n": 20, "ort_R": 0.41, "ts": 1793752819189}
 {"olay": "yol", "yol": "geri_cekilme|short|btc:asagi", "karar": "kacin", "n": 20, "ort_R": -0.781, "ts": 1793757849657}
 {"olay": "yol", "yol": "geri_test|short|btc:asagi", "karar": null, "n": 30, "ort_R": -0.299, "ts": 1793759549303}
+{"olay": "yol", "yol": "geri_cekilme|short|btc:asagi", "karar": null, "n": 32, "ort_R": -0.322, "ts": 1793761894952}
