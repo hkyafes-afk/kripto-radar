@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.344R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.345R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 5991 | %46.7 | -0.344 | -2062.98 |
+| polat_tum_sinyaller | 5994 | %46.6 | -0.345 | -2066.86 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 5978 | %46.7 | -0.344 | -2057.61 |
-| rastgele | 5951 | %43.2 | -0.414 | -2461.49 |
+| polat_girilmeyen | 5981 | %46.6 | -0.345 | -2061.5 |
+| rastgele | 5960 | %43.2 | -0.412 | -2457.92 |
 | trend_naif | 5972 | %43.7 | -0.407 | -2431.3 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-5.16
+Polat özsermaye: %-4.71 · BTC al-tut: %-5.39
 
 ## Öğrenme (walk-forward)
 
@@ -25,13 +25,13 @@ En az işe yarayan okumalar: btc_1H ×0.545, yapi_4H ×0.73, supertrend_1H ×0.7
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 26119, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 26179, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
 - ders: 13381
-- yetki: 5944
-- gösterge aileleri aynı yönde değil: 791
+- yetki: 5952
+- gösterge aileleri aynı yönde değil: 804
 - büyük zaman dilimi trendi ters: 259
 - puan +0.122 eşiğin (0.25) altında: 30
 - puan +0.137 eşiğin (0.25) altında: 30
@@ -93,8 +93,8 @@ Kapanmış işlem yok. Görülen kurulum: 26119, girilen: 0.
 
 - ders: 66540
 - günlük işlem tavanı (8): 7185
-- yetki: 7141
-- gösterge aileleri aynı yönde değil: 3400
+- yetki: 7149
+- gösterge aileleri aynı yönde değil: 3413
 - büyük zaman dilimi trendi ters: 2367
 - üst üste 3 zarar: 2345
 - aynı yönde pozisyon tavanı: 1426
@@ -160,8 +160,8 @@ Kapanmış işlem yok. Görülen kurulum: 26119, girilen: 0.
 
 - ders: 66540
 - günlük işlem tavanı (8): 7185
-- yetki: 7141
-- gösterge aileleri aynı yönde değil: 3400
+- yetki: 7149
+- gösterge aileleri aynı yönde değil: 3413
 - büyük zaman dilimi trendi ters: 2367
 - üst üste 3 zarar: 2345
 - aynı yönde pozisyon tavanı: 1426
