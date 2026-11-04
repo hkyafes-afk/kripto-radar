@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 6181 | %46.6 | -0.344 | -2126.97 |
+| polat_tum_sinyaller | 6183 | %46.6 | -0.344 | -2127.68 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 6168 | %46.6 | -0.344 | -2121.61 |
-| rastgele | 6148 | %43.3 | -0.409 | -2517.6 |
-| trend_naif | 6181 | %43.2 | -0.414 | -2556.38 |
+| polat_girilmeyen | 6170 | %46.6 | -0.344 | -2122.32 |
+| rastgele | 6150 | %43.3 | -0.409 | -2516.75 |
+| trend_naif | 6183 | %43.2 | -0.414 | -2557.1 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-3.23
+Polat özsermaye: %-4.71 · BTC al-tut: %-3.15
 
 ## Öğrenme (walk-forward)
 
@@ -25,20 +25,20 @@ En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.553, adx_di_1H ×0.729, 
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 31060, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 31113, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 14455
-- yetki: 6725
+- ders: 14461
+- yetki: 6739
 - gösterge aileleri aynı yönde değil: 1027
 - büyük zaman dilimi trendi ters: 501
 - puan +0.138 eşiğin (0.25) altında: 55
-- puan +0.130 eşiğin (0.25) altında: 53
+- puan +0.130 eşiğin (0.25) altında: 54
 - puan +0.127 eşiğin (0.25) altında: 52
 - puan +0.122 eşiğin (0.25) altında: 51
+- puan +0.128 eşiğin (0.25) altında: 51
 - puan +0.148 eşiğin (0.25) altında: 51
-- puan +0.128 eşiğin (0.25) altında: 50
 
 ## Son 50 gün
 
@@ -91,8 +91,8 @@ Kapanmış işlem yok. Görülen kurulum: 31060, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 67614
-- yetki: 7922
+- ders: 67620
+- yetki: 7936
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 3636
 - büyük zaman dilimi trendi ters: 2609
@@ -158,8 +158,8 @@ Kapanmış işlem yok. Görülen kurulum: 31060, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 67614
-- yetki: 7922
+- ders: 67620
+- yetki: 7936
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 3636
 - büyük zaman dilimi trendi ters: 2609
