@@ -170,3 +170,4 @@
 {"olay": "yol", "yol": "uyusmazlik_donus_mfi|short|btc:yatay", "karar": null, "n": 27, "ort_R": -0.314, "ts": 1793824311715}
 {"olay": "yol", "yol": "canli_ret|short|btc:yatay", "karar": "kacin", "n": 35, "ort_R": -0.335, "ts": 1793838692067}
 {"olay": "yol", "yol": "psar_donus|short|btc:yatay", "karar": "kacin", "n": 96, "ort_R": -0.279, "ts": 1793838701460}
+{"olay": "geri_alindi", "ogrenilmis_ort_R": -0.427, "temel_ort_R": -0.317, "neden": "öğrenilmiş katsayılar temel halden kötü sonuç verdi", "ts": 1793845929744}
