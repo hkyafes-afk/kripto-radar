@@ -25,11 +25,11 @@ En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.553, dow_4H ×0.744, yap
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 34816, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 34906, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 16573
+- ders: 16659
 - yetki: 7661
 - gösterge aileleri aynı yönde değil: 1037
 - büyük zaman dilimi trendi ters: 566
@@ -91,7 +91,7 @@ Kapanmış işlem yok. Görülen kurulum: 34816, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 82285
+- ders: 82371
 - yetki: 9766
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 3935
@@ -158,7 +158,7 @@ Kapanmış işlem yok. Görülen kurulum: 34816, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 82285
+- ders: 82371
 - yetki: 9766
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 3935
