@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.364R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.365R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 7054 | %45.6 | -0.364 | -2570.9 |
+| polat_tum_sinyaller | 7058 | %45.6 | -0.365 | -2573.8 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 7041 | %45.6 | -0.364 | -2565.54 |
-| rastgele | 7004 | %43.5 | -0.407 | -2854.11 |
-| trend_naif | 7059 | %42.7 | -0.422 | -2981.98 |
+| polat_girilmeyen | 7045 | %45.6 | -0.365 | -2568.44 |
+| rastgele | 7007 | %43.5 | -0.408 | -2857.81 |
+| trend_naif | 7063 | %42.7 | -0.423 | -2984.95 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-0.63
+Polat özsermaye: %-4.71 · BTC al-tut: %-0.76
 
 ## Öğrenme (walk-forward)
 
@@ -25,20 +25,20 @@ En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.553, dow_4H ×0.741, yap
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 34141, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 34206, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 15910
+- ders: 15973
 - yetki: 7661
 - gösterge aileleri aynı yönde değil: 1037
 - büyük zaman dilimi trendi ters: 566
 - puan +0.170 eşiğin (0.25) altında: 64
 - puan +0.177 eşiğin (0.25) altında: 62
 - puan +0.185 eşiğin (0.25) altında: 59
+- puan +0.136 eşiğin (0.25) altında: 58
 - puan +0.145 eşiğin (0.25) altında: 58
 - puan +0.152 eşiğin (0.25) altında: 58
-- puan +0.132 eşiğin (0.25) altında: 57
 
 ## Son 50 gün
 
@@ -91,7 +91,7 @@ Kapanmış işlem yok. Görülen kurulum: 34141, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 81622
+- ders: 81685
 - yetki: 9766
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 3935
@@ -158,7 +158,7 @@ Kapanmış işlem yok. Görülen kurulum: 34141, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 81622
+- ders: 81685
 - yetki: 9766
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 3935
