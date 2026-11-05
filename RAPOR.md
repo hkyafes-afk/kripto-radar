@@ -14,23 +14,23 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 7432 | %43.6 | -0.403 | -2991.43 |
 | trend_naif | 7478 | %43.7 | -0.397 | -2972.16 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-6.37
+Polat özsermaye: %-4.71 · BTC al-tut: %-6.46
 
 ## Öğrenme (walk-forward)
 
-Örnek 7463 (eğitim 5224, doğrulama 2239) · uygulanan katsayı 71 · doğrulamada tutmadığı için reddedilen 64
+Örnek 7471 (eğitim 5229, doğrulama 2242) · uygulanan katsayı 71 · doğrulamada tutmadığı için reddedilen 64
 
-En çok işe yarayan okumalar: btc_dominans ×1.292, hacim_oran_1H ×1.228, uyusmazlik_cci_15m ×1.204, obv_egim_15m ×1.169, mum_dis_mum_15m ×1.169, cift_tepe_4H ×1.159, tetik_psar_donus_15m ×1.157, uyusmazlik_rsi_15m ×1.146, tetik_uyusmazlik_donus_macd ×1.136, macd_hist_15m ×1.135
-En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.622, yapi_4H ×0.761, adx_di_4H ×0.769, adx_di_1H ×0.772, dow_4H ×0.775, obo_1H ×0.781, supertrend_1H ×0.815, ema_4H ×0.849, supertrend_4H ×0.861
+En çok işe yarayan okumalar: btc_dominans ×1.292, hacim_oran_1H ×1.228, uyusmazlik_cci_15m ×1.204, obv_egim_15m ×1.169, mum_dis_mum_15m ×1.169, cift_tepe_4H ×1.163, tetik_psar_donus_15m ×1.157, uyusmazlik_rsi_15m ×1.146, tetik_uyusmazlik_donus_macd ×1.136, macd_hist_15m ×1.134
+En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.622, yapi_4H ×0.76, adx_di_4H ×0.769, adx_di_1H ×0.772, dow_4H ×0.774, obo_1H ×0.781, supertrend_1H ×0.815, ema_4H ×0.849, supertrend_4H ×0.86
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 49942, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 50016, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 30677
-- yetki: 8159
+- ders: 30744
+- yetki: 8166
 - gösterge aileleri aynı yönde değil: 1079
 - büyük zaman dilimi trendi ters: 604
 - puan +0.170 eşiğin (0.25) altında: 64
@@ -91,8 +91,8 @@ Kapanmış işlem yok. Görülen kurulum: 49942, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 96389
-- yetki: 10264
+- ders: 96456
+- yetki: 10271
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 3977
 - büyük zaman dilimi trendi ters: 2904
@@ -158,8 +158,8 @@ Kapanmış işlem yok. Görülen kurulum: 49942, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 96389
-- yetki: 10264
+- ders: 96456
+- yetki: 10271
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 3977
 - büyük zaman dilimi trendi ters: 2904
