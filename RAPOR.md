@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 6814 | %46.1 | -0.353 | -2406.16 |
+| polat_tum_sinyaller | 6821 | %46.1 | -0.353 | -2408.73 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 6801 | %46.1 | -0.353 | -2400.8 |
-| rastgele | 6772 | %43.4 | -0.407 | -2755.47 |
-| trend_naif | 6827 | %42.8 | -0.417 | -2847.39 |
+| polat_girilmeyen | 6808 | %46.1 | -0.353 | -2403.36 |
+| rastgele | 6776 | %43.4 | -0.407 | -2755.98 |
+| trend_naif | 6830 | %42.8 | -0.417 | -2848.38 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-0.51
+Polat özsermaye: %-4.71 · BTC al-tut: %-0.56
 
 ## Öğrenme (walk-forward)
 
@@ -25,20 +25,20 @@ En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.553, yapi_4H ×0.729, do
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 29464, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 29533, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 12051
-- yetki: 7545
+- ders: 12080
+- yetki: 7551
 - gösterge aileleri aynı yönde değil: 1020
 - büyük zaman dilimi trendi ters: 566
-- puan +0.177 eşiğin (0.25) altında: 57
+- puan +0.177 eşiğin (0.25) altında: 58
 - puan +0.185 eşiğin (0.25) altında: 57
 - puan +0.170 eşiğin (0.25) altında: 56
 - puan +0.132 eşiğin (0.25) altında: 54
-- puan +0.136 eşiğin (0.25) altında: 52
-- puan +0.138 eşiğin (0.25) altında: 52
+- puan +0.136 eşiğin (0.25) altında: 53
+- puan +0.138 eşiğin (0.25) altında: 53
 
 ## Son 50 gün
 
@@ -91,8 +91,8 @@ Kapanmış işlem yok. Görülen kurulum: 29464, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 77763
-- yetki: 9650
+- ders: 77792
+- yetki: 9656
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 3918
 - büyük zaman dilimi trendi ters: 2866
@@ -158,8 +158,8 @@ Kapanmış işlem yok. Görülen kurulum: 29464, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 77763
-- yetki: 9650
+- ders: 77792
+- yetki: 9656
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 3918
 - büyük zaman dilimi trendi ters: 2866
