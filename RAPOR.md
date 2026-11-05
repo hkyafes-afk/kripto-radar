@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.353R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.352R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 7284 | %46.1 | -0.353 | -2568.16 |
+| polat_tum_sinyaller | 7286 | %46.2 | -0.352 | -2567.47 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 7271 | %46.1 | -0.352 | -2562.8 |
-| rastgele | 7241 | %43.6 | -0.405 | -2930.88 |
-| trend_naif | 7288 | %43.1 | -0.412 | -3004.13 |
+| polat_girilmeyen | 7273 | %46.1 | -0.352 | -2562.11 |
+| rastgele | 7243 | %43.6 | -0.405 | -2933.82 |
+| trend_naif | 7290 | %43.1 | -0.412 | -3003.43 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-2.68
+Polat özsermaye: %-4.71 · BTC al-tut: %-2.83
 
 ## Öğrenme (walk-forward)
 
@@ -25,18 +25,18 @@ En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.579, yapi_4H ×0.756, ad
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 40566, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 40805, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 21846
+- ders: 22080
 - yetki: 7856
 - gösterge aileleri aynı yönde değil: 1066
 - büyük zaman dilimi trendi ters: 586
 - puan +0.170 eşiğin (0.25) altında: 64
 - puan +0.177 eşiğin (0.25) altında: 62
+- puan +0.145 eşiğin (0.25) altında: 61
 - puan +0.136 eşiğin (0.25) altında: 60
-- puan +0.145 eşiğin (0.25) altında: 60
 - puan +0.180 eşiğin (0.25) altında: 59
 - puan +0.185 eşiğin (0.25) altında: 59
 
@@ -91,7 +91,7 @@ Kapanmış işlem yok. Görülen kurulum: 40566, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 87558
+- ders: 87792
 - yetki: 9961
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 3964
@@ -158,7 +158,7 @@ Kapanmış işlem yok. Görülen kurulum: 40566, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 87558
+- ders: 87792
 - yetki: 9961
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 3964
