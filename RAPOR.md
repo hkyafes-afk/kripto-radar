@@ -14,7 +14,7 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 6760 | %43.4 | -0.408 | -2755.96 |
 | trend_naif | 6819 | %42.8 | -0.418 | -2847.43 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-0.34
+Polat özsermaye: %-4.71 · BTC al-tut: %-0.33
 
 ## Öğrenme (walk-forward)
 
@@ -25,20 +25,20 @@ En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.553, yapi_4H ×0.729, do
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 29191, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 29308, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 11968
-- yetki: 7509
-- gösterge aileleri aynı yönde değil: 1017
-- büyük zaman dilimi trendi ters: 565
+- ders: 12004
+- yetki: 7522
+- gösterge aileleri aynı yönde değil: 1019
+- büyük zaman dilimi trendi ters: 566
 - puan +0.177 eşiğin (0.25) altında: 56
-- puan +0.170 eşiğin (0.25) altında: 54
+- puan +0.170 eşiğin (0.25) altında: 55
 - puan +0.185 eşiğin (0.25) altında: 54
-- puan +0.132 eşiğin (0.25) altında: 52
-- puan +0.138 eşiğin (0.25) altında: 51
-- puan +0.152 eşiğin (0.25) altında: 51
+- puan +0.132 eşiğin (0.25) altında: 53
+- puan +0.136 eşiğin (0.25) altında: 52
+- puan +0.137 eşiğin (0.25) altında: 51
 
 ## Son 50 gün
 
@@ -91,11 +91,11 @@ Kapanmış işlem yok. Görülen kurulum: 29191, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 77680
-- yetki: 9614
+- ders: 77716
+- yetki: 9627
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 3915
-- büyük zaman dilimi trendi ters: 2865
+- gösterge aileleri aynı yönde değil: 3917
+- büyük zaman dilimi trendi ters: 2866
 - üst üste 3 zarar: 2345
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
@@ -158,11 +158,11 @@ Kapanmış işlem yok. Görülen kurulum: 29191, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 77680
-- yetki: 9614
+- ders: 77716
+- yetki: 9627
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 3915
-- büyük zaman dilimi trendi ters: 2865
+- gösterge aileleri aynı yönde değil: 3917
+- büyük zaman dilimi trendi ters: 2866
 - üst üste 3 zarar: 2345
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
