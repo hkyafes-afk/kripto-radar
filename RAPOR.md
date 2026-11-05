@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 7103 | %45.6 | -0.365 | -2595.62 |
+| polat_tum_sinyaller | 7104 | %45.6 | -0.365 | -2595.08 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 7090 | %45.6 | -0.365 | -2590.26 |
-| rastgele | 7050 | %43.6 | -0.407 | -2870.46 |
-| trend_naif | 7108 | %42.7 | -0.423 | -3005.41 |
+| polat_girilmeyen | 7091 | %45.6 | -0.365 | -2589.72 |
+| rastgele | 7052 | %43.6 | -0.407 | -2870.99 |
+| trend_naif | 7109 | %42.7 | -0.423 | -3004.86 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-0.8
+Polat özsermaye: %-4.71 · BTC al-tut: %-0.78
 
 ## Öğrenme (walk-forward)
 
@@ -25,14 +25,14 @@ En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.553, yapi_4H ×0.747, do
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 35396, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 35495, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 17115
+- ders: 17206
 - yetki: 7661
 - gösterge aileleri aynı yönde değil: 1037
-- büyük zaman dilimi trendi ters: 568
+- büyük zaman dilimi trendi ters: 569
 - puan +0.170 eşiğin (0.25) altında: 64
 - puan +0.177 eşiğin (0.25) altında: 62
 - puan +0.185 eşiğin (0.25) altında: 59
@@ -91,11 +91,11 @@ Kapanmış işlem yok. Görülen kurulum: 35396, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 82827
+- ders: 82918
 - yetki: 9766
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 3935
-- büyük zaman dilimi trendi ters: 2868
+- büyük zaman dilimi trendi ters: 2869
 - üst üste 3 zarar: 2345
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
@@ -158,11 +158,11 @@ Kapanmış işlem yok. Görülen kurulum: 35396, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 82827
+- ders: 82918
 - yetki: 9766
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 3935
-- büyük zaman dilimi trendi ters: 2868
+- büyük zaman dilimi trendi ters: 2869
 - üst üste 3 zarar: 2345
 - aynı yönde pozisyon tavanı: 1426
 - bu coinde zaten pozisyon var: 794
