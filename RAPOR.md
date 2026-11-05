@@ -14,22 +14,22 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 7128 | %43.5 | -0.41 | -2918.96 |
 | trend_naif | 7181 | %42.8 | -0.42 | -3016.87 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-1.61
+Polat özsermaye: %-4.71 · BTC al-tut: %-1.8
 
 ## Öğrenme (walk-forward)
 
-Örnek 7145 (eğitim 5001, doğrulama 2144) · uygulanan katsayı 80 · doğrulamada tutmadığı için reddedilen 55
+Örnek 7175 (eğitim 5022, doğrulama 2153) · uygulanan katsayı 73 · doğrulamada tutmadığı için reddedilen 62
 
-En çok işe yarayan okumalar: hacim_oran_1H ×1.223, duvar_alt ×1.208, uyusmazlik_cci_15m ×1.202, obv_egim_15m ×1.183, uyusmazlik_macd_15m ×1.178, uyusmazlik_rsi_15m ×1.167, tetik_psar_donus_15m ×1.165, mum_cimbiz_dip_5m ×1.161, macd_hist_15m ×1.156, momentum_15m ×1.146
-En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.543, yapi_4H ×0.745, dow_4H ×0.751, adx_di_1H ×0.756, adx_di_4H ×0.768, obo_1H ×0.781, supertrend_1H ×0.792, tetik_stoch_kesisim_15m ×0.845, ema_4H ×0.85
+En çok işe yarayan okumalar: hacim_oran_1H ×1.223, uyusmazlik_cci_15m ×1.203, mum_dis_mum_15m ×1.188, obv_egim_15m ×1.183, uyusmazlik_macd_15m ×1.174, uyusmazlik_rsi_15m ×1.164, tetik_psar_donus_15m ×1.154, macd_hist_15m ×1.148, momentum_15m ×1.145, cci_15m ×1.115
+En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.559, yapi_4H ×0.749, dow_4H ×0.757, adx_di_1H ×0.76, adx_di_4H ×0.769, obo_1H ×0.781, supertrend_1H ×0.797, ema_4H ×0.851, tetik_stoch_kesisim_15m ×0.859
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 37118, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 37311, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 18735
+- ders: 18928
 - yetki: 7687
 - gösterge aileleri aynı yönde değil: 1045
 - büyük zaman dilimi trendi ters: 570
@@ -91,7 +91,7 @@ Kapanmış işlem yok. Görülen kurulum: 37118, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 84447
+- ders: 84640
 - yetki: 9792
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 3943
@@ -158,7 +158,7 @@ Kapanmış işlem yok. Görülen kurulum: 37118, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 84447
+- ders: 84640
 - yetki: 9792
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 3943
