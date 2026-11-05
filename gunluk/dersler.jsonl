@@ -175,3 +175,4 @@
 {"olay": "yol", "yol": "yapi_bozulmasi|long|btc:yatay", "karar": "kacin", "n": 668, "ort_R": -0.255, "ts": 1793865379336}
 {"olay": "yol", "yol": "uyusmazlik_donus_obv|long|btc:yatay", "karar": "kacin", "n": 20, "ort_R": -0.578, "ts": 1793868527430}
 {"olay": "yol", "yol": "uyusmazlik_donus_macd|long|btc:yatay", "karar": "kacin", "n": 30, "ort_R": -0.356, "ts": 1793869358492}
+{"olay": "yol", "yol": "uyusmazlik_donus_macd|long|btc:yatay", "karar": null, "n": 31, "ort_R": -0.31, "ts": 1793869545388}
