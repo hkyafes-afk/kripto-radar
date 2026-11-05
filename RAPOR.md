@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.365R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.364R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 7111 | %45.6 | -0.365 | -2597.72 |
+| polat_tum_sinyaller | 7125 | %45.6 | -0.364 | -2596.63 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 7098 | %45.6 | -0.365 | -2592.36 |
-| rastgele | 7070 | %43.5 | -0.41 | -2895.31 |
-| trend_naif | 7118 | %42.7 | -0.423 | -3010.23 |
+| polat_girilmeyen | 7112 | %45.6 | -0.364 | -2591.27 |
+| rastgele | 7078 | %43.5 | -0.409 | -2897.01 |
+| trend_naif | 7130 | %42.7 | -0.422 | -3010.57 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-0.91
+Polat özsermaye: %-4.71 · BTC al-tut: %-1.01
 
 ## Öğrenme (walk-forward)
 
@@ -25,19 +25,19 @@ En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.553, yapi_4H ×0.748, do
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 35705, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 35846, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 17392
-- yetki: 7665
+- ders: 17516
+- yetki: 7668
 - gösterge aileleri aynı yönde değil: 1045
 - büyük zaman dilimi trendi ters: 569
 - puan +0.170 eşiğin (0.25) altında: 64
 - puan +0.177 eşiğin (0.25) altında: 62
+- puan +0.136 eşiğin (0.25) altında: 59
+- puan +0.145 eşiğin (0.25) altında: 59
 - puan +0.185 eşiğin (0.25) altında: 59
-- puan +0.136 eşiğin (0.25) altında: 58
-- puan +0.145 eşiğin (0.25) altında: 58
 - puan +0.152 eşiğin (0.25) altında: 58
 
 ## Son 50 gün
@@ -91,8 +91,8 @@ Kapanmış işlem yok. Görülen kurulum: 35705, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 83104
-- yetki: 9770
+- ders: 83228
+- yetki: 9773
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 3943
 - büyük zaman dilimi trendi ters: 2869
@@ -158,8 +158,8 @@ Kapanmış işlem yok. Görülen kurulum: 35705, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 83104
-- yetki: 9770
+- ders: 83228
+- yetki: 9773
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 3943
 - büyük zaman dilimi trendi ters: 2869
