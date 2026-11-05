@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 6945 | %45.8 | -0.36 | -2500.28 |
+| polat_tum_sinyaller | 6947 | %45.8 | -0.36 | -2501.36 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 6932 | %45.8 | -0.36 | -2494.92 |
-| rastgele | 6896 | %43.6 | -0.407 | -2804.37 |
-| trend_naif | 6950 | %42.8 | -0.42 | -2917.51 |
+| polat_girilmeyen | 6934 | %45.8 | -0.36 | -2496.0 |
+| rastgele | 6898 | %43.6 | -0.407 | -2805.45 |
+| trend_naif | 6953 | %42.8 | -0.42 | -2917.86 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-0.48
+Polat özsermaye: %-4.71 · BTC al-tut: %-0.49
 
 ## Öğrenme (walk-forward)
 
@@ -25,20 +25,20 @@ En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.553, dow_4H ×0.736, yap
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 31812, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 31870, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 13931
-- yetki: 7627
+- ders: 13967
+- yetki: 7628
 - gösterge aileleri aynı yönde değil: 1035
 - büyük zaman dilimi trendi ters: 566
-- puan +0.170 eşiğin (0.25) altında: 60
+- puan +0.170 eşiğin (0.25) altında: 61
 - puan +0.177 eşiğin (0.25) altında: 60
 - puan +0.185 eşiğin (0.25) altında: 58
 - puan +0.132 eşiğin (0.25) altında: 55
+- puan +0.136 eşiğin (0.25) altında: 55
 - puan +0.138 eşiğin (0.25) altında: 55
-- puan +0.152 eşiğin (0.25) altında: 55
 
 ## Son 50 gün
 
@@ -91,8 +91,8 @@ Kapanmış işlem yok. Görülen kurulum: 31812, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 79643
-- yetki: 9732
+- ders: 79679
+- yetki: 9733
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 3933
 - büyük zaman dilimi trendi ters: 2866
@@ -158,8 +158,8 @@ Kapanmış işlem yok. Görülen kurulum: 31812, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 79643
-- yetki: 9732
+- ders: 79679
+- yetki: 9733
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 3933
 - büyük zaman dilimi trendi ters: 2866
