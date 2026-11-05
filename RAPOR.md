@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.364R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.363R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 7017 | %45.7 | -0.364 | -2551.2 |
+| polat_tum_sinyaller | 7021 | %45.7 | -0.363 | -2550.67 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 7004 | %45.7 | -0.363 | -2545.83 |
-| rastgele | 6968 | %43.5 | -0.408 | -2845.3 |
-| trend_naif | 7022 | %42.7 | -0.423 | -2968.31 |
+| polat_girilmeyen | 7008 | %45.7 | -0.363 | -2545.3 |
+| rastgele | 6970 | %43.5 | -0.408 | -2844.01 |
+| trend_naif | 7027 | %42.7 | -0.422 | -2966.88 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-0.63
+Polat özsermaye: %-4.71 · BTC al-tut: %-0.73
 
 ## Öğrenme (walk-forward)
 
@@ -25,11 +25,11 @@ En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.553, dow_4H ×0.741, yap
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 32980, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 33080, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 14876
+- ders: 14963
 - yetki: 7654
 - gösterge aileleri aynı yönde değil: 1037
 - büyük zaman dilimi trendi ters: 566
@@ -38,7 +38,7 @@ Kapanmış işlem yok. Görülen kurulum: 32980, girilen: 0.
 - puan +0.185 eşiğin (0.25) altında: 59
 - puan +0.132 eşiğin (0.25) altında: 57
 - puan +0.138 eşiğin (0.25) altında: 56
-- puan +0.135 eşiğin (0.25) altında: 55
+- puan +0.152 eşiğin (0.25) altında: 56
 
 ## Son 50 gün
 
@@ -91,7 +91,7 @@ Kapanmış işlem yok. Görülen kurulum: 32980, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 80588
+- ders: 80675
 - yetki: 9759
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 3935
@@ -158,7 +158,7 @@ Kapanmış işlem yok. Görülen kurulum: 32980, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 80588
+- ders: 80675
 - yetki: 9759
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 3935
