@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 8104 | %46.5 | -0.343 | -2780.55 |
+| polat_tum_sinyaller | 8105 | %46.5 | -0.343 | -2781.74 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 8091 | %46.5 | -0.343 | -2775.19 |
-| rastgele | 8048 | %43.6 | -0.403 | -3243.68 |
-| trend_naif | 8111 | %43.9 | -0.396 | -3208.69 |
+| polat_girilmeyen | 8092 | %46.5 | -0.343 | -2776.38 |
+| rastgele | 8050 | %43.6 | -0.403 | -3244.17 |
+| trend_naif | 8112 | %43.9 | -0.396 | -3209.88 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-6.51
+Polat özsermaye: %-4.71 · BTC al-tut: %-6.4
 
 ## Öğrenme (walk-forward)
 
@@ -25,13 +25,13 @@ En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.576, yapi_4H ×0.733, ad
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 38241, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 38308, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 34327
-- yetki: 1118
-- gösterge aileleri aynı yönde değil: 194
+- ders: 34380
+- yetki: 1121
+- gösterge aileleri aynı yönde değil: 195
 - büyük zaman dilimi trendi ters: 66
 - puan +0.145 eşiğin (0.25) altında: 26
 - puan +0.127 eşiğin (0.25) altında: 25
@@ -91,10 +91,10 @@ Kapanmış işlem yok. Görülen kurulum: 38241, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 109652
-- yetki: 10657
+- ders: 109705
+- yetki: 10660
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 4102
+- gösterge aileleri aynı yönde değil: 4103
 - büyük zaman dilimi trendi ters: 2925
 - üst üste 3 zarar: 2345
 - aynı yönde pozisyon tavanı: 1426
@@ -158,10 +158,10 @@ Kapanmış işlem yok. Görülen kurulum: 38241, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 109652
-- yetki: 10657
+- ders: 109705
+- yetki: 10660
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 4102
+- gösterge aileleri aynı yönde değil: 4103
 - büyük zaman dilimi trendi ters: 2925
 - üst üste 3 zarar: 2345
 - aynı yönde pozisyon tavanı: 1426
