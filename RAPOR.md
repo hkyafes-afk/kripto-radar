@@ -14,22 +14,22 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 8123 | %43.7 | -0.402 | -3269.24 |
 | trend_naif | 8179 | %43.9 | -0.396 | -3235.96 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-6.43
+Polat özsermaye: %-4.71 · BTC al-tut: %-6.41
 
 ## Öğrenme (walk-forward)
 
-Örnek 8157 (eğitim 5709, doğrulama 2448) · uygulanan katsayı 69 · doğrulamada tutmadığı için reddedilen 68
+Örnek 8179 (eğitim 5725, doğrulama 2454) · uygulanan katsayı 67 · doğrulamada tutmadığı için reddedilen 70
 
-En çok işe yarayan okumalar: obv_egim_15m ×1.199, hacim_oran_1H ×1.181, momentum_15m ×1.167, tetik_yapi_bozulmasi_15m ×1.162, mum_harami_15m ×1.158, mum_dis_mum_15m ×1.154, macd_hist_15m ×1.153, tetik_psar_donus_15m ×1.136, cci_15m ×1.132, rsi_5m ×1.122
-En az işe yarayan okumalar: btc_1H ×0.576, yapi_4H ×0.728, adx_di_4H ×0.75, dow_4H ×0.759, obo_1H ×0.781, supertrend_1H ×0.792, adx_di_1H ×0.795, tetik_supurme ×0.801, ema_4H ×0.822, supertrend_4H ×0.832
+En çok işe yarayan okumalar: obv_egim_15m ×1.196, hacim_oran_1H ×1.181, momentum_15m ×1.166, tetik_yapi_bozulmasi_15m ×1.162, mum_harami_15m ×1.158, mum_dis_mum_15m ×1.154, macd_hist_15m ×1.152, tetik_psar_donus_15m ×1.136, cci_15m ×1.131, rsi_5m ×1.119
+En az işe yarayan okumalar: btc_1H ×0.576, cift_dip_4H ×0.655, yapi_4H ×0.728, adx_di_4H ×0.751, dow_4H ×0.759, obo_1H ×0.781, supertrend_1H ×0.793, adx_di_1H ×0.796, tetik_supurme ×0.801, supertrend_4H ×0.833
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 40231, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 40269, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 36197
+- ders: 36235
 - yetki: 1129
 - gösterge aileleri aynı yönde değil: 206
 - büyük zaman dilimi trendi ters: 67
@@ -91,7 +91,7 @@ Kapanmış işlem yok. Görülen kurulum: 40231, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 111522
+- ders: 111560
 - yetki: 10668
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 4114
@@ -158,7 +158,7 @@ Kapanmış işlem yok. Görülen kurulum: 40231, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 111522
+- ders: 111560
 - yetki: 10668
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 4114
