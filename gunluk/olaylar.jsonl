@@ -809,3 +809,4 @@
 {"olay": "nabiz_gonderilemedi", "seri": 3, "hata": "remote: fatal error in commit_refs        \nTo https://github.com/hkyafes-afk/kripto-radar.git\n ! [remote rejected] HEAD -> polat-veri (failure)\nerror: failed to push some refs to 'https://github.com/hkyafes-afk/kripto-radar.git'", "ts": 1793921040710}
 {"olay": "nabiz_gonderilemedi", "seri": 4, "hata": "remote: fatal error in commit_refs        \nTo https://github.com/hkyafes-afk/kripto-radar.git\n ! [remote rejected] HEAD -> polat-veri (failure)\nerror: failed to push some refs to 'https://github.com/hkyafes-afk/kripto-radar.git'", "ts": 1793921106509}
 {"olay": "ogrenme", "durum": "güncellendi", "uygulanan": 69, "reddedilen": 66, "ts": 1793922251566}
+{"olay": "ogrenme", "durum": "güncellendi", "uygulanan": 67, "reddedilen": 68, "ts": 1793924053163}
