@@ -4,17 +4,17 @@ _Yatırım tavsiyesi değildir._
 
 ## Kıyaslama (maliyetler düşülmüş, net R)
 
-**Hüküm:** Polat net -0.338R; geçtiği kıyaslar: rastgele, trend_naif
+**Hüküm:** Polat net -0.339R; geçtiği kıyaslar: rastgele, trend_naif
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 7948 | %46.7 | -0.338 | -2684.72 |
+| polat_tum_sinyaller | 7955 | %46.7 | -0.339 | -2693.67 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 7935 | %46.7 | -0.338 | -2679.36 |
-| rastgele | 7896 | %43.7 | -0.4 | -3162.13 |
-| trend_naif | 7954 | %43.8 | -0.396 | -3146.31 |
+| polat_girilmeyen | 7942 | %46.7 | -0.338 | -2688.31 |
+| rastgele | 7901 | %43.7 | -0.401 | -3168.71 |
+| trend_naif | 7962 | %43.8 | -0.396 | -3156.71 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-6.01
+Polat özsermaye: %-4.71 · BTC al-tut: %-5.83
 
 ## Öğrenme (walk-forward)
 
@@ -25,19 +25,19 @@ En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.576, yapi_4H ×0.737, ad
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 35183, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 35235, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 31530
-- yetki: 1068
+- ders: 31572
+- yetki: 1070
 - gösterge aileleri aynı yönde değil: 191
 - büyük zaman dilimi trendi ters: 59
 - puan +0.127 eşiğin (0.25) altında: 24
 - puan +0.145 eşiğin (0.25) altında: 24
 - puan +0.146 eşiğin (0.25) altında: 22
 - puan +0.170 eşiğin (0.25) altında: 22
-- puan +0.136 eşiğin (0.25) altında: 20
+- puan +0.136 eşiğin (0.25) altında: 21
 - puan +0.183 eşiğin (0.25) altında: 20
 
 ## Son 50 gün
@@ -91,8 +91,8 @@ Kapanmış işlem yok. Görülen kurulum: 35183, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 106855
-- yetki: 10607
+- ders: 106897
+- yetki: 10609
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 4099
 - büyük zaman dilimi trendi ters: 2918
@@ -158,8 +158,8 @@ Kapanmış işlem yok. Görülen kurulum: 35183, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 106855
-- yetki: 10607
+- ders: 106897
+- yetki: 10609
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 4099
 - büyük zaman dilimi trendi ters: 2918
