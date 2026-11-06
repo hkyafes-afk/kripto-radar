@@ -11,25 +11,25 @@ _Yatırım tavsiyesi değildir._
 | polat_tum_sinyaller | 7902 | %46.9 | -0.335 | -2647.84 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
 | polat_girilmeyen | 7889 | %46.9 | -0.335 | -2642.48 |
-| rastgele | 7850 | %43.7 | -0.401 | -3146.85 |
-| trend_naif | 7906 | %43.9 | -0.393 | -3104.49 |
+| rastgele | 7851 | %43.7 | -0.401 | -3146.44 |
+| trend_naif | 7907 | %43.9 | -0.393 | -3104.08 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-6.12
+Polat özsermaye: %-4.71 · BTC al-tut: %-6.09
 
 ## Öğrenme (walk-forward)
 
-Örnek 7894 (eğitim 5525, doğrulama 2369) · uygulanan katsayı 65 · doğrulamada tutmadığı için reddedilen 71
+Örnek 7902 (eğitim 5531, doğrulama 2371) · uygulanan katsayı 68 · doğrulamada tutmadığı için reddedilen 68
 
-En çok işe yarayan okumalar: obv_egim_15m ×1.215, hacim_oran_1H ×1.203, momentum_15m ×1.17, macd_hist_15m ×1.163, mum_dis_mum_15m ×1.158, tetik_yapi_bozulmasi_15m ×1.156, mum_harami_15m ×1.153, tetik_psar_donus_15m ×1.136, rsi_5m ×1.127, stoch_1H ×1.12
-En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.566, yapi_4H ×0.733, adx_di_4H ×0.752, dow_4H ×0.755, obo_1H ×0.781, supertrend_1H ×0.784, ema_4H ×0.831, supertrend_4H ×0.839, trix_4H ×0.856
+En çok işe yarayan okumalar: obv_egim_15m ×1.211, hacim_oran_1H ×1.192, momentum_15m ×1.171, macd_hist_15m ×1.162, mum_dis_mum_15m ×1.158, tetik_yapi_bozulmasi_15m ×1.156, mum_harami_15m ×1.153, tetik_psar_donus_15m ×1.134, rsi_5m ×1.127, stoch_1H ×1.119
+En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.565, yapi_4H ×0.735, adx_di_4H ×0.753, dow_4H ×0.757, obo_1H ×0.781, supertrend_1H ×0.785, ema_4H ×0.832, supertrend_4H ×0.841, ema200_1H ×0.856
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 34695, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 34760, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 31059
+- ders: 31124
 - yetki: 1061
 - gösterge aileleri aynı yönde değil: 191
 - büyük zaman dilimi trendi ters: 59
@@ -91,7 +91,7 @@ Kapanmış işlem yok. Görülen kurulum: 34695, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 106384
+- ders: 106449
 - yetki: 10600
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 4099
@@ -158,7 +158,7 @@ Kapanmış işlem yok. Görülen kurulum: 34695, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 106384
+- ders: 106449
 - yetki: 10600
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 4099
