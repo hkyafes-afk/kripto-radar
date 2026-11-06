@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 7682 | %47.0 | -0.331 | -2543.27 |
+| polat_tum_sinyaller | 7684 | %47.0 | -0.331 | -2545.55 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 7669 | %47.0 | -0.331 | -2537.91 |
-| rastgele | 7629 | %43.7 | -0.4 | -3050.79 |
-| trend_naif | 7687 | %44.1 | -0.389 | -2987.96 |
+| polat_girilmeyen | 7671 | %47.0 | -0.331 | -2540.19 |
+| rastgele | 7634 | %43.7 | -0.4 | -3051.57 |
+| trend_naif | 7689 | %44.1 | -0.389 | -2990.24 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-6.44
+Polat özsermaye: %-4.71 · BTC al-tut: %-6.61
 
 ## Öğrenme (walk-forward)
 
@@ -25,13 +25,13 @@ En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.563, yapi_4H ×0.723, do
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 29617, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 29698, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 26337
-- yetki: 1011
-- gösterge aileleri aynı yönde değil: 112
+- ders: 26411
+- yetki: 1012
+- gösterge aileleri aynı yönde değil: 116
 - büyük zaman dilimi trendi ters: 45
 - puan +0.127 eşiğin (0.25) altında: 23
 - puan +0.145 eşiğin (0.25) altında: 23
@@ -91,10 +91,10 @@ Kapanmış işlem yok. Görülen kurulum: 29617, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 101662
-- yetki: 10550
+- ders: 101736
+- yetki: 10551
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 4020
+- gösterge aileleri aynı yönde değil: 4024
 - büyük zaman dilimi trendi ters: 2904
 - üst üste 3 zarar: 2345
 - aynı yönde pozisyon tavanı: 1426
@@ -158,10 +158,10 @@ Kapanmış işlem yok. Görülen kurulum: 29617, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 101662
-- yetki: 10550
+- ders: 101736
+- yetki: 10551
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 4020
+- gösterge aileleri aynı yönde değil: 4024
 - büyük zaman dilimi trendi ters: 2904
 - üst üste 3 zarar: 2345
 - aynı yönde pozisyon tavanı: 1426
