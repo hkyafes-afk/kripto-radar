@@ -182,3 +182,4 @@
 {"olay": "yol", "yol": "formasyon_abcd|short|btc:yatay", "karar": "kacin", "n": 20, "ort_R": -0.954, "ts": 1793913902942}
 {"olay": "geri_alindi", "ogrenilmis_ort_R": 0.283, "temel_ort_R": 0.39, "neden": "öğrenilmiş katsayılar temel halden kötü sonuç verdi", "ts": 1793914170850}
 {"olay": "yol", "yol": "psar_donus|short|btc:yatay", "karar": null, "n": 108, "ort_R": -0.269, "ts": 1793921002863}
+{"olay": "yol", "yol": "anlik_kirilim|short|btc:yatay", "karar": "kacin", "n": 141, "ort_R": -0.274, "ts": 1793924826704}
