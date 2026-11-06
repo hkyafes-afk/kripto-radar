@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 7636 | %46.9 | -0.333 | -2542.48 |
+| polat_tum_sinyaller | 7637 | %46.9 | -0.333 | -2541.71 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 7623 | %46.9 | -0.333 | -2537.11 |
-| rastgele | 7587 | %43.6 | -0.4 | -3035.26 |
-| trend_naif | 7642 | %43.9 | -0.391 | -2989.53 |
+| polat_girilmeyen | 7624 | %46.9 | -0.333 | -2536.35 |
+| rastgele | 7591 | %43.6 | -0.4 | -3038.65 |
+| trend_naif | 7643 | %43.9 | -0.391 | -2988.76 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-6.23
+Polat özsermaye: %-4.71 · BTC al-tut: %-6.32
 
 ## Öğrenme (walk-forward)
 
@@ -25,13 +25,13 @@ En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.572, yapi_4H ×0.724, do
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 28100, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 28188, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 25098
-- yetki: 903
-- gösterge aileleri aynı yönde değil: 79
+- ders: 25179
+- yetki: 905
+- gösterge aileleri aynı yönde değil: 80
 - büyük zaman dilimi trendi ters: 45
 - puan +0.127 eşiğin (0.25) altında: 23
 - puan +0.145 eşiğin (0.25) altında: 23
@@ -91,10 +91,10 @@ Kapanmış işlem yok. Görülen kurulum: 28100, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 100423
-- yetki: 10442
+- ders: 100504
+- yetki: 10444
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 3987
+- gösterge aileleri aynı yönde değil: 3988
 - büyük zaman dilimi trendi ters: 2904
 - üst üste 3 zarar: 2345
 - aynı yönde pozisyon tavanı: 1426
@@ -158,10 +158,10 @@ Kapanmış işlem yok. Görülen kurulum: 28100, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 100423
-- yetki: 10442
+- ders: 100504
+- yetki: 10444
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 3987
+- gösterge aileleri aynı yönde değil: 3988
 - büyük zaman dilimi trendi ters: 2904
 - üst üste 3 zarar: 2345
 - aynı yönde pozisyon tavanı: 1426
