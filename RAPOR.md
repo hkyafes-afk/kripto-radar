@@ -14,23 +14,23 @@ _Yatırım tavsiyesi değildir._
 | rastgele | 7571 | %43.7 | -0.4 | -3025.35 |
 | trend_naif | 7628 | %44.0 | -0.39 | -2976.91 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-6.02
+Polat özsermaye: %-4.71 · BTC al-tut: %-6.04
 
 ## Öğrenme (walk-forward)
 
-Örnek 7618 (eğitim 5332, doğrulama 2286) · uygulanan katsayı 66 · doğrulamada tutmadığı için reddedilen 69
+Örnek 7622 (eğitim 5335, doğrulama 2287) · uygulanan katsayı 66 · doğrulamada tutmadığı için reddedilen 69
 
-En çok işe yarayan okumalar: hacim_oran_1H ×1.223, btc_dominans ×1.185, obv_egim_15m ×1.184, tetik_psar_donus_15m ×1.167, mum_harami_15m ×1.156, mum_dis_mum_15m ×1.155, macd_hist_15m ×1.155, momentum_15m ×1.147, cift_tepe_4H ×1.144, cci_15m ×1.12
-En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.577, yapi_4H ×0.73, dow_4H ×0.746, adx_di_4H ×0.748, obo_1H ×0.781, supertrend_1H ×0.79, tetik_stoch_kesisim_15m ×0.821, ema_4H ×0.831, supertrend_4H ×0.843
+En çok işe yarayan okumalar: hacim_oran_1H ×1.223, obv_egim_15m ×1.186, btc_dominans ×1.177, tetik_psar_donus_15m ×1.167, mum_harami_15m ×1.156, mum_dis_mum_15m ×1.155, macd_hist_15m ×1.155, momentum_15m ×1.148, cift_tepe_4H ×1.144, cci_15m ×1.121
+En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.575, yapi_4H ×0.727, dow_4H ×0.743, adx_di_4H ×0.748, obo_1H ×0.781, supertrend_1H ×0.789, tetik_stoch_kesisim_15m ×0.821, ema_4H ×0.83, supertrend_4H ×0.841
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 27558, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 27610, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 24596
-- yetki: 874
+- ders: 24643
+- yetki: 879
 - gösterge aileleri aynı yönde değil: 79
 - büyük zaman dilimi trendi ters: 45
 - puan +0.127 eşiğin (0.25) altında: 23
@@ -91,8 +91,8 @@ Kapanmış işlem yok. Görülen kurulum: 27558, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 99921
-- yetki: 10413
+- ders: 99968
+- yetki: 10418
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 3987
 - büyük zaman dilimi trendi ters: 2904
@@ -158,8 +158,8 @@ Kapanmış işlem yok. Görülen kurulum: 27558, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 99921
-- yetki: 10413
+- ders: 99968
+- yetki: 10418
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 3987
 - büyük zaman dilimi trendi ters: 2904
