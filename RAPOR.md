@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 8332 | %46.2 | -0.35 | -2914.03 |
+| polat_tum_sinyaller | 8333 | %46.2 | -0.35 | -2915.29 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 8319 | %46.2 | -0.35 | -2908.66 |
+| polat_girilmeyen | 8320 | %46.2 | -0.35 | -2909.93 |
 | rastgele | 8283 | %43.8 | -0.402 | -3325.64 |
-| trend_naif | 8327 | %43.8 | -0.399 | -3322.76 |
+| trend_naif | 8328 | %43.8 | -0.399 | -3324.02 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-6.26
+Polat özsermaye: %-4.71 · BTC al-tut: %-6.4
 
 ## Öğrenme (walk-forward)
 
@@ -25,20 +25,20 @@ En az işe yarayan okumalar: btc_4H ×0.514, btc_1H ×0.576, yapi_4H ×0.742, do
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 44101, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 18455, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 39898
-- yetki: 1144
-- gösterge aileleri aynı yönde değil: 208
-- büyük zaman dilimi trendi ters: 67
-- puan +0.145 eşiğin (0.25) altında: 28
-- puan +0.127 eşiğin (0.25) altında: 25
-- puan +0.170 eşiğin (0.25) altında: 23
-- puan +0.136 eşiğin (0.25) altında: 22
-- puan +0.138 eşiğin (0.25) altında: 22
-- puan +0.141 eşiğin (0.25) altında: 22
+- ders: 17039
+- yetki: 331
+- gösterge aileleri aynı yönde değil: 137
+- büyük zaman dilimi trendi ters: 22
+- puan -0.127 eşiğin (0.25) altında: 9
+- puan -0.152 eşiğin (0.25) altında: 9
+- puan +0.163 eşiğin (0.25) altında: 8
+- puan +0.168 eşiğin (0.25) altında: 8
+- puan -0.150 eşiğin (0.25) altında: 8
+- puan -0.200 eşiğin (0.25) altında: 8
 
 ## Son 50 gün
 
@@ -91,7 +91,7 @@ Kapanmış işlem yok. Görülen kurulum: 44101, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 115223
+- ders: 115284
 - yetki: 10683
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 4116
@@ -158,7 +158,7 @@ Kapanmış işlem yok. Görülen kurulum: 44101, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 115223
+- ders: 115284
 - yetki: 10683
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 4116
