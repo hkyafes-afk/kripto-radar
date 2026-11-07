@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Polat Paneli</title>
+<style>
+:root{
+  --bg:#0b0f14; --panel:#121820; --panel2:#18202a; --line:#232d39; --text:#e6edf3; --muted:#8b98a7; --dim:#5d6b7a;
+  --green:#34d399; --green-bg:rgba(52,211,153,.12); --red:#f87171; --red-bg:rgba(248,113,113,.12);
+  --amber:#fbbf24; --amber-bg:rgba(251,191,36,.12); --blue:#60a5fa; --blue-bg:rgba(96,165,250,.12);
+  --mono: ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+  --sans: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,"Helvetica Neue",Arial,sans-serif;
+  --r:14px; color-scheme:dark;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#f5f7fa; --panel:#ffffff; --panel2:#f0f3f7; --line:#e1e6ec; --text:#0f1720; --muted:#5b6876; --dim:#8a96a3;
+    --green:#059669; --green-bg:rgba(5,150,105,.10); --red:#dc2626; --red-bg:rgba(220,38,38,.09);
+    --amber:#b45309; --amber-bg:rgba(180,83,9,.10); --blue:#2563eb; --blue-bg:rgba(37,99,235,.09); color-scheme:light;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#f5f7fa; --panel:#ffffff; --panel2:#f0f3f7; --line:#e1e6ec; --text:#0f1720; --muted:#5b6876; --dim:#8a96a3;
+  --green:#059669; --green-bg:rgba(5,150,105,.10); --red:#dc2626; --red-bg:rgba(220,38,38,.09);
+  --amber:#b45309; --amber-bg:rgba(180,83,9,.10); --blue:#2563eb; --blue-bg:rgba(37,99,235,.09); color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-text-size-adjust:100%}
+body{padding-bottom:calc(24px + env(safe-area-inset-bottom))}
+a{color:var(--blue);text-decoration:none}
+.wrap{max-width:980px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+header{padding:18px 0 10px;display:flex;align-items:center;gap:12px}
+h1{font-size:19px;margin:0}
+.sub{color:var(--muted);font-size:12.5px;margin-top:2px}
+.btn{margin-left:auto;background:var(--panel);border:1px solid var(--line);color:var(--muted);border-radius:10px;padding:7px 10px;font-size:13px}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:6px 0 14px}
+@media (max-width:640px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi,.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px 13px;min-width:0}
+.kpi .l{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.kpi .v{font-size:20px;font-weight:700;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi .s{font-size:12px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.up{color:var(--green)} .down{color:var(--red)}
+h2{font-size:14px;margin:18px 0 8px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+.card{margin-bottom:10px}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;color:var(--muted);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11.5px;font-weight:600}
+.b-green{background:var(--green-bg);color:var(--green)} .b-red{background:var(--red-bg);color:var(--red)}
+.b-amber{background:var(--amber-bg);color:var(--amber)} .b-dim{background:var(--panel2);color:var(--muted)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:640px){.grid2{grid-template-columns:1fr}}
+.kv{display:flex;justify-content:space-between;gap:10px;padding:4px 0;font-size:13px;border-bottom:1px dashed var(--line)}
+.kv:last-child{border-bottom:0}
+.kv span:first-child{color:var(--muted)}
+.warn{padding:10px 12px;border-radius:12px;background:var(--amber-bg);color:var(--amber);font-size:13px;margin:8px 0;display:none}
+.foot{color:var(--dim);font-size:12px;margin-top:16px}
+.empty{color:var(--muted);font-size:13px;padding:6px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>🎯 Polat</h1>
+      <div class="sub" id="sub">yükleniyor…</div>
+    </div>
+    <a class="btn" href="./">← Kripto Radar</a>
+  </header>
+  <div class="warn" id="warn"></div>
+  <div class="kpis" id="kpis"></div>
+
+  <h2>Açık pozisyonlar</h2>
+  <div class="card tw" id="pos"></div>
+
+  <h2>Kıyaslama (maliyetler düşülmüş)</h2>
+  <div class="card" id="kiyas"></div>
+
+  <h2>Son işlemler</h2>
+  <div class="card tw" id="trades"></div>
+
+  <div class="grid2">
+    <div>
+      <h2>Risk ve durdurmalar</h2>
+      <div class="card" id="risk"></div>
+    </div>
+    <div>
+      <h2>Veri sağlığı ve hız</h2>
+      <div class="card" id="data"></div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div>
+      <h2>Öğrenme</h2>
+      <div class="card" id="learn"></div>
+    </div>
+    <div>
+      <h2>Ders defteri (yollar)</h2>
+      <div class="card" id="paths"></div>
+    </div>
+  </div>
+
+  <h2>İzlenen coinler</h2>
+  <div class="card" id="watch"></div>
+
+  <div class="foot">Sanal 100.000$ ile demo. Gerçek para yok. Yatırım tavsiyesi değildir. Fiyatlar ve açık kâr/zarar OKX'ten anlık; Polat'ın kararları ve pozisyonları 30 sn'de bir yenilenir.</div>
+</div>
+<script>
+(function(){
+  var host = location.hostname.split(".")[0] || "hkyafes-afk";
+  var repo = location.pathname.split("/").filter(Boolean)[0] || "kripto-radar";
+  if (host === "localhost" || host === "127") { host = "hkyafes-afk"; repo = "kripto-radar"; }
+  var URL = "https://raw.githubusercontent.com/" + host + "/" + repo + "/polat-veri/ozet.json";
+  var q = new URLSearchParams(location.search).get("veri");     // test/yerel: ?veri=ozet.json
+  if (q) URL = q;
+  var $ = function(id){ return document.getElementById(id); };
+  function esc(s){ return String(s == null ? "" : s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+  function n(x, d){ if (x == null || isNaN(x)) return "–"; return Number(x).toLocaleString("tr-TR", {maximumFractionDigits: d == null ? 2 : d, minimumFractionDigits: 0}); }
+  function sgn(x, d){ if (x == null || isNaN(x)) return "–"; return (x > 0 ? "+" : "") + n(x, d); }
+  function cls(x){ return x > 0 ? "up" : (x < 0 ? "down" : ""); }
+  function ago(ms){ var s = Math.max(0, (Date.now() - ms) / 1000); if (s < 90) return Math.round(s) + " sn önce"; if (s < 5400) return Math.round(s/60) + " dk önce"; return Math.round(s/3600) + " saat önce"; }
+  function px(x){ if (x == null) return "–"; var a = Math.abs(x); return n(x, a >= 100 ? 2 : a >= 1 ? 4 : 6); }
+  function sym(i){ return String(i || "").split("-")[0]; }
+  function kv(rows){ return rows.map(function(r){ return '<div class="kv"><span>' + esc(r[0]) + '</span><span class="num">' + r[1] + '</span></div>'; }).join(""); }
+  function table(head, rows){ if (!rows.length) return '<div class="empty">Henüz yok.</div>'; return "<table><thead><tr>" + head.map(function(h){ return "<th>" + esc(h) + "</th>"; }).join("") + "</tr></thead><tbody>" + rows.map(function(r){ return "<tr>" + r.map(function(c){ return "<td>" + c + "</td>"; }).join("") + "</tr>"; }).join("") + "</tbody></table>"; }
+
+  function fmtAdj(a){
+    var out = [];
+    if (a.min_stop_atr != null) out.push("en dar stop " + a.min_stop_atr + " ATR");
+    if (a.basabas_r != null) out.push("başabaş " + a.basabas_r + "R");
+    Object.keys(a.kayma_cezasi || {}).forEach(function(i){ out.push(sym(i) + " kayma cezası ×" + a.kayma_cezasi[i]); });
+    return out.join(" · ") || "yok";
+  }
+  function render(d){
+    var eq = d.ozsermaye, cap = d.sermaye || 100000, ret = (eq / cap - 1) * 100;
+    $("sub").textContent = (d.bekleme ? "halef ısınıyor · " : "") + "güncellendi " + ago(d.zaman) + " · sürüm " + d.surum + " · mod " + d.mod;
+    var stale = Date.now() - d.zaman > 12 * 60 * 1000;   // GitHub dosya önbelleği ~5 dk geciktirir; fiyatlar ise OKX'ten anlık
+    var w = $("warn");
+    if (stale) { w.style.display = "block"; w.textContent = "Polat verisi 12 dakikadan eski: Polat çalışmıyor olabilir ya da devirde."; }
+    else if (d.risk && d.risk.halted) { w.style.display = "block"; w.textContent = "⛔ Durduruldu: " + d.risk.halt_reason; }
+    else { w.style.display = "none"; }
+    var pw = (d.pencereler || {})["1_gun"] || {};
+    var acik = (d.pozisyonlar || []).reduce(function(a, p){ return a + (p.pnl_usd || 0); }, 0);
+    $("kpis").innerHTML = [
+      ["Özsermaye", "$" + n(eq, 0), '<span class="' + cls(ret) + '">' + sgn(ret, 2) + "%</span> başlangıçtan"],
+      ["Açık pozisyon", (d.pozisyonlar || []).length, '<span class="' + cls(acik) + '">' + sgn(acik, 0) + "$</span> açık kâr/zarar"],
+      ["Son 24 saat", (pw.islem || 0) + " işlem", pw.islem ? ("%" + n(pw.kazanma, 0) + " kazanma · " + sgn(pw.toplam_r, 2) + "R") : "kapanan işlem yok"],
+      ["BTC al-tut", d.kiyas && d.kiyas.btc_al_tut_yuzde != null ? sgn(d.kiyas.btc_al_tut_yuzde, 2) + "%" : "–", "Polat " + sgn(ret, 2) + "%"]
+    ].map(function(k){ return '<div class="kpi"><div class="l">' + k[0] + '</div><div class="v num">' + k[1] + '</div><div class="s">' + k[2] + "</div></div>"; }).join("");
+
+    $("pos").innerHTML = table(["Coin", "Yön", "Giriş", "Fiyat", "Stop", "Hedef", "Şimdi", "K/Z $", "Kaldıraç", "Tetik"],
+      (d.pozisyonlar || []).map(function(p){
+        return ["<b>" + esc(sym(p.inst)) + "</b>", '<span class="badge ' + (p.side === "long" ? "b-green" : "b-red") + '">' + (p.side === "long" ? "LONG" : "SHORT") + "</span>",
+          '<span class="num">' + px(p.entry) + "</span>", '<span class="num">' + px(p.fiyat) + "</span>", '<span class="num">' + px(p.sl) + "</span>",
+          '<span class="num">' + px(p.tp) + "</span>", '<span class="num ' + cls(p.r_simdi) + '">' + sgn(p.r_simdi, 2) + "R</span>",
+          '<span class="num ' + cls(p.pnl_usd) + '">' + sgn(p.pnl_usd, 0) + "</span>", '<span class="num">' + esc(p.lev) + "x</span>", esc(p.kurulum || "")];
+      }));
+
+    var k = d.kiyas || {};
+    var krow = [["polat_tum_sinyaller", "Polat (tüm sinyaller)"], ["polat_girilen", "Polat (girilen)"], ["polat_girilmeyen", "Polat (girilmeyen)"], ["rastgele", "Rastgele yön"], ["trend_naif", "Sadece trend"]];
+    $("kiyas").innerHTML = '<div style="font-size:13px;margin-bottom:8px"><b>Hüküm:</b> ' + esc(k.hukum || "veri bekleniyor") + "</div>" +
+      '<div class="tw">' + table(["", "Sinyal", "Kazanma", "Ort. net R", "Toplam net R"], krow.map(function(r){ var x = k[r[0]] || {};
+        return [esc(r[1]), '<span class="num">' + (x.n || 0) + "</span>", '<span class="num">' + (x.kazanma != null ? "%" + n(x.kazanma, 1) : "–") + "</span>",
+          '<span class="num ' + cls(x.ort_R_net) + '">' + sgn(x.ort_R_net, 3) + "</span>", '<span class="num ' + cls(x.toplam_R_net) + '">' + sgn(x.toplam_R_net, 2) + "</span>"]; })) + "</div>";
+
+    $("trades").innerHTML = table(["Zaman", "Coin", "Yön", "Neden", "R", "Net $", "Süre", "Hata"],
+      (d.son_islemler || []).map(function(t){
+        return ['<span class="num">' + new Date(t.ts).toLocaleString("tr-TR", {day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit"}) + "</span>",
+          "<b>" + esc(sym(t.inst)) + "</b>", esc(t.yon), esc(t.neden), '<span class="num ' + cls(t.r) + '">' + sgn(t.r, 2) + "</span>",
+          '<span class="num ' + cls(t.pnl_net) + '">' + sgn(t.pnl_net, 0) + "</span>", '<span class="num">' + n(t.sure_saat, 1) + " sa</span>",
+          (t.hatalar && t.hatalar.length) ? '<span class="badge b-amber">' + esc(t.hatalar.join("; ")) + "</span>" : ""];
+      }));
+
+    var r = d.risk || {};
+    $("risk").innerHTML = kv([
+      ["Durum", r.halted ? '<span class="badge b-red">DURDU</span>' : (r.pause_until > Date.now() ? '<span class="badge b-amber">ARA</span>' : '<span class="badge b-green">AKTİF</span>')],
+      ["Bugünkü işlem", esc(r.trades_today)], ["Üst üste zarar", esc(r.loss_streak)],
+      ["Gün başı özsermaye", "$" + n(r.day_start, 0)], ["Zirve", "$" + n(r.peak, 0)],
+      ["Zirveden düşüş", n((1 - eq / (r.peak || eq)) * 100, 2) + "%"]
+    ]);
+    var v = d.veri || {}, rs = d.rest || {}, cal = d.likidasyon_kalibrasyon || {};
+    var qh = v.kalite_telemetrisi || {}, qchannels = qh.kanallar || {};
+    var qsummary = Object.keys(qchannels).sort().map(function(ch) {
+      var row = qchannels[ch] || {}, states = row.durumlar || {};
+      return ch + ": LIVE " + n(states.LIVE, 0) + " · STALE " + n(states.STALE, 0) +
+        " · INVALID " + n(states.INVALID, 0) + " · DISCONNECTED " + n(states.DISCONNECTED, 0) +
+        " · UNKNOWN " + n(states.UNKNOWN, 0) + " · " + n(row.sembol_sayisi, 0) +
+        " sembol · max yaş " + n(row.son_olay_yasi_ms_max, 0) + " ms";
+    }).join(" | ");
+    var journal = v.ham_olay_gunlugu || {};
+    var journalState = !journal.enabled ? "Etkin değil" :
+      journal.complete ? "Kayıp yok (şu ana kadar)" : "Eksik · kayıp / sınır / hata";
+    var journalCount = n(journal.records_total, 0) + " toplam · " + n(journal.records_this_run, 0) +
+      " bu çalışma · kuyruk " + n(journal.queued, 0) + " · düşen " + n(journal.dropped, 0);
+    var journalBytes = n(journal.bytes, 0) + " / " + n(journal.max_bytes, 0) + " byte";
+    var rtt = Object.keys(rs.rtt_ms || {}).map(function(b){ return b.replace("https://", "") + " " + n(rs.rtt_ms[b], 0) + " ms"; }).join(" · ");
+    $("data").innerHTML = kv([
+      ["İşlenen mesaj", n(v.mesaj, 0)], ["Veri gecikmesi p50 / p95 / p99 / max", n(v.gecikme_ms_p50, 0) + " / " + n(v.gecikme_ms_p95, 0) + " / " + n(v.gecikme_ms_p99, 0) + " / " + n(v.gecikme_ms_max, 0) + " ms · n=" + n(v.gecikme_ornek_sayisi, 0)],
+      ["İşleme süresi p50 / p95 / p99 / max", n(v.isleme_us_p50, 0) + " / " + n(v.isleme_us_p95, 0) + " / " + n(v.isleme_us_p99, 0) + " / " + n(v.isleme_us_max, 0) + " µs · n=" + n(v.isleme_ornek_sayisi, 0)],
+      ["Kanal kalite telemetrisi", esc(qsummary || "henüz kanal verisi yok")],
+      ["Kalite ölçüm kapsamı", esc(qh.anlam || "bu sürümde yapısal kalite ölçümü yok")],
+      ["Ham olay günlüğü", esc(journalState)],
+      ["Ham günlük kayıt / kuyruk / düşen", esc(journalCount)],
+      ["Ham günlük boyut / sınır", esc(journalBytes)],
+      ["Ham günlük hata", esc(journal.error || (journal.limit_reached ? "kayıt veya boyut sınırına ulaşıldı" : "yok"))],
+      ["En uzun karar", n((d.sayac || {}).karar_ms_max, 1) + " ms"], ["Sunucu", esc(rtt || "–")],
+      ["REST istek / tekrar", n(rs.istek, 0) + " / " + n(rs.tekrar, 0)],
+      ["Kopma", esc(JSON.stringify((d.baglanti || {}).kopma || {}))],
+      ["Likidasyon tahmini isabeti", cal.olay ? ("%" + n(cal.isabet / cal.olay * 100, 1) + " (" + cal.olay + " olay)") : "henüz yok"]
+    ]);
+    var o = d.ogrenme || {}, m = o.meta || {};
+    $("learn").innerHTML = kv([
+      ["Sonuçlanmış gölge sinyal", n(((d.kiyas || {}).polat_tum_sinyaller || {}).n || m.ornek, 0)], ["Uygulanan / reddedilen katsayı", n(m.uygulanan, 0) + " / " + n(m.reddedilen, 0)],
+      ["En çok işe yarayan", esc((o.en_guclu || []).slice(0, 4).map(function(x){ return x[0] + " ×" + x[1]; }).join(", ") || "–")],
+      ["En az işe yarayan", esc((o.en_zayif || []).slice(0, 4).map(function(x){ return x[0] + " ×" + x[1]; }).join(", ") || "–")],
+      ["Hatadan gelen ayarlar", esc(fmtAdj(d.ayar || {}))]
+    ]);
+    $("paths").innerHTML = table(["Yol", "Hüküm", "n", "Ort. R"], (d.yollar || []).map(function(y){
+      return [esc(y.yol), '<span class="badge ' + (y.karar === "benimse" ? "b-green" : "b-red") + '">' + (y.karar === "benimse" ? "benimse" : "kaçın") + "</span>",
+        '<span class="num">' + y.n + "</span>", '<span class="num ' + cls(y.sumR) + '">' + sgn(y.sumR / y.n, 2) + "</span>"];
+    }));
+    $("watch").innerHTML = (d.izlenen || []).map(function(i){ return '<span class="badge b-dim" style="margin:2px">' + esc(sym(i)) + "</span>"; }).join("") || '<div class="empty">–</div>';
+  }
+
+  // ---- canlı fiyat: tarayıcı doğrudan OKX'in açık fiyat akışına bağlanır (anahtar gerekmez) ----
+  var last = null, live = {}, ws = null, subs = {}, dirty = false;
+  function want(d){ var s = {"BTC-USDT-SWAP": 1}; (d.pozisyonlar || []).forEach(function(p){ s[p.inst] = 1; }); return Object.keys(s); }
+  function liveView(d){
+    var x = JSON.parse(JSON.stringify(d)), delta = 0;
+    (x.pozisyonlar || []).forEach(function(p){
+      var px = live[p.inst]; if (!px || !p.fiyat) return;
+      var sg = p.side === "long" ? 1 : -1, ch = (px - p.fiyat) * (p.qty || 0) * sg;
+      p.pnl_usd = (p.pnl_usd || 0) + ch; delta += ch;
+      if (p.r_dist) p.r_simdi = (px - p.entry) * sg / p.r_dist;
+      p.fiyat = px;
+    });
+    x.ozsermaye = (x.ozsermaye || 0) + delta;
+    return x;
+  }
+  function connect(){
+    try { ws = new WebSocket("wss://ws.okx.com:443/ws/v5/public"); } catch (e) { return; }
+    ws.onopen = function(){ subs = {}; sync(); setLive(true); };
+    ws.onmessage = function(ev){
+      if (ev.data === "pong") return;
+      var m = JSON.parse(ev.data);
+      (m.data || []).forEach(function(t){ if (t.instId && t.last) { live[t.instId] = parseFloat(t.last); dirty = true; } });
+    };
+    ws.onclose = function(){ setLive(false); setTimeout(connect, 3000); };
+  }
+  function sync(){
+    if (!ws || ws.readyState !== 1 || !last) return;
+    var add = want(last).filter(function(i){ return !subs[i]; });
+    if (add.length) { ws.send(JSON.stringify({op: "subscribe", args: add.map(function(i){ return {channel: "tickers", instId: i}; })})); add.forEach(function(i){ subs[i] = 1; }); }
+  }
+  function setLive(on){ var e = $("sub"); if (e) e.dataset.live = on ? "1" : ""; }
+  setInterval(function(){ if (dirty && last) { dirty = false; render(liveView(last)); var e = $("sub"); if (e && e.dataset.live) e.textContent = "🟢 canlı fiyat · " + e.textContent.replace(/^🟢 canlı fiyat · /, ""); } }, 1000);
+  setInterval(function(){ if (ws && ws.readyState === 1) ws.send("ping"); }, 20000);
+  connect();
+
+  function load(){
+    fetch(URL + "?t=" + Date.now(), {cache: "no-store"}).then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function(d){ last = d; sync(); render(Object.keys(live).length ? liveView(d) : d); }).catch(function(e){ $("sub").textContent = "Polat verisi alınamadı (" + e.message + "). Polat henüz başlamamış olabilir."; });
+  }
+  load();
+  setInterval(load, 30000);
+})();
+</script>
+</body>
+</html>

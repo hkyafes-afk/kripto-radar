@@ -1,0 +1,848 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0a1120">
+<title>Baş Trader</title>
+<style>
+:root{
+  --bg:#0a1120; --card:#0f1829; --card2:#141f33; --line:#1e2a40; --line2:#26344d; --text:#e8eef7; --muted:#8a97ab; --dim:#5f6d83;
+  --green:#22c55e; --green-bg:rgba(34,197,94,.14); --red:#ef4444; --red-bg:rgba(239,68,68,.14);
+  --amber:#f59e0b; --amber-bg:rgba(245,158,11,.14); --blue:#3b82f6; --blue-bg:rgba(59,130,246,.16);
+  --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,"Helvetica Neue",Arial,sans-serif;
+  --r:16px; color-scheme:dark;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-text-size-adjust:100%}
+body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+.num{font-variant-numeric:tabular-nums;letter-spacing:-.1px}
+.up{color:var(--green)} .down{color:var(--red)} .mut{color:var(--muted)}
+.app{max-width:1240px;margin:0 auto;padding:0 max(14px,env(safe-area-inset-left)) 0 max(14px,env(safe-area-inset-right))}
+.cols{display:block}
+@media (min-width:980px){.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
+  body{padding-bottom:24px} .bnav{display:none} .col2{padding-top:14px}}
+.top{display:flex;align-items:center;gap:10px;padding:14px 0 4px}
+.ib{width:44px;height:44px;border-radius:12px;background:var(--card);border:1px solid var(--line);display:grid;place-items:center;position:relative;flex:none}
+.ib svg{width:20px;height:20px}
+.dot{position:absolute;top:9px;right:10px;width:8px;height:8px;border-radius:50%;background:var(--red);display:none}
+.dot.on{display:block}
+.brand{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
+.brand h1{font-size:23px;margin:0;font-weight:800;white-space:nowrap;letter-spacing:-.2px}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.3px;border:1px solid}
+.p-shadow{color:var(--green);border-color:rgba(34,197,94,.45);background:var(--green-bg)}
+.tag{color:var(--muted);font-size:13px;text-align:center;margin:2px 0 12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:12px;min-width:0}
+.kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;min-width:0}
+.kpi .l{color:var(--muted);font-size:13px}
+.kpi .v{font-size:24px;font-weight:800;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.3px}
+.kpi .s{font-size:13px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.st{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:999px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.st::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.st-ok{color:var(--green);background:var(--green-bg)} .st-yok{color:var(--muted);background:var(--card2)}
+.st-bayat{color:var(--amber);background:var(--amber-bg)} .st-kesik{color:var(--red);background:var(--red-bg)}
+.btch{display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.coin{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:15px;flex:none;color:#fff}
+.btch .px{font-size:26px;font-weight:800;letter-spacing:-.3px;white-space:nowrap}
+.sel{margin-left:auto;display:flex;gap:2px;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:3px;flex:none}
+.sel button{padding:5px 7px;border-radius:8px;font-size:12.5px;color:var(--muted);font-weight:600}
+.sel button.on{background:var(--blue-bg);color:#cfe0ff}
+.chart{width:100%;height:170px;display:block;margin-top:8px}
+.cells{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}
+.cell{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:8px 9px;min-width:0}
+.cell .l{color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.metric-source{font-size:10px;color:var(--muted);opacity:.85;line-height:1.25;margin-top:3px;overflow-wrap:anywhere;grid-column:1 / -1}
+.cell .v{font-weight:800;font-size:16px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sys{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}
+@media (max-width:420px){.sys{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.sysi{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:8px 9px;min-width:0}
+.sysi .l{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sysi .v{font-size:13px;font-weight:700;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.big{font-size:22px;font-weight:800;display:flex;align-items:center;gap:8px;margin-top:6px}
+.hrow{display:flex;align-items:center;gap:8px}
+.hrow h2{font-size:17px;margin:0;font-weight:700}
+.btn{margin-left:auto;background:var(--card2);border:1px solid var(--line2);border-radius:11px;padding:7px 12px;font-size:13.5px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.tabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:2px 0 12px;padding-bottom:2px;scroll-margin-top:8px}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;padding:10px 14px;border-radius:12px;border:1px solid var(--line2);background:var(--card);font-size:14.5px;font-weight:600;color:#c9d3e2;white-space:nowrap}
+.tab.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.tr{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:10px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--card);margin-bottom:10px}
+.tr .sym{font-weight:800;font-size:16.5px}
+.tr .sd{font-size:13.5px;font-weight:700;margin-top:2px}
+.tr .ln{font-size:14px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tr .sm{font-size:12.5px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tr .rt{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;max-width:110px}
+.tr .usd{font-size:17px;font-weight:800;white-space:nowrap}
+.tr .r{font-size:14.5px;font-weight:700}
+.spark{width:84px;height:30px;display:block;margin-top:4px}
+.chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px;grid-column:2 / 4}
+.chip{font-size:11.5px;padding:2px 8px;border-radius:999px;background:var(--card2);border:1px solid var(--line2);color:#b9c5d6;white-space:nowrap}
+.dl{padding:0;overflow:hidden}
+.dr{display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:10px;padding:11px 12px;border-bottom:1px solid var(--line)}
+.dr:last-child{border-bottom:0}
+.dr .t1{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0}
+.dr .t1 b{font-size:15.5px}
+.dr .t2{font-size:13px;color:var(--muted);margin-top:4px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.dr .tm{font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.dr details{grid-column:1 / 4}
+.dr summary{font-size:12px;color:var(--blue);cursor:pointer;list-style:none}
+.dr summary::-webkit-details-marker{display:none}
+.dr pre{white-space:pre-wrap;font-family:var(--sans);font-size:12.5px;background:var(--card2);border-radius:10px;padding:9px;margin:6px 0 0;color:#c9d3e2}
+.dr .coin{width:34px;height:34px;font-size:13px}
+.sp{font-size:11px;font-weight:800;padding:2px 8px;border-radius:7px;border:1px solid}
+.sp-l{color:var(--green);border-color:rgba(34,197,94,.5);background:var(--green-bg)}
+.sp-s{color:var(--red);border-color:rgba(239,68,68,.5);background:var(--red-bg)}
+.dp{font-size:11px;font-weight:700;padding:2px 8px;border-radius:7px;background:var(--card2);border:1px solid var(--line2);color:#c9d3e2}
+.dp-OPEN{color:var(--green);border-color:rgba(34,197,94,.5)} .dp-REDUCE_SIZE{color:var(--blue);border-color:rgba(59,130,246,.5)}
+.dp-SHADOW{color:var(--amber);border-color:rgba(245,158,11,.5)} .dp-REJECT,.dp-EXIT{color:var(--red);border-color:rgba(239,68,68,.5)}
+.gd{width:9px;height:9px;border-radius:50%;background:var(--green);flex:none}
+.sg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+.sg>div{background:var(--card2);border:1px solid var(--line);border-radius:11px;padding:8px;min-width:0}
+.sg .l{font-size:11.5px;color:var(--muted)} .sg .v{font-weight:800;font-size:15.5px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.note{font-size:12.5px;color:var(--muted);margin-top:6px;line-height:1.45}
+.sec{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin:16px 2px 8px;font-weight:700}
+.empty{color:var(--muted);font-size:14px;padding:18px 6px;text-align:center}
+.warn{border:1px solid rgba(245,158,11,.4);background:var(--amber-bg);color:#fcd38d;border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:10px}
+.warn.red{border-color:rgba(239,68,68,.45);background:var(--red-bg);color:#fca5a5}
+.pf{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.pf .l{color:var(--muted);font-size:13px} .pf .v{font-size:22px;font-weight:800;margin-top:3px;white-space:nowrap} .pf .s{font-size:13px;margin-top:2px}
+.bnav{position:fixed;left:0;right:0;bottom:0;background:rgba(10,17,32,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line);
+  display:grid;grid-template-columns:repeat(5,1fr);padding:6px 4px calc(6px + env(safe-area-inset-bottom));z-index:5}
+.bnav button{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12px;color:var(--muted);padding:4px 0}
+.bnav svg{width:22px;height:22px}
+.bnav button.on{color:var(--blue)}
+.fresh{display:flex;gap:6px 14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin:-4px 2px 10px}
+.fresh b{color:var(--text);font-weight:700}
+.hz{grid-column:1 / 4;margin-top:6px;min-width:0;overflow-wrap:anywhere}
+.hzbar{height:6px;border-radius:6px;background:var(--card2);overflow:hidden;margin-top:6px}
+.hzbar i{display:block;height:100%;background:var(--blue)}
+.hzt{font-size:12.5px;margin-top:4px;color:#c9d3e2;font-weight:700}
+.hb{font-size:12.5px;color:#fcd38d;margin-top:5px;font-weight:700}
+.gts{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.gt{font-size:11px;padding:2px 7px;border-radius:7px;border:1px solid var(--line2);color:#c9d3e2;white-space:nowrap}
+.gt-ok{color:var(--green);border-color:rgba(34,197,94,.45)} .gt-golge{color:var(--amber);border-color:rgba(245,158,11,.45)}
+.gt-red{color:var(--red);border-color:rgba(239,68,68,.45)} .gt-yok{color:var(--muted)}
+.dpre{white-space:pre-wrap;overflow-wrap:anywhere}
+.lvst{font-size:12px;margin-top:3px}
+.foot{color:var(--dim);font-size:12px;line-height:1.5;margin:6px 2px 16px}
+.sourcebar{display:flex;align-items:flex-start;justify-content:space-between;gap:8px 14px;flex-wrap:wrap;padding:10px 12px;margin:0 0 12px;background:var(--card2);border:1px solid var(--line);border-radius:12px;font-size:12.5px;line-height:1.45}
+.sourcebar b{font-weight:750}.sourcebar .mut{overflow-wrap:anywhere}.sourcebar-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sourcebar .st{font-size:11px}
+.evidence-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+.evidence-item{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:10px;min-width:0}
+.evidence-item .l{font-size:12px;color:var(--muted)} .evidence-item .v{font-size:20px;font-weight:800;margin-top:4px}
+.evidence-track{height:7px;border-radius:8px;background:var(--line);overflow:hidden;margin-top:8px}
+.evidence-track i{display:block;height:100%;background:var(--blue);border-radius:8px}
+@media(max-width:420px){.sourcebar{padding:9px 10px}.sourcebar-meta{width:100%;justify-content:space-between}}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="cols">
+    <div class="col1" id="home">
+      <div class="top">
+        <button class="ib" id="menuBtn" aria-label="Sekmeler"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+        <div class="brand"><span style="font-size:26px">👑</span><h1>Baş Trader</h1><span class="pill p-shadow" id="modePill">SHADOW</span></div>
+        <button class="ib" id="bellBtn" aria-label="Uyarılar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="dot" id="bellDot"></span></button>
+      </div>
+      <div class="tag" id="modeTag">Gerçek emir yok • Canlı piyasa • Sanal işlemler</div>
+      <div class="fresh" id="fresh"></div>
+      <div id="warn" aria-live="polite" aria-atomic="true"></div>
+      <div class="kpis" id="kpis"></div>
+      <div id="forwardEvidence"></div>
+      <div class="card" id="btc"></div>
+      <div class="card" id="sys"></div>
+    </div>
+    <div class="col2">
+      <div class="tabs" id="tabs"></div>
+      <div id="view" aria-live="polite"><div class="card empty" role="status">Gerçek PAPER ve piyasa verileri yükleniyor…</div></div>
+      <div class="card" id="pf"></div>
+      <div class="foot">Tek karar verici Baş Trader'dır; açma, red, bekleme, çıkış, boyut ve sermaye dağılımını yalnız o belirler.
+        Trend, sıkışma kırılımı, kontrollü kırılım vb. yalnız strateji / sinyal kaynağı etiketidir. Bu sayfa yalnız canlı sistemin
+        yayınladığı dosyaları okur: dosya yoksa "Veri yok", eskiyse "Bayat", ulaşılamıyorsa "Bağlantı kesik" yazar. 60 sn'de bir yenilenir.</div>
+    </div>
+  </div>
+</div>
+<nav class="bnav" id="bnav">
+  <button data-go="home" class="on"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3 2 11h3v9h6v-6h2v6h6v-9h3z"/></svg>Ana Sayfa</button>
+  <button data-go="portfoy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h13l-3-3M20 17H7l3 3"/></svg>Portföy</button>
+  <button data-go="karar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="m8 12 3 3 5-6"/></svg>Kararlar</button>
+  <button data-go="performans"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 20V10M10 20V4M15 20v-7M20 20V8"/></svg>Performans</button>
+  <button data-go="veri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>Veri</button>
+</nav>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const isNum = v => typeof v === "number" && isFinite(v);
+const fmt = (v, d = 2) => isNum(v) ? v.toLocaleString("en-US", {minimumFractionDigits: d, maximumFractionDigits: d}) : "—";
+const px = v => !isNum(v) ? "—" : v >= 1000 ? fmt(v, 1) : v >= 1 ? fmt(v, v >= 100 ? 2 : 4) : fmt(v, 5);
+const usd = v => !isNum(v) ? "—" : (v > 0 ? "+" : v < 0 ? "-" : "") + "$" + fmt(Math.abs(v), 2);
+const sgn = (v, d = 2, suf = "") => !isNum(v) ? "—" : (v > 0 ? "+" : "") + v.toFixed(d) + suf;
+const cls = v => isNum(v) ? (v > 0 ? "up" : v < 0 ? "down" : "") : "";
+const hm = ms => ms ? new Date(ms).toLocaleTimeString("tr-TR", {hour: "2-digit", minute: "2-digit"}) : "—";
+const dt = ms => ms ? new Date(ms).toLocaleString("tr-TR", {day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit"}) : "—";
+const dur = ms => { if (!isNum(ms) || ms < 0) return "—"; const m = Math.floor(ms / 60000);
+  return m < 60 ? m + "dk" : m < 1440 ? Math.floor(m / 60) + "s " + (m % 60) + "dk" : Math.floor(m / 1440) + "g " + Math.floor(m % 1440 / 60) + "s"; };
+const ago = ms => ms ? dur(Date.now() - ms) + " önce" : "—";
+const STR = {swing_trend: "Trend", compression_breakout: "Sıkışma kırılımı", controlled_breakout: "Kontrollü kırılım",
+  panic_reversal: "Panik dönüşü", short_trend: "Short trend", intraday_trend: "Gün içi trend", microstructure: "Mikro yapı",
+  legacy_murat: "Geri çekilme sinyali", carry: "Funding carry"};
+const sname = s => STR[s] || s || "—";
+const DEC = {OPEN: "AÇILDI", REDUCE_SIZE: "YARIM AÇILDI", SHADOW: "GÖLGE", REJECT: "RED", EXIT: "ÇIK", HOLD: "BEKLE"};
+const LIM = {data: 25, ozet: 30, durum: 30};
+const STL = {ok: ["Güncel", "st-ok"], yok: ["Veri yok", "st-yok"], bayat: ["Bayat", "st-bayat"], kesik: ["Bağlantı kesik", "st-kesik"]};
+const badge = s => { const [t, c] = STL[s] || STL.yok; return `<span class="st ${c}">${t}</span>`; };
+const fresh = (st, ts, lim) => st !== "ok" ? st : (!ts ? "yok" : ((Date.now() - ts) / 60000 > lim ? "bayat" : "ok"));
+const COLORS = ["#14b8a6", "#c2a633", "#8b5cf6", "#ec4899", "#0ea5e9", "#f97316", "#10b981", "#64748b", "#e11d48", "#6366f1"];
+const coinIcon = s => { s = String(s || "?"); let h = 0; for (const c of s) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  const col = s === "BTC" ? "#f7931a" : s === "ETH" ? "#627eea" : COLORS[h % COLORS.length];
+  return `<div class="coin" style="background:${col}">${esc(s.slice(0, 1))}</div>`; };
+const S = {tab: "portfoy", range: 24, data: null};
+try { const t = localStorage.getItem("bt_tab"); if (t) S.tab = (t === "acik" || t === "kapanan") ? "portfoy" : t === "karne" ? "performans" : t; } catch (e) {}
+
+async function get(p, lines = false) {
+  try { const r = await fetch(p + "?t=" + Date.now(), {cache: "no-store"});
+    if (r.status === 404) return {st: "yok", v: lines ? [] : null};
+    if (!r.ok) return {st: "kesik", v: lines ? [] : null};
+    if (!lines) return {st: "ok", v: await r.json()};
+    const v = (await r.text()).split("\n").filter(Boolean).map(l => { try { return JSON.parse(l); } catch (e) { return null; } }).filter(Boolean);
+    return {st: "ok", v};
+  } catch (e) { return {st: "kesik", v: lines ? [] : null}; }
+}
+const day = off => new Date(Date.now() - off * 86400000).toISOString().slice(0, 10);
+
+function spark(h, color) {
+  if (!h || h.length < 3) return "";
+  const w = 84, hg = 30, ys = h.map(p => p[1]), mn = Math.min(...ys), rng = (Math.max(...ys) - mn) || 1;
+  const pts = ys.map((v, i) => `${(i * (w - 2) / (ys.length - 1) + 1).toFixed(1)},${(hg - 2 - (v - mn) * (hg - 4) / rng).toFixed(1)}`).join(" ");
+  return `<svg class="spark" viewBox="0 0 ${w} ${hg}" preserveAspectRatio="none" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="${color}" stroke-width="1.8" vector-effect="non-scaling-stroke"/></svg>`;
+}
+function areaChart(h, H, fmtY, base) {
+  if (!h || h.length < 3) return `<div class="empty">Veri yok: geçmiş birikiyor (5 dakikada bir nokta).</div>`;
+  const W = 600, pl = 4, pr = 70, pt = 10, pb = 22;
+  const ys = h.map(p => p[1]);
+  let mn = Math.min(...ys), mx = Math.max(...ys);
+  if (base != null) { mn = Math.min(mn, base); mx = Math.max(mx, base); }
+  const rng = (mx - mn) || 1, t0 = h[0][0], t1 = h[h.length - 1][0], tr = (t1 - t0) || 1;
+  const x = t => pl + (t - t0) * (W - pl - pr) / tr, y = v => pt + (mx - v) * (H - pt - pb) / rng;
+  const line = h.map((p, i) => (i ? "L" : "M") + x(p[0]).toFixed(1) + " " + y(p[1]).toFixed(1)).join(" ");
+  const last = ys[ys.length - 1], up = base != null ? last >= base : last >= ys[0];
+  const col = up ? "#22c55e" : "#ef4444";
+  const area = line + ` L${x(t1).toFixed(1)} ${H - pb} L${x(t0).toFixed(1)} ${H - pb} Z`;
+  let g = "";
+  for (let i = 0; i <= 3; i++) { const v = mx - i * rng / 3, yy = y(v);
+    g += `<line x1="${pl}" x2="${W - pr}" y1="${yy}" y2="${yy}" stroke="#1e2a40" stroke-dasharray="3 4"/><text x="${W - pr + 6}" y="${yy + 4}" fill="#8a97ab" font-size="12">${esc(fmtY(v))}</text>`; }
+  for (let i = 0; i <= 4; i++) { const t = t0 + i * tr / 4;
+    g += `<text x="${Math.min(W - pr - 34, Math.max(pl, x(t) - 16))}" y="${H - 5}" fill="#8a97ab" font-size="12">${hm(t)}</text>`; }
+  return `<svg class="chart" style="height:${H}px" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Grafik">${g}
+    ${base != null ? `<line x1="${pl}" x2="${W - pr}" y1="${y(base)}" y2="${y(base)}" stroke="#5f6d83"/>` : ""}
+    <path d="${area}" fill="${col}" opacity=".13"/><path d="${line}" fill="none" stroke="${col}" stroke-width="2" vector-effect="non-scaling-stroke"/>
+    <rect x="${W - pr + 2}" y="${y(last) - 10}" width="${pr - 4}" height="20" rx="4" fill="${col}"/>
+    <text x="${W - pr + 6}" y="${y(last) + 4}" fill="#fff" font-size="12" font-weight="700">${esc(fmtY(last))}</text></svg>`;
+}
+
+function renderForwardEvidence(durum) {
+  const root = $("forwardEvidence");
+  if (!root) return;
+  const e = durum && durum.forward_paper_kaniti;
+  if (!e || typeof e !== "object") {
+    root.innerHTML = '<div class="card"><div class="hrow"><h2>İleri PAPER doğrulaması</h2><span class="st st-yok">Henüz yayımlanmadı</span></div><div class="note">14 günlük gözlem ve kapanmış işlem kanıtı henüz durum dosyasında yok. Bu sayaç işlem açma izni değildir; PAPER yürütmesini engellemez.</div></div>';
+    return;
+  }
+  const days = isNum(e.elapsed_days) ? Math.max(0, e.elapsed_days) : null;
+  const requiredDays = isNum(e.required_days) && e.required_days > 0 ? e.required_days : 14;
+  const trades = Number.isInteger(e.closed_paper_trades) ? Math.max(0, e.closed_paper_trades) : null;
+  const requiredTrades = Number.isInteger(e.required_closed_trades) && e.required_closed_trades > 0 ? e.required_closed_trades : 100;
+  const dayPct = days == null ? 0 : Math.min(100, days / requiredDays * 100);
+  const tradePct = trades == null ? 0 : Math.min(100, trades / requiredTrades * 100);
+  const ready = e.promotion_evidence_ready === true;
+  const state = ready ? '<span class="st st-ok">Kanıt hazır</span>' : '<span class="st st-bayat">Gözlem sürüyor</span>';
+  const dayText = days == null ? 'Veri yok' : fmt(days, 2) + ' / ' + fmt(requiredDays, 0) + ' gün';
+  const tradeText = trades == null ? 'Veri yok' : trades + ' / ' + requiredTrades + ' kapanış';
+  const reset = Number.isInteger(e.window_resets) ? e.window_resets : '—';
+  const reason = e.last_reason ? esc(e.last_reason) : '—';
+  root.innerHTML = '<div class="card"><div class="hrow"><h2>İleri PAPER doğrulaması</h2>' + state + '</div>' +
+    '<div class="evidence-grid"><div class="evidence-item"><div class="l">Kesintisiz gözlem</div><div class="v num">' + dayText + '</div><div class="evidence-track"><i style="width:' + dayPct.toFixed(1) + '%"></i></div></div>' +
+    '<div class="evidence-item"><div class="l">Gerçek kapanmış Unified PAPER</div><div class="v num">' + tradeText + '</div><div class="evidence-track"><i style="width:' + tradePct.toFixed(1) + '%"></i></div></div></div>' +
+    '<div class="note">Son durum: ' + reason + ' · Gözlem sıfırlanma sayısı: ' + reset + '</div>' +
+    '<div class="note"><b>Önemli:</b> 14 gün ve 100 kapanış yalnız doğrulama/terfi kanıtıdır. PAPER işlemlerinin açılmasını engellemez; her işlem yine normal piyasa verisi ve risk kapılarından geçer. Gerçek emirler kapalıdır.</div></div>';
+}
+
+function render() {
+  const D = S.data; if (!D) return;
+  const {data, durum, ozet, decs, st} = D;
+  const pos = ((durum && durum.pozisyonlar) || []).slice().sort((a, b) => b.opened_ts - a.opened_ts);
+  const closed = ((durum && durum.kapananlar) || []).slice().reverse();
+  const W = [];
+  if (st.data === "kesik") W.push(["red", "Bağlantı kesik: site verisine ulaşılamadı."]);
+  else if (st.data === "bayat") W.push(["", `Bayat: canlı döngü ${ago(data.generated_at)} yayın yaptı; döngü yeniden başlıyor olabilir.`]);
+  if (st.okx === "kesik") W.push(["red", "Bağlantı kesik: OKX canlı fiyat akışı sağlıksız."]);
+  if (st.durum === "yok" && st.data === "ok") W.push(["", "Veri yok: Birleşik PAPER portföyü henüz ilk turunu yayınlamadı."]);
+  if (st.durum === "bayat") W.push(["", "Bayat: Birleşik PAPER portföyü " + ago(durum.ts) + " güncellendi."]);
+  if (durum && (durum.hatalar || []).length) W.push(["", "Son hatalar: " + durum.hatalar.join(" · ")]);
+  $("warn").innerHTML = W.map(([c, t]) => `<div class="warn ${c}">${esc(t)}</div>`).join("");
+  $("bellDot").classList.toggle("on", W.length > 0);
+  const eq = durum && durum.bakiye, start = durum && durum.baslangic, dstart = durum && durum.gun_basi;
+  const tot = isNum(eq) && isNum(start) ? eq - start : null, dpl = isNum(eq) && isNum(dstart) ? eq - dstart : null;
+  const win = pos.filter(p => (p.unrealized_usd || 0) > 0).length, lose = pos.filter(p => (p.unrealized_usd || 0) < 0).length;
+  const c = decs.reduce((a, x) => (a[x.decision] = (a[x.decision] || 0) + 1, a), {});
+  const k = (l, v, s, vc = "", id = "") => `<div class="kpi"><div class="l">${l}</div><div class="v num ${vc}" ${id ? `id="${id}"` : ""}>${v}</div><div class="s" ${id ? `id="${id}S"` : ""}>${s}</div></div>`;
+  $("kpis").innerHTML =
+    k("Toplam Değer (Sanal)", isNum(eq) ? "$" + fmt(eq) : "—", isNum(tot) ? `<span class="${cls(tot)}">${usd(tot)} (${sgn(tot / start * 100, 2, "%")})</span>` : badge(st.durum), "", "kEq") +
+    k("Açık İşlemler", durum ? pos.length : "—", durum ? `<span class="up">+${win}</span> / <span class="down">-${lose}</span>` : badge(st.durum)) +
+    k("Bugünkü Karar", decs.length ? decs.length : (st.dec === "ok" ? 0 : "—"), decs.length ? `Aç: <b class="up">${(c.OPEN || 0) + (c.REDUCE_SIZE || 0)}</b> &nbsp;Gölge: <b>${c.SHADOW || 0}</b> &nbsp;Red: <b class="down">${c.REJECT || 0}</b>` : badge(st.dec)) +
+    k("Günlük PAPER K/Z", isNum(dpl) ? usd(dpl) : "—", isNum(dpl) && dstart ? `<span class="${cls(dpl)}">${sgn(dpl / dstart * 100, 2, "%")}</span>` : badge(st.durum), cls(dpl));
+  renderForwardEvidence(durum);
+  renderBtc(data, durum); renderSys(data, durum, st); renderTabs(pos, closed, decs, data, st, durum, ozet, S.data && S.data.ayarlar, S.data && S.data.polat); renderPf(durum, tot, dpl, start, st); applyLive();
+}
+
+function renderBtc(data, durum) {
+  const b = (data && data.btc) || null, w = (data && data.weather) || {};
+  const bc = ((data && data.coins) || []).find(x => x.sym === "BTC") || {};
+  const h = ((durum && durum.btc_hist) || []).filter(p => p[0] >= Date.now() - S.range * 3600e3);
+  const reg = w.trend === "boga" ? ["Boğa", "up"] : w.trend === "ayi" ? ["Ayı", "down"] : w.trend === "yatay" ? ["Yatay", ""] : ["—", ""];
+  $("btc").innerHTML = `<div class="btch">${coinIcon("BTC")}<div style="min-width:0"><div style="font-weight:700">BTC/USDT</div>
+      <div class="px num"><span id="btcpx">${b ? fmt(b.price, 1) : "—"}</span> <span style="font-size:15px" class="${cls(b && b.chg24)}">${b ? sgn(b.chg24, 1, "%") : ""}</span></div></div>
+      <div class="sel">${[6, 12, 24, 48].map(r => `<button data-r="${r}" class="${S.range === r ? "on" : ""}">${r}s</button>`).join("")}</div></div>
+    ${areaChart(h, 170, v => fmt(v, 0), null)}
+    <div class="cells">
+      <div class="cell"><div class="l">Rejim</div><div class="v ${reg[1]}">${reg[0]}</div></div>
+      <div class="cell"><div class="l">EMA200</div><div class="v num">${b && isNum(b.ema200) ? fmt(b.ema200, 0) : "—"}</div></div>
+      <div class="cell"><div class="l">Funding/yıl</div><div class="v num">${isNum(bc.funding_ann) ? sgn(bc.funding_ann, 1, "%") : "—"}</div></div>
+      <div class="cell"><div class="l">Oynaklık</div><div class="v num">${isNum(w.rv_rank) ? "%" + Math.round(w.rv_rank * 100) : "—"}</div></div>
+    </div>`;
+  $("btc").querySelectorAll(".sel button").forEach(x => x.onclick = () => { S.range = +x.dataset.r; render(); });
+}
+
+function renderSys(data, durum, st) {
+  const okx = data && data.feeds && data.feeds.okx;
+  const risk = durum ? (isNum(durum.dusus_yuzde) && durum.dusus_yuzde > 0 ? "Düşüş %" + fmt(durum.dusus_yuzde, 1) : "Normal") : null;
+  const items = [["OKX", st.okx, okx && isNum(okx.last_msg_age_s) && st.okx === "ok" ? Math.round(okx.last_msg_age_s * 1000) + "ms" : null],
+    ["Veri Akışı", st.data, st.data === "ok" ? "Canlı" : null], ["Karar Motoru", st.ozet, st.ozet === "ok" ? "Aktif" : null],
+    ["Risk Kontrol", st.durum, st.durum === "ok" ? risk : null]];
+  const all = items.every(i => i[1] === "ok");
+  $("sys").innerHTML = `<div class="hrow"><h2>Sistem Durumu</h2><button class="btn" data-go="sistem">Detaylar ›</button></div>
+    <div class="big ${all ? "up" : ""}"><span class="gd" style="${all ? "" : "background:var(--amber)"}"></span>${all ? "Tümü Sağlıklı" : "Kontrol gerekiyor"}</div>
+    <div class="mut" style="font-size:13px;margin-top:2px">Son güncelleme: ${data ? new Date(data.generated_at).toLocaleTimeString("tr-TR") : "—"}</div>
+    <div class="sys">${items.map(([n, s, v]) => `<div class="sysi"><div class="l">${n}</div><div class="v"><span class="st ${(STL[s] || STL.yok)[1]}">${esc(v || (STL[s] || STL.yok)[0])}</span></div></div>`).join("")}</div>`;
+  bindGo($("sys"));
+}
+
+const INSTS_BTC = "BTC-USDT-SWAP";
+const instOf = p => p.inst || (p.symbol + "-USDT-SWAP");
+function calcLive(p, price) {
+  const sg = p.side === "long" ? 1 : -1;
+  const unreal = sg * (price - p.entry) * p.qty + (p.realized_usd || 0) - (p.fees_usd || 0) + (p.funding_usd || 0);
+  const risk = p.risk_usd > 0 ? p.risk_usd : null;
+  return {unreal, pct: sg * (price / p.entry - 1) * 100, r: risk ? unreal / risk : null};
+}
+function chartHist(p) {
+  const base = (p.hist || []).slice(), lv = LIVE.hist[instOf(p)] || [];
+  if (!lv.length) return base;
+  const t0 = lv[0][0];
+  return base.filter(x => x[0] < t0).concat(lv);
+}
+function olasilik(h) {
+  if (!S.data || !S.data.haz) return "Veri yok";
+  if (!h || !h.grup) return "Veri yok";
+  const H = S.data.haz, g = (H.gruplar || {})[h.grup], n = g ? g.n : 0, esik = H.esik || 30;
+  if (n < esik) return `kanıt yetersiz (${n}/${esik})`;
+  return `%${Math.round(g.acik / n * 100)} (${g.acik}/${n} benzer kararın sonradan açılması; kârlılık değildir)`;
+}
+function hzBlock(d) {
+  const h = d.hazirlik;
+  if (!h) return `<div class="hz"><div class="note">Hazırlık bilgisi yok (bu kayıt eski sürümle yazıldı).</div></div>`;
+  const GC = {"GEÇTİ": "gt-ok", "GÖLGE": "gt-golge", "RED": "gt-red", "VERİ YOK": "gt-yok"};
+  const gates = (h.kapilar || []).map(k => `<span class="gt ${GC[k.durum] || "gt-yok"}">${esc(k.etiket)}: ${esc(k.durum)}</span>`).join("");
+  const skor = isNum(h.skor) ? h.skor : 0;
+  const top = `<div class="hzt num">Hazırlık: ${isNum(h.skor) ? "%" + h.skor : "—"} · ${h.gecen}/${h.olculen} ölçülebilir kapı geçti</div>`;
+  const eng = h.engel_metni ? `<div class="hb">${esc(h.engel_metni)}</div>` : "";
+  const nd = (h.nedenler || []).length ? `<div class="note">${(h.nedenler || []).map(esc).join(" · ")}</div>` : "";
+  const ol = d.decision === "OPEN" || d.decision === "REDUCE_SIZE" ? "" :
+    `<div class="note">Tarihsel geçiş oranı (kârlılık değil): ${esc(olasilik(h))}</div>`;
+  return `<div class="hz"><div class="hzbar"><i style="width:${skor}%"></i></div>${top}${eng}${nd}<div class="gts">${gates}</div>${ol}</div>`;
+}
+function engelOzet(H) {
+  if (!H || !H.engel_24s) return `<div class="card empty">Son 24 saat engel özeti: Veri yok.</div>`;
+  const e = H.engel_24s;
+  const items = [["YETKI_GOLGE", e.YETKI_GOLGE], ["POLITIKA", e.POLITIKA], ["MALIYET", e.MALIYET], ["VERI", e.VERI], ["RED", e.RED]];
+  return `<div class="card"><div class="hrow"><h2>Son 24 saat engel özeti</h2></div>
+    <div class="note">Karar kaydı sayısı · toplam ${e.toplam ?? 0}. Bir kayıt birden fazla engel taşıyabilir; sayılar ayrı ayrı okunur.</div>
+    <div class="sg">${items.map(([k, v]) => `<div><div class="l">${k}</div><div class="v num">${isNum(v) ? v : "—"}</div></div>`).join("")}</div></div>`;
+}
+function tradeCard(p) {
+  const L = p.side === "long", t = (p.targets || []).slice(-1)[0], id = instOf(p);
+  return `<div class="tr" data-inst="${esc(id)}">${coinIcon(p.symbol)}
+    <div style="min-width:0"><div class="sym">${esc(p.symbol)}</div>
+      <div class="sd ${L ? "up" : "down"}">${L ? "LONG" : "SHORT"} · ${isNum(p.leverage) ? fmt(p.leverage, 0) + "x" : "—"}</div>
+      <div class="ln num">${px(p.entry)} → <span data-lv="px">${px(p.current_price)}</span></div>
+      <div class="sm">Stop: <span class="num">${px(p.stop)}</span> &nbsp; Hedef: <span class="num">${t ? px(t) : "kural çıkışı"}</span></div>
+      <div class="sm num"><span data-lv="pct" class="${cls(p.unrealized_pct)}">${sgn(p.unrealized_pct, 2, "%")}</span> · tepe <span data-lv="peak">${sgn(p.peak_r, 2, "R")}</span></div>
+      <div class="lvst" data-lv="state"></div></div>
+    <div class="rt"><div class="usd num ${cls(p.unrealized_usd)}" data-lv="usd">${usd(p.unrealized_usd)}</div>
+      <div class="r num ${cls(p.unrealized_r)}" data-lv="r">${sgn(p.unrealized_r, 2, "R")}</div>
+      <span data-lv="spark">${spark(p.hist, (p.unrealized_usd || 0) >= 0 ? "#22c55e" : "#ef4444")}</span>
+      <div class="sm">${dur(Date.now() - p.opened_ts)}</div></div>
+    <div class="chips">${(p.strategies || [p.strategy]).map(s => `<span class="chip">${esc(sname(s))}</span>`).join("")}</div></div>`;
+}
+
+function closedCard(c) {
+  const L = c.side === "long";
+  return `<div class="tr">${coinIcon(c.symbol)}
+    <div style="min-width:0"><div class="sym">${esc(c.symbol)}</div>
+      <div class="sd ${L ? "up" : "down"}">${L ? "LONG" : "SHORT"} · ${isNum(c.leverage) ? fmt(c.leverage, 0) + "x" : "—"}</div>
+      <div class="ln num">${px(c.entry)} → ${px(c.exit_px)}</div>
+      <div class="sm">${esc(c.exit_reason || "—")}</div>
+      <div class="sm">Ücret ${usd(-(c.fees_usd || 0))} · Kayma ${usd(-(c.slip_usd || 0))} · Funding ${usd(c.funding_usd || 0)}</div></div>
+    <div class="rt"><div class="usd num ${cls(c.net_usd)}">${usd(c.net_usd)}</div><div class="r num ${cls(c.r)}">${sgn(c.r, 2, "R")}</div>
+      <div class="sm">${dt(c.opened_ts)}</div><div class="sm">→ ${dt(c.closed_ts)}</div></div>
+    <div class="chips">${(c.strategies || [c.strategy]).map(s => `<span class="chip">${esc(sname(s))}</span>`).join("")}</div></div>`;
+}
+
+function decRow(d) {
+  const L = d.side === "long", why = ((d.explanation_tr || "").split("\n").find(l => l.startsWith("Neden:")) || "").replace("Neden: ", "");
+  const src = (d.strategies || [d.strategy]).map(sname).join(" + ");
+  const dc = d.decision === "REJECT" ? "background:var(--red)" : d.decision === "SHADOW" ? "background:var(--amber)" : "";
+  const c = d.costs || {}, n = v => isNum(v) ? v.toFixed(1) + " bp" : "—";
+  const extra = [
+    `Tüm sebep kodları: ${(d.reason_codes || []).join(", ") || "—"}`,
+    `Maliyetler: giriş ücreti ${n(c.entry_fee_bp)}, çıkış ücreti ${n(c.exit_fee_bp)}, spread ${n(c.spread_bp)}, giriş kayması ${n(c.entry_slippage_bp)}, çıkış kayması ${n(c.exit_slippage_bp)}, stop kayması (olasılıklı) ${n(c.stop_slippage_bp)}, funding ${n(c.funding_bp)}, dolum tamponu ${n(c.missed_fill_buffer_bp)}, belirsizlik tamponu ${n(c.uncertainty_buffer_bp)}; toplam ${n(c.total_cost_bp)}; brüt ${n(c.gross_edge_bp)}; net ${n(d.net_edge_bp)}`,
+    `Eksik faktörler: ${(d.missing_factors || []).join(", ") || "yok"} · Bayat faktörler: ${(d.stale_factors || []).join(", ") || "yok"}`,
+    `Destekleyen kanıt: ${(d.evidence_for || []).join(" · ") || "yok"}`,
+    `Karşı kanıt: ${(d.evidence_against || []).join(" · ") || "yok"}`,
+    `Plan: giriş ${px(d.entry)} · stop ${px(d.stop)} · hedefler ${(d.targets || []).map(px).join(", ") || "yok"} · beklenen süre ${isNum(d.expected_holding_hours) ? d.expected_holding_hours + " sa" : "—"}`,
+  ].join("\n");
+  return `<div class="dr">${coinIcon(d.symbol)}<div style="min-width:0"><div class="t1"><b>${esc(d.symbol)}</b>
+      ${d.side ? `<span class="sp ${L ? "sp-l" : "sp-s"}">${L ? "LONG" : "SHORT"}</span>` : ""}<span class="dp dp-${esc(d.decision)}">${DEC[d.decision] || esc(d.decision)}</span></div>
+      <div class="t2">${esc(src)} · Net avantaj: <span class="num ${cls(d.net_edge_bp)}">${isNum(d.net_edge_bp) ? sgn(d.net_edge_bp, 1, " bp") : "—"}</span>${why ? " · " + esc(why) : ""}</div></div>
+    <div class="tm">${hm(d.kayit_ms || d.ts_ms)}<span class="gd" style="${dc}"></span></div>
+    ${hzBlock(d)}
+    <details><summary>Ayrıntı</summary><pre class="dpre">${esc(d.explanation_tr)}\n\n${esc(extra)}</pre></details></div>`;
+}
+
+function statBox(s, title, sub) {
+  if (!s || !s.n) return `<div class="card"><div class="hrow"><h2>${title}</h2></div>${sub ? `<div class="note">${esc(sub)}</div>` : ""}<div class="empty">Veri yok.</div></div>`;
+  const ga = isNum(s.ga_alt) ? `${sgn(s.ga_alt)} … ${sgn(s.ga_ust)}` : "—";
+  return `<div class="card"><div class="hrow"><h2>${title}</h2></div>${sub ? `<div class="note">${esc(sub)}</div>` : ""}<div class="sg">
+    <div><div class="l">İşlem</div><div class="v num">${s.n}</div></div><div><div class="l">İsabet</div><div class="v num">%${fmt(s.isabet, 1)}</div></div>
+    <div><div class="l">Ort. R</div><div class="v num ${cls(s.ort_r)}">${sgn(s.ort_r)}</div></div><div><div class="l">Toplam R</div><div class="v num ${cls(s.toplam_r)}">${sgn(s.toplam_r, 1)}</div></div>
+    <div><div class="l">Profit factor</div><div class="v num">${s.pf ?? "—"}</div></div><div><div class="l">Net USD</div><div class="v num ${cls(s.pnl_usd)}">${usd(s.pnl_usd)}</div></div></div>
+    <div class="note">%95 güven aralığı (ort. R): <b class="num">${ga}</b> — ${esc(s.durum)}</div></div>`;
+}
+
+function renderKarne(K, st) {
+  if (!K) return `<div class="card empty">${(STL[st] || STL.yok)[0]}.</div>`;
+  let h = statBox(K.yeni_golge, "👑 Yeni Baş Trader · gölge sanal", "Canlı fiyatla sanal işlemler; ücret, kayma ve funding düşülmüş. Gerçek emir yok.");
+  if ((K.yeni_kaynaklar || []).length) h += `<div class="sec">Strateji / sinyal kaynağı</div>` + K.yeni_kaynaklar.map(r => statBox(r.golge_sanal, esc(r.etiket), "")).join("");
+  h += `<div class="sec">Eski sistem (legacy) — yeni Baş Trader performansı değildir</div>`;
+  h += statBox(K.bas_trader, "Legacy · gerçek", "Eski defterin paper işlemleri") + statBox(K.bas_trader_golge, "Legacy · gölge", "Eski sistemin izlenen fikirleri");
+  if ((K.kaynaklar || []).length) h += `<div class="sec">Legacy: strateji / sinyal kaynağı</div>` + K.kaynaklar.map(r => statBox(r.gercek, esc(r.etiket) + " · gerçek", "") + statBox(r.golge, esc(r.etiket) + " · gölge", "")).join("");
+  h += `<div class="sec">Filtre karnesi (gölgeye gönderenler)</div>` + ((K.filtreler || []).length ? K.filtreler.map(r => statBox(r, esc(r.filtre), r.karar)).join("") : `<div class="card empty">Veri yok.</div>`);
+  return h;
+}
+
+function renderSysTab(data, durum, ozet, st) {
+  const okx = data && data.feeds && data.feeds.okx;
+  const row = (n, s, d) => `<div class="dr" style="grid-template-columns:minmax(0,1fr) auto"><div style="min-width:0"><b>${n}</b><div class="t2">${d}</div></div><div class="tm">${badge(s)}</div></div>`;
+  return `<div class="card dl">${row("Canlı döngü (site)", st.data, data ? "son yayın " + ago(data.generated_at) : "data.json okunamadı")}
+    ${row("OKX canlı fiyat akışı", st.okx, okx ? "son mesaj " + (isNum(okx.last_msg_age_s) ? okx.last_msg_age_s + " sn önce" : "—") + " · yeniden bağlanma " + (okx.reconnects ?? "—") : "akış bilgisi yok")}
+    ${row("Karar motoru", st.ozet, ozet ? "son tur " + ago(ozet.ts) + " · " + (ozet.coin ?? "—") + " coin" : "özet yok")}
+    ${row("UnifiedTrader PAPER portföyü", st.durum, durum ? "son güncelleme " + ago(durum.ts) + " · açık " + (durum.pozisyonlar || []).length : "durum dosyası yok")}
+    ${row("Karar günlüğü", st.dec, st.dec === "ok" ? "kararlar-" + day(0) + ".jsonl" : "bugünün dosyası yok")}
+    ${row("Gerçek emir", "ok", "Kapalı: yalnız sanal yürütme; borsaya emir gönderilmez")}</div>`;
+}
+
+function renderPolatBridge(polat) {
+  const p = polat && polat.v;
+  const labels = {
+    fresh: ["Taze", "st-ok"], stale: ["Bayat", "st-bayat"],
+    missing: ["Snapshot yok", "st-yok"], disabled: ["Devre dışı", "st-yok"],
+    replay: ["Tekrar reddedildi", "st-kesik"], invalid: ["Geçersiz", "st-kesik"],
+    error: ["Okuma hatası", "st-kesik"]
+  };
+  if (!p) return '<div class="card empty"><b>Polat → Unified araştırma köprüsü</b><div class="t2">Köprü durum dosyası henüz yayınlanmadı. Bu, canlı aktarımın kurulu olduğu anlamına gelmez.</div></div>';
+  const state = labels[p.status] || ["Durum bilinmiyor", "st-yok"];
+  const age = isNum(p.age_ms) ? fmt(p.age_ms, 0) + " ms" : "—";
+  const received = isNum(p.received_at_ms) ? ago(p.received_at_ms) : "—";
+  const count = Number.isInteger(p.observation_count) ? p.observation_count : 0;
+  const source = p.source_run_id ? esc(p.source_run_id) : "—";
+  const reason = p.reason ? esc(p.reason) : "Yok";
+  const t = p.telemetry && typeof p.telemetry === "object" ? p.telemetry : {};
+  const channels = t.channels && typeof t.channels === "object" ? t.channels : {};
+  const counters = t.channel_counters && typeof t.channel_counters === "object" ? t.channel_counters : {};
+  const latency = t.latency && typeof t.latency === "object" ? t.latency : {};
+  const connections = t.connections && typeof t.connections === "object" ? t.connections : {};
+  const metric = (v, suffix) => isNum(v) ? fmt(v, 1) + (suffix || "") : "—";
+  const channelRows = Object.keys(channels).sort().map(name => {
+    const row = channels[name] || {}, states = row.durumlar || {}, c = counters[name] || {};
+    return '<div class="dr"><div style="min-width:0"><b>' + esc(name) + '</b>' +
+      '<div class="t2">Sembol: ' + (Number.isInteger(row.sembol_sayisi) ? row.sembol_sayisi : "—") +
+      ' · LIVE ' + (states.LIVE ?? 0) + ' · STALE ' + (states.STALE ?? 0) +
+      ' · INVALID ' + (states.INVALID ?? 0) + ' · Kopuk ' + (states.DISCONNECTED ?? 0) +
+      ' · UNKNOWN ' + (states.UNKNOWN ?? 0) + '</div>' +
+      '<div class="t2">Duplicate ' + (c.duplicate ?? 0) + ' · ID duplicate ' + (c.duplicate_event_id ?? 0) +
+      ' · Sıra dışı ' + (c.out_of_order ?? 0) + ' · Sequence gap ' + (c.sequence_gap ?? 0) +
+      ' · Tahmini eksik update ' + (c.dropped_sequence_updates ?? 0) + '</div></div>' +
+      '<div class="tm num">' + metric(row.son_olay_yasi_ms_max, " ms") + '</div></div>';
+  }).join("");
+  const latencyRows = [
+    ["Feed gecikme p50 / p95 / p99 / max", ["gecikme_ms_p50","gecikme_ms_p95","gecikme_ms_p99","gecikme_ms_max"].map(k => metric(latency[k], " ms")).join(" / ")],
+    ["İşleme p50 / p95 / p99 / max", ["isleme_us_p50","isleme_us_p95","isleme_us_p99","isleme_us_max"].map(k => metric(latency[k], " µs")).join(" / ")],
+    ["Örnek sayısı (feed / işlem)", (latency.gecikme_ornek_sayisi ?? 0) + " / " + (latency.isleme_ornek_sayisi ?? 0)]
+  ].map(row => '<div class="dr"><div><b>' + esc(row[0]) + '</b></div><div class="tm num">' + esc(row[1]) + '</div></div>').join("");
+  const connectionRows = Object.keys(connections).sort().map(name => {
+    const c = connections[name] || {};
+    const error = c.last_error ? ' · Son hata: ' + esc(c.last_error) : "";
+    return '<div class="dr"><div style="min-width:0"><b>' + esc(name) + '</b><div class="t2">Deneme ' +
+      (c.attempts ?? 0) + ' · Bağlandı ' + (c.connected ?? 0) + ' · Koptu ' + (c.disconnects ?? 0) +
+      error + '</div></div><div class="tm">' +
+      (isNum(c.last_connected_ms) ? ago(c.last_connected_ms) : "Bağlantı yok") + '</div></div>';
+  }).join("");
+  return '<div class="card dl"><div class="hrow"><h2>Polat → Unified · araştırma köprüsü</h2><span class="st ' + state[1] + '">' + state[0] + '</span></div>' +
+    '<div class="cells"><div class="cell"><div class="l">Gözlem sayısı</div><div class="v num">' + count + '</div></div>' +
+    '<div class="cell"><div class="l">Snapshot yaşı</div><div class="v num">' + age + '</div></div>' +
+    '<div class="cell"><div class="l">Son okuma</div><div class="v">' + esc(received) + '</div></div>' +
+    '<div class="cell"><div class="l">Sıra</div><div class="v num">' + (p.sequence ?? "—") + '</div></div></div>' +
+    '<div class="dr"><div><b>Kaynak koşu</b></div><div class="tm">' + source + '</div></div>' +
+    '<div class="dr"><div><b>Durum nedeni</b></div><div class="tm">' + reason + '</div></div>' +
+    '<div class="sec">Kanal kalite durumu ve olay sayaçları</div>' +
+    (channelRows || '<div class="card empty">SHA-256 özeti doğrulanmış snapshot içinde kanal telemetrisi yok.</div>') +
+    '<div class="sec">Gecikme dağılımı</div>' + latencyRows +
+    '<div class="sec">WebSocket bağlantı sağlığı</div>' +
+    (connectionRows || '<div class="card empty">Bağlantı telemetrisi yok.</div>') +
+    '<div class="note">Yalnız araştırma/teşhis telemetrisi. UnifiedTrader fiyatı, kararları, emirleri, portföy değerlemesi veya pozisyon yetkisini değiştirmez. Ortak kalıcı disk yolu kurulmadıysa köprü devre dışı veya eksik görünür. Sequence gap, paket seviyesinde kayıp ölçümü değil; borsa sıra numarasından türetilmiş eksik update tahminidir.</div></div>';
+}
+function renderDataHealth(durum) {
+  const q = durum && durum.tanilama;
+  if (!q || q.hazir === false) return '<div class="card empty">Birleşik Baş Trader veri tanılaması henüz yayımlanmadı. Veri yok.</div>';
+  if (q.hata) return '<div class="card empty">Veri tanılaması hatası: ' + esc(q.hata) + '</div>';
+  const spread = q.spread_durum_sayim || {};
+  const spreadText = Object.keys(spread).sort().map(k => esc(k) + ': ' + spread[k]).join(' · ') || 'henüz yok';
+  const age = isNum(q.ts) ? Math.max(0, Math.round((Date.now() - q.ts) / 1000)) + ' sn önce' : '—';
+  const rows = (q.ornek || []).map(x => '<div class="dr"><div style="min-width:0"><b>' + esc(x.decision_inst || '—') +
+    '</b><div class="t2">Feed: ' + (x.feed_inst ? 'abone' : 'abone değil') + ' · Defter: ' +
+    (x.book_exists ? 'var' : 'yok') + ' · Kaynak: ' + esc(x.bbo_kaynak || '—') +
+    ' · Spread: ' + esc(x.spread_status || '—') + ' · Kalite: ' + esc(x.quality_state || 'UNKNOWN') +
+    (x.quality_reason ? ' (' + esc(x.quality_reason) + ')' : '') + '</div></div><div class="tm num">' +
+    (isNum(x.ws_book_age) ? fmt(x.ws_book_age, 1) + ' sn' : '—') + '</div></div>').join('');
+  return '<div class="card dl">' +
+    '<div class="hrow"><h2>OKX BBO / veri akışı</h2>' + badge(q.ws_healthy === true ? 'Bağlı' : q.ws_healthy === false ? 'Kopuk' : 'Bilinmiyor') + '</div>' +
+    '<div class="cells"><div class="cell"><div class="l">Tanılama güncellemesi</div><div class="v num">' + age + '</div></div>' +
+    '<div class="cell"><div class="l">Son tick sayacı</div><div class="v num">' + (q.tick_count ?? '—') + '</div></div>' +
+    '<div class="cell"><div class="l">Feed sembolü</div><div class="v num">' + (q.feed_symbols ?? '—') + '</div></div>' +
+    '<div class="cell"><div class="l">Karar coini / defter</div><div class="v num">' + (q.decision_coins ?? '—') + ' / ' + (q.book_entries ?? '—') + '</div></div></div>' +
+    '<div class="dr"><div><b>Son tick yaşı</b></div><div class="tm num">' + (isNum(q.last_tick_age) ? fmt(q.last_tick_age, 1) + ' sn' : '—') + '</div></div>' +
+    '<div class="dr"><div><b>Spread kalite dağılımı</b></div><div class="tm">' + spreadText + '</div></div>' +
+    (q.bbo_rest_hata ? '<div class="note">REST BBO hatası: ' + esc(q.bbo_rest_hata) + '</div>' : '') +
+    '</div>' + (rows ? '<div class="sec">Karar evreninden gerçek BBO örnekleri</div><div class="card dl">' + rows + '</div>' : '<div class="card empty">Karar evreni BBO örneği yok.</div>') +
+    '<div class="note">Bu görünüm sunucunun gerçek BBO/akış tanılamasıdır. Tarayıcıdaki ek OKX ticker akışıyla karıştırılmaz; gecikme garantisi vermez.</div>';
+}
+
+function renderSettings(settings) {
+  if (!settings || settings.st !== "ok" || !settings.v) return '<div class="card empty">Ayar kataloğu henüz yayımlanmadı.</div>';
+  const catalog = settings.v;
+  const labels = {capital:"Sermaye", indicators:"Göstergeler", strategies:"Stratejiler", risk:"Risk", market:"Piyasa", derivatives:"Türev Veriler", data:"Veri", costs:"Maliyetler", notifications:"Bildirimler", dashboard:"Dashboard", general:"Genel"};
+  const groups = {};
+  for (const p of (catalog.parameters || [])) (groups[p.category] ||= []).push(p);
+  let html = '<div class="card"><div class="hrow"><h2>⚙️ Parametre kataloğu</h2>' + badge("Güvenli talep akışı") + '</div><div class="note">Ayarlar doğrudan dashboard üzerinden değiştirilmez. Yetkili GitHub Actions talebi yalnızca izin listesinde ve sabit sınırlar içindeki sayısal ayarlar için taslak PR açar; otomatik uygulama yoktur. PAPER modu, tek karar otoritesi, API anahtarları ve canlı işlem ayarları kilitlidir. Bu akış PR main dalına alındıktan sonra kullanılabilir.</div><p><a href="https://github.com/hkyafes-afk/kripto-radar/actions/workflows/settings-change-request.yml" target="_blank" rel="noopener">Güvenli ayar değişikliği talebi (GitHub Actions) ↗</a></p><div class="cells"><div class="cell"><div class="l">Keşfedilen</div><div class="v num">' + catalog.parameter_count + '</div></div><div class="cell"><div class="l">Korunan</div><div class="v num">' + (catalog.parameters || []).filter(x => x.protected).length + '</div></div><div class="cell"><div class="l">Yazılabilir</div><div class="v num">0</div></div><div class="cell"><div class="l">Şema sürümü</div><div class="v num">' + catalog.schema_version + '</div></div></div></div>';
+  for (const key of Object.keys(groups).sort()) {
+    html += '<div class="sec">' + esc(labels[key] || key) + '</div><div class="card dl">' + groups[key].map(p => {
+      const value = typeof p.value === "string" ? p.value : JSON.stringify(p.value);
+      const status = p.protected ? "KORUNAN" : "KEŞFEDİLDİ · YAZMA KAPALI";
+      const schema = p.schema || {};
+      const details = 'Birim: ' + (schema.unit || 'doğrulanmadı') + ' · Sınırlar: ' +
+        (schema.minimum == null && schema.maximum == null ? 'doğrulanmadı' : [schema.minimum, schema.maximum].join('–')) +
+        ' · Yeniden başlatma: ' + (schema.restart_requirement || 'bilinmiyor');
+      return '<div class="dr"><div>⚙️</div><div style="min-width:0"><div class="t1"><b>' + esc(p.label) + '</b><span class="chip">' + esc(p.value_type) + '</span><span class="chip">' + status + '</span></div><div class="t2">' + esc(p.path) + ' · Değer: <span class="num">' + esc(value) + '</span></div><div class="t2">' + esc(p.description || 'Açıklama doğrulanmadı') + '</div><div class="t2">' + esc(details) + '</div></div><div class="tm">' + (p.protected ? "Kilitli" : "Salt okunur") + '</div></div>';
+    }).join("") + '</div>';
+  }
+  return html;
+}
+
+function renderOpportunities(decs, st) {
+  const rows = decs.filter(x => ["OPEN", "REDUCE_SIZE", "SHADOW"].includes(x.decision));
+  const counts = rows.reduce((a, x) => (a[x.decision] = (a[x.decision] || 0) + 1, a), {});
+  return `<div class="hrow"><h2>Fırsat akışı · son 24 saat</h2>${badge(st.dec)}</div>` +
+    `<div class="cells"><div class="cell"><div class="l">Kabul</div><div class="v num">${counts.OPEN || 0}</div></div>` +
+    `<div class="cell"><div class="l">Boyut azalt</div><div class="v num">${counts.REDUCE_SIZE || 0}</div></div>` +
+    `<div class="cell"><div class="l">Gölge / challenger</div><div class="v num">${counts.SHADOW || 0}</div></div></div>` +
+    (rows.length ? `<div class="card dl">${rows.slice(0, 80).map(decRow).join("")}</div>` :
+      `<div class="card empty">${(STL[st] || STL.yok)[0]}. Son 24 saatte kabul edilmiş veya gölgeye alınmış karar kaydı yok.</div>`) +
+    `<div class="note">Bu görünüm karar günlüğündeki gerçek OPEN/REDUCE_SIZE/SHADOW kayıtlarını gösterir; tahmini sinyal veya otomatik fırsat üretmez.</div>`;
+}
+
+function renderExperimentLab(K, st) {
+  if (!K) return `<div class="card empty">${(STL[st] || STL.yok)[0]}. Deney/SHADOW karne verisi henüz yayımlanmadı.</div>`;
+  let h = statBox(K.yeni_golge, "UnifiedTrader · ayrı SHADOW defteri", "Ücret, kayma ve funding düşülmüş sanal sonuçlar; legacy ve PAPER portföyüne karıştırılmaz.");
+  if ((K.yeni_kaynaklar || []).length) h += `<div class="sec">Strateji / sinyal kaynağı</div>` +
+    K.yeni_kaynaklar.map(r => statBox(r.golge_sanal, esc(r.etiket), "Ayrı shadow sonuçları")).join("");
+  return h + `<div class="note">Bu alan yalnız mevcut shadow kapanış kayıtlarını raporlar. Örneklem yetersizse performans kanıtı veya strateji terfisi anlamına gelmez.</div>`;
+}
+
+function sourceMeta(title, path, status, ts, method) {
+  const state = Object.prototype.hasOwnProperty.call(STL, status) ? status : "yok";
+  const stamp = isNum(ts) && ts > 0 ? "Kaynak güncellemesi: " + ago(ts) : "Kaynak zaman damgası yok";
+  return `<div class="sourcebar" role="note"><div><b>${esc(title)}</b><div class="mut">${esc(path)}</div></div>
+    <div class="sourcebar-meta">${badge(state)}<span class="mut">${esc(stamp)}</span></div>
+    <div class="mut" style="width:100%">${esc(method)}</div></div>`;
+}
+function renderTabs(pos, closed, decs, data, st, durum, ozet, settings, polat) {
+  const T = [["firsat", "Fırsatlar"], ["portfoy", `Portföy (${durum ? pos.length : "—"})`],
+    ["karar", "Karar Merkezi"], ["performans", "Performans"], ["deney", "Deney Laboratuvarı"],
+    ["veri", "Veri Sağlığı"], ["ayarlar", "Ayarlar"], ["sistem", "Sistem"]];
+  $("tabs").innerHTML = T.map(([k, n]) => `<button class="tab ${S.tab === k ? "on" : ""}" data-t="${k}">${n}</button>`).join("");
+  $("tabs").querySelectorAll(".tab").forEach(b => b.onclick = () => setTab(b.dataset.t, false));
+  let h, meta = "";
+  const lastDecision = decs.length ? (decs[0].kayit_ms || decs[0].ts_ms) : 0;
+  if (S.tab === "firsat") {
+    meta = sourceMeta("Fırsat akışı", "birlesik/kararlar-YYYY-MM-DD.jsonl", st.dec, lastDecision,
+      "Yalnız gerçek karar günlüğündeki OPEN, REDUCE_SIZE ve SHADOW kayıtları; tahmini sinyal üretilmez.");
+    h = renderOpportunities(decs, st.dec);
+  } else if (S.tab === "portfoy" || S.tab === "acik" || S.tab === "kapanan") {
+    meta = sourceMeta("Birleşik PAPER portföyü", "birlesik/durum.json → pozisyonlar / kapananlar", st.durum, durum && durum.ts,
+      "Yalnız UnifiedTrader PAPER defteri; legacy ve SHADOW kayıtları ana portföye eklenmez.");
+    h = `<div class="hrow"><h2>Açık PAPER pozisyonları (${pos.length})</h2>${badge(st.durum)}</div>` +
+      (pos.length ? pos.map(tradeCard).join("") : `<div class="card empty">${durum ? "Açık sanal işlem yok." : (STL[st.durum] || STL.yok)[0] + "."}</div>`) +
+      `<div class="sec">Son kapanan PAPER işlemleri</div>` +
+      (closed.length ? closed.slice(0, 20).map(closedCard).join("") : `<div class="card empty">${durum ? "Henüz kapanan sanal işlem yok." : (STL[st.durum] || STL.yok)[0] + "."}</div>`);
+  } else if (S.tab === "karar") {
+    meta = sourceMeta("Karar merkezi", "birlesik/kararlar-YYYY-MM-DD.jsonl + birlesik/hazirlik.json", st.dec, lastDecision,
+      "Karar gerekçeleri, engel kodları, eksik/bayat faktörler ve maliyet tahminleri kaynak kayıttan okunur.");
+    h = engelOzet(S.data && S.data.haz) + `<div class="hrow" style="margin:0 2px 8px"><h2>Son Kararlar (${decs.length})</h2>${badge(st.dec)}</div>` +
+      (decs.length ? `<div class="card dl">${decs.slice(0, 80).map(decRow).join("")}</div>` : `<div class="card empty">${(STL[st.dec] || STL.yok)[0]}.</div>`);
+  } else if (S.tab === "performans" || S.tab === "karne") {
+    meta = sourceMeta("Performans karnesi", "data.json → karne", st.data, data && data.generated_at,
+      "Yayımlanan kapanış istatistikleri; yetersiz örneklem kanıt veya kârlılık garantisi değildir.");
+    h = renderKarne(data && data.karne, st.data);
+  } else if (S.tab === "deney") {
+    meta = sourceMeta("Deney laboratuvarı", "data.json → karne.yeni_golge", st.data, data && data.generated_at,
+      "SHADOW sonuçları PAPER portföyünden ayrı tutulur; terfi iddiası için gerçek örneklem ve süre gerekir.");
+    h = renderExperimentLab(data && data.karne, st.data);
+  } else if (S.tab === "veri") {
+    const q = durum && durum.tanilama;
+    meta = sourceMeta("Veri sağlığı", "birlesik/durum.json → tanilama", st.durum, q && q.ts,
+      "Sunucu BBO kalite gözlemleri; tarayıcıdaki public ticker akışı karar motorunun veri kaynağı değildir.");
+    h = renderPolatBridge(polat) + renderDataHealth(durum);
+  } else if (S.tab === "ayarlar") {
+    meta = sourceMeta("Ayar kataloğu", "birlesik/ayarlar.json", settings && settings.st, data && data.generated_at,
+      "Salt okunur keşif kataloğu; güvenlik ve PAPER ayarları dashboard'dan değiştirilemez.");
+    h = renderSettings(settings);
+  } else if (S.tab === "sistem") {
+    meta = sourceMeta("Sistem sağlık özeti", "data.json + birlesik/durum.json + public OKX ticker", st.data, data && data.generated_at,
+      "Statik snapshot ile tarayıcı public fiyat akışı ayrı gösterilir; kesintisiz 7/24 veya milisaniye SLA iddiası yoktur.");
+    h = renderSysTab(data, durum, ozet, st);
+  } else h = `<div class="card empty">Bu bölüm için gerçek veri henüz yayımlanmadı.</div>`;
+  $("view").innerHTML = meta + h;
+  const provenance = {
+    firsat: {path:"birlesik/kararlar-YYYY-MM-DD.jsonl", ts:lastDecision, method:"OPEN / REDUCE_SIZE / SHADOW adetleri; yalnız gerçek karar kayıtları."},
+    portfoy: {path:"birlesik/durum.json", ts:durum && durum.ts, method:"Açık/kapanan Unified PAPER defteri; K/Z bakiye ve başlangıç sermayesi farkından."},
+    karar: {path:"kararlar-YYYY-MM-DD.jsonl + hazirlik.json", ts:lastDecision, method:"Karar ve engel sayıları kaynak günlükteki kayıtların sınıflandırılmasıdır."},
+    performans: {path:"data.json → karne", ts:data && data.generated_at, method:"Yayınlanan kapanış örneklemi; R, net sonuç ve %95 aralık karne hesaplamasından."},
+    deney: {path:"data.json → karne.yeni_golge", ts:data && data.generated_at, method:"Ayrı Unified SHADOW kapanışları; PAPER portföyüne dahil edilmez."},
+    veri: {path:"birlesik/durum.json → tanilama; polat_kopru.json", ts:durum && durum.tanilama && durum.tanilama.ts, method:"Sunucu BBO kalite gözlemleri; Polat snapshot yaşı ve sıra kontrolü ayrı araştırma telemetrisidir."},
+    ayarlar: {path:"birlesik/ayarlar.json", ts:data && data.generated_at, method:"Config keşif kataloğu; kaynakta tanımlı olmayan birim, sınır veya restart etkisi bilinmiyor."},
+    sistem: {path:"data.json + birlesik/durum.json + karar özeti", ts:data && data.generated_at, method:"Her kaynak kendi timestamp ve bağlantı durumuyla değerlendirilir; tek timestamp hepsini temsil etmez."}
+  }[S.tab];
+  if (provenance) {
+    const stamp = isNum(provenance.ts) && provenance.ts > 0 ? "Güncelleme: " + ago(provenance.ts) : "Güncelleme zamanı yok";
+    const line = provenance.path + " · " + stamp + " · " + provenance.method;
+    $("view").querySelectorAll(".cell .l, .sg .l, .pf .l, .sysi .l, .dr").forEach(label => {
+      const detail = document.createElement("div");
+      detail.className = "metric-source";
+      detail.textContent = line;
+      label.insertAdjacentElement("afterend", detail);
+      label.title = line;
+    });
+  }
+}
+
+function renderPf(durum, tot, dpl, start, st) {
+  $("pf").innerHTML = `<div class="hrow"><h2>💼 Portföy Özeti (Sanal)</h2><button class="btn" data-go="performans">Performans ›</button></div>
+    <div class="pf"><div><div class="l">Günlük K/Z</div><div class="v num ${cls(dpl)}">${usd(dpl)}</div>
+      <div class="s num ${cls(dpl)}">${isNum(dpl) && durum.gun_basi ? sgn(dpl / durum.gun_basi * 100, 2, "%") : badge(st.durum)}</div></div>
+      <div><div class="l">Toplam K/Z</div><div class="v num ${cls(tot)}">${usd(tot)}</div>
+      <div class="s num ${cls(tot)}">${isNum(tot) && start ? sgn(tot / start * 100, 2, "%") : ""}</div></div></div>
+    <div class="note" id="pfLive"></div>
+    ${areaChart((durum && durum.eq_hist) || [], 150, v => "$" + fmt(v, 0), isNum(start) ? start : null)}`;
+  bindGo($("pf"));
+}
+
+function setTab(t, scroll = true) {
+  if (t === "acik" || t === "kapanan") t = "portfoy";
+  if (t === "karne") t = "performans";
+  S.tab = t; try { localStorage.setItem("bt_tab", t); } catch (e) {}
+  render();
+  document.querySelectorAll(".bnav button").forEach(b => b.classList.toggle("on", b.dataset.go === t));
+  if (scroll && window.innerWidth < 980) $("tabs").scrollIntoView({behavior: "smooth", block: "start"});
+}
+function bindGo(root) { root.querySelectorAll("[data-go]").forEach(b => b.onclick = () => setTab(b.dataset.go)); }
+document.querySelectorAll(".bnav button").forEach(b => b.onclick = () => {
+  if (b.dataset.go === "home") { scrollTo({top: 0, behavior: "smooth"}); document.querySelectorAll(".bnav button").forEach(x => x.classList.toggle("on", x === b)); }
+  else setTab(b.dataset.go);
+});
+$("menuBtn").onclick = () => $("tabs").scrollIntoView({behavior: "smooth", block: "start"});
+$("bellBtn").onclick = () => scrollTo({top: 0, behavior: "smooth"});
+
+/* ── Canlı fiyat: yalnız OKX PUBLIC WebSocket (API anahtarı, login, private kanal yok) ── */
+const WS_URL = "wss://ws.okx.com/ws/v5/public";
+const TC = Object.assign({pingMs: 25000, pongMs: 10000, staleMs: 60000, maxBackoffMs: 30000, retryMs: 1000, watchMs: 1000}, (window.__BT_CFG || {}));
+const LIVE = {px: {}, hist: {}, ws: null, open: false, lastMsg: 0, pingAt: 0, subs: new Set(), retry: 0, rafOn: false};
+function instIds() {
+  const ids = new Set([INSTS_BTC]);
+  ((S.data && S.data.durum && S.data.durum.pozisyonlar) || []).forEach(p => ids.add(instOf(p)));
+  return [...ids];
+}
+function subscribeAll() {
+  if (!LIVE.open || !LIVE.ws) return;
+  const fresh = instIds().filter(i => !LIVE.subs.has(i));
+  if (!fresh.length) return;
+  try { LIVE.ws.send(JSON.stringify({op: "subscribe", args: fresh.map(instId => ({channel: "tickers", instId}))})); } catch (e) {}
+  fresh.forEach(i => LIVE.subs.add(i));
+}
+function wsRetry() {
+  LIVE.retry = LIVE.retry ? Math.min(LIVE.retry * 2, TC.maxBackoffMs) : TC.retryMs;
+  setTimeout(wsConnect, LIVE.retry);
+}
+function wsConnect() {
+  if (LIVE.ws && LIVE.ws.readyState <= 1) return;
+  let ws;
+  try { ws = new WebSocket(WS_URL); } catch (e) { LIVE.open = false; applyLiveSoon(); return wsRetry(); }
+  LIVE.ws = ws; LIVE.open = false; LIVE.subs = new Set();
+  ws.onopen = () => { LIVE.open = true; LIVE.retry = 0; LIVE.lastMsg = Date.now(); LIVE.pingAt = 0; subscribeAll(); applyLiveSoon(); };
+  ws.onmessage = ev => {
+    LIVE.lastMsg = Date.now(); LIVE.pingAt = 0;
+    if (ev.data === "pong") return;
+    let m; try { m = JSON.parse(ev.data); } catch (e) { return; }
+    onTick(m);
+  };
+  ws.onclose = () => { if (LIVE.ws === ws) LIVE.ws = null; LIVE.open = false; applyLiveSoon(); wsRetry(); };
+  ws.onerror = () => { try { ws.close(); } catch (e) {} };
+}
+function wsWatch() {
+  if (LIVE.open && LIVE.ws) {
+    const now = Date.now();
+    if (!LIVE.pingAt && now - LIVE.lastMsg > TC.pingMs) { LIVE.pingAt = now; try { LIVE.ws.send("ping"); } catch (e) {} }
+    else if (LIVE.pingAt && now - LIVE.pingAt > TC.pongMs) { LIVE.pingAt = 0; try { LIVE.ws.close(); } catch (e) {} }
+  }
+  applyLiveSoon();
+}
+function onTick(m) {
+  if (!m || !m.arg || m.arg.channel !== "tickers" || !Array.isArray(m.data)) return;
+  const now = Date.now();
+  for (const d of m.data) {
+    const v = Number(d.last), id = d.instId || m.arg.instId;
+    if (!isFinite(v) || v <= 0 || !id) continue;
+    const L = LIVE.px[id] || (LIVE.px[id] = {last: v, t: now});
+    L.last = v; L.t = now;
+    const h = LIVE.hist[id] || (LIVE.hist[id] = []);
+    if (!h.length || now - h[h.length - 1][0] >= 5000) { h.push([now, v]); if (h.length > 288) h.splice(0, h.length - 288); }
+  }
+  applyLiveSoon();
+}
+function applyLiveSoon() {
+  if (LIVE.rafOn) return;
+  LIVE.rafOn = true;
+  requestAnimationFrame(() => { LIVE.rafOn = false; applyLive(); });
+}
+function cardState(p, now) {
+  const L = LIVE.px[instOf(p)];
+  if (!L) return {mode: "srv", price: p.current_price, usd: p.unrealized_usd, pct: p.unrealized_pct, r: p.unrealized_r, t: p.updated_ts, peak: p.peak_r};
+  if (!LIVE.open) return {mode: "down", t: L.t};
+  if (now - L.t > TC.staleMs) return {mode: "stale", t: L.t};
+  const c = calcLive(p, L.last);
+  const peak = Math.max(isNum(p.peak_r) ? p.peak_r : -Infinity, isNum(c.r) ? c.r : -Infinity);
+  return {mode: "live", price: L.last, t: L.t, usd: c.unreal, pct: c.pct, r: c.r, calc: c, peak: isFinite(peak) ? peak : p.peak_r};
+}
+function setLv(el, k, text, cl) {
+  const e = el.querySelector(`[data-lv="${k}"]`); if (!e) return;
+  e.textContent = text;
+  if (cl !== undefined) e.className = e.className.replace(/\b(up|down)\b/g, "").replace(/\s+/g, " ").trim() + (cl ? " " + cl : "");
+}
+function paintCard(el, p, st) {
+  const na = st.mode === "down" || st.mode === "stale";
+  const pxv = st.mode === "srv" ? p.current_price : st.price;
+  setLv(el, "px", na ? "—" : px(pxv));
+  setLv(el, "usd", na ? "—" : usd(st.usd), na ? "" : cls(st.usd));
+  setLv(el, "pct", na ? "—" : sgn(st.pct, 2, "%"), na ? "" : cls(st.pct));
+  setLv(el, "r", na ? "—" : sgn(st.r, 2, "R"), na ? "" : cls(st.r));
+  setLv(el, "peak", na ? "—" : sgn(st.peak, 2, "R"));
+  const sp = el.querySelector('[data-lv="spark"]');
+  if (sp) sp.innerHTML = spark(chartHist(p), (na ? 0 : st.usd || 0) >= 0 ? "#22c55e" : "#ef4444");
+  const se = el.querySelector('[data-lv="state"]');
+  if (se) se.innerHTML = st.mode === "live" ? `<span class="st st-ok">Canlı · ${Math.max(0, Math.round((Date.now() - st.t) / 1000))} sn önce</span>`
+    : st.mode === "srv" ? `<span class="st st-yok">Sunucu yayını · ${ago(st.t)}</span>`
+    : st.mode === "down" ? `<span class="st st-kesik">Bağlantı kesik</span> <span class="mut">son canlı fiyat ${ago(st.t)}</span>`
+    : `<span class="st st-bayat">Bayat</span> <span class="mut">son canlı fiyat ${ago(st.t)}</span>`;
+}
+function applyLive() {
+  const D = S.data; if (!D || !D.durum) return;
+  const now = Date.now();
+  const pos = D.durum.pozisyonlar || [];
+  let openTot = 0, allLive = pos.length > 0, adj = 0;
+  for (const p of pos) {
+    const st = cardState(p, now);
+    if (st.mode === "live") { openTot += st.usd; adj += st.usd - (isNum(p.unrealized_usd) ? p.unrealized_usd : 0); }
+    else { allLive = false; openTot += isNum(p.unrealized_usd) ? p.unrealized_usd : 0; }
+    document.querySelectorAll(`[data-inst="${CSS.escape(instOf(p))}"]`).forEach(el => paintCard(el, p, st));
+  }
+  const eq = D.durum.bakiye, start = D.durum.baslangic;
+  if (isNum(eq) && isNum(start) && $("kEq")) {
+    const e2 = eq + adj, tot = e2 - start;
+    $("kEq").textContent = "$" + fmt(e2);
+    $("kEqS").innerHTML = `<span class="${cls(tot)}">${usd(tot)} (${sgn(tot / start * 100, 2, "%")})</span>`;
+  }
+  if ($("pfLive")) $("pfLive").innerHTML = pos.length ? `Açık K/Z ${allLive ? "(canlı)" : "(kısmen sunucu verisi)"}: <b class="num ${cls(openTot)}">${usd(openTot)}</b>` : "";
+  const b = LIVE.px[INSTS_BTC];
+  if (b && LIVE.open && now - b.t <= TC.staleMs && $("btcpx")) $("btcpx").textContent = fmt(b.last, 1);
+  const ticks = Object.values(LIVE.px).map(x => x.t);
+  const lastT = ticks.length ? Math.max(...ticks) : 0;
+  const fr = $("fresh");
+  if (fr) {
+    const fl = !LIVE.open ? `<span class="st st-kesik">Bağlantı kesik</span> yeniden bağlanılıyor`
+      : !lastT ? `<span class="st st-yok">Bağlanıyor</span>`
+      : now - lastT <= TC.staleMs ? `<span class="st st-ok">Canlı</span> <b>${now - lastT < 1000 ? (now - lastT) + " ms" : Math.round((now - lastT) / 1000) + " sn"} önce</b>`
+      : `<span class="st st-bayat">Bayat</span> son tik ${ago(lastT)}`;
+    const dk = D.ozet && D.ozet.ts ? `Karar motoru: <b>${ago(D.ozet.ts)}</b>` : "Karar motoru: Veri yok";
+    fr.innerHTML = `<span>Fiyat akışı: ${fl}</span><span>${dk}</span>`;
+  }
+}
+window.__BT = {calcLive, cardState, instIds};
+
+async function load() {
+  const [D, duUnified, t0, t1, hz, ayarlar, polat] = await Promise.all([
+    get("data.json"), get("birlesik/durum.json"),
+    get(`birlesik/kararlar-${day(0)}.jsonl`, true), get(`birlesik/kararlar-${day(1)}.jsonl`, true),
+    get("birlesik/hazirlik.json"), get("birlesik/ayarlar.json"), get("birlesik/polat_kopru.json")]);
+  const data = D.v;
+  // Ana panel yalnız UnifiedTrader'ın 100 USDT PAPER portföyünü gösterir.
+  // Eski shadow/legacy defterleri arşivdir; aktif hesap bakiyesi olarak kullanılmaz.
+  const unifiedStatus = duUnified.v && duUnified.v.mod === "unified" ? duUnified : null;
+  const durum = unifiedStatus ? unifiedStatus.v : null;
+  const ozet = durum;
+  const okx = data && data.feeds && data.feeds.okx;
+  const summaryState = unifiedStatus ? unifiedStatus.st : duUnified.st;
+  const st = {data: fresh(D.st, data && data.generated_at, LIM.data), ozet: fresh(summaryState, ozet && ozet.ts, LIM.ozet),
+    durum: fresh(summaryState, durum && durum.ts, LIM.durum), dec: (t0.st === "ok" || t1.st === "ok") ? "ok" : (t0.st === "kesik" ? "kesik" : "yok")};
+  st.okx = !data ? st.data : (okx ? (okx.healthy ? "ok" : "kesik") : "yok");
+  const seen = new Map();
+  for (const r of [...t1.v, ...t0.v]) seen.set(r.idempotency_key || (r.symbol + r.strategy + r.side), r);
+  const decs = [...seen.values()].filter(r => (r.kayit_ms || r.ts_ms || 0) > Date.now() - 24 * 3600e3)
+    .sort((a, b) => (b.kayit_ms || b.ts_ms) - (a.kayit_ms || a.ts_ms));
+  S.data = {data, durum, ozet, decs, st, haz: hz.v, ayarlar, polat};
+  $("modePill").textContent = "PAPER · TEK OTORİTE";
+  $("modeTag").textContent = durum ? "100 USDT PAPER • Deneysel doğrulama sürüyor • Gerçek OKX emirleri kapalı" : "100 USDT PAPER • Birleşik durum bekleniyor • Eski defterler arşivde • Gerçek OKX emirleri kapalı";
+  render();
+  subscribeAll();
+}
+wsConnect();
+load();
+setInterval(load, 60000);
+setInterval(wsWatch, TC.watchMs);
+</script>
+</body>
+</html>
