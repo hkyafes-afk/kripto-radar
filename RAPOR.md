@@ -18,18 +18,18 @@ Polat özsermaye: %-4.71 · BTC al-tut: %-6.17
 
 ## Öğrenme (walk-forward)
 
-Örnek 8534 (eğitim 5973, doğrulama 2561) · uygulanan katsayı 81 · doğrulamada tutmadığı için reddedilen 57
+Örnek 8543 (eğitim 5980, doğrulama 2563) · uygulanan katsayı 81 · doğrulamada tutmadığı için reddedilen 57
 
-En çok işe yarayan okumalar: obv_egim_15m ×1.235, hacim_oran_1H ×1.218, tetik_yapi_bozulmasi_15m ×1.202, mum_cimbiz_dip_5m ×1.199, macd_hist_15m ×1.159, tetik_psar_donus_15m ×1.144, rsi_5m ×1.139, tetik_trend_cizgisi_kirilim_1H ×1.132, momentum_5m ×1.118, cci_5m ×1.117
-En az işe yarayan okumalar: btc_1H ×0.576, btc_4H ×0.741, yapi_4H ×0.749, dow_4H ×0.754, supertrend_1H ×0.782, adx_di_4H ×0.784, obo_1H ×0.806, ema_4H ×0.854, cift_tepe_15m ×0.863, supertrend_4H ×0.865
+En çok işe yarayan okumalar: obv_egim_15m ×1.234, hacim_oran_1H ×1.217, tetik_yapi_bozulmasi_15m ×1.201, mum_cimbiz_dip_5m ×1.199, macd_hist_15m ×1.159, tetik_psar_donus_15m ×1.144, rsi_5m ×1.139, tetik_trend_cizgisi_kirilim_1H ×1.131, momentum_5m ×1.117, cci_5m ×1.117
+En az işe yarayan okumalar: btc_1H ×0.576, btc_4H ×0.736, yapi_4H ×0.748, dow_4H ×0.754, supertrend_1H ×0.782, adx_di_4H ×0.784, obo_1H ×0.806, ema_4H ×0.853, cift_tepe_15m ×0.863, supertrend_4H ×0.865
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 23416, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 23453, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 21586
+- ders: 21615
 - yetki: 341
 - gösterge aileleri aynı yönde değil: 147
 - büyük zaman dilimi trendi ters: 22
@@ -91,7 +91,7 @@ Kapanmış işlem yok. Görülen kurulum: 23416, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 119831
+- ders: 119860
 - yetki: 10693
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 4126
@@ -158,7 +158,7 @@ Kapanmış işlem yok. Görülen kurulum: 23416, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 119831
+- ders: 119860
 - yetki: 10693
 - günlük işlem tavanı (8): 7185
 - gösterge aileleri aynı yönde değil: 4126
