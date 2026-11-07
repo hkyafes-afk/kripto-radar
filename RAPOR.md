@@ -8,13 +8,13 @@ _Yatırım tavsiyesi değildir._
 
 | | sinyal | kazanma | ort. net R | toplam net R |
 |---|---|---|---|---|
-| polat_tum_sinyaller | 8560 | %46.2 | -0.352 | -3015.4 |
+| polat_tum_sinyaller | 8563 | %46.2 | -0.352 | -3016.61 |
 | polat_girilen | 13 | %53.8 | -0.412 | -5.36 |
-| polat_girilmeyen | 8547 | %46.2 | -0.352 | -3010.04 |
-| rastgele | 8511 | %43.9 | -0.401 | -3413.64 |
-| trend_naif | 8552 | %43.7 | -0.403 | -3442.7 |
+| polat_girilmeyen | 8550 | %46.2 | -0.352 | -3011.25 |
+| rastgele | 8514 | %43.9 | -0.401 | -3414.85 |
+| trend_naif | 8555 | %43.7 | -0.403 | -3443.91 |
 
-Polat özsermaye: %-4.71 · BTC al-tut: %-6.18
+Polat özsermaye: %-4.71 · BTC al-tut: %-6.17
 
 ## Öğrenme (walk-forward)
 
@@ -25,13 +25,13 @@ En az işe yarayan okumalar: btc_1H ×0.576, btc_4H ×0.725, yapi_4H ×0.748, do
 
 ## Son 1 gün
 
-Kapanmış işlem yok. Görülen kurulum: 23891, girilen: 0.
+Kapanmış işlem yok. Görülen kurulum: 23956, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 22017
-- yetki: 341
-- gösterge aileleri aynı yönde değil: 147
+- ders: 22066
+- yetki: 345
+- gösterge aileleri aynı yönde değil: 148
 - büyük zaman dilimi trendi ters: 22
 - puan -0.127 eşiğin (0.25) altında: 9
 - puan -0.152 eşiğin (0.25) altında: 9
@@ -91,10 +91,10 @@ Kapanmış işlem yok. Görülen kurulum: 23891, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 120262
-- yetki: 10693
+- ders: 120311
+- yetki: 10697
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 4126
+- gösterge aileleri aynı yönde değil: 4127
 - büyük zaman dilimi trendi ters: 2926
 - üst üste 3 zarar: 2345
 - aynı yönde pozisyon tavanı: 1426
@@ -158,10 +158,10 @@ Kapanmış işlem yok. Görülen kurulum: 23891, girilen: 0.
 
 **Girilmeyen kurulumlar (engel)**
 
-- ders: 120262
-- yetki: 10693
+- ders: 120311
+- yetki: 10697
 - günlük işlem tavanı (8): 7185
-- gösterge aileleri aynı yönde değil: 4126
+- gösterge aileleri aynı yönde değil: 4127
 - büyük zaman dilimi trendi ters: 2926
 - üst üste 3 zarar: 2345
 - aynı yönde pozisyon tavanı: 1426
